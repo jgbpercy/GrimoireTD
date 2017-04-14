@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 8408703d89f6a9d4a9254000d0a1e459
+timeCreated: 1490901697
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Macondo
+  fontNames:
+  - Macondo
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
