@@ -36,7 +36,10 @@ public class Projectile : IFrameUpdatee {
     {
         position = startPosition;
         this.target = target;
+        target.RegisterForOnDiedCallback(() => this.target = null);
+
         projectileTemplate = template;
+
         ProjectileView.Instance.CreateProjectile(this);
 
         ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);

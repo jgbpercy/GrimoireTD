@@ -94,17 +94,18 @@ public class Creep : ITargetable, IFrameUpdatee {
         }
 
         position = Vector3.MoveTowards(position, currentDestinationVector, currentSpeed * Time.deltaTime);
-
-        if (currentHitpoints < 1)
-        {
-            OnDiedCallback();
-        }
     }
 
     public void TakeDamage(int damage)
     {
         currentHitpoints -= damage;
         OnHealthChangedCallback();
+
+        if (currentHitpoints < 1)
+        {
+            OnDiedCallback();
+        }
+
     }
 
     public void RegisterForOnHealthChangedCallback(Action callback)
@@ -122,7 +123,7 @@ public class Creep : ITargetable, IFrameUpdatee {
         OnDiedCallback += callback;
     }
 
-    public void UnregisterForOnDiedCallback(Action callback)
+    public void DeregisterForOnDiedCallback(Action callback)
     {
         OnDiedCallback -= callback;
     }

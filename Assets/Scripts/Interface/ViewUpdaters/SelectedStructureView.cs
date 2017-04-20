@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AbilityCooldownView : SingletonMonobehaviour<AbilityCooldownView> {
+public class SelectedStructureView : SingletonMonobehaviour<SelectedStructureView> {
 
     [SerializeField]
     private GameObject abilityVerticalLayout;
 
     [SerializeField]
     private GameObject abilitySliderPrefab;
+
+    [SerializeField]
+    private GameObject selectedStructurePanel;
+    [SerializeField]
+    private Text selectedStructureName;
+    [SerializeField]
+    private Text selectedStructureText;
 
     private List<DefendModeAbility> trackedAbilities = new List<DefendModeAbility>();
 
@@ -33,7 +40,15 @@ public class AbilityCooldownView : SingletonMonobehaviour<AbilityCooldownView> {
 
     public void OnDefendingEntitySelected(DefendingEntity newSelection)
     {
-        OnDefendingEntityDeselected();
+        ClearAbilityLists();
+
+        selectedStructurePanel.SetActive(true);
+
+        Structure selectedStructureInstance = newSelection as Structure;
+
+        selectedStructureName.text = selectedStructureInstance.StructureClassTemplate.NameInGame;
+
+        selectedStructureText.text = selectedStructureInstance.UIText();
 
         trackedAbilities = newSelection.DefendModeAbilities();
 
@@ -51,6 +66,12 @@ public class AbilityCooldownView : SingletonMonobehaviour<AbilityCooldownView> {
     }
 
     public void OnDefendingEntityDeselected()
+    {
+        ClearAbilityLists();
+        selectedStructurePanel.SetActive(false);
+    }
+
+    private void ClearAbilityLists()
     {
         abilitySliders.ForEach(x => Destroy(x.gameObject));
 

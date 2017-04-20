@@ -16,7 +16,6 @@ public class ApplicationLoader : SingletonMonobehaviour<ApplicationLoader> {
     CreepManager creepManager;
     InterfaceController interfaceController;
     GameStateManager gameStateManager;
-    AbilityCooldownView abilityCooldownView;
 
     private void Awake()
     {
@@ -48,8 +47,6 @@ public class ApplicationLoader : SingletonMonobehaviour<ApplicationLoader> {
         gameStateManager = gameManager.GetComponent<GameStateManager>();
         Assert.IsTrue(gameStateManager != null);
 
-        abilityCooldownView = gameManager.GetComponent<AbilityCooldownView>();
-        Assert.IsTrue(abilityCooldownView != null);
 
         CDebug.Log(CDebug.applicationLoading, "Application Loader Finished Awake");
     }
@@ -66,7 +63,6 @@ public class ApplicationLoader : SingletonMonobehaviour<ApplicationLoader> {
         creepManager.enabled = true;
         interfaceController.enabled = true;
         gameStateManager.enabled = true;
-        abilityCooldownView.enabled = true;
 
         CDebug.Log(CDebug.applicationLoading, "Application Loader Finished Start");
     }
