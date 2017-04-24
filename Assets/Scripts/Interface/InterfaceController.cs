@@ -2,11 +2,14 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections.Generic;
+using System.Collections;
 
 public enum InterfaceCursorMode
 {
     BUILD,
-    SELECT
+    SELECT,
+    EXECUTE_BUILD_MODE_ABILITY
 }
 
 public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
@@ -19,6 +22,10 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private StructureTemplate selectedStructureTemplate;
 
     private Structure selectedStructureInstance = null;
+
+    private Unit selectedUnitInstance = null;
+
+    private HexTargetedBuildModeAbility hexTargetedAbilityToActivate = null;
 
     [SerializeField]
     private float maxRayFromCameraDistance = 100f;
@@ -38,7 +45,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private MapData map;
     private GameStateManager gameStateManager;
 
-    private Action<DefendingEntity> OnDefendingEntitySelectedCallback;
+    private Action<Structure, Unit> OnDefendingEntitySelectedCallback;
     private Action OnDefendingEntityDeselectedCallback;
 
     private Action<StructureTemplate> OnStructureToBuildSelectedCallback;
@@ -80,6 +87,38 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         get
         {
             return mouseOverCoord;
+        }
+    }
+
+    public HexTargetedBuildModeAbility HexTargetedAbilityToActivate
+    {
+        get
+        {
+            return hexTargetedAbilityToActivate;
+        }
+    }
+
+    public Unit SelectedUnitInstance
+    {
+        get
+        {
+            return selectedUnitInstance;
+        }
+    }
+
+    public Coord SelectedUnitLocation
+    {
+        get
+        {
+            return map.WhereAmI(selectedUnitInstance);
+        }
+    }
+
+    public Structure SelectedStructureInstance
+    {
+        get
+        {
+            return selectedStructureInstance;
         }
     }
 
@@ -129,17 +168,6 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             SetCursorModeSelect();
             DeselectStructure();
         }
-
-        //debug
-        if (Input.GetButtonDown("DebugSpawnWave") && gameStateManager.CurrentGameMode == GameMode.DEFEND)
-        {
-            CreepManager.Instance.InfDebugSpawnWave = true;
-        }
-
-        if (Input.GetButtonDown("DebugSpawn") && gameStateManager.CurrentGameMode == GameMode.DEFEND)
-        {
-            CreepManager.Instance.InfDebugSpawn = true;
-        }
     }
 
 
@@ -150,12 +178,12 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             return;
         }
 
-        if (cursorMode == InterfaceCursorMode.SELECT && mouseOverHex.StructureHere != null)
+        if (cursorMode == InterfaceCursorMode.SELECT && ( mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null ))
         {
-            SelectBuiltStructure();
+            SelectHexContents(mouseOverHex);
             return;
         }
-        else
+        else if ( cursorMode != InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY )
         {
             DeselectStructure();
         }
@@ -165,9 +193,17 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             map.TryBuildStructureAt(mouseOverCoord, selectedStructureTemplate);
         }
 
+        if (cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY && hexTargetedAbilityToActivate.IsTargetSuitable(map.WhereAmI(selectedUnitInstance), mouseOverCoord))
+        {
+            CDebug.Log(CDebug.buildModeAbilities, "InterfaceController detected hex targeted build mode ability click");
+            hexTargetedAbilityToActivate.ExecuteAbility(map.WhereAmI(selectedUnitInstance), mouseOverCoord, selectedUnitInstance);
+            SetCursorModeSelect();
+            SelectHexContents(mouseOverHex);
+        }
+
     }
 
-    public void buttonClickDefend()
+    public void ButtonClickDefend()
     {
         CDebug.Log(CDebug.gameState, "Interface Controller registered defend button click");
 
@@ -193,13 +229,14 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         OnStructureToBuildSelectedCallback(selectedStructureTemplate);
     }
 
-    private void SelectBuiltStructure()
+    private void SelectHexContents(HexData hex)
     {
-        selectedStructureInstance = mouseOverHex.StructureHere;
+        selectedStructureInstance = hex.StructureHere;
+        selectedUnitInstance = hex.UnitHere;
 
         if (OnDefendingEntitySelectedCallback != null)
         {
-            OnDefendingEntitySelectedCallback(selectedStructureInstance);
+            OnDefendingEntitySelectedCallback(selectedStructureInstance, selectedUnitInstance);
         }
     }
 
@@ -225,12 +262,41 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         cursorMode = InterfaceCursorMode.SELECT;
     }
 
-    public void RegisterForOnDefendingEntitySelectedCallback(Action<DefendingEntity> callback)
+    //NOTE this is hardcoded to be unit activated - need to split back out in SelectedDefendingEntitiesView to do structures
+    public void ActivateBuildModeAbility(int index)
+    {
+        BuildModeAbility abilityToActivate = SelectedDefendingEntitiesView.Instance.TrackedBuildModeAbilities[index];
+
+        if ( !EconomyManager.Instance.CanDoTransaction(abilityToActivate.BuildModeAbilityTemplate.Cost))
+        {
+            return;
+        }
+
+        if (abilityToActivate is HexTargetedBuildModeAbility)
+        {
+            CDebug.Log(CDebug.buildModeAbilities, "Hex Targeted ability activated");
+            cursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
+            hexTargetedAbilityToActivate = abilityToActivate as HexTargetedBuildModeAbility;
+        }
+        else
+        {
+            Coord unitCoord = map.WhereAmI(selectedUnitInstance);
+            abilityToActivate.ExecuteAbility(unitCoord, unitCoord, selectedUnitInstance);
+            SetCursorModeSelect();
+        }
+    }
+
+    public void ExecuteHexTargetedBuildModeAbility()
+    {
+        SetCursorModeSelect();
+    }
+
+    public void RegisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
     {
         OnDefendingEntitySelectedCallback += callback;
     }
 
-    public void DeregisterForOnDefendingEntitySelectedCallback(Action<DefendingEntity> callback)
+    public void DeregisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
     {
         OnDefendingEntitySelectedCallback -= callback;
     }

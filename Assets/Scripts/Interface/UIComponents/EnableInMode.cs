@@ -9,14 +9,57 @@ public class EnableInMode : MonoBehaviour {
     {
         if ( enabledInMode == GameMode.DEFEND )
         {
-            GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(() => gameObject.SetActive(false));
-            GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(() => gameObject.SetActive(true));
-            gameObject.SetActive(false);
+            GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(SetSelfInactive);
+            GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(SetSelfActive);
+            if ( GameStateManager.Instance.CurrentGameMode == GameMode.DEFEND )
+            {
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
         else
         {
-            GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(() => gameObject.SetActive(true));
-            GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(() => gameObject.SetActive(false));
+            GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(SetSelfActive);
+            GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(SetSelfInactive);
+            if (GameStateManager.Instance.CurrentGameMode == GameMode.BUILD)
+            {
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
+
+        }
+    }
+
+    private void SetSelfActive()
+    {
+        gameObject.SetActive(true);
+    }
+
+    private void SetSelfInactive()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        if ( GameStateManager.InstanceNullAccepted != null )
+        {
+            if (enabledInMode == GameMode.DEFEND)
+            {
+                GameStateManager.Instance.DeregisterForOnEnterBuildModeCallback(SetSelfInactive);
+                GameStateManager.Instance.DeregisterForOnEnterDefendModeCallback(SetSelfActive);
+            }
+            else
+            {
+                GameStateManager.Instance.DeregisterForOnEnterBuildModeCallback(SetSelfActive);
+                GameStateManager.Instance.DeregisterForOnEnterDefendModeCallback(SetSelfInactive);
+            }
         }
     }
 

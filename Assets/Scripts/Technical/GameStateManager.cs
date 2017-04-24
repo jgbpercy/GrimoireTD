@@ -11,7 +11,7 @@ public enum GameMode
 
 public class GameStateManager : SingletonMonobehaviour<GameStateManager> {
 
-    private GameMode gameMode;
+    private GameMode gameMode = GameMode.DEFEND;
 
     private Action OnEnterDefendModeCallback;
     private Action OnEnterBuildModeCallback;

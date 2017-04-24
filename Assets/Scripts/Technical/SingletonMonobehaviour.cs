@@ -25,4 +25,12 @@ public class SingletonMonobehaviour<T> : MonoBehaviour where T : MonoBehaviour
             return instance;
         }
     }
+
+    public static T InstanceNullAccepted
+    {
+        get
+        {
+            return (T)FindObjectOfType(typeof(T));
+        }
+    }
 }

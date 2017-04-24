@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
-    [SerializeField]
-    private CreepTemplate[] creepTemplates;
-
     private List<Wave> WaveList;
 
     private int currentWave = 0;
@@ -16,10 +13,6 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
     private bool waveIsActive = false;
     private bool waveIsSpawning = false;
-
-    //debug crap
-    private bool infDebugSpawn = false;
-    private bool infDebugSpawnWave = false;
 
     [SerializeField]
     private string[] slowSourcesInEditor;
@@ -31,22 +24,6 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         get
         {
             return slowSources;
-        }
-    }
-
-    public bool InfDebugSpawn
-    {
-        set
-        {
-            infDebugSpawn = value;
-        }
-    }
-
-    public bool InfDebugSpawnWave
-    {
-        set
-        {
-            infDebugSpawnWave = value;
         }
     }
 
@@ -71,32 +48,15 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
         //test waves hacky hacky make scriptable objects
         WaveList = new List<Wave>();
-        float[] timings = new float[10] { 0.25f, 0.5f, 0.75f, 1f, 1.25f, 3.25f, 3.5f, 3.75f, 4, 4.25f };
-        CreepTemplate[] creeps = new CreepTemplate[10] { creepTemplates[1], creepTemplates[1], creepTemplates[1], creepTemplates[1], creepTemplates[1], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0] };
 
-        WaveList.Add(new Wave(timings, creeps));
-
-        float[] timingsTwo = new float[10] { 0.5f, 0.7f, 0.9f, 1.4f, 1.6f, 1.8f, 2.0f, 2.5f, 2.7f, 2.9f };
-        CreepTemplate[] creepsTwo = new CreepTemplate[10] { creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0], creepTemplates[0] };
-
-        WaveList.Add(new Wave(timingsTwo, creepsTwo));
+        foreach (WaveTemplate waveTemplate in MapGenerator.Instance.Level.Waves)
+        {
+            WaveList.Add(waveTemplate.GenerateWave());
+        }
 
     }
 
     void Update () {
-
-        if ( infDebugSpawnWave )
-        {
-            infDebugSpawnWave = false;
-
-            StartCoroutine(SpawnWave());
-        }
-
-        if ( infDebugSpawn )
-        {
-            infDebugSpawn = false;
-            SpawnCreep(creepTemplates[0]);
-        }
 
         if ( creepList.Count == 0 && !waveIsSpawning )
         {

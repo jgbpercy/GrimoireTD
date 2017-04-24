@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public enum HexType
 {
@@ -12,6 +13,8 @@ public enum HexType
 public class MapData {
 
     private Dictionary<Coord, HexData> hexes;
+
+    private Dictionary<DefendingEntity, Coord> defendingEntities = new Dictionary<DefendingEntity, Coord>();
 
     private int width;
     private int height;
@@ -374,13 +377,123 @@ public class MapData {
     {
         if ( GetHexAt(coord).CanAddStructureHere() && EconomyManager.Instance.CanDoTransaction( structureTemplate.Cost ) )
         {
-            GetHexAt(coord).AddStructureHere(structureTemplate.GenerateStructure(coord.ToPositionVector()));
+            Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
+
+            GetHexAt(coord).AddStructureHere(newStructure);
             EconomyManager.Instance.DoTransaction(structureTemplate.Cost);
+            defendingEntities.Add(newStructure, coord);
 
             return true;
         }
 
         return false;
+    }
+
+    public bool TryBuildStructureAtFree(Coord coord, StructureTemplate structureTemplate)
+    {
+        Assert.IsTrue(TryGetHexAt(coord) != null);
+        Assert.IsTrue(structureTemplate != null);
+
+        if ( GetHexAt(coord).CanAddStructureHere() )
+        {
+            Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
+
+            GetHexAt(coord).AddStructureHere(structureTemplate.GenerateStructure(coord.ToPositionVector()));
+            defendingEntities.Add(newStructure, coord);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool TryCreateUnitAt(Coord coord, UnitTemplate unitTemplate)
+    {
+        if ( GetHexAt(coord).CanMoveUnitHere() )
+        {
+            Unit newUnit = unitTemplate.GenerateUnit(coord.ToPositionVector());
+
+            GetHexAt(coord).MoveUnitHere(newUnit);
+            defendingEntities.Add(newUnit, coord);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool TryMoveUnitTo(Coord fromCoord, Coord targetCoord, Unit unit, EconomyTransaction cost)
+    {
+        if ( GetHexAt(targetCoord).CanMoveUnitHere() && EconomyManager.Instance.CanDoTransaction(cost) )
+        {
+            GetHexAt(targetCoord).MoveUnitHere(unit);
+            GetHexAt(fromCoord).RemoveUnitHere();
+
+            defendingEntities.Remove(unit);
+            defendingEntities.Add(unit, targetCoord);
+
+            EconomyManager.Instance.DoTransaction(cost);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public static bool HexIsInRange(int range, Coord startHex, Coord targetHex)
+    {
+        return Distance(startHex, targetHex) <= range;
+    }
+
+    public static int Distance(Coord startHex, Coord targetHex)
+    {
+        int baseVerticalDistance = Mathf.Abs(startHex.Y - targetHex.Y);
+        int baseHorizontalDistance;
+
+        if (baseVerticalDistance % 2 == 0)
+        {
+            baseHorizontalDistance = Mathf.Abs(startHex.X - targetHex.X);
+        }
+        else
+        {
+            int fakeX;
+
+            if (startHex.Y % 2 == 0)
+            {
+                fakeX = startHex.X > targetHex.X ? targetHex.X + 1 : targetHex.X;
+            }
+            else
+            {
+                fakeX = startHex.X > targetHex.X ? targetHex.X : targetHex.X - 1;
+            }
+
+            baseHorizontalDistance = Mathf.Abs(startHex.X - fakeX);
+        }
+
+        CDebug.Log(CDebug.distanceCalculations, "Ver: " + baseVerticalDistance);
+        CDebug.Log(CDebug.distanceCalculations, "Hor: " + baseHorizontalDistance);
+
+        return baseVerticalDistance + Mathf.Max(baseHorizontalDistance - (baseVerticalDistance / 2), 0);
+    }
+
+    public bool HexIsEmpty(Coord coord)
+    {
+        return GetHexAt(coord).UnitHere == null && GetHexAt(coord).StructureHere == null;
+    }
+
+    public bool HexHasUnit(Coord coord)
+    {
+        return GetHexAt(coord).UnitHere != null;
+    }
+
+    public bool HexHasStructure(Coord coord)
+    {
+        return GetHexAt(coord).StructureHere != null;
+    }
+
+    public Coord WhereAmI(DefendingEntity defendingEntity)
+    {
+        return defendingEntities[defendingEntity];
     }
 
 }

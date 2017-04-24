@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class HexData {
 
+    private HexType hexType;
+
+    private Structure structureHere = null;
+
+    private Unit unitHere = null;
 
     public HexType HexType
     {
@@ -15,8 +20,6 @@ public class HexData {
         }
     }
 
-    private HexType hexType;
-
     public Structure StructureHere
     {
         get
@@ -25,7 +28,13 @@ public class HexData {
         }
     }
 
-    private Structure structureHere = null;
+    public Unit UnitHere
+    {
+        get
+        {
+            return unitHere;
+        }
+    }
 
     public float pathingFScore;
     public float pathingGScore;
@@ -66,4 +75,18 @@ public class HexData {
         structureHere = structureAdded;
     }
     
+    public bool CanMoveUnitHere()
+    {
+        return IsBuildable() && unitHere == null;
+    }    
+
+    public void MoveUnitHere(Unit unitMoved)
+    {
+        unitHere = unitMoved;
+    }
+
+    public void RemoveUnitHere()
+    {
+        unitHere = null;
+    }
 }

@@ -7,15 +7,15 @@ public class StructureUIElement : MonoBehaviour {
     [HideInInspector]
     public int indexInStructureList;
 
-    private InterfaceController interfaceManager;
+    private InterfaceController interfaceController;
 
-    private void Awake()
+    private void Start()
     {
-        interfaceManager = GameObject.Find("GameManager").GetComponent<InterfaceController>();
+        interfaceController = InterfaceController.Instance;
     }
 
-    public void SendClickToInterfaceManager()
+    public void SendClickToInterfaceController()
     {
-        interfaceManager.SelectStructureToBuild(indexInStructureList);
+        interfaceController.SelectStructureToBuild(indexInStructureList);
     }
 }

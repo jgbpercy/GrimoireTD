@@ -36,8 +36,11 @@ public class AbilityController : MonoBehaviour {
 
     private void Update ()
     {
-        ExecuteHighestPriorityAbilityOffCooldown();
-	}
+        if ( GameStateManager.Instance.CurrentGameMode == GameMode.DEFEND )
+        {
+            ExecuteHighestPriorityAbilityOffCooldown();
+        }
+    }
 
     private void ExecuteHighestPriorityAbilityOffCooldown()
     {

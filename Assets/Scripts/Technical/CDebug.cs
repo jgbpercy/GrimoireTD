@@ -41,6 +41,8 @@ public static class CDebug {
     public static DebugChannel gameState;
     public static DebugChannel creepSpawning;
     public static DebugChannel abilityManagement;
+    public static DebugChannel distanceCalculations;
+    public static DebugChannel buildModeAbilities;
 
     public static void InitialiseDebugChannels()
     {
@@ -65,8 +67,14 @@ public static class CDebug {
         creepSpawning = new DebugChannel("Creep Spawning", false);
         channelList.Add(creepSpawning);
 
-        abilityManagement = new DebugChannel("Ability Management", true);
+        abilityManagement = new DebugChannel("Ability Management", false);
         channelList.Add(abilityManagement);
+
+        distanceCalculations = new DebugChannel("Distance Calcs", false);
+        channelList.Add(distanceCalculations);
+
+        buildModeAbilities = new DebugChannel("Build Mode Abilities", true);
+        channelList.Add(buildModeAbilities);
 
         foreach (DebugChannel debugChannel in channelList)
         {

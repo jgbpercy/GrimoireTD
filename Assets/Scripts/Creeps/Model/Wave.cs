@@ -19,7 +19,6 @@ public class Wave {
     public Wave()
     {
         spawns = new SortedList<float, CreepTemplate>();
-
     }
 
     public Wave(SortedList<float, CreepTemplate> spawns)
@@ -29,7 +28,6 @@ public class Wave {
 
     public Wave(float[] timings, CreepTemplate[] creeps)
     {
-
         spawns = new SortedList<float, CreepTemplate>();
 
         for (int i = 0; i < timings.Length; i++)

@@ -13,6 +13,9 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
     private Color tileHighlightCanAction;
 
     [SerializeField]
+    private Color tileHighlighterTestBright;
+
+    [SerializeField]
     private Transform tileHighlighter;
     private MeshRenderer tileHighlighterRenderer;
 
@@ -99,9 +102,26 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
 
             tileHighlighter.position = mouseOverCoord.ToPositionVector();
 
-            if (mouseOverHex.StructureHere != null)
+            if (mouseOverHex.StructureHere != null || mouseOverHex.UnitHere != null)
             {
                 tileHighlighterRenderer.material.color = tileHighlightCanAction;
+            }
+            else
+            {
+                tileHighlighterRenderer.material.color = tileHighlightNoAction;
+            }
+        }
+        else if ( cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY)
+        {
+            tileHighlighterRenderer.enabled = true;
+            rangeIndicatorRenderer.enabled = false;
+            structureGhostRenderer.enabled = false;
+
+            tileHighlighter.position = mouseOverCoord.ToPositionVector();
+
+            if (interfaceController.HexTargetedAbilityToActivate.IsTargetSuitable(interfaceController.SelectedUnitLocation, mouseOverCoord))
+            {
+                tileHighlighterRenderer.material.color = tileHighlighterTestBright;
             }
             else
             {
@@ -118,14 +138,14 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
     private void OnSelectedStructureChange(StructureTemplate selectedStructureTemplate)
     {
         //should get and cache these at start (and also generally do better)
-        MeshFilter selectedStructureMeshFilter = selectedStructureTemplate.StructurePrefab.GetComponentInChildren<MeshFilter>();
+        MeshFilter selectedStructureMeshFilter = selectedStructureTemplate.Prefab.GetComponentInChildren<MeshFilter>();
         Transform selectedStructureGraphics = selectedStructureMeshFilter.transform;
 
         structureGhost.localScale = selectedStructureGraphics.localScale;
         structureGhostPositionOffset = selectedStructureGraphics.localPosition;
 
         structureGhostFilter.mesh = selectedStructureMeshFilter.sharedMesh;
-        structureGhostRenderer.material = selectedStructureTemplate.StructurePrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+        structureGhostRenderer.material = selectedStructureTemplate.Prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
         structureGhostRenderer.material.color = new Color(structureGhostRenderer.material.color.r, structureGhostRenderer.material.color.g, structureGhostRenderer.material.color.b, 0.45f);
 
         //TEMP HACK TEMP HACK TEMP HACK

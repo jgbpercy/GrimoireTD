@@ -12,8 +12,6 @@ public abstract class Ability {
         this.template = template;
     }
 
-    public abstract bool ExecuteAbility(Vector3 executionPosition);
-
     public abstract string UIText();
 
 }

@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 //all currently assumes tileScale = 1 whops
-[System.Serializable]
+[Serializable]
 public class Coord : object
 {
+    [SerializeField]
     private int x;
+    [SerializeField]
     private int y;
 
     public virtual int X

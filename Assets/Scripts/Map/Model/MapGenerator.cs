@@ -17,7 +17,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
     private Dictionary<Color32, HexType> colorsToTypesDictionary;
 
     [SerializeField]
-    private Texture2D levelImage;
+    private Level level;
 
     [SerializeField]
     private ColorToType[] colorsToTypes;
@@ -30,21 +30,32 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         }
     }
 
+    public Level Level
+    {
+        get
+        {
+            return level;
+        }
+    }
+
     private void Awake()
     {
-        colorsToTypesArrayToDictionary();
+        ColorsToTypesArrayToDictionary();
     }
 
     private void Start()
     {
         CDebug.Log(CDebug.applicationLoading, "Map Generator Start");
 
-        map = new MapData(levelImage, colorsToTypesDictionary);
+        map = new MapData(level.LevelImage, colorsToTypesDictionary);
+
+        PlaceStartingStructures();
+        PlaceStartingUnits();
 
         map.GeneratePath();
     }
 
-    private void colorsToTypesArrayToDictionary()
+    private void ColorsToTypesArrayToDictionary()
     {
         colorsToTypesDictionary = new Dictionary<Color32, HexType>();
 
@@ -54,5 +65,25 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         }
     }
 
+    private void PlaceStartingStructures()
+    {
+        foreach(Level.StartingStructure startingStructure in level.StartingStructures)
+        {
+            if (!map.TryBuildStructureAtFree(startingStructure.StartingPosition, startingStructure.StructureTemplate))
+            {
+                throw new Exception("Attempted to add Starting Structure at invalid position (" + startingStructure.StartingPosition.X + ", " + startingStructure.StartingPosition.Y + ")");
+            }
+        }
+    }
 
+    private void PlaceStartingUnits()
+    {
+        foreach(Level.StartingUnit startingUnit in level.StartingUnits)
+        {
+            if (!map.TryCreateUnitAt(startingUnit.StartingPosition, startingUnit.UnitTemplate) )
+            {
+                throw new Exception("Attempted to add Starting Unit at invalid position (" + startingUnit.StartingPosition.X + ", " + startingUnit.StartingPosition.Y + ")");
+            }
+        }
+    }
 }

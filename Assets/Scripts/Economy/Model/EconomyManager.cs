@@ -6,23 +6,13 @@ public class EconomyManager : SingletonMonobehaviour<EconomyManager> {
     [SerializeField]
     private int maxFood;
     [SerializeField]
-    private int startingFood;
-    [SerializeField]
     private int maxWood;
-    [SerializeField]
-    private int startingWood;
     [SerializeField]
     private int maxStone;
     [SerializeField]
-    private int startingStone;
-    [SerializeField]
     private int maxGold;
     [SerializeField]
-    private int startingGold;
-    [SerializeField]
     private int maxMana;
-    [SerializeField]
-    private int startingMana;
 
     private Resource food;
     private Resource wood;
@@ -76,11 +66,13 @@ public class EconomyManager : SingletonMonobehaviour<EconomyManager> {
     {
         CDebug.Log(CDebug.applicationLoading, "Econonmy Manager Start");
 
-        food = new Resource("Food", maxFood, startingFood);
-        wood = new Resource("Wood", maxWood, startingWood);
-        stone = new Resource("Stone", maxStone, startingStone);
-        gold = new Resource("Gold", maxGold, startingGold);
-        mana = new Resource("Mana", maxMana, startingMana);
+        food = new Resource("Food", maxFood, 0);
+        wood = new Resource("Wood", maxWood, 0);
+        stone = new Resource("Stone", maxStone, 0);
+        gold = new Resource("Gold", maxGold, 0);
+        mana = new Resource("Mana", maxMana, 0);
+
+        DoTransaction(MapGenerator.Instance.Level.StartingResources);
 
         if ( OnResourceValueChangeCallback != null )
         {
