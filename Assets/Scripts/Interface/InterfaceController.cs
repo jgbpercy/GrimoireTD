@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
-using System.Collections.Generic;
-using System.Collections;
+using UnityEngine.Assertions;
 
 public enum InterfaceCursorMode
 {
@@ -15,14 +13,13 @@ public enum InterfaceCursorMode
 public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     [SerializeField]
-    private LayerMask tileMapLayer;
+    private LayerMask mainRayHitLayer;
 
     private InterfaceCursorMode cursorMode = InterfaceCursorMode.SELECT;
 
     private StructureTemplate selectedStructureTemplate;
 
     private Structure selectedStructureInstance = null;
-
     private Unit selectedUnitInstance = null;
 
     private HexTargetedBuildModeAbility hexTargetedAbilityToActivate = null;
@@ -31,11 +28,12 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private float maxRayFromCameraDistance = 100f;
 
     private Ray cameraToMouseRay;
-    private RaycastHit mouseHitAgainstTileMap;
-    private bool mouseRaycastHitMapBool;
+    private RaycastHit mouseHit;
 
     private Coord mouseOverCoord;
     private HexData mouseOverHex;
+
+    private Creep mouseOverCreep;
 
     private Camera mainCamera;
 
@@ -50,6 +48,9 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     private Action<StructureTemplate> OnStructureToBuildSelectedCallback;
 
+    private Action<Creep> OnCreepSelectedCallback;
+    private Action OnCreepDeselectedCallback;
+
     public StructureTemplate[] StructureTemplates
     {
         get
@@ -62,7 +63,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     {
         get
         {
-            return mouseRaycastHitMapBool;
+            return mouseOverCoord != null;
         }
     }
 
@@ -146,17 +147,11 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     void Update() {
 
-        if (!EventSystem.current.IsPointerOverGameObject())
-        {
-            cameraToMouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-            mouseRaycastHitMapBool = Physics.Raycast(cameraToMouseRay, out mouseHitAgainstTileMap, maxRayFromCameraDistance, tileMapLayer);
-            mouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHitAgainstTileMap.point.x, mouseHitAgainstTileMap.point.y, 0f));
-            mouseOverHex = map.GetHexAt(mouseOverCoord);
-        }
-        else
-        {
-            mouseRaycastHitMapBool = false;
-        }
+        mouseOverCoord = null;
+        mouseOverHex = null;
+        mouseOverCreep = null;
+
+        InterfaceControllerRaycast();
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -166,26 +161,67 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         if (Input.GetMouseButtonDown(1))
         {
             SetCursorModeSelect();
-            DeselectStructure();
+            DeselectDefendingEntities();
         }
+    }
+
+    private void InterfaceControllerRaycast()
+    {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        cameraToMouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+        bool mouseRaycastHit = Physics.Raycast(cameraToMouseRay, out mouseHit, maxRayFromCameraDistance, mainRayHitLayer);
+
+        if (!mouseRaycastHit)
+        {
+            return;
+        }
+
+        if (mouseHit.transform.CompareTag("TileMap"))
+        {
+            mouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHit.point.x, mouseHit.point.y, 0f));
+            mouseOverHex = map.GetHexAt(mouseOverCoord);
+            return;
+        }
+
+        if (mouseHit.transform.CompareTag("Creep"))
+        {
+            mouseOverCreep = mouseHit.transform.GetComponent<CreepComponent>().CreepModel;
+            Assert.IsNotNull(mouseOverCreep);
+            return;
+        }
+
+        throw new Exception("Mouse Raycast hit unhandled");
     }
 
 
     private void HandleMouseClick()
     {
-        if (!mouseRaycastHitMapBool)
+        if (mouseOverCoord == null && mouseOverCreep == null)
         {
             return;
         }
 
-        if (cursorMode == InterfaceCursorMode.SELECT && ( mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null ))
+        if (cursorMode == InterfaceCursorMode.SELECT && mouseOverCreep != null)
         {
-            SelectHexContents(mouseOverHex);
+            SelectCreep(mouseOverCreep);
+            DeselectDefendingEntities();
             return;
         }
-        else if ( cursorMode != InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY )
+
+        if (cursorMode == InterfaceCursorMode.SELECT && (mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null))
         {
-            DeselectStructure();
+            SelectHexContents(mouseOverHex);
+            DeselectCreep();
+            return;
+        }
+        else if (cursorMode == InterfaceCursorMode.SELECT)
+        {
+            DeselectDefendingEntities();
+            DeselectCreep();
         }
 
         if (cursorMode == InterfaceCursorMode.BUILD)
@@ -240,9 +276,10 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         }
     }
 
-    private void DeselectStructure()
+    private void DeselectDefendingEntities()
     {
         selectedStructureInstance = null;
+        selectedUnitInstance = null;
 
         if (OnDefendingEntityDeselectedCallback != null)
         {
@@ -250,9 +287,25 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         }
     }
 
+    private void SelectCreep(Creep creep)
+    {
+        if ( OnCreepSelectedCallback != null )
+        {
+            OnCreepSelectedCallback(creep);
+        }
+    }
+
+    private void DeselectCreep()
+    {
+        if ( OnCreepDeselectedCallback != null)
+        {
+            OnCreepDeselectedCallback();
+        }
+    }
+
     private void SetCursorModeBuild()
     {
-        DeselectStructure();
+        DeselectDefendingEntities();
 
         cursorMode = InterfaceCursorMode.BUILD;
     }
@@ -267,7 +320,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     {
         BuildModeAbility abilityToActivate = SelectedDefendingEntitiesView.Instance.TrackedBuildModeAbilities[index];
 
-        if ( !EconomyManager.Instance.CanDoTransaction(abilityToActivate.BuildModeAbilityTemplate.Cost))
+        if (!EconomyManager.Instance.CanDoTransaction(abilityToActivate.BuildModeAbilityTemplate.Cost))
         {
             return;
         }
@@ -319,5 +372,25 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     public void DeregisterForStructureToBuildSelectedCallback(Action<StructureTemplate> callback)
     {
         OnStructureToBuildSelectedCallback -= callback;
+    }
+
+    public void RegisterForOnCreepSelectedCallback(Action<Creep> callback)
+    {
+        OnCreepSelectedCallback += callback;
+    }
+
+    public void DeregisterForOnCreepSelectedCallback(Action<Creep> callback)
+    {
+        OnCreepSelectedCallback -= callback;
+    }
+
+    public void RegisterForOnCreepDeselectedCallback(Action callback)
+    {
+        OnCreepDeselectedCallback += callback;
+    }
+
+    public void DeregisterForOnCreepDeselectedCallback(Action callback)
+    {
+        OnCreepDeselectedCallback -= callback;
     }
 }

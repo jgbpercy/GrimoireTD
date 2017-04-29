@@ -99,9 +99,15 @@ public class Creep : ITargetable, IFrameUpdatee {
     public void TakeDamage(int damage)
     {
         currentHitpoints -= damage;
+
+        if ( currentHitpoints < 1 )
+        {
+            currentHitpoints = 0;
+        }
+
         OnHealthChangedCallback();
 
-        if (currentHitpoints < 1)
+        if (currentHitpoints == 0)
         {
             OnDiedCallback();
         }
@@ -113,7 +119,7 @@ public class Creep : ITargetable, IFrameUpdatee {
         OnHealthChangedCallback += callback;
     }
 
-    public void UnregisterForOnHealthChangedCallback(Action callback)
+    public void DeregisterForOnHealthChangedCallback(Action callback)
     {
         OnHealthChangedCallback -= callback;
     }
