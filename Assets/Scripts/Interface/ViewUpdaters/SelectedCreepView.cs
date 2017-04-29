@@ -26,6 +26,12 @@ public class SelectedCreepView : MonoBehaviour {
 
     private void OnNewSelection(Creep creep)
     {
+        if ( selectedCreep != null )
+        {
+            selectedCreep.DeregisterForOnHealthChangedCallback(OnHealthChange);
+            selectedCreep.DeregisterForOnDiedCallback(OnDied);
+        }
+
         selectedCreep = creep;
 
         selectedCreepPanel.SetActive(true);

@@ -162,6 +162,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         {
             SetCursorModeSelect();
             DeselectDefendingEntities();
+            DeselectCreep();
         }
     }
 
