@@ -13,6 +13,9 @@ public enum InterfaceCursorMode
 public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     [SerializeField]
+    private float debugTimeScale = 1f;
+
+    [SerializeField]
     private LayerMask mainRayHitLayer;
 
     private InterfaceCursorMode cursorMode = InterfaceCursorMode.SELECT;
@@ -126,6 +129,8 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private void Start()
     {
         CDebug.Log(CDebug.applicationLoading, "Interface Controller Start");
+
+        Time.timeScale = debugTimeScale;
 
         //map
         map = MapGenerator.Instance.Map;

@@ -3,9 +3,19 @@ using System.Collections.Generic;
 
 public abstract class DefendingEntity
 {
+    protected int id;
+
     protected SortedList<int, Ability> abilities;
 
     private DefendingEntityTemplate defendingEntityTemplate;
+
+    public virtual string Id
+    {
+        get
+        {
+            return "?-" + id;
+        }
+    }
 
     public SortedList<int, Ability> Abilities
     {

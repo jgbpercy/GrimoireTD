@@ -3,6 +3,8 @@ using System;
 
 public class Projectile : IFrameUpdatee {
 
+    protected int id;
+
     //TODO check objects like this are destroyed and garbage collected somehow :)
     private Vector3 position;
     private Vector3 currentDirection;
@@ -15,6 +17,14 @@ public class Projectile : IFrameUpdatee {
     private ProjectileTemplate projectileTemplate;
 
     private Action<float> OnDestroyCallback;
+
+    public string Id
+    {
+        get
+        {
+            return "P-" + id;
+        }
+    }
 
     public Vector3 Position
     {
@@ -34,6 +44,8 @@ public class Projectile : IFrameUpdatee {
 
     public Projectile(Vector3 startPosition, ITargetable target, ProjectileTemplate template)
     {
+        id = IdGen.GetNextId();
+
         position = startPosition;
         this.target = target;
         target.RegisterForOnDiedCallback(() => this.target = null);
@@ -43,6 +55,8 @@ public class Projectile : IFrameUpdatee {
         ProjectileView.Instance.CreateProjectile(this);
 
         ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+
+        CDebug.Log(CDebug.combatLog, Id + " (" + projectileTemplate.name + ") " + "was created, target: " + target.GetId() + " (" + target.GetName() + ")");
     }
 
     public virtual void ModelObjectFrameUpdate()
@@ -75,7 +89,9 @@ public class Projectile : IFrameUpdatee {
 
     public void HitCreep(Creep creep, float destructionDelay)
     {
-        creep.TakeDamage(projectileTemplate.Damage);
+        CDebug.Log(CDebug.combatLog, Id + " (" + projectileTemplate.name + ") hit " + creep.Id + " (" + creep.GetName() + ")");
+
+        creep.ApplyAttackEffects(projectileTemplate.AttackEffects);
         destroyingForHitTarget = true;
         Destroy(destructionDelay);
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class AoeProjectileTemplate : ProjectileTemplate {
 
     [SerializeField]
-    protected int aoeDamage;
+    protected AttackEffect[] aoeAttackEffects;
 
     [SerializeField]
     protected float aoeRadius;
@@ -14,11 +14,11 @@ public class AoeProjectileTemplate : ProjectileTemplate {
     [SerializeField]
     protected float aoeExpansionLerpFactor = 0.15f;
 
-    public int AoeDamage
+    public AttackEffect[] AoeAttackEffects
     {
         get
         {
-            return aoeDamage;
+            return aoeAttackEffects;
         }
     }
 

@@ -4,7 +4,7 @@
 public class ProjectileTemplate : ScriptableObject {
 
     [SerializeField]
-    protected int damage;
+    protected AttackEffect[] attackEffects;
 
     [SerializeField]
     protected float speed;
@@ -12,11 +12,11 @@ public class ProjectileTemplate : ScriptableObject {
     [SerializeField]
     protected GameObject projectilePrefab;
 
-    public int Damage
+    public AttackEffect[] AttackEffects
     {
         get
         {
-            return damage;
+            return attackEffects;
         }
     }
 

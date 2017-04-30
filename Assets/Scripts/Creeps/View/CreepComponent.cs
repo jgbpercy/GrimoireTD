@@ -27,7 +27,7 @@ public class CreepComponent : MonoBehaviour {
 	private void Start () {
 
         healthBar = GetComponentInChildren<Slider>();
-        healthBar.maxValue = creepModel.CreepClassTemplate.MaxHitpoints;
+        healthBar.maxValue = creepModel.CreepTemplate.MaxHitpoints;
         healthBar.value = healthBar.maxValue;
     }
 

@@ -7,7 +7,7 @@ public class CreepView : SingletonMonobehaviour<CreepView> {
 
     public void CreateCreep(Creep creepModel)
     {
-        CreepComponent creepComponent = Instantiate(creepModel.CreepClassTemplate.CreepPrefab, creepModel.Position, Quaternion.identity, creepFolder).GetComponent<CreepComponent>();
+        CreepComponent creepComponent = Instantiate(creepModel.CreepTemplate.CreepPrefab, creepModel.Position, Quaternion.identity, creepFolder).GetComponent<CreepComponent>();
 
         creepComponent.SetUp(creepModel);
     }

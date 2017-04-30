@@ -106,7 +106,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
             Slider newSlider = newSliderGo.GetComponent<Slider>();
             abilitySliders.Add(newSlider);
 
-            newSliderGo.GetComponentInChildren<Text>().text = defendModeAbility.DefendModeAbilityClassTemplate.NameInGame;
+            newSliderGo.GetComponentInChildren<Text>().text = defendModeAbility.DefendModeAbilityTemplate.NameInGame;
             newSlider.value = defendModeAbility.PercentOfCooldownPassed;
         }
 

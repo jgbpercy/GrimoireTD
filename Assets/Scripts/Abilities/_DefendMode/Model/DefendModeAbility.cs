@@ -23,7 +23,7 @@ public abstract class DefendModeAbility : Ability, IFrameUpdatee {
         }
     }
 
-    public DefendModeAbilityTemplate DefendModeAbilityClassTemplate
+    public DefendModeAbilityTemplate DefendModeAbilityTemplate
     {
         get
         {

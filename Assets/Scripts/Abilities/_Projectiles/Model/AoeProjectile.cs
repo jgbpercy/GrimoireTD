@@ -57,7 +57,7 @@ public class AoeProjectile : Projectile {
 
     public virtual void HitCreepInAoe(Creep creep)
     {
-        creep.TakeDamage(aoeProjectileTemplate.AoeDamage);
+        creep.ApplyAttackEffects(aoeProjectileTemplate.AoeAttackEffects);
     }
 
     public void RegisterForOnExplosionCallback(Action callback)

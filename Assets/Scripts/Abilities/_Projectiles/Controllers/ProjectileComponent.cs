@@ -30,7 +30,7 @@ public class ProjectileComponent : MonoBehaviour {
             hitExplosion.Play();
             ownRenderer.enabled = false;
             ownCollider.enabled = false;
-            projectileModel.HitCreep(hitCreep, hitExplosion.main.duration);
+            projectileModel.HitCreep(hitCreep, hitExplosion.main.duration - 0.01f);
         }
     }
 

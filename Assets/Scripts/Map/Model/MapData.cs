@@ -398,7 +398,7 @@ public class MapData {
         {
             Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
 
-            GetHexAt(coord).AddStructureHere(structureTemplate.GenerateStructure(coord.ToPositionVector()));
+            GetHexAt(coord).AddStructureHere(newStructure);
             defendingEntities.Add(newStructure, coord);
 
             return true;

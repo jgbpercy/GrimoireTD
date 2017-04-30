@@ -43,6 +43,7 @@ public static class CDebug {
     public static DebugChannel abilityManagement;
     public static DebugChannel distanceCalculations;
     public static DebugChannel buildModeAbilities;
+    public static DebugChannel combatLog;
 
     public static void InitialiseDebugChannels()
     {
@@ -73,8 +74,11 @@ public static class CDebug {
         distanceCalculations = new DebugChannel("Distance Calcs", false);
         channelList.Add(distanceCalculations);
 
-        buildModeAbilities = new DebugChannel("Build Mode Abilities", true);
+        buildModeAbilities = new DebugChannel("Build Mode Abilities", false);
         channelList.Add(buildModeAbilities);
+
+        combatLog = new DebugChannel("Combat Log", false);
+        channelList.Add(combatLog);
 
         foreach (DebugChannel debugChannel in channelList)
         {
@@ -87,9 +91,19 @@ public static class CDebug {
 
     public static void Log(DebugChannel channel, string message)
     {
-        if ( channel.Enabled )
+        if (channel.Enabled)
         {
             Debug.Log(channel.Name + ": " + message);
         }
     }
+
+    public static void Log(DebugChannel channel, string message, Object context)
+    {
+        if (channel.Enabled)
+        {
+            Debug.Log(channel.Name + ": " + message, context);
+        }
+    }
+
+
 }

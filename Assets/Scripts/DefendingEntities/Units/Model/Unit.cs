@@ -7,6 +7,14 @@ public class Unit : DefendingEntity
 
     private Action<Coord> onMovedCallback;
 
+    public override string Id
+    {
+        get
+        {
+            return "U-" + id;
+        }
+    }
+
     public UnitTemplate UnitClassTemplate
     {
         get
@@ -25,6 +33,8 @@ public class Unit : DefendingEntity
 
     public Unit(UnitTemplate unitTemplate, Vector3 position) : base(unitTemplate)
     {
+        id = IdGen.GetNextId();
+
         this.unitTemplate = unitTemplate;
 
         DefendingEntityView.Instance.CreateUnit(this, position);
