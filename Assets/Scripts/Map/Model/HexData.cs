@@ -40,14 +40,6 @@ public class HexData {
     public float pathingGScore;
     public Coord pathingCameFrom;
 
-    public HexData()
-    {
-        hexType = HexType.HEX_GRASS;
-        pathingFScore = Mathf.Infinity;
-        pathingGScore = Mathf.Infinity;
-
-    }
-
     public HexData(HexType createWithType)
     {
         hexType = createWithType;
@@ -57,12 +49,12 @@ public class HexData {
 
     public bool IsPathable()
     {
-        return hexType == HexType.HEX_GRASS ? true : false;
+        return hexType.IsPathableByCreeps;
     }
 
     public bool IsBuildable()
     {
-        return HexType == HexType.HEX_ROCK ? true : false;
+        return hexType.IsBuildable;
     }
 
     public bool CanAddStructureHere()
@@ -77,7 +69,7 @@ public class HexData {
     
     public bool CanMoveUnitHere()
     {
-        return IsBuildable() && unitHere == null;
+        return hexType.UnitCanOccupy && unitHere == null;
     }    
 
     public void MoveUnitHere(Unit unitMoved)

@@ -11,7 +11,7 @@ public enum GameMode
 
 public class GameStateManager : SingletonMonobehaviour<GameStateManager> {
 
-    private GameMode gameMode = GameMode.DEFEND;
+    private GameMode gameMode = GameMode.BUILD;
 
     private Action OnEnterDefendModeCallback;
     private Action OnEnterBuildModeCallback;
@@ -39,13 +39,11 @@ public class GameStateManager : SingletonMonobehaviour<GameStateManager> {
     private void Start ()
     {
         CDebug.Log(CDebug.applicationLoading, "Game State Manager Start");
-
-        EnterBuildMode();
     }
 
     private void Update()
     {
-        if ( !CreepManager.Instance.WaveIsActive && CurrentGameMode == GameMode.DEFEND )
+        if ( CurrentGameMode == GameMode.DEFEND && !CreepManager.Instance.WaveIsActive && !CreepManager.Instance.TrackIdleTime )
         {
             EnterBuildMode();
         }

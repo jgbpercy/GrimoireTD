@@ -38,8 +38,6 @@ public static class AttackEffectNames
 
     private static Dictionary<AttackEffectType, string> CreateAttackEffectNames()
     {
-        Debug.Log("Called attack effect name dictionary");
-
         Dictionary<AttackEffectType, string> names = new Dictionary<AttackEffectType, string>();
 
         names.Add(AttackEffectType.PiercingDamage, "Piercing Damage");

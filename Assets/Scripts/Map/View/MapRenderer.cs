@@ -2,14 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-[Serializable]
-public class TypeToTextureOffset
-{
-    public HexType hexType;
-    public int[] textureOffset;
-}
-
 public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
 
     [SerializeField]
@@ -25,12 +17,7 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
     [SerializeField]
     private int[] textureOffsetForOffmapHexes;
 
-    [SerializeField]
-    private TypeToTextureOffset[] typesToTextureOffsets;
-
     private Texture2D tileImages;
-
-    private Dictionary<HexType, int[]> typesToTextureOffsetsDictionary;
 
     [SerializeField]
     private MeshFilter mapGraphicsFilter;
@@ -47,11 +34,6 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
     [SerializeField]
     private int offMapHexThickness;
 
-    private void Awake()
-    {
-        typesToTextureOffsetsArrayToDictionary();
-    }
-
     private void Start ()
     {
         CDebug.Log(CDebug.applicationLoading, "Map Renderer Start");
@@ -66,16 +48,6 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
 
         InitialiseOffMap();
 	}
-
-    private void typesToTextureOffsetsArrayToDictionary()
-    {
-        typesToTextureOffsetsDictionary = new Dictionary<HexType, int[]>();
-
-        foreach ( TypeToTextureOffset typeToTextureOffset in typesToTextureOffsets)
-        {
-            typesToTextureOffsetsDictionary.Add(typeToTextureOffset.hexType, typeToTextureOffset.textureOffset);
-        }
-    }
 
     private void InitialiseMap()
     {
@@ -212,9 +184,9 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
                     }
                 }
 
-                textureOffsetX = typesToTextureOffsetsDictionary[map.GetHexAt(new Coord(x, y)).HexType][0];
+                textureOffsetX = map.GetHexAt(new Coord(x, y)).HexType.TextureOffset[0];
 
-                textureOffsetY = typesToTextureOffsetsDictionary[map.GetHexAt(new Coord(x, y)).HexType][1];
+                textureOffsetY = map.GetHexAt(new Coord(x, y)).HexType.TextureOffset[1];
                      
                 currentUvs = hexUvs(textureOffsetX, textureScaleMultiplierX, textureOffsetY, textureScaleMultiplierY);
 
@@ -224,10 +196,7 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
                 }
 
                 currentVertexIndex += 7;
-
             }
-
-            
         }
 
         mapMesh.vertices = vertices;

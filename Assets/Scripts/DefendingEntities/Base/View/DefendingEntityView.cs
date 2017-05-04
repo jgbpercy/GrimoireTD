@@ -17,7 +17,7 @@ public class DefendingEntityView : SingletonMonobehaviour<DefendingEntityView> {
     
     public void CreateUnit(Unit unitModel, Vector3 position)
     {
-        UnitComponent unitComponent = Instantiate(unitModel.UnitClassTemplate.Prefab, position, Quaternion.identity, unitFolder).GetComponent<UnitComponent>();
+        UnitComponent unitComponent = Instantiate(unitModel.UnitTemplate.Prefab, position, Quaternion.identity, unitFolder).GetComponent<UnitComponent>();
 
         unitComponent.SetUp(unitModel);
     }

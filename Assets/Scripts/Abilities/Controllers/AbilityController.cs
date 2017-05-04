@@ -11,6 +11,8 @@ public class AbilityController : MonoBehaviour {
 
     private List<DefendModeAbility> defendModeAbilities;
 
+    private bool trackIdleTime = false;
+
     [SerializeField]
     private Transform firePoint;
 
@@ -23,23 +25,41 @@ public class AbilityController : MonoBehaviour {
         if (attachedToStructureComponent != null )
         {
             attachedToDefendingEntity = attachedToStructureComponent.StructureModel;
+            trackIdleTime = false;
         }
         else
         {
             attachedToDefendingEntity = attachedToUnitComponent.UnitModel;
+            trackIdleTime = true;
         }
 
         defendModeAbilities = attachedToDefendingEntity.DefendModeAbilities();
 
-        GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(() => OnEnterDefendMode());
+        GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
+        //GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
     }
 
     private void Update ()
     {
-        if ( GameStateManager.Instance.CurrentGameMode == GameMode.DEFEND )
+        if (GameStateManager.Instance.CurrentGameMode != GameMode.DEFEND)
         {
-            ExecuteHighestPriorityAbilityOffCooldown();
+            return;
         }
+
+        ExecuteHighestPriorityAbilityOffCooldown();
+
+        if ( trackIdleTime && CreepManager.Instance.TrackIdleTime )
+        {
+            if ( defendModeAbilities.Exists(x => !x.OffCooldown() ))
+            {
+                ((Unit)attachedToDefendingEntity).TrackTime(false, Time.deltaTime);
+            }
+            else
+            {
+                ((Unit)attachedToDefendingEntity).TrackTime(true, Time.deltaTime);
+            }
+        }
+            
     }
 
     private void ExecuteHighestPriorityAbilityOffCooldown()

@@ -6,7 +6,7 @@ using UnityEngine;
 public class ColorToType
 {
     public Color32 color;
-    public HexType hexType;
+    public BaseHexTypeEnum baseHexType;
 
 }
 
@@ -15,6 +15,11 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
     private MapData map;
 
     private Dictionary<Color32, HexType> colorsToTypesDictionary;
+
+    [SerializeField]
+    private HexType[] hexTypes;
+
+    private Dictionary<BaseHexTypeEnum, HexType> hexTypeDictionary;
 
     [SerializeField]
     private Level level;
@@ -40,6 +45,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     private void Awake()
     {
+        BuildHexTypesDictionary();
         ColorsToTypesArrayToDictionary();
     }
 
@@ -55,13 +61,23 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         map.GeneratePath();
     }
 
+    private void BuildHexTypesDictionary()
+    {
+        hexTypeDictionary = new Dictionary<BaseHexTypeEnum, HexType>();
+
+        foreach (HexType hexType in hexTypes)
+        {
+            hexTypeDictionary.Add(hexType.BaseHexType, hexType);
+        }
+    }
+
     private void ColorsToTypesArrayToDictionary()
     {
         colorsToTypesDictionary = new Dictionary<Color32, HexType>();
 
         foreach (ColorToType colorToType in colorsToTypes)
         {
-            colorsToTypesDictionary.Add(colorToType.color, colorToType.hexType);
+            colorsToTypesDictionary.Add(colorToType.color, hexTypeDictionary[colorToType.baseHexType]);
         }
     }
 

@@ -51,6 +51,6 @@ public class MoveAbility : HexTargetedBuildModeAbility
             return false;
         }
 
-        return MapGenerator.Instance.Map.GetHexAt(targetCoord).IsBuildable();
+        return MapGenerator.Instance.Map.GetHexAt(targetCoord).HexType.UnitCanOccupy;
     }
 }

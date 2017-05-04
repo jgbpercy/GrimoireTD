@@ -29,6 +29,20 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     [SerializeField]
     private GameObject unitAbilityVerticalLayout;
 
+    [SerializeField]
+    private Text unitExperience;
+    [SerializeField]
+    private Text unitFatigue;
+
+    [SerializeField]
+    private Slider idleActiveSlider;
+    [SerializeField]
+    private Text activeText;
+    [SerializeField]
+    private Text idleText;
+
+    private Unit selectedUnit = null;
+
     private List<DefendModeAbility> trackedDefendModeAbilities = new List<DefendModeAbility>();
     private List<BuildModeAbility> trackedBuildModeAbilities = new List<BuildModeAbility>();
 
@@ -56,9 +70,23 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
     private void Update()
     {
+        if ( GameStateManager.Instance.CurrentGameMode == GameMode.BUILD )
+        {
+            return;
+        }
+
         for (int i = 0; i < abilitySliders.Count; i++)
         {
             abilitySliders[i].value = trackedDefendModeAbilities[i].PercentOfCooldownPassed;
+        }
+
+        if ( selectedUnit != null)
+        {
+            idleActiveSlider.maxValue = selectedUnit.TimeActive + selectedUnit.TimeIdle;
+            idleActiveSlider.value = selectedUnit.TimeActive;
+            activeText.text = selectedUnit.TimeActive.ToString("0.0");
+            idleText.text = selectedUnit.TimeIdle.ToString("0.0");
+            
         }
     }
 
@@ -78,9 +106,18 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         if ( unitSelected != null )
         {
             OnDefendingEntitySelected(unitSelected, selectedUnitPanel, selectedUnitName, selectedUnitText, unitAbilityVerticalLayout);
+            selectedUnit = unitSelected;
+            unitExperience.text = "Experience: " + selectedUnit.Experience;
+            unitFatigue.text = "Fatigue: " + selectedUnit.Fatigue;
+            selectedUnit.RegisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
         }
         else
-        {
+        {   
+            if ( selectedUnit != null )
+            {
+                selectedUnit.DeregisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+                selectedUnit = null;
+            }
             selectedUnitPanel.SetActive(false);
         }
     }
@@ -129,8 +166,21 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     public void OnDefendingEntitiesDeselected()
     {
         ClearAbilityLists();
+
+        if ( selectedUnit != null )
+        {
+            selectedUnit.DeregisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+        }
+        selectedUnit = null;
+
         selectedStructurePanel.SetActive(false);
         selectedUnitPanel.SetActive(false);
+    }
+
+    private void OnUnitExperienceChange()
+    {
+        unitExperience.text = "Experience: " + selectedUnit.Experience;
+        unitFatigue.text = "Fatigue: " + selectedUnit.Fatigue;
     }
 
     private void ClearAbilityLists()

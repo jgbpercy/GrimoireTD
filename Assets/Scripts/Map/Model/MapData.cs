@@ -4,12 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public enum HexType
-{
-    HEX_GRASS,
-    HEX_ROCK
-}
-
 public class MapData {
 
     private Dictionary<Coord, HexData> hexes;
@@ -20,8 +14,6 @@ public class MapData {
     private int height;
 
     private List<GraphEdge> graphEdges;
-
-    private bool debugOn = false;
 
     private List<Coord> path;
 
@@ -82,12 +74,12 @@ public class MapData {
 
     public MapData(Texture2D mapImage, Dictionary<Color32, HexType> colorsToTypesDictionary)
     {
-        if (debugOn) Debug.Log("Call to MapData constructor from image");
+        CDebug.Log(CDebug.mapGeneration, "Call to MapData constructor from image");
 
         width = mapImage.width / 2;
         height = mapImage.height / 2;
 
-        if (debugOn) Debug.Log("Map dimensions: (" + width + ", " + height + ")");
+        CDebug.Log(CDebug.mapGeneration, "Map dimensions: (" + width + ", " + height + ")");
 
         hexes = new Dictionary<Coord, HexData>();
 
@@ -95,7 +87,7 @@ public class MapData {
         int xPixelCoord;
         int yPixelCoord;
 
-        if (debugOn) Debug.Log("Pixels in array " + allPixels.GetLength(0));
+        CDebug.Log(CDebug.mapGeneration, "Pixels in array " + allPixels.GetLength(0));
 
         HexType currentHexType;
         bool foundHexType;
@@ -107,13 +99,23 @@ public class MapData {
                 xPixelCoord = y % 2 == 0 ? 2 * x : 2 * x + 1;
                 yPixelCoord = 2 * y;
 
-                if (debugOn) Debug.Log("Setting tile (" + x + ", " + y + ") from pixel (" + xPixelCoord + ", " + yPixelCoord + ")");
+                CDebug.Log(CDebug.mapGeneration, "Setting tile (" + x + ", " + y + ") from pixel (" + xPixelCoord + ", " + yPixelCoord + ")");
 
-                if (debugOn) Debug.Log("Pixel Color: " + allPixels[xPixelCoord + yPixelCoord * width * 2]);
+                CDebug.Log(CDebug.mapGeneration, "Pixel Color: " + allPixels[xPixelCoord + yPixelCoord * width * 2]);
 
                 foundHexType = colorsToTypesDictionary.TryGetValue(allPixels[xPixelCoord + yPixelCoord * width * 2], out currentHexType);
+                if ( !foundHexType )
+                {
+                    Debug.Log("didn't find hex for coord: " + x + ", " + y);
+                    Debug.Log("R:" + allPixels[xPixelCoord + yPixelCoord * width * 2].r);
+                    Debug.Log("G:" + allPixels[xPixelCoord + yPixelCoord * width * 2].g);
+                    Debug.Log("B:" + allPixels[xPixelCoord + yPixelCoord * width * 2].b);
+                    Debug.Log("A:" + allPixels[xPixelCoord + yPixelCoord * width * 2].a);
+                }
 
-                hexes.Add(new Coord(x,y), foundHexType ? new HexData(currentHexType) : new HexData());
+                Assert.IsTrue(foundHexType);
+
+                hexes.Add(new Coord(x,y), new HexData(currentHexType));
             }
         }
     }
@@ -130,24 +132,9 @@ public class MapData {
         }
     }
 
-    /*
-    private void GenerateEmptyMap()
-    {
-        hexes = new Dictionary<Coord, HexData>();
-
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                hexes.Add(new Coord(x, y), new HexData());
-            }
-        }
-        
-    }*/
-
     private void GenerateGraphEdges()
     {
-        if (debugOn) Debug.Log("Generating Graph Edges");
+        CDebug.Log(CDebug.mapGeneration, "Generating Graph Edges");
 
         graphEdges = new List<GraphEdge>();
 
@@ -158,14 +145,14 @@ public class MapData {
         {
             currentCoord = hex.Key;
 
-            if (debugOn) Debug.Log("Generating edges for (" + currentCoord.X + ", " + currentCoord.Y + ")");
+            CDebug.Log(CDebug.mapGeneration, "Generating edges for (" + currentCoord.X + ", " + currentCoord.Y + ")");
 
             if ( GetHexAt(currentCoord).IsPathable() )
             {
 
                 currentNeighbours = GetNeighboursOf(currentCoord);
 
-                if (debugOn) Debug.Log("Hex is pathable! Finding pathable neighbours");
+                CDebug.Log(CDebug.mapGeneration, "Hex is pathable! Finding pathable neighbours");
 
                 foreach (Coord neighbour in currentNeighbours)
                 {
@@ -173,7 +160,7 @@ public class MapData {
                     if ( GetHexAt(neighbour) != null && GetHexAt(neighbour).IsPathable() )
                     {
                         graphEdges.Add(new GraphEdge(currentCoord, neighbour));
-                        if (debugOn) Debug.Log("Added edge: (" + currentCoord.X + ", " + currentCoord.Y + ") -> (" + neighbour.X + ", " + neighbour.Y + ")");
+                        CDebug.Log(CDebug.mapGeneration, "Added edge: (" + currentCoord.X + ", " + currentCoord.Y + ") -> (" + neighbour.X + ", " + neighbour.Y + ")");
                     }
                 }
             }
@@ -210,7 +197,7 @@ public class MapData {
 
         float tentativeGScore;
 
-        if (debugOn) Debug.Log("Generating path from (" + fromCoord.X + ", " + fromCoord.Y + ") to (" + toCoord.X + ", " + toCoord.Y + ")");
+        CDebug.Log(CDebug.mapGeneration, "Generating path from (" + fromCoord.X + ", " + fromCoord.Y + ") to (" + toCoord.X + ", " + toCoord.Y + ")");
 
         openSet.Add(fromCoord);
         hexes[fromCoord].pathingGScore = 0f;
@@ -218,7 +205,7 @@ public class MapData {
 
         while ( openSet.Count != 0 )
         {
-            if (debugOn) Debug.Log("----A* iteration----");
+            CDebug.Log(CDebug.mapGeneration, "----A* iteration----");
 
             currentCoord = openSet[0];
             foreach ( Coord openSetMember in openSet )
@@ -229,11 +216,11 @@ public class MapData {
                 }
             }
 
-            if (debugOn) Debug.Log("Current Coord is (" + currentCoord.X + ", " + currentCoord.Y + ")");
+            CDebug.Log(CDebug.mapGeneration, "Current Coord is (" + currentCoord.X + ", " + currentCoord.Y + ")");
 
             if ( currentCoord.Equals(toCoord) )
             {
-                if (debugOn) Debug.Log("----To Coord reached, reconstructing path----");
+                CDebug.Log(CDebug.mapGeneration, "----To Coord reached, reconstructing path----");
                 return ReconstructPath(fromCoord, toCoord);
             }
 
@@ -242,38 +229,38 @@ public class MapData {
 
             currentEdges = graphEdges.FindAll(x => x.FromVertex.Equals(currentCoord));
 
-            if (debugOn) Debug.Log("Number of current edges: " + currentEdges.Count);
+            CDebug.Log(CDebug.mapGeneration, "Number of current edges: " + currentEdges.Count);
             
             foreach ( GraphEdge edge in currentEdges )
             {
-                if (debugOn) Debug.Log("Neighbour (" + edge.ToVertex.X + ", " + edge.ToVertex.Y + ")...");
+                CDebug.Log(CDebug.mapGeneration, "Neighbour (" + edge.ToVertex.X + ", " + edge.ToVertex.Y + ")...");
 
                 if ( !closedSet.Contains(edge.ToVertex) )
                 {
 
-                    if (debugOn) Debug.Log("...was not in closed set...");
+                    CDebug.Log(CDebug.mapGeneration, "...was not in closed set...");
                     tentativeGScore = hexes[currentCoord].pathingGScore + 2 * MapRenderer.HEX_OFFSET;
                     if ( !openSet.Contains(edge.ToVertex) )
                     {
-                        if (debugOn) Debug.Log("...or open set...");
+                        CDebug.Log(CDebug.mapGeneration, "...or open set...");
                         openSet.Add(edge.ToVertex);
                     }
                     else
                     {
-                        if (debugOn) Debug.Log("...but was in open set...");
+                        CDebug.Log(CDebug.mapGeneration, "...but was in open set...");
                     }
                     if ( tentativeGScore < hexes[edge.ToVertex].pathingGScore )
                     {
-                        if (debugOn) Debug.Log("...tentative GScore " + tentativeGScore + " was below previous GScore of " + hexes[edge.ToVertex].pathingGScore + "...");
+                        CDebug.Log(CDebug.mapGeneration, "...tentative GScore " + tentativeGScore + " was below previous GScore of " + hexes[edge.ToVertex].pathingGScore + "...");
                         hexes[edge.ToVertex].pathingGScore = tentativeGScore;
                         hexes[edge.ToVertex].pathingCameFrom = currentCoord;
                         hexes[edge.ToVertex].pathingFScore = tentativeGScore + HeuristicDistance(edge.ToVertex, toCoord);
-                        if (debugOn) Debug.Log("...set Came From to (" + hexes[edge.ToVertex].pathingCameFrom.X + ", " + hexes[edge.ToVertex].pathingCameFrom.Y + ") and FScore to " + hexes[edge.ToVertex].pathingFScore + ".");
+                        CDebug.Log(CDebug.mapGeneration, "...set Came From to (" + hexes[edge.ToVertex].pathingCameFrom.X + ", " + hexes[edge.ToVertex].pathingCameFrom.Y + ") and FScore to " + hexes[edge.ToVertex].pathingFScore + ".");
                     }
                 }
                 else
                 {
-                    if (debugOn) Debug.Log("...was in closed set.");
+                    CDebug.Log(CDebug.mapGeneration, "...was in closed set.");
                 }
             }
         }
@@ -286,12 +273,12 @@ public class MapData {
         Vector3 fromCoordPosition = fromCoord.ToPositionVector();
         Vector3 toCoordPosition = toCoord.ToPositionVector();
 
-        if (debugOn) Debug.Log("Calculating a heuristic distance between (" + fromCoord.X + ", " + fromCoord.Y + ") and (" + toCoord.X + ", " + toCoord.Y + ")");
-        if (debugOn) Debug.Log("Positions: " + fromCoordPosition + " and " + toCoordPosition);
+        CDebug.Log(CDebug.mapGeneration, "Calculating a heuristic distance between (" + fromCoord.X + ", " + fromCoord.Y + ") and (" + toCoord.X + ", " + toCoord.Y + ")");
+        CDebug.Log(CDebug.mapGeneration, "Positions: " + fromCoordPosition + " and " + toCoordPosition);
 
-        if (debugOn) Debug.Log("Difference: " + (fromCoordPosition - toCoordPosition));
+        CDebug.Log(CDebug.mapGeneration, "Difference: " + (fromCoordPosition - toCoordPosition));
 
-        if (debugOn) Debug.Log("Magnitude: " + Vector3.Magnitude(fromCoordPosition - toCoordPosition));
+        CDebug.Log(CDebug.mapGeneration, "Magnitude: " + Vector3.Magnitude(fromCoordPosition - toCoordPosition));
 
         return Vector3.Magnitude(fromCoordPosition - toCoordPosition);
     }
@@ -304,12 +291,12 @@ public class MapData {
 
         while ( !currentCoord.Equals(fromCoord) )
         {
-            if (debugOn) Debug.Log("Adding (" + currentCoord.X + ", " + currentCoord.Y + ") to path");
+            CDebug.Log(CDebug.mapGeneration, "Adding (" + currentCoord.X + ", " + currentCoord.Y + ") to path");
             path.Add(currentCoord);
             currentCoord = hexes[currentCoord].pathingCameFrom;
         }
 
-        if (debugOn) Debug.Log("Adding (" + fromCoord.X + ", " + fromCoord.Y + ") to path");
+        CDebug.Log(CDebug.mapGeneration, "Adding (" + fromCoord.X + ", " + fromCoord.Y + ") to path");
         path.Add(fromCoord);
 
         return path;

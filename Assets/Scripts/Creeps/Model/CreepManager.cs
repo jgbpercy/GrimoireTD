@@ -13,19 +13,10 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
     private bool waveIsActive = false;
     private bool waveIsSpawning = false;
+    private bool trackIdleTime = false;
 
     [SerializeField]
-    private string[] slowSourcesInEditor;
-
-    private static string[] slowSources;
-
-    public static string[] SlowSources
-    {
-        get
-        {
-            return slowSources;
-        }
-    }
+    private float trackIdleTimeAfterSpawns = 10f;
 
     public bool WaveIsActive
     {
@@ -35,9 +26,20 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         }
     }
 
-    private void Awake()
+    public bool WaveIsSpawning
     {
-        slowSources = slowSourcesInEditor;
+        get
+        {
+            return waveIsSpawning;
+        }
+    }
+
+    public bool TrackIdleTime
+    {
+        get
+        {
+            return trackIdleTime;
+        }
     }
 
     void Start ()
@@ -104,6 +106,11 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         }
 
         waveIsSpawning = false;
+
+        yield return new WaitForSeconds(trackIdleTimeAfterSpawns);
+
+        trackIdleTime = false;
+
         currentWave++;
 
         CDebug.Log(CDebug.creepSpawning, "SpawnWave coroutine finished");
@@ -135,6 +142,7 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         }
 
         waveIsActive = true;
+        trackIdleTime = true;
 
         StartCoroutine(SpawnWave());
 
