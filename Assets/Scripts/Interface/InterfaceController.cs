@@ -350,6 +350,11 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         SetCursorModeSelect();
     }
 
+    public void ClickUnitTalent(Unit unit, UnitTalent unitTalent)
+    {
+        unit.TryLevelUp(unitTalent);
+    }
+
     public void RegisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
     {
         OnDefendingEntitySelectedCallback += callback;

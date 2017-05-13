@@ -15,9 +15,6 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
     private bool waveIsSpawning = false;
     private bool trackIdleTime = false;
 
-    [SerializeField]
-    private float trackIdleTimeAfterSpawns = 10f;
-
     public bool WaveIsActive
     {
         get
@@ -107,7 +104,7 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
         waveIsSpawning = false;
 
-        yield return new WaitForSeconds(trackIdleTimeAfterSpawns);
+        yield return new WaitForSeconds(TempSettings.Instance.TrackIdleTimeAfterSpawns);
 
         trackIdleTime = false;
 

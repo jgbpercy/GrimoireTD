@@ -5,6 +5,14 @@ public class EnableInMode : MonoBehaviour {
     [SerializeField]
     private GameMode enabledInMode;
 
+    public GameMode EnabledInMode
+    {
+        get
+        {
+            return enabledInMode;
+        }
+    }
+
 	private void Start ()
     {
         if ( enabledInMode == GameMode.DEFEND )

@@ -45,6 +45,7 @@ public static class CDebug {
     public static DebugChannel buildModeAbilities;
     public static DebugChannel combatLog;
     public static DebugChannel experienceAndFatigue;
+    public static DebugChannel unitAttributes;
 
     public static void InitialiseDebugChannels()
     {
@@ -83,6 +84,9 @@ public static class CDebug {
 
         experienceAndFatigue = new DebugChannel("XP and Fatigue", true);
         channelList.Add(experienceAndFatigue);
+
+        unitAttributes = new DebugChannel("Unit Attributes", true);
+        channelList.Add(unitAttributes);
 
         foreach (DebugChannel debugChannel in channelList)
         {

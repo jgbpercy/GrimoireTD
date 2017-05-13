@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,9 +31,24 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     private GameObject unitAbilityVerticalLayout;
 
     [SerializeField]
-    private Text unitExperience;
+    private Text unitExperienceText;
     [SerializeField]
-    private Text unitFatigue;
+    private Text unitFatigueText;
+    [SerializeField]
+    private Slider unitExperienceSlider;
+    [SerializeField]
+    private GameObject unitTalentButton;
+    private Text unitTalentButtonText;
+
+    [SerializeField]
+    private Text unitLevelText;
+
+    [SerializeField]
+    private GameObject unitTalentPanel;
+    [SerializeField]
+    private Transform unitTalentLayout;
+    [SerializeField]
+    private GameObject unitTalentDisplayPrefab;
 
     [SerializeField]
     private Slider idleActiveSlider;
@@ -52,6 +68,8 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     private List<Slider> abilitySliders = new List<Slider>();
     private List<GameObject> abilityButtons = new List<GameObject>();
 
+    private List<GameObject> talentDisplays = new List<GameObject>();
+
     public List<BuildModeAbility> TrackedBuildModeAbilities
     {
         get
@@ -64,12 +82,20 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     {
         CDebug.Log(CDebug.applicationLoading, "Selected Defending Entites View Start");
 
+        unitTalentButtonText = unitTalentButton.GetComponentInChildren<Text>();
+
         InterfaceController.Instance.RegisterForOnDefendingEntitySelectedCallback(OnNewSelection);
         InterfaceController.Instance.RegisterForOnDefendingEntityDeselectedCallback(OnDefendingEntitiesDeselected);
     }
 
     private void Update()
     {
+        //TEMP DEBUG
+        if (CDebug.unitAttributes.Enabled && Input.GetAxisRaw("DebugSpawnWave") > 0)
+        {
+            selectedUnit.TempDebugAddExperience();
+        }
+
         if ( GameStateManager.Instance.CurrentGameMode == GameMode.BUILD )
         {
             return;
@@ -86,30 +112,38 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
             idleActiveSlider.value = selectedUnit.TimeActive;
             activeText.text = selectedUnit.TimeActive.ToString("0.0");
             idleText.text = selectedUnit.TimeIdle.ToString("0.0");
-            
         }
+
     }
 
-    private void OnNewSelection(Structure structureSelected, Unit unitSelected)
+    private void OnNewSelection(Structure newStructureSelected, Unit newSelectedUnit)
     {
         ClearAbilityLists();
+        ClearTalentDisplays();
 
-        if ( structureSelected != null )
+        if ( newStructureSelected != null )
         {
-            OnDefendingEntitySelected(structureSelected, selectedStructurePanel, selectedStructureName, selectedStructureText, structureAbilityVerticalLayout);
+            OnDefendingEntitySelected(newStructureSelected, selectedStructurePanel, selectedStructureName, selectedStructureText, structureAbilityVerticalLayout);
         }
         else
         {
             selectedStructurePanel.SetActive(false);
         }
 
-        if ( unitSelected != null )
+        if ( newSelectedUnit != null )
         {
-            OnDefendingEntitySelected(unitSelected, selectedUnitPanel, selectedUnitName, selectedUnitText, unitAbilityVerticalLayout);
-            selectedUnit = unitSelected;
-            unitExperience.text = "Experience: " + selectedUnit.Experience;
-            unitFatigue.text = "Fatigue: " + selectedUnit.Fatigue;
+            OnDefendingEntitySelected(newSelectedUnit, selectedUnitPanel, selectedUnitName, selectedUnitText, unitAbilityVerticalLayout);
+            selectedUnit = newSelectedUnit;
+
+            SetExperienceFatigueLevelView();
+            SetUpTalentDisplay();
+
             selectedUnit.RegisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+
+            if ( CDebug.unitAttributes.Enabled )
+            {
+                DebugLogSelectedUnitAttributes();
+            }
         }
         else
         {   
@@ -119,6 +153,15 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
                 selectedUnit = null;
             }
             selectedUnitPanel.SetActive(false);
+            unitTalentPanel.SetActive(false);
+        }
+    }
+
+    private void DebugLogSelectedUnitAttributes()
+    {
+        foreach (UnitAttributeName attributeName in Enum.GetValues(typeof(UnitAttributeName)))
+        {
+            CDebug.Log(CDebug.unitAttributes, selectedUnit.TempDebugGetAttributeDisplayName(attributeName) + ": " + selectedUnit.GetAttribute(attributeName));
         }
     }
 
@@ -166,6 +209,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     public void OnDefendingEntitiesDeselected()
     {
         ClearAbilityLists();
+        ClearTalentDisplays();
 
         if ( selectedUnit != null )
         {
@@ -175,12 +219,59 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         selectedStructurePanel.SetActive(false);
         selectedUnitPanel.SetActive(false);
+        unitTalentPanel.SetActive(false);
     }
 
     private void OnUnitExperienceChange()
     {
-        unitExperience.text = "Experience: " + selectedUnit.Experience;
-        unitFatigue.text = "Fatigue: " + selectedUnit.Fatigue;
+        SetExperienceFatigueLevelView();
+    }
+
+    private void SetExperienceFatigueLevelView()
+    {
+        unitExperienceText.text = "Experience: " + (selectedUnit.Experience - selectedUnit.UnitTemplate.ExperienceToLevelUp * selectedUnit.Level) + " / " + selectedUnit.UnitTemplate.ExperienceToLevelUp;
+        unitFatigueText.text = "Fatigue: " + selectedUnit.Fatigue;
+        unitExperienceSlider.maxValue = selectedUnit.UnitTemplate.ExperienceToLevelUp;
+        unitExperienceSlider.value = Mathf.Min(selectedUnit.Experience - selectedUnit.Level * selectedUnit.UnitTemplate.ExperienceToLevelUp, selectedUnit.UnitTemplate.ExperienceToLevelUp);
+
+        unitLevelText.text = "Level: " + selectedUnit.Level;
+
+        if (selectedUnit.LevelUpsPending > 0)
+        {
+            unitLevelText.text += " (" + "+ " + selectedUnit.LevelUpsPending + ")";
+            unitTalentButtonText.text = "Level Up!";
+        }
+        else
+        {
+            unitTalentButtonText.text = "Talents";
+        }
+    }
+
+    private void SetUpTalentDisplay()
+    {
+        ClearTalentDisplays();
+
+        foreach (UnitTalent talent in selectedUnit.UnitTemplate.UnitTalents)
+        {
+            GameObject newTalentDisplay = Instantiate(unitTalentDisplayPrefab) as GameObject;
+            newTalentDisplay.transform.SetParent(unitTalentLayout);
+
+            newTalentDisplay.GetComponent<UnitTalentUIComponent>().SetUp(selectedUnit, talent);
+
+            talentDisplays.Add(newTalentDisplay);
+        }
+    }
+
+    public void ToggleTalentPanel()
+    {
+        if (unitTalentPanel.activeSelf)
+        {
+            unitTalentPanel.SetActive(false);
+        }
+        else
+        {
+            unitTalentPanel.SetActive(true);
+        }
     }
 
     private void ClearAbilityLists()
@@ -193,5 +284,12 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         trackedDefendModeAbilities = new List<DefendModeAbility>();
         trackedBuildModeAbilities = new List<BuildModeAbility>();
+    }
+
+    private void ClearTalentDisplays()
+    {
+        talentDisplays.ForEach(x => Destroy(x));
+
+        talentDisplays = new List<GameObject>();
     }
 }
