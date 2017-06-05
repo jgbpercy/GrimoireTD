@@ -7,13 +7,16 @@ public class UnitTemplate : DefendingEntityTemplate {
     private string nameInGame;
 
     [SerializeField]
-    protected string description;
+    private string description;
 
     [SerializeField]
     private int experienceToLevelUp = 100;
 
     [SerializeField]
     private UnitTalent[] unitTalents;
+
+    [SerializeField]
+    private HexOccupationBonus[] baseConditionalHexOccupationBonuses;
 
     public string NameInGame
     {
@@ -44,6 +47,14 @@ public class UnitTemplate : DefendingEntityTemplate {
         get
         {
             return unitTalents;
+        }
+    }
+
+    public HexOccupationBonus[] BaseConditionalHexOccupationBonuses
+    {
+        get
+        {
+            return baseConditionalHexOccupationBonuses;
         }
     }
 

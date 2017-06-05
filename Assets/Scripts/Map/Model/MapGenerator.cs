@@ -7,7 +7,6 @@ public class ColorToType
 {
     public Color32 color;
     public BaseHexTypeEnum baseHexType;
-
 }
 
 public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
@@ -79,6 +78,11 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         {
             colorsToTypesDictionary.Add(colorToType.color, hexTypeDictionary[colorToType.baseHexType]);
         }
+    }
+
+    public HexType HexTypeFromName(BaseHexTypeEnum nameEnum)
+    {
+        return hexTypeDictionary[nameEnum];
     }
 
     private void PlaceStartingStructures()

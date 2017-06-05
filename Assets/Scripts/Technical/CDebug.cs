@@ -47,13 +47,14 @@ public static class CDebug {
     public static DebugChannel experienceAndFatigue;
     public static DebugChannel unitAttributes;
     public static DebugChannel structureUpgrades;
+    public static DebugChannel hexEconomy;
 
     public static void InitialiseDebugChannels()
     {
         if ( !debugChannelsEnabled )
         {
             return;
-        } 
+        }
 
         Debug.Log("Debug Channels intialising");
 
@@ -86,11 +87,14 @@ public static class CDebug {
         experienceAndFatigue = new DebugChannel("XP and Fatigue", false);
         channelList.Add(experienceAndFatigue);
 
-        unitAttributes = new DebugChannel("Unit Attributes", true);
+        unitAttributes = new DebugChannel("Unit Attributes", false);
         channelList.Add(unitAttributes);
 
-        structureUpgrades = new DebugChannel("Structure Upgrades", true);
+        structureUpgrades = new DebugChannel("Structure Upgrades", false);
         channelList.Add(structureUpgrades);
+
+        hexEconomy = new DebugChannel("Hex Economy", true);
+        channelList.Add(hexEconomy);
 
         foreach (DebugChannel debugChannel in channelList)
         {

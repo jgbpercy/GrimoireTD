@@ -8,7 +8,7 @@ public class MapData {
 
     private Dictionary<Coord, HexData> hexes;
 
-    private Dictionary<DefendingEntity, Coord> defendingEntities = new Dictionary<DefendingEntity, Coord>();
+    private Dictionary<DefendingEntity, Coord> defendingEntityPositions = new Dictionary<DefendingEntity, Coord>();
 
     private int width;
     private int height;
@@ -368,7 +368,7 @@ public class MapData {
 
             GetHexAt(coord).AddStructureHere(newStructure);
             EconomyManager.Instance.DoTransaction(structureTemplate.Cost);
-            defendingEntities.Add(newStructure, coord);
+            defendingEntityPositions.Add(newStructure, coord);
 
             return true;
         }
@@ -386,7 +386,7 @@ public class MapData {
             Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
 
             GetHexAt(coord).AddStructureHere(newStructure);
-            defendingEntities.Add(newStructure, coord);
+            defendingEntityPositions.Add(newStructure, coord);
 
             return true;
         }
@@ -401,7 +401,7 @@ public class MapData {
             Unit newUnit = unitTemplate.GenerateUnit(coord.ToPositionVector());
 
             GetHexAt(coord).MoveUnitHere(newUnit);
-            defendingEntities.Add(newUnit, coord);
+            defendingEntityPositions.Add(newUnit, coord);
 
             return true;
         }
@@ -416,8 +416,8 @@ public class MapData {
             GetHexAt(targetCoord).MoveUnitHere(unit);
             GetHexAt(fromCoord).RemoveUnitHere();
 
-            defendingEntities.Remove(unit);
-            defendingEntities.Add(unit, targetCoord);
+            defendingEntityPositions.Remove(unit);
+            defendingEntityPositions.Add(unit, targetCoord);
 
             EconomyManager.Instance.DoTransaction(cost);
 
@@ -480,7 +480,7 @@ public class MapData {
 
     public Coord WhereAmI(DefendingEntity defendingEntity)
     {
-        return defendingEntities[defendingEntity];
+        return defendingEntityPositions[defendingEntity];
     }
 
 }

@@ -10,6 +10,9 @@ public class DefendingEntityTemplate : ScriptableObject {
     [SerializeField]
     protected GameObject prefab;
 
+    [SerializeField]
+    protected HexOccupationBonus[] baseFlatHexOccupationBonuses;
+
     public AbilityTemplate[] BaseAbilities
     {
         get
@@ -23,6 +26,14 @@ public class DefendingEntityTemplate : ScriptableObject {
         get
         {
             return prefab;
+        }
+    }
+
+    public HexOccupationBonus[] BaseFlatHexOccupationBonuses
+    {
+        get
+        {
+            return baseFlatHexOccupationBonuses;
         }
     }
 

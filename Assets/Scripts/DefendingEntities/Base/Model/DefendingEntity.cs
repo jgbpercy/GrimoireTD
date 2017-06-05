@@ -10,6 +10,9 @@ public enum AttributeName
 
 public abstract class DefendingEntity
 {
+    protected int id;
+
+    //Attributes
     protected abstract class Attribute
     {
         private string displayName;
@@ -111,12 +114,16 @@ public abstract class DefendingEntity
 
     protected Dictionary<AttributeName, Attribute> attributes;
 
-    protected int id;
+    //Economy
+    private List<HexOccupationBonus> flatHexOccupationBonuses;
 
+    //Abilities
     protected SortedList<int, Ability> abilities;
 
+    //Template
     private DefendingEntityTemplate defendingEntityTemplate;
 
+    //Properties
     public virtual string Id
     {
         get
@@ -141,16 +148,60 @@ public abstract class DefendingEntity
         }
     }
 
+    //Helper Properties
+    public Coord CoordPosition
+    {
+        get
+        {
+            return MapGenerator.Instance.Map.WhereAmI(this);
+        }
+    }
+
+    protected HexData OnHex
+    {
+        get
+        {
+            return MapGenerator.Instance.Map.GetHexAt(CoordPosition);
+        }
+    }
+
+    protected HexType OnHexType
+    {
+        get
+        {
+            return OnHex.HexType;
+        }
+    }
+
     public DefendingEntity(DefendingEntityTemplate template)
+    {
+        defendingEntityTemplate = template;
+
+        SetUpBaseAbilities();
+
+        SetUpBaseFlatHexOccupationBonuses();
+
+        GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
+    }
+
+    private void SetUpBaseAbilities()
     {
         abilities = new SortedList<int, Ability>();
 
-        for (int i = 0; i < template.BaseAbilities.Length; i++)
+        for (int i = 0; i < defendingEntityTemplate.BaseAbilities.Length; i++)
         {
-            abilities.Add(i, template.BaseAbilities[i].GenerateAbility());
+            abilities.Add(i, defendingEntityTemplate.BaseAbilities[i].GenerateAbility());
         }
+    }
 
-        defendingEntityTemplate = template;
+    private void SetUpBaseFlatHexOccupationBonuses()
+    {
+        flatHexOccupationBonuses = new List<HexOccupationBonus>();
+
+        foreach (HexOccupationBonus hexOccupationBonus in defendingEntityTemplate.BaseFlatHexOccupationBonuses)
+        {
+            flatHexOccupationBonuses.Add(hexOccupationBonus);
+        }
     }
 
     public List<DefendModeAbility> DefendModeAbilities()
@@ -183,6 +234,17 @@ public abstract class DefendingEntity
         return buildModeAbilities;
     }
 
+    protected virtual void OnEnterBuildMode()
+    {
+        CDebug.Log(CDebug.hexEconomy, Id + " entered build mode:");
+
+        EconomyTransaction flatHexOccupationBonus = GetHexOccupationBonus(OnHexType, flatHexOccupationBonuses);
+
+        EconomyManager.Instance.DoTransaction(flatHexOccupationBonus);
+
+        CDebug.Log(CDebug.hexEconomy, Id + " added flat occupation bonus " + flatHexOccupationBonus);
+    }
+
     public void AddAttributeModifier(AttributeName attribute, AttributeModifier modifier)
     {
         Attribute attributeToModify = null;
@@ -212,12 +274,28 @@ public abstract class DefendingEntity
         return attributes[attributeName].Value();
     }
 
-    public string TempDebugGetAttributeDisplayName(AttributeName attributeName)
+    protected EconomyTransaction GetHexOccupationBonus(HexType hexType, List<HexOccupationBonus> occupationBonusList)
     {
-        return attributes[attributeName].DisplayName;
+        EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
+
+        foreach (HexOccupationBonus hexOccupationBonus in occupationBonusList)
+        {
+            if ( hexOccupationBonus.HexType == hexType)
+            {
+                occupationBonusTransaction += hexOccupationBonus.ResourceGain;
+            }
+        }
+
+        return occupationBonusTransaction;
     }
 
     public abstract string UIText();
 
     public abstract string CurrentName();
+
+    public string TempDebugGetAttributeDisplayName(AttributeName attributeName)
+    {
+        return attributes[attributeName].DisplayName;
+    }
+
 }

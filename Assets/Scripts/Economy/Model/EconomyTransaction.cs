@@ -73,7 +73,7 @@ public struct EconomyTransaction {
 
     public override string ToString()
     {
-        return "Food: " + goldChange + ", Wood: " + woodChange + ", Stone: " + ", Gold: " + goldChange + ", Mana: " + manaChange;
+        return "(F: " + goldChange + ", W: " + woodChange + ", S: " + stoneChange + ", G: " + goldChange + ", M: " + manaChange + ")";
     }
 
     public string ToString(bool absolute)
@@ -87,7 +87,7 @@ public struct EconomyTransaction {
 
         if ( absolute )
         {
-            displayTransaction = this.Abs();
+            displayTransaction = Abs();
         }
         else
         {
@@ -121,4 +121,86 @@ public struct EconomyTransaction {
         return new EconomyTransaction(Mathf.Abs(foodChange), Mathf.Abs(woodChange), Mathf.Abs(stoneChange), Mathf.Abs(goldChange), Mathf.Abs(manaChange));
     }
 
+    public static EconomyTransaction operator +(EconomyTransaction transaction1, EconomyTransaction transaction2)
+    {
+        return new EconomyTransaction(
+            transaction1.foodChange + transaction2.foodChange,
+            transaction1.woodChange + transaction2.woodChange,
+            transaction1.stoneChange + transaction2.stoneChange,
+            transaction1.goldChange + transaction2.goldChange,
+            transaction1.manaChange + transaction2.manaChange
+            );
+    }
+
+    public static EconomyTransaction operator -(EconomyTransaction transaction1, EconomyTransaction transaction2)
+    {
+        return new EconomyTransaction(
+            transaction1.foodChange - transaction2.foodChange,
+            transaction1.woodChange - transaction2.woodChange,
+            transaction1.stoneChange - transaction2.stoneChange,
+            transaction1.goldChange - transaction2.goldChange,
+            transaction1.manaChange - transaction2.manaChange
+            );
+    }
+
+    public EconomyTransaction Multiply(int factor)
+    {
+        return new EconomyTransaction(
+            foodChange * factor,
+            woodChange * factor,
+            stoneChange * factor,
+            goldChange * factor,
+            manaChange * factor
+            );
+    }
+
+    public enum RoundingModes
+    {
+        NEAREST,
+        UP,
+        DOWN
+    }
+
+    public EconomyTransaction Multiply(float factor, RoundingModes roundingMode)
+    {
+        if (roundingMode == RoundingModes.NEAREST)
+        {
+            return new EconomyTransaction(
+                Mathf.RoundToInt(foodChange * factor),
+                Mathf.RoundToInt(woodChange * factor),
+                Mathf.RoundToInt(stoneChange * factor),
+                Mathf.RoundToInt(goldChange * factor),
+                Mathf.RoundToInt(manaChange * factor)
+            );
+        }
+        else if (roundingMode == RoundingModes.UP)
+        {
+            return new EconomyTransaction(
+                Mathf.CeilToInt(foodChange * factor),
+                Mathf.CeilToInt(woodChange * factor),
+                Mathf.CeilToInt(stoneChange * factor),
+                Mathf.CeilToInt(goldChange * factor),
+                Mathf.CeilToInt(manaChange * factor)
+            );
+        }
+        else if (roundingMode == RoundingModes.DOWN)
+        {
+            return new EconomyTransaction(
+                Mathf.FloorToInt(foodChange * factor),
+                Mathf.FloorToInt(woodChange * factor),
+                Mathf.FloorToInt(stoneChange * factor),
+                Mathf.FloorToInt(goldChange * factor),
+                Mathf.FloorToInt(manaChange * factor)
+            );
+        }
+        else
+        {
+            return Multiply(factor); //Do default
+        }
+    }
+
+    public EconomyTransaction Multiply(float factor)
+    {
+        return Multiply(factor, RoundingModes.NEAREST);
+    }
 }

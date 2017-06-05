@@ -6,11 +6,14 @@ using UnityEngine.Assertions;
 
 public class Unit : DefendingEntity
 {
-    private Dictionary<UnitTalent, int> levelledTalents;
-
+    //Template
     private UnitTemplate unitTemplate;
 
+    //Movement
     private Action<Coord> onMovedCallback;
+
+    //Talents & levelling
+    private Dictionary<UnitTalent, int> levelledTalents;
 
     private float timeIdle;
     private float timeActive;
@@ -22,6 +25,10 @@ public class Unit : DefendingEntity
 
     private Action OnExperienceFatigueLevelChangedCallback;
 
+    //Economy
+    private List<HexOccupationBonus> conditionalHexOccupationBonuses;
+
+    //Public Properties
     public override string Id
     {
         get
@@ -114,6 +121,8 @@ public class Unit : DefendingEntity
 
         SetUpTalentsAchieved();
 
+        SetUpBaseConditionalHexOccupationBonuses();
+
         timeIdle = 0f;
         timeActive = 0f;
         experience = 0;
@@ -144,6 +153,16 @@ public class Unit : DefendingEntity
         }
     }
 
+    private void SetUpBaseConditionalHexOccupationBonuses()
+    {
+        conditionalHexOccupationBonuses = new List<HexOccupationBonus>();
+
+        foreach (HexOccupationBonus hexOccupationBonus in unitTemplate.BaseConditionalHexOccupationBonuses)
+        {
+            conditionalHexOccupationBonuses.Add(hexOccupationBonus);
+        }
+    }
+
     public override string CurrentName()
     {
         return unitTemplate.NameInGame;
@@ -166,9 +185,37 @@ public class Unit : DefendingEntity
         }
     }
 
-    private void OnEnterBuildMode()
+    protected override void OnEnterBuildMode()
     {
-        CDebug.Log(CDebug.experienceAndFatigue, Id + " entered build mode:");
+        base.OnEnterBuildMode();
+
+        OnEnterBuildModeEconomyChanges();
+
+        OnEnterBuildModeExperienceAndFatigueChanges();
+
+        timeIdle = 0f;
+        timeActive = 0f;
+    }
+
+    private void OnEnterBuildModeEconomyChanges()
+    {
+        CDebug.Log(CDebug.hexEconomy, "Time Active: " + timeActive.ToString("0.0"));
+        CDebug.Log(CDebug.hexEconomy, "Time Idle: " + timeIdle.ToString("0.0"));
+
+        float activeProportion = timeActive / (timeActive + timeIdle);
+        CDebug.Log(CDebug.hexEconomy, "Active Proportion: " + activeProportion.ToString("0.000"));
+
+        EconomyTransaction grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
+        CDebug.Log(CDebug.hexEconomy, "Gross Bonus: " + grossConditionalHexOccuationBonus);
+
+        EconomyTransaction netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(activeProportion);
+        CDebug.Log(CDebug.hexEconomy, "Net Bonus: " + netConditionalHexOccupationBonus);
+
+        EconomyManager.Instance.DoTransaction(grossConditionalHexOccuationBonus);
+    }
+
+    private void OnEnterBuildModeExperienceAndFatigueChanges()
+    {
         CDebug.Log(CDebug.experienceAndFatigue, "Time Active: " + timeActive.ToString("0.0"));
         CDebug.Log(CDebug.experienceAndFatigue, "Time Idle: " + timeIdle.ToString("0.0"));
 
@@ -196,9 +243,6 @@ public class Unit : DefendingEntity
         {
             OnExperienceFatigueLevelChangedCallback();
         }
-
-        timeIdle = 0f;
-        timeActive = 0f;
     }
 
     private float FatigueFactor()
