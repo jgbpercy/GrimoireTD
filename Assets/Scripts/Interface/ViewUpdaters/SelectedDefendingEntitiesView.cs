@@ -51,6 +51,15 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     private GameObject unitTalentDisplayPrefab;
 
     [SerializeField]
+    private GameObject structureUpgradePanel;
+    [SerializeField]
+    private Transform structureUpgradeLayout;
+    [SerializeField]
+    private GameObject structureUpgradeDisplayPrefab;
+    [SerializeField]
+    private GameObject structureEnhancementDisplayPrefab;
+
+    [SerializeField]
     private Slider idleActiveSlider;
     [SerializeField]
     private Text activeText;
@@ -58,6 +67,8 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     private Text idleText;
 
     private Unit selectedUnit = null;
+
+    private Structure selectedStructure = null;
 
     private List<DefendModeAbility> trackedDefendModeAbilities = new List<DefendModeAbility>();
     private List<BuildModeAbility> trackedBuildModeAbilities = new List<BuildModeAbility>();
@@ -69,6 +80,9 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     private List<GameObject> abilityButtons = new List<GameObject>();
 
     private List<GameObject> talentDisplays = new List<GameObject>();
+
+    private List<GameObject> upgradeDisplays = new List<GameObject>();
+    private List<GameObject> enhancementDisplays = new List<GameObject>();
 
     public List<BuildModeAbility> TrackedBuildModeAbilities
     {
@@ -124,15 +138,34 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         if ( newStructureSelected != null )
         {
             OnDefendingEntitySelected(newStructureSelected, selectedStructurePanel, selectedStructureName, selectedStructureText, structureAbilityVerticalLayout);
+
+            selectedStructure = newStructureSelected;
+
+            SetUpUpgradeView();
+
+            selectedStructure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
+
+            if (CDebug.structureUpgrades.Enabled)
+            {
+                DebugLogSelectedStructureAttributes();
+            }
         }
         else
         {
+            if (selectedStructure != null)
+            {
+                selectedStructure.DeregisterForOnUpgradedCallback(OnStructureUpgraded);
+                selectedStructure = null;
+            }
+
             selectedStructurePanel.SetActive(false);
+            structureUpgradePanel.SetActive(false);
         }
 
         if ( newSelectedUnit != null )
         {
             OnDefendingEntitySelected(newSelectedUnit, selectedUnitPanel, selectedUnitName, selectedUnitText, unitAbilityVerticalLayout);
+
             selectedUnit = newSelectedUnit;
 
             SetExperienceFatigueLevelView();
@@ -152,16 +185,9 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
                 selectedUnit.DeregisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
                 selectedUnit = null;
             }
+
             selectedUnitPanel.SetActive(false);
             unitTalentPanel.SetActive(false);
-        }
-    }
-
-    private void DebugLogSelectedUnitAttributes()
-    {
-        foreach (UnitAttributeName attributeName in Enum.GetValues(typeof(UnitAttributeName)))
-        {
-            CDebug.Log(CDebug.unitAttributes, selectedUnit.TempDebugGetAttributeDisplayName(attributeName) + ": " + selectedUnit.GetAttribute(attributeName));
         }
     }
 
@@ -169,9 +195,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     {
         panel.SetActive(true);
 
-        nameText.text = newSelection.DefendingEntityTemplate.NameInGame;
-
-        descriptionText.text = newSelection.UIText();
+        SetNameAndDescription(newSelection, nameText, descriptionText);
 
         List<DefendModeAbility> entityDefendModeAbilities = newSelection.DefendModeAbilities();
         List<BuildModeAbility> entityBuildModeAbilities = newSelection.BuildModeAbilities();
@@ -205,11 +229,23 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         }
     }
 
+    private void SetNameAndDescription(DefendingEntity selectedEntity, Text nameText, Text descriptionText)
+    {
+        nameText.text = selectedEntity.CurrentName();
+        descriptionText.text = selectedEntity.UIText();
+    }
+
 
     public void OnDefendingEntitiesDeselected()
     {
         ClearAbilityLists();
         ClearTalentDisplays();
+
+        if (selectedStructure != null)
+        {
+            selectedStructure.DeregisterForOnUpgradedCallback(OnStructureUpgraded);
+        }
+        selectedStructure = null;
 
         if ( selectedUnit != null )
         {
@@ -220,12 +256,27 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         selectedStructurePanel.SetActive(false);
         selectedUnitPanel.SetActive(false);
         unitTalentPanel.SetActive(false);
+        structureUpgradePanel.SetActive(false);
     }
 
     private void OnUnitExperienceChange()
     {
         SetExperienceFatigueLevelView();
     }
+
+    private void OnStructureUpgraded()
+    {
+        SetNameAndDescription(selectedStructure, selectedStructureName, selectedStructureText);
+
+        foreach(StructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
+        {
+            if (!selectedStructure.UpgradesBought[upgrade])
+            {
+                AddUpgradeDisplay(upgrade);
+                return;
+            }
+        }
+    } 
 
     private void SetExperienceFatigueLevelView()
     {
@@ -274,6 +325,54 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         }
     }
 
+    private void SetUpUpgradeView()
+    {
+        ClearUpgradeAndEnhancementDisplays();
+
+        foreach (StructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
+        {
+            AddUpgradeDisplay(upgrade);
+
+            if (!selectedStructure.UpgradesBought[upgrade])
+            {
+                return;
+            }
+        }
+    }
+
+    private void AddUpgradeDisplay(StructureUpgrade upgrade)
+    {
+        GameObject newUpgradeDisplay = Instantiate(structureUpgradeDisplayPrefab) as GameObject;
+        newUpgradeDisplay.transform.SetParent(structureUpgradeLayout);
+
+        upgradeDisplays.Add(newUpgradeDisplay);
+
+        newUpgradeDisplay.GetComponentInChildren<Text>().text = "Upgrade to " + upgrade.NewStructureName + "\n" + upgrade.BonusDescription;
+
+        foreach (StructureEnhancement enhancement in upgrade.OptionalEnhancements)
+        {
+            GameObject newEnhancementDisplay = Instantiate(structureEnhancementDisplayPrefab) as GameObject;
+            newEnhancementDisplay.transform.SetParent(newUpgradeDisplay.transform);
+
+            newEnhancementDisplay.GetComponent<StructureEnhancementUIComponent>().SetUp(selectedStructure, upgrade, enhancement);
+
+            enhancementDisplays.Add(newEnhancementDisplay);
+        }
+    }
+
+    public void ToggleUpgradePanel()
+    {
+        Debug.Log("Called toggle panel");
+        if (structureUpgradePanel.activeSelf)
+        {
+            structureUpgradePanel.SetActive(false);
+        }
+        else
+        {
+            structureUpgradePanel.SetActive(true);
+        }
+    }
+
     private void ClearAbilityLists()
     {
         abilitySliders.ForEach(x => Destroy(x.gameObject));
@@ -292,4 +391,30 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         talentDisplays = new List<GameObject>();
     }
+
+    private void ClearUpgradeAndEnhancementDisplays()
+    {
+        enhancementDisplays.ForEach(x => Destroy(x));
+        upgradeDisplays.ForEach(x => Destroy(x));
+
+        enhancementDisplays = new List<GameObject>();
+        upgradeDisplays = new List<GameObject>();
+    }
+
+    private void DebugLogSelectedUnitAttributes()
+    {
+        foreach (AttributeName attributeName in Enum.GetValues(typeof(AttributeName)))
+        {
+            CDebug.Log(CDebug.unitAttributes, selectedUnit.TempDebugGetAttributeDisplayName(attributeName) + ": " + selectedUnit.GetAttribute(attributeName));
+        }
+    }
+
+    private void DebugLogSelectedStructureAttributes()
+    {
+        foreach (AttributeName attributeName in Enum.GetValues(typeof(AttributeName)))
+        {
+            CDebug.Log(CDebug.structureUpgrades, selectedStructure.TempDebugGetAttributeDisplayName(attributeName) + ": " + selectedStructure.GetAttribute(attributeName));
+        }
+    }
+
 }

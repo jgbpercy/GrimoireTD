@@ -3,13 +3,14 @@
 [CreateAssetMenu(fileName = "NewUnitTalent", menuName = "Structures and Units/Unit Talent")]
 public class UnitTalent : ScriptableObject {
 
+    //TODO make array of arrays so that you can have multiple attribute gains in a talent level
     [SerializeField]
-    private UnitAttributeNamedModifier[] attributeBonuses;
+    private NamedAttributeModifier[] attributeBonuses;
 
     [SerializeField]
     private string descriptionText;
 
-    public UnitAttributeNamedModifier[] AttributeBonuses
+    public NamedAttributeModifier[] AttributeBonuses
     {
         get
         {

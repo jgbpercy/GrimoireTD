@@ -29,7 +29,7 @@ public class StructureSelectView : SingletonMonobehaviour<StructureSelectView> {
             structurePanelUIScript.indexInStructureList = i;
 
             Text structureName = structurePanel.transform.GetChild(0).GetComponent<Text>();
-            structureName.text = structureTemplates[i].NameInGame;
+            structureName.text = structureTemplates[i].StartingNameInGame;
 
             Text structureDescription = structurePanel.transform.GetChild(1).GetComponent<Text>();
             structureDescription.text = structureTemplates[i].UIText();

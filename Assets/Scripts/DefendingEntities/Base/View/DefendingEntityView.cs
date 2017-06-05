@@ -10,7 +10,7 @@ public class DefendingEntityView : SingletonMonobehaviour<DefendingEntityView> {
 
     public void CreateStructure(Structure structureModel, Vector3 position)
     {
-        StructureComponent structureComponent = Instantiate(structureModel.StructureClassTemplate.Prefab, position, Quaternion.identity, structureFolder).GetComponent<StructureComponent>();
+        StructureComponent structureComponent = Instantiate(structureModel.StructureTemplate.Prefab, position, Quaternion.identity, structureFolder).GetComponent<StructureComponent>();
 
         structureComponent.SetUp(structureModel);
     }

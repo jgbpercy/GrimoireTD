@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class UnitAttributeModifier
+public class AttributeModifier
 {
     [SerializeField]
     private float magnitude;
@@ -15,7 +15,7 @@ public class UnitAttributeModifier
         }
     }
 
-    public UnitAttributeModifier(float magnitude)
+    public AttributeModifier(float magnitude)
     {
         this.magnitude = magnitude;
     }
@@ -38,26 +38,26 @@ public class UnitAttributeModifier
 }
 
 [Serializable]
-public class UnitAttributeNamedModifier
+public class NamedAttributeModifier
 {
     [SerializeField]
-    private UnitAttributeName unitAttributeName;
+    private AttributeName attributeName;
     [SerializeField]
-    private UnitAttributeModifier unitAttributeModifier;
+    private AttributeModifier attributeModifier;
 
-    public UnitAttributeName UnitAttributeName
+    public AttributeName AttributeName
     {
         get
         {
-            return unitAttributeName;
+            return attributeName;
         }
     }
 
-    public UnitAttributeModifier UnitAttributeModifier
+    public AttributeModifier AttributeModifier
     {
         get
         {
-            return unitAttributeModifier;
+            return attributeModifier;
         }
     }
 

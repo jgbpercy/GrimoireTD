@@ -4,13 +4,46 @@
 public class StructureTemplate : DefendingEntityTemplate {
 
     [SerializeField]
+    private string startingNameInGame;
+
+    [SerializeField]
+    private string startingDescription;
+
+    [SerializeField]
     private EconomyTransaction cost;
+
+    [SerializeField]
+    private StructureUpgrade[] structureUpgrades;
+
+    public string StartingNameInGame
+    {
+        get
+        {
+            return startingNameInGame;
+        }
+    }
+
+    public string StartingDescription
+    {
+        get
+        {
+            return startingDescription;
+        }
+    }
 
     public EconomyTransaction Cost
     {
         get
         {
             return cost;
+        }
+    }
+
+    public StructureUpgrade[] StructureUpgrades
+    {
+        get
+        {
+            return structureUpgrades;
         }
     }
 

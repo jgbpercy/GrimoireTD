@@ -355,6 +355,11 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         unit.TryLevelUp(unitTalent);
     }
 
+    public void ClickStructureEnhancement(Structure structure, StructureUpgrade upgrade, StructureEnhancement enhancement)
+    {
+        structure.TryUpgrade(upgrade, enhancement, false);
+    }
+
     public void RegisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
     {
         OnDefendingEntitySelectedCallback += callback;

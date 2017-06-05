@@ -4,117 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
-public enum UnitAttributeName
-{
-    rangeBonus,
-    damageBonus,
-    cooldownReduction
-}
-
 public class Unit : DefendingEntity
 {
-
-    private abstract class Attribute
-    {
-        private string displayName;
-
-        protected List<UnitAttributeModifier> modifiers;
-
-        public string DisplayName
-        {
-            get
-            {
-                return displayName;
-            }
-        }
-
-        public Attribute(string displayName)
-        {
-            modifiers = new List<UnitAttributeModifier>();
-            this.displayName = displayName;
-        }
-
-        public void AddModifier(UnitAttributeModifier modifier)
-        {
-            modifiers.Add(modifier);
-        }
-
-        public bool TryRemoveModifier(UnitAttributeModifier modifier)
-        {
-            if (!modifiers.Contains(modifier) )
-            {
-                return false;
-            }
-
-            modifiers.Remove(modifier);
-            return true;
-        }
-
-        public abstract float Value();
-    }
-
-    private class MultiplicativeAttribute : Attribute
-    {
-        public MultiplicativeAttribute(string displayName) : base(displayName)
-        {
-
-        }
-
-        public override float Value()
-        {
-            float multiplier = 1;
-
-            foreach (UnitAttributeModifier modifier in modifiers)
-            {
-                multiplier = multiplier * (1 + modifier.Magnitude);
-            }
-
-            return multiplier - 1;
-        }
-    }
-
-    private class AdditiveAttribute : Attribute
-    {
-        public AdditiveAttribute(string displayName) : base(displayName)
-        {
-
-        }
-
-        public override float Value()
-        {
-            float value = 0;
-
-            foreach (UnitAttributeModifier modifier in modifiers)
-            {
-                value += modifier.Magnitude;
-            }
-
-            return value;
-        }
-    }
-
-    private class DiminishingAttribute : Attribute
-    {
-        public DiminishingAttribute(string displayName) : base(displayName)
-        {
-
-        }
-
-        public override float Value()
-        {
-            float multiplier = 1;
-
-            foreach (UnitAttributeModifier modifier in modifiers)
-            {
-                multiplier = multiplier * (1 - modifier.Magnitude);
-            }
-
-            return 1 - multiplier;
-        }
-    }
-
-    private Dictionary<UnitAttributeName, Attribute> attributes;
-
     private Dictionary<UnitTalent, int> levelledTalents;
 
     private UnitTemplate unitTemplate;
@@ -221,7 +112,7 @@ public class Unit : DefendingEntity
 
         SetUpAttributes();
 
-        SetUpLevelUpsAchieved();
+        SetUpTalentsAchieved();
 
         timeIdle = 0f;
         timeActive = 0f;
@@ -235,21 +126,27 @@ public class Unit : DefendingEntity
 
     private void SetUpAttributes()
     {
-        attributes = new Dictionary<UnitAttributeName, Attribute>();
-
-        attributes.Add(UnitAttributeName.rangeBonus, new AdditiveAttribute("Range Bonus"));
-        attributes.Add(UnitAttributeName.damageBonus, new AdditiveAttribute("Damage Bonus"));
-        attributes.Add(UnitAttributeName.cooldownReduction, new DiminishingAttribute("Cooldown Reduction"));
+        attributes = new Dictionary<AttributeName, Attribute>
+        {
+            { AttributeName.rangeBonus, new AdditiveAttribute("Range Bonus") },
+            { AttributeName.damageBonus, new AdditiveAttribute("Damage Bonus") },
+            { AttributeName.cooldownReduction, new DiminishingAttribute("Cooldown Reduction") }
+        };
     }
 
-    private void SetUpLevelUpsAchieved()
+    private void SetUpTalentsAchieved()
     {
         levelledTalents = new Dictionary<UnitTalent, int>();
 
-        foreach (UnitTalent levelUp in unitTemplate.UnitTalents) 
+        foreach (UnitTalent talent in unitTemplate.UnitTalents) 
         {
-            levelledTalents.Add(levelUp, 0);
+            levelledTalents.Add(talent, 0);
         }
+    }
+
+    public override string CurrentName()
+    {
+        return unitTemplate.NameInGame;
     }
 
     public override string UIText()
@@ -326,31 +223,6 @@ public class Unit : DefendingEntity
         OnExperienceFatigueLevelChangedCallback();
     }
 
-    public float GetAttribute(UnitAttributeName attributeName)
-    {
-        return attributes[attributeName].Value();
-    }
-
-    public string TempDebugGetAttributeDisplayName(UnitAttributeName attributeName)
-    {
-        return attributes[attributeName].DisplayName;
-    }
-
-    public void AddAttributeModifier(UnitAttributeName attribute, UnitAttributeModifier modifier)
-    {
-        attributes[attribute].AddModifier(modifier);
-    }
-
-    public bool TryRemoveAttributeModifier(UnitAttributeName attribute, UnitAttributeModifier modifier)
-    {
-        if (attributes[attribute].TryRemoveModifier(modifier))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public bool TryLevelUp(UnitTalent talentChosen)
     {
         if ( levelUpsPending <= 0 )
@@ -365,13 +237,13 @@ public class Unit : DefendingEntity
 
         if (levelledTalents[talentChosen] != 0)
         {
-            UnitAttributeNamedModifier outgoingNamedModifier = talentChosen.AttributeBonuses[levelledTalents[talentChosen] - 1];
-            bool removedModifier = TryRemoveAttributeModifier(outgoingNamedModifier.UnitAttributeName, outgoingNamedModifier.UnitAttributeModifier);
+            NamedAttributeModifier outgoingNamedModifier = talentChosen.AttributeBonuses[levelledTalents[talentChosen] - 1];
+            bool removedModifier = TryRemoveAttributeModifier(outgoingNamedModifier.AttributeName, outgoingNamedModifier.AttributeModifier);
             Assert.IsTrue(removedModifier);
         }
 
-        UnitAttributeNamedModifier incomingNamedModifier = talentChosen.AttributeBonuses[levelledTalents[talentChosen]];
-        AddAttributeModifier(incomingNamedModifier.UnitAttributeName, incomingNamedModifier.UnitAttributeModifier);
+        NamedAttributeModifier incomingNamedModifier = talentChosen.AttributeBonuses[levelledTalents[talentChosen]];
+        AddAttributeModifier(incomingNamedModifier.AttributeName, incomingNamedModifier.AttributeModifier);
 
         levelledTalents[talentChosen] += 1;
 
