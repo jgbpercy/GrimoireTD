@@ -40,9 +40,6 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     private Camera mainCamera;
 
-    [SerializeField]
-    private StructureTemplate[] structureTemplates;
-
     private MapData map;
     private GameStateManager gameStateManager;
 
@@ -53,14 +50,6 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     private Action<Creep> OnCreepSelectedCallback;
     private Action OnCreepDeselectedCallback;
-
-    public StructureTemplate[] StructureTemplates
-    {
-        get
-        {
-            return structureTemplates;
-        }
-    }
 
     public bool MouseRaycastHitMap
     {
@@ -141,8 +130,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         //camera
         mainCamera = Camera.main;
 
-        //default tower to build
-        SelectStructureToBuild(0);
+        //default cursor mode
         SetCursorModeSelect();
 
         gameStateManager.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
@@ -254,7 +242,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     private void OnEnterBuildMode()
     {
-
+        SetCursorModeSelect();
     }
 
     private void OnEnterDefendMode()
@@ -262,11 +250,11 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         SetCursorModeSelect();
     }
 
-    public void SelectStructureToBuild(int structureIndex)
+    public void SelectStructureToBuild(StructureTemplate selectedStructureTemplate)
     {
-        SetCursorModeBuild();
+        this.selectedStructureTemplate = selectedStructureTemplate;
 
-        selectedStructureTemplate = structureTemplates[structureIndex];
+        SetCursorModeBuild();
 
         OnStructureToBuildSelectedCallback(selectedStructureTemplate);
     }
@@ -321,11 +309,8 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         cursorMode = InterfaceCursorMode.SELECT;
     }
 
-    //NOTE this is hardcoded to be unit activated - need to split back out in SelectedDefendingEntitiesView to do structures
-    public void ActivateBuildModeAbility(int index)
+    public void ActivateBuildModeAbility(BuildModeAbility abilityToActivate)
     {
-        BuildModeAbility abilityToActivate = SelectedDefendingEntitiesView.Instance.TrackedBuildModeAbilities[index];
-
         if (!EconomyManager.Instance.CanDoTransaction(abilityToActivate.BuildModeAbilityTemplate.Cost))
         {
             return;

@@ -26,6 +26,7 @@ public class StructureEnhancementUIComponent : MonoBehaviour {
         {
             return;
         }
+        initialised = true;
 
         selectedStructure = structure;
         this.upgrade = upgrade;
@@ -49,7 +50,6 @@ public class StructureEnhancementUIComponent : MonoBehaviour {
         {
             gameObject.GetComponent<Image>().color = notBoughtColor;
         }
-
     }
 
     public void UIComponentClicked()
