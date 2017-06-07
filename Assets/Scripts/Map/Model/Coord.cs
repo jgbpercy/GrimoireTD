@@ -63,7 +63,6 @@ public class Coord : object
         return x ^ y;
     }
 
-
     public Vector3 ToPositionVector()
     {
         if (y % 2 == 0)
@@ -74,6 +73,11 @@ public class Coord : object
         {
             return new Vector3(x * 2f * MapRenderer.HEX_OFFSET * MapRenderer.tileScale + MapRenderer.HEX_OFFSET, y * 0.75f * MapRenderer.tileScale, 0f);
         }
+    }
+
+    public override string ToString()
+    {
+        return "(" + x + ", " + y + ")";
     }
 
     public static Coord PositionVectorToCoord(Vector3 positionVector)

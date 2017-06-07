@@ -129,8 +129,6 @@ public class Unit : DefendingEntity
         fatigue = 0;
         levelUpsPending = 0;
         level = 0;
-
-        GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
     }
 
     private void SetUpAttributes()

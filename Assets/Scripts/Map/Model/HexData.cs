@@ -43,38 +43,61 @@ public class HexData {
     public HexData(HexType createWithType)
     {
         hexType = createWithType;
+        ResetPathingData();
+    }
+
+    public void ResetPathingData()
+    {
         pathingFScore = Mathf.Infinity;
         pathingGScore = Mathf.Infinity;
+        pathingCameFrom = null;
     }
 
-    public bool IsPathable()
+    //Public non-changing helpers
+    public bool IsPathableByCreeps()
     {
-        return hexType.IsPathableByCreeps;
+        return hexType.TypeIsPathableByCreeps && IsEmpty();
     }
 
-    public bool IsBuildable()
+    public bool IsPathableByCreepsWithUnitRemoved()
     {
-        return hexType.IsBuildable;
+        return hexType.TypeIsPathableByCreeps && structureHere == null;
     }
 
-    public bool CanAddStructureHere()
+    public bool IsPathableByCreepsWithTypePathable()
     {
-        return IsBuildable() && structureHere == null;
+        return IsEmpty();
     }
 
+    public bool IsPathableByCreepsWithStructureRemoved()
+    {
+        return hexType.TypeIsPathableByCreeps && unitHere == null;
+    }
+
+    public bool CanPlaceStructureHere()
+    {
+        return hexType.IsBuildable && structureHere == null;
+    }
+
+    public bool CanPlaceUnitHere()
+    {
+        return hexType.UnitCanOccupy && unitHere == null;
+    }
+
+    public bool IsEmpty()
+    {
+        return structureHere == null && unitHere == null;
+    }
+
+    //Public change methods
     public void AddStructureHere(Structure structureAdded)
     {
         structureHere = structureAdded;
     }
-    
-    public bool CanMoveUnitHere()
-    {
-        return hexType.UnitCanOccupy && unitHere == null;
-    }    
 
-    public void MoveUnitHere(Unit unitMoved)
+    public void PlaceUnitHere(Unit unitPlaced)
     {
-        unitHere = unitMoved;
+        unitHere = unitPlaced;
     }
 
     public void RemoveUnitHere()

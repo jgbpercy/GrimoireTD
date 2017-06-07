@@ -13,11 +13,8 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     private MapData map;
 
-    private Dictionary<Color32, HexType> colorsToTypesDictionary;
-
     [SerializeField]
     private HexType[] hexTypes;
-
     private Dictionary<BaseHexTypeEnum, HexType> hexTypeDictionary;
 
     [SerializeField]
@@ -25,6 +22,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     [SerializeField]
     private ColorToType[] colorsToTypes;
+    private Dictionary<Color32, HexType> colorsToTypesDictionary;
 
     public MapData Map
     {
@@ -56,8 +54,6 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
         PlaceStartingStructures();
         PlaceStartingUnits();
-
-        map.GeneratePath();
     }
 
     private void BuildHexTypesDictionary()
@@ -89,9 +85,13 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
     {
         foreach(Level.StartingStructure startingStructure in level.StartingStructures)
         {
-            if (!map.TryBuildStructureAtFree(startingStructure.StartingPosition, startingStructure.StructureTemplate))
+            if (!map.CanBuildStructureAt(startingStructure.StartingPosition, startingStructure.StructureTemplate, true))
             {
                 throw new Exception("Attempted to add Starting Structure at invalid position (" + startingStructure.StartingPosition.X + ", " + startingStructure.StartingPosition.Y + ")");
+            }
+            else
+            {
+                map.TryBuildStructureAt(startingStructure.StartingPosition, startingStructure.StructureTemplate, true);
             }
         }
     }
@@ -100,9 +100,13 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
     {
         foreach(Level.StartingUnit startingUnit in level.StartingUnits)
         {
-            if (!map.TryCreateUnitAt(startingUnit.StartingPosition, startingUnit.UnitTemplate) )
+            if (!map.CanCreateUnitAt(startingUnit.StartingPosition) )
             {
                 throw new Exception("Attempted to add Starting Unit at invalid position (" + startingUnit.StartingPosition.X + ", " + startingUnit.StartingPosition.Y + ")");
+            }
+            else
+            {
+                map.TryCreateUnitAt(startingUnit.StartingPosition, startingUnit.UnitTemplate);
             }
         }
     }

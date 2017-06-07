@@ -48,6 +48,7 @@ public static class CDebug {
     public static DebugChannel unitAttributes;
     public static DebugChannel structureUpgrades;
     public static DebugChannel hexEconomy;
+    public static DebugChannel pathing;
 
     public static void InitialiseDebugChannels()
     {
@@ -93,8 +94,11 @@ public static class CDebug {
         structureUpgrades = new DebugChannel("Structure Upgrades", false);
         channelList.Add(structureUpgrades);
 
-        hexEconomy = new DebugChannel("Hex Economy", true);
+        hexEconomy = new DebugChannel("Hex Economy", false);
         channelList.Add(hexEconomy);
+
+        pathing = new DebugChannel("Pathing", false);
+        channelList.Add(pathing);
 
         foreach (DebugChannel debugChannel in channelList)
         {

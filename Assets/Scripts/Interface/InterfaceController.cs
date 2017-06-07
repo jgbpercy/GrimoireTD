@@ -220,7 +220,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
         if (cursorMode == InterfaceCursorMode.BUILD)
         {
-            map.TryBuildStructureAt(mouseOverCoord, selectedStructureTemplate);
+            map.TryBuildStructureAt(mouseOverCoord, selectedStructureTemplate, false);
         }
 
         if (cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY && hexTargetedAbilityToActivate.IsTargetSuitable(map.WhereAmI(selectedUnitInstance), mouseOverCoord))
@@ -316,16 +316,22 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             return;
         }
 
+        Coord unitCoord = map.WhereAmI(selectedUnitInstance);
+
         if (abilityToActivate is HexTargetedBuildModeAbility)
         {
             CDebug.Log(CDebug.buildModeAbilities, "Hex Targeted ability activated");
+
             cursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
+
             hexTargetedAbilityToActivate = abilityToActivate as HexTargetedBuildModeAbility;
+
+            hexTargetedAbilityToActivate.RegenerateCachedDisallowedTargetHexes(map, unitCoord);
         }
         else
         {
-            Coord unitCoord = map.WhereAmI(selectedUnitInstance);
             abilityToActivate.ExecuteAbility(unitCoord, unitCoord, selectedUnitInstance);
+
             SetCursorModeSelect();
         }
     }

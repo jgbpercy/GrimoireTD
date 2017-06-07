@@ -77,7 +77,7 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
             rangeIndicatorRenderer.enabled = true;
             tileHighlighterRenderer.enabled = false;
 
-            if (mouseOverHex.CanAddStructureHere())
+            if (mouseOverHex.CanPlaceStructureHere())
             {
                 structureGhostRenderer.enabled = true;
 

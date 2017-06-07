@@ -43,7 +43,7 @@ public class HexTargetedBuildModeAbilityTemplate : BuildModeAbilityTemplate {
 
     public override Ability GenerateAbility()
     {
-        throw new System.NotImplementedException("Cannot Generate from HexTargetedBuildModeAbilityTemplate -it is pseudo -abstract");
+        throw new System.NotImplementedException("Cannot Generate from HexTargetedBuildModeAbilityTemplate - it is pseudo-abstract");
     }
 
 }

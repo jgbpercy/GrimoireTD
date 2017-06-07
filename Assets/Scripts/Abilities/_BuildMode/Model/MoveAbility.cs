@@ -26,7 +26,7 @@ public class MoveAbility : HexTargetedBuildModeAbility
         Assert.IsTrue(executingEntity is Unit);
         Unit executingUnit = (Unit)executingEntity;
 
-        if ( MapGenerator.Instance.Map.TryMoveUnitTo(fromCoord, targetCoord, (Unit)executingEntity, moveAbilityTemplate.Cost ) ) {
+        if ( MapGenerator.Instance.Map.TryMoveUnitTo(fromCoord, targetCoord, executingUnit, moveAbilityTemplate.Cost, cachedDisallowedTargetHexes ) ) {
             if ( executingUnit.OnMovedCallback != null )
             {
                 executingUnit.OnMovedCallback(targetCoord);
@@ -51,6 +51,11 @@ public class MoveAbility : HexTargetedBuildModeAbility
             return false;
         }
 
-        return MapGenerator.Instance.Map.GetHexAt(targetCoord).HexType.UnitCanOccupy;
+        return MapGenerator.Instance.Map.CanMoveUnitTo(targetCoord, moveAbilityTemplate.Cost, cachedDisallowedTargetHexes);
+    }
+
+    public override void RegenerateCachedDisallowedTargetHexes(MapData map, Coord fromCoord)
+    {
+        cachedDisallowedTargetHexes = map.GetDisallowedCoordsAfterUnitMove(fromCoord);
     }
 }

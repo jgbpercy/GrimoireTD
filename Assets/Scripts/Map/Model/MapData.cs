@@ -6,6 +6,7 @@ using UnityEngine.Assertions;
 
 public class MapData {
 
+    //Private fields
     private Dictionary<Coord, HexData> hexes;
 
     private Dictionary<DefendingEntity, Coord> defendingEntityPositions = new Dictionary<DefendingEntity, Coord>();
@@ -13,41 +14,13 @@ public class MapData {
     private int width;
     private int height;
 
-    private List<GraphEdge> graphEdges;
+    private List<Coord> _path;
 
-    private List<Coord> path;
+    private List<Coord> disallowedCoords;
 
-    public Action OnPathGeneratedOrChangedCallback;
+    private Action OnPathGeneratedOrChangedCallback;
 
-    private class GraphEdge
-    {
-        private Coord fromVertex;
-        private Coord toVertex;
-
-        public Coord FromVertex
-        {
-            get
-            {
-                return fromVertex;
-            }
-        }
-
-        public Coord ToVertex
-        {
-            get
-            {
-                return toVertex;
-            }
-        }
-
-        public GraphEdge(Coord fromVertex, Coord toVertex)
-        {
-            this.fromVertex = fromVertex;
-            this.toVertex = toVertex;
-        }
-
-    }
-
+    //Public properties
     public int Width
     {
         get
@@ -68,10 +41,26 @@ public class MapData {
     {
         get
         {
-            return path;
+            return _path;
+        }
+        private set
+        {
+            CDebug.Log(CDebug.pathing, "The _path was changed");
+            _path = value;
+
+            if (OnPathGeneratedOrChangedCallback != null)
+            {
+                CDebug.Log(CDebug.pathing, "The callback for the _path changing was called");
+                OnPathGeneratedOrChangedCallback();
+            }
+
+            CDebug.Log(CDebug.pathing, "The Path property called update disallowed coords");
+            disallowedCoords = PathingService.DisallowedCoords(_path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1));
+
         }
     }
 
+    //Constructor
     public MapData(Texture2D mapImage, Dictionary<Color32, HexType> colorsToTypesDictionary)
     {
         CDebug.Log(CDebug.mapGeneration, "Call to MapData constructor from image");
@@ -114,59 +103,32 @@ public class MapData {
                 }
 
                 Assert.IsTrue(foundHexType);
-
+                
                 hexes.Add(new Coord(x,y), new HexData(currentHexType));
             }
         }
+
+        TempRegeneratePath();
     }
 
-    public void GeneratePath()
+    //Pathing
+    //  until variable start/ends etc, to at least just store the hardcoded start and ends in one place
+    private void TempRegeneratePath()
     {
-        GenerateGraphEdges();
+        CDebug.Log(CDebug.pathing, "TempRegeneratePath called the Pathing service");
+        Path = PathingService.GeneratePath(this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1));
 
-        path = GetPath(new Coord(0, 0), new Coord(width - 1, height - 1));
-
-        if (OnPathGeneratedOrChangedCallback != null)
-        {
-            OnPathGeneratedOrChangedCallback();
-        }
+        string debugString = "";
+        Path.ForEach(x => debugString += x + " ");
+        CDebug.Log(CDebug.pathing, "The path is now: " + debugString);
     }
 
-    private void GenerateGraphEdges()
+    private void TempRegenerateDisallowedCoords()
     {
-        CDebug.Log(CDebug.mapGeneration, "Generating Graph Edges");
-
-        graphEdges = new List<GraphEdge>();
-
-        List<Coord> currentNeighbours = new List<Coord>();
-        Coord currentCoord;
-
-        foreach ( KeyValuePair<Coord, HexData> hex in hexes)
-        {
-            currentCoord = hex.Key;
-
-            CDebug.Log(CDebug.mapGeneration, "Generating edges for (" + currentCoord.X + ", " + currentCoord.Y + ")");
-
-            if ( GetHexAt(currentCoord).IsPathable() )
-            {
-
-                currentNeighbours = GetNeighboursOf(currentCoord);
-
-                CDebug.Log(CDebug.mapGeneration, "Hex is pathable! Finding pathable neighbours");
-
-                foreach (Coord neighbour in currentNeighbours)
-                {
-
-                    if ( GetHexAt(neighbour) != null && GetHexAt(neighbour).IsPathable() )
-                    {
-                        graphEdges.Add(new GraphEdge(currentCoord, neighbour));
-                        CDebug.Log(CDebug.mapGeneration, "Added edge: (" + currentCoord.X + ", " + currentCoord.Y + ") -> (" + neighbour.X + ", " + neighbour.Y + ")");
-                    }
-                }
-            }
-        }
+        disallowedCoords = PathingService.DisallowedCoords(Path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1));
     }
 
+    //Public Hex/Coord queries
     public HexData TryGetHexAt(Coord hexCoord)
     {
         HexData hexAtCoords;
@@ -186,123 +148,7 @@ public class MapData {
         return hexes[hexCoord];       
     }
 
-    private List<Coord> GetPath(Coord fromCoord, Coord toCoord)
-    {
-        List<Coord> closedSet = new List<Coord>();
-        List<Coord> openSet = new List<Coord>();
-
-        List<GraphEdge> currentEdges = new List<GraphEdge>();
-
-        Coord currentCoord;
-
-        float tentativeGScore;
-
-        CDebug.Log(CDebug.mapGeneration, "Generating path from (" + fromCoord.X + ", " + fromCoord.Y + ") to (" + toCoord.X + ", " + toCoord.Y + ")");
-
-        openSet.Add(fromCoord);
-        hexes[fromCoord].pathingGScore = 0f;
-        hexes[fromCoord].pathingFScore = HeuristicDistance(fromCoord, toCoord);
-
-        while ( openSet.Count != 0 )
-        {
-            CDebug.Log(CDebug.mapGeneration, "----A* iteration----");
-
-            currentCoord = openSet[0];
-            foreach ( Coord openSetMember in openSet )
-            {
-                if ( hexes[openSetMember].pathingFScore < hexes[currentCoord].pathingFScore )
-                {
-                    currentCoord = openSetMember;
-                }
-            }
-
-            CDebug.Log(CDebug.mapGeneration, "Current Coord is (" + currentCoord.X + ", " + currentCoord.Y + ")");
-
-            if ( currentCoord.Equals(toCoord) )
-            {
-                CDebug.Log(CDebug.mapGeneration, "----To Coord reached, reconstructing path----");
-                return ReconstructPath(fromCoord, toCoord);
-            }
-
-            openSet.Remove(currentCoord);
-            closedSet.Add(currentCoord);
-
-            currentEdges = graphEdges.FindAll(x => x.FromVertex.Equals(currentCoord));
-
-            CDebug.Log(CDebug.mapGeneration, "Number of current edges: " + currentEdges.Count);
-            
-            foreach ( GraphEdge edge in currentEdges )
-            {
-                CDebug.Log(CDebug.mapGeneration, "Neighbour (" + edge.ToVertex.X + ", " + edge.ToVertex.Y + ")...");
-
-                if ( !closedSet.Contains(edge.ToVertex) )
-                {
-
-                    CDebug.Log(CDebug.mapGeneration, "...was not in closed set...");
-                    tentativeGScore = hexes[currentCoord].pathingGScore + 2 * MapRenderer.HEX_OFFSET;
-                    if ( !openSet.Contains(edge.ToVertex) )
-                    {
-                        CDebug.Log(CDebug.mapGeneration, "...or open set...");
-                        openSet.Add(edge.ToVertex);
-                    }
-                    else
-                    {
-                        CDebug.Log(CDebug.mapGeneration, "...but was in open set...");
-                    }
-                    if ( tentativeGScore < hexes[edge.ToVertex].pathingGScore )
-                    {
-                        CDebug.Log(CDebug.mapGeneration, "...tentative GScore " + tentativeGScore + " was below previous GScore of " + hexes[edge.ToVertex].pathingGScore + "...");
-                        hexes[edge.ToVertex].pathingGScore = tentativeGScore;
-                        hexes[edge.ToVertex].pathingCameFrom = currentCoord;
-                        hexes[edge.ToVertex].pathingFScore = tentativeGScore + HeuristicDistance(edge.ToVertex, toCoord);
-                        CDebug.Log(CDebug.mapGeneration, "...set Came From to (" + hexes[edge.ToVertex].pathingCameFrom.X + ", " + hexes[edge.ToVertex].pathingCameFrom.Y + ") and FScore to " + hexes[edge.ToVertex].pathingFScore + ".");
-                    }
-                }
-                else
-                {
-                    CDebug.Log(CDebug.mapGeneration, "...was in closed set.");
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private float HeuristicDistance(Coord fromCoord, Coord toCoord)
-    {
-        Vector3 fromCoordPosition = fromCoord.ToPositionVector();
-        Vector3 toCoordPosition = toCoord.ToPositionVector();
-
-        CDebug.Log(CDebug.mapGeneration, "Calculating a heuristic distance between (" + fromCoord.X + ", " + fromCoord.Y + ") and (" + toCoord.X + ", " + toCoord.Y + ")");
-        CDebug.Log(CDebug.mapGeneration, "Positions: " + fromCoordPosition + " and " + toCoordPosition);
-
-        CDebug.Log(CDebug.mapGeneration, "Difference: " + (fromCoordPosition - toCoordPosition));
-
-        CDebug.Log(CDebug.mapGeneration, "Magnitude: " + Vector3.Magnitude(fromCoordPosition - toCoordPosition));
-
-        return Vector3.Magnitude(fromCoordPosition - toCoordPosition);
-    }
-
-    private List<Coord> ReconstructPath(Coord fromCoord, Coord toCoord)
-    {
-        List<Coord> path = new List<Coord>();
-
-        Coord currentCoord = toCoord;
-
-        while ( !currentCoord.Equals(fromCoord) )
-        {
-            CDebug.Log(CDebug.mapGeneration, "Adding (" + currentCoord.X + ", " + currentCoord.Y + ") to path");
-            path.Add(currentCoord);
-            currentCoord = hexes[currentCoord].pathingCameFrom;
-        }
-
-        CDebug.Log(CDebug.mapGeneration, "Adding (" + fromCoord.X + ", " + fromCoord.Y + ") to path");
-        path.Add(fromCoord);
-
-        return path;
-    }
-
-    private List<Coord> GetNeighboursOf(Coord hexCoord)
+    public List<Coord> GetNeighboursOf(Coord hexCoord)
     {
         List<Coord> neighbourList = new List<Coord>();
 
@@ -350,83 +196,154 @@ public class MapData {
         return neighbourList;
     }
 
-    public void RegisterForOnPathGeneratedOrChangedCallback(Action callback)
-    {
-        OnPathGeneratedOrChangedCallback += callback;
-    }
+    //Public change methods
+    //  Optimisation: cache all of the below CanX call when entering states where this info is needed 
+    //  At time of writing, will be called each frame from MouseOverMapView
 
-    public void DeregisterForOnPathGeneratedOrChangedCallback(Action callback)
+    //  Building
+    public bool CanBuildStructureAt(Coord coord, StructureTemplate structureTemplate, bool isFree)
     {
-        OnPathGeneratedOrChangedCallback -= callback;
-    }
-
-    public bool TryBuildStructureAt(Coord coord, StructureTemplate structureTemplate)
-    {
-        if ( GetHexAt(coord).CanAddStructureHere() && EconomyManager.Instance.CanDoTransaction( structureTemplate.Cost ) )
+        if (!GetHexAt(coord).CanPlaceStructureHere())
         {
-            Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
+            //CDebug.Log(something);
+            return false;
+        }
 
-            GetHexAt(coord).AddStructureHere(newStructure);
+        if (!isFree && !EconomyManager.Instance.CanDoTransaction(structureTemplate.Cost))
+        {
+            //CDebug.Log(something);
+            return false;
+        }
+
+        if (disallowedCoords.Contains(coord))
+        {
+            CDebug.Log(CDebug.pathing, "CanBuildStructureAt found " + coord + " in disallowed coords");
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool TryBuildStructureAt(Coord coord, StructureTemplate structureTemplate, bool isFree)
+    {
+        if ( !CanBuildStructureAt(coord, structureTemplate, isFree) )
+        {
+            return false;
+        }
+
+        Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
+
+        GetHexAt(coord).AddStructureHere(newStructure);
+
+        if (!isFree)
+        {
             EconomyManager.Instance.DoTransaction(structureTemplate.Cost);
-            defendingEntityPositions.Add(newStructure, coord);
-
-            return true;
         }
 
-        return false;
-    }
+        defendingEntityPositions.Add(newStructure, coord);
 
-    public bool TryBuildStructureAtFree(Coord coord, StructureTemplate structureTemplate)
-    {
-        Assert.IsTrue(TryGetHexAt(coord) != null);
-        Assert.IsTrue(structureTemplate != null);
-
-        if ( GetHexAt(coord).CanAddStructureHere() )
+        if ( Path.Contains(coord) )
         {
-            Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
-
-            GetHexAt(coord).AddStructureHere(newStructure);
-            defendingEntityPositions.Add(newStructure, coord);
-
-            return true;
+            CDebug.Log(CDebug.pathing,"TryBuildStructureAt found coord " + coord + " in Path and called TempRegeneratePath");
+            TempRegeneratePath();
         }
-
-        return false;
-    }
-
-    public bool TryCreateUnitAt(Coord coord, UnitTemplate unitTemplate)
-    {
-        if ( GetHexAt(coord).CanMoveUnitHere() )
+        else
         {
-            Unit newUnit = unitTemplate.GenerateUnit(coord.ToPositionVector());
-
-            GetHexAt(coord).MoveUnitHere(newUnit);
-            defendingEntityPositions.Add(newUnit, coord);
-
-            return true;
+            TempRegenerateDisallowedCoords();
         }
 
-        return false;
+        return true;
     }
 
-    public bool TryMoveUnitTo(Coord fromCoord, Coord targetCoord, Unit unit, EconomyTransaction cost)
+    //  Unit Creation
+    public bool CanCreateUnitAt(Coord coord)
     {
-        if ( GetHexAt(targetCoord).CanMoveUnitHere() && EconomyManager.Instance.CanDoTransaction(cost) )
+        if (!GetHexAt(coord).CanPlaceUnitHere())
         {
-            GetHexAt(targetCoord).MoveUnitHere(unit);
-            GetHexAt(fromCoord).RemoveUnitHere();
-
-            defendingEntityPositions.Remove(unit);
-            defendingEntityPositions.Add(unit, targetCoord);
-
-            EconomyManager.Instance.DoTransaction(cost);
-
-            return true;
+            //CDebug.Log(something)
+            return false;
         }
 
-        return false;
+        if (disallowedCoords.Contains(coord))
+        {
+            CDebug.Log(CDebug.pathing, "CanCreateUnitAt found " + coord + " in disallowed coords");
+            return false;
+        }
+
+        return true;
     }
 
+    public bool TryCreateUnitAt(Coord targetCoord, UnitTemplate unitTemplate)
+    {
+        if (!CanCreateUnitAt(targetCoord))
+        {
+            return false;
+        }
+
+        Unit newUnit = unitTemplate.GenerateUnit(targetCoord.ToPositionVector());
+
+        GetHexAt(targetCoord).PlaceUnitHere(newUnit);
+
+        defendingEntityPositions.Add(newUnit, targetCoord);
+
+        if (Path.Contains(targetCoord))
+        {
+            TempRegeneratePath();
+        }
+        else
+        {
+            TempRegenerateDisallowedCoords();
+        }
+
+        return true;
+    }
+
+    //  Unit Movement
+    public bool CanMoveUnitTo(Coord targetCoord, EconomyTransaction cost, List<Coord> disallowedCoordsForMove)
+    {
+        if (!GetHexAt(targetCoord).CanPlaceUnitHere())
+        {
+            //CDebug.Log(something)
+            return false;
+        }
+
+            //CDebug.Log(something);
+        if (!EconomyManager.Instance.CanDoTransaction(cost))
+        {
+            //CDebug.Log(something);
+            return false;
+        }
+
+        if (disallowedCoordsForMove.Contains(targetCoord))
+        {
+            CDebug.Log(CDebug.pathing, "CanMoveUnitTo found " + targetCoord + " in disallowed coords for move");
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool TryMoveUnitTo(Coord fromCoord, Coord targetCoord, Unit unit, EconomyTransaction cost, List<Coord> disallowedCoordsForMove)
+    {
+        if ( !CanMoveUnitTo(targetCoord, cost, disallowedCoordsForMove) )
+        {
+            return false;
+        }
+
+        GetHexAt(targetCoord).PlaceUnitHere(unit);
+        GetHexAt(fromCoord).RemoveUnitHere();
+
+        defendingEntityPositions.Remove(unit);
+        defendingEntityPositions.Add(unit, targetCoord);
+
+        EconomyManager.Instance.DoTransaction(cost);
+
+        TempRegeneratePath();
+
+        return true;
+    }
+
+    //Public non-changing helper methods
     public static bool HexIsInRange(int range, Coord startHex, Coord targetHex)
     {
         return Distance(startHex, targetHex) <= range;
@@ -463,24 +380,34 @@ public class MapData {
         return baseVerticalDistance + Mathf.Max(baseHorizontalDistance - (baseVerticalDistance / 2), 0);
     }
 
-    public bool HexIsEmpty(Coord coord)
-    {
-        return GetHexAt(coord).UnitHere == null && GetHexAt(coord).StructureHere == null;
-    }
-
-    public bool HexHasUnit(Coord coord)
-    {
-        return GetHexAt(coord).UnitHere != null;
-    }
-
-    public bool HexHasStructure(Coord coord)
-    {
-        return GetHexAt(coord).StructureHere != null;
-    }
-
     public Coord WhereAmI(DefendingEntity defendingEntity)
     {
         return defendingEntityPositions[defendingEntity];
     }
 
+    public List<Coord> GetDisallowedCoordsAfterUnitMove(Coord fromCoord)
+    {
+        if ( GetHexAt(fromCoord).IsPathableByCreepsWithUnitRemoved() )
+        {
+            return PathingService.DisallowedCoords(Path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1), new List<Coord> { fromCoord });
+        }
+
+        return disallowedCoords;
+    }
+
+    private List<Coord> GetDisallowedCoords(List<Coord> newlyPathableCoords)
+    {
+        return PathingService.DisallowedCoords(Path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1), newlyPathableCoords);
+    }
+
+    //Callback registering
+    public void RegisterForOnPathGeneratedOrChangedCallback(Action callback)
+    {
+        OnPathGeneratedOrChangedCallback += callback;
+    }
+
+    public void DeregisterForOnPathGeneratedOrChangedCallback(Action callback)
+    {
+        OnPathGeneratedOrChangedCallback -= callback;
+    }
 }
