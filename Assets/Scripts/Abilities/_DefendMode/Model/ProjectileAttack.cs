@@ -3,7 +3,15 @@ using UnityEngine;
 
 public class ProjectileAttack : DefendModeAbility
 {
-    ProjectileAttackTemplate projectileAttackTemplate;
+    private ProjectileAttackTemplate projectileAttackTemplate;
+
+    public ProjectileAttackTemplate ProjectileAttackTemplate
+    {
+        get
+        {
+            return projectileAttackTemplate;
+        }
+    }
 
     public ProjectileAttack(ProjectileAttackTemplate template) : base(template)
     {

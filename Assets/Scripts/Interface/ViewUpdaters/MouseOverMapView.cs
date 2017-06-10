@@ -20,10 +20,6 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
     private MeshRenderer tileHighlighterRenderer;
 
     [SerializeField]
-    private Transform rangeIndicator;
-    private MeshRenderer rangeIndicatorRenderer;
-
-    [SerializeField]
     private Transform structureGhost;
     private MeshFilter structureGhostFilter;
     private MeshRenderer structureGhostRenderer;
@@ -38,10 +34,6 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
         //tile highlighter
         tileHighlighterRenderer = tileHighlighter.GetComponent<MeshRenderer>();
         tileHighlighterRenderer.enabled = false;
-
-        //range indicator
-        rangeIndicatorRenderer = rangeIndicator.GetComponent<MeshRenderer>();
-        rangeIndicatorRenderer.enabled = false;
 
         //tower ghost
         structureGhostFilter = structureGhost.GetComponent<MeshFilter>();
@@ -64,7 +56,6 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
         {
             tileHighlighterRenderer.enabled = false;
             structureGhostRenderer.enabled = false;
-            rangeIndicatorRenderer.enabled = false;
             return;
         }
 
@@ -74,30 +65,22 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
 
         if (cursorMode == InterfaceCursorMode.BUILD)
         {
-            rangeIndicatorRenderer.enabled = true;
             tileHighlighterRenderer.enabled = false;
 
-            if (mouseOverHex.CanPlaceStructureHere())
+            if (MapGenerator.Instance.Map.CanBuildGenericStructureAt(mouseOverCoord))
             {
                 structureGhostRenderer.enabled = true;
 
                 structureGhost.position = mouseOverCoord.ToPositionVector() + structureGhostPositionOffset;
-
-                rangeIndicatorRenderer.material.color = tileHighlightCanAction;
-                rangeIndicator.position = mouseOverCoord.ToPositionVector();
             }
             else
             {
                 structureGhostRenderer.enabled = false;
-
-                rangeIndicatorRenderer.material.color = tileHighlightNoAction;
-                rangeIndicator.position = mouseOverCoord.ToPositionVector();
             }
         }
         else if (cursorMode == InterfaceCursorMode.SELECT)
         {
             tileHighlighterRenderer.enabled = true;
-            rangeIndicatorRenderer.enabled = false;
             structureGhostRenderer.enabled = false;
 
             tileHighlighter.position = mouseOverCoord.ToPositionVector();
@@ -114,7 +97,6 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
         else if ( cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY)
         {
             tileHighlighterRenderer.enabled = true;
-            rangeIndicatorRenderer.enabled = false;
             structureGhostRenderer.enabled = false;
 
             tileHighlighter.position = mouseOverCoord.ToPositionVector();
@@ -137,7 +119,7 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
 
     private void OnSelectedStructureChange(StructureTemplate selectedStructureTemplate)
     {
-        //should get and cache these at start (and also generally do better)
+        //TODO: get and cache these at start (and also generally do better)
         MeshFilter selectedStructureMeshFilter = selectedStructureTemplate.Prefab.GetComponentInChildren<MeshFilter>();
         Transform selectedStructureGraphics = selectedStructureMeshFilter.transform;
 
@@ -147,11 +129,5 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
         structureGhostFilter.mesh = selectedStructureMeshFilter.sharedMesh;
         structureGhostRenderer.material = selectedStructureTemplate.Prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
         structureGhostRenderer.material.color = new Color(structureGhostRenderer.material.color.r, structureGhostRenderer.material.color.g, structureGhostRenderer.material.color.b, 0.45f);
-
-        //TEMP HACK TEMP HACK TEMP HACK
-        Assert.IsTrue((ProjectileAttackTemplate)selectedStructureTemplate.BaseAbilities[0] != null);
-        float abilityZeroRange = ((ProjectileAttackTemplate)selectedStructureTemplate.BaseAbilities[0]).Range;
-
-        rangeIndicator.localScale = new Vector3(abilityZeroRange * 2, rangeIndicator.localScale.y, abilityZeroRange * 2);
     }
 }

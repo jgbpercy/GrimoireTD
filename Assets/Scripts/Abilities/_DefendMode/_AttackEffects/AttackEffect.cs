@@ -38,23 +38,23 @@ public static class AttackEffectNames
 
     private static Dictionary<AttackEffectType, string> CreateAttackEffectNames()
     {
-        Dictionary<AttackEffectType, string> names = new Dictionary<AttackEffectType, string>();
-
-        names.Add(AttackEffectType.PiercingDamage, "Piercing Damage");
-        names.Add(AttackEffectType.BluntDamage, "Blunt Damage");
-        names.Add(AttackEffectType.PoisonDamage, "Poison Damage");
-        names.Add(AttackEffectType.AcidDamage, "Acid Damage");
-        names.Add(AttackEffectType.FireDamage, "Fire Damage");
-        names.Add(AttackEffectType.ColdDamage, "Cold Damage");
-        names.Add(AttackEffectType.LightningDamage, "Lightning Damage");
-        names.Add(AttackEffectType.EarthDamage, "Earth Damage");
-        names.Add(AttackEffectType.FrostSlow, "Slow (Frost)");
-        names.Add(AttackEffectType.MaimSlow, "Slow (Maim)");
-        names.Add(AttackEffectType.TrapSlow, "Slow (Trap)");
-        names.Add(AttackEffectType.DazeSlow, "Slow (Daze)");
-        names.Add(AttackEffectType.ArmorReduction, "Armor Reduction");
-        names.Add(AttackEffectType.ArmorCorrosion, "Armor Corrosion");
-
+        Dictionary<AttackEffectType, string> names = new Dictionary<AttackEffectType, string>
+        {
+            { AttackEffectType.PiercingDamage, "Piercing Damage" },
+            { AttackEffectType.BluntDamage, "Blunt Damage" },
+            { AttackEffectType.PoisonDamage, "Poison Damage" },
+            { AttackEffectType.AcidDamage, "Acid Damage" },
+            { AttackEffectType.FireDamage, "Fire Damage" },
+            { AttackEffectType.ColdDamage, "Cold Damage" },
+            { AttackEffectType.LightningDamage, "Lightning Damage" },
+            { AttackEffectType.EarthDamage, "Earth Damage" },
+            { AttackEffectType.FrostSlow, "Slow (Frost)" },
+            { AttackEffectType.MaimSlow, "Slow (Maim)" },
+            { AttackEffectType.TrapSlow, "Slow (Trap)" },
+            { AttackEffectType.DazeSlow, "Slow (Daze)" },
+            { AttackEffectType.ArmorReduction, "Armor Reduction" },
+            { AttackEffectType.ArmorCorrosion, "Armor Corrosion" }
+        };
         return names;
     }
 }

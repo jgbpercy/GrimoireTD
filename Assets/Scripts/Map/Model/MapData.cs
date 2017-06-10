@@ -118,9 +118,12 @@ public class MapData {
         CDebug.Log(CDebug.pathing, "TempRegeneratePath called the Pathing service");
         Path = PathingService.GeneratePath(this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1));
 
-        string debugString = "";
-        Path.ForEach(x => debugString += x + " ");
-        CDebug.Log(CDebug.pathing, "The path is now: " + debugString);
+        if ( CDebug.pathing.Enabled)
+        {
+            string debugString = "";
+            Path.ForEach(x => debugString += x + " ");
+            CDebug.Log(CDebug.pathing, "The path is now: " + debugString);
+        }
     }
 
     private void TempRegenerateDisallowedCoords()
@@ -201,15 +204,9 @@ public class MapData {
     //  At time of writing, will be called each frame from MouseOverMapView
 
     //  Building
-    public bool CanBuildStructureAt(Coord coord, StructureTemplate structureTemplate, bool isFree)
+    public bool CanBuildGenericStructureAt(Coord coord)
     {
         if (!GetHexAt(coord).CanPlaceStructureHere())
-        {
-            //CDebug.Log(something);
-            return false;
-        }
-
-        if (!isFree && !EconomyManager.Instance.CanDoTransaction(structureTemplate.Cost))
         {
             //CDebug.Log(something);
             return false;
@@ -218,6 +215,22 @@ public class MapData {
         if (disallowedCoords.Contains(coord))
         {
             CDebug.Log(CDebug.pathing, "CanBuildStructureAt found " + coord + " in disallowed coords");
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool CanBuildStructureAt(Coord coord, StructureTemplate structureTemplate, bool isFree)
+    {
+        if ( !CanBuildGenericStructureAt(coord) )
+        {
+            return false;
+        }
+
+        if (!isFree && !EconomyManager.Instance.CanDoTransaction(structureTemplate.Cost))
+        {
+            //CDebug.Log(something);
             return false;
         }
 
