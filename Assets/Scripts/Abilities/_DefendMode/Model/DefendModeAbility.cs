@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
-public abstract class DefendModeAbility : Ability, IFrameUpdatee {
+public class DefendModeAbility : Ability, IFrameUpdatee {
 
-    protected float timeSinceExecuted;
+    private float timeSinceExecuted;
 
     private DefendModeAbilityTemplate defendModeAbilityTemplate;
 
@@ -39,7 +41,20 @@ public abstract class DefendModeAbility : Ability, IFrameUpdatee {
         ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
     }
 
-    public abstract bool ExecuteAbility(Vector3 executionPosition);
+    public override string UIText()
+    {
+        return defendModeAbilityTemplate.NameInGame;
+    }
+
+    public bool ExecuteAbility(Vector3 executionPosition)
+    {
+        List<ITargetable> targetList = defendModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
+
+        if ( targetList == null ) { return false; }
+
+        defendModeAbilityTemplate.EffectComponent.ExecuteEffect(executionPosition, targetList);
+        return true;
+    }
 
     public bool OffCooldown()
     {

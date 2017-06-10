@@ -51,15 +51,17 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
         if (cursorMode == InterfaceCursorMode.SELECT)
         {
             indicatorsToRender = 0;
-
-            List<ProjectileAttack> projectileAttacksFromHex = new List<ProjectileAttack>();
+            List<TargetingComponentFloatRange> floatRangedAttackFromHexTargetingComponents = new List<TargetingComponentFloatRange>();
             
             if ( mouseOverHex.StructureHere != null )
             {
                 mouseOverHex.StructureHere.DefendModeAbilities().ForEach(x => {
-                    if ( x is ProjectileAttack)
+
+                    TargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
+
+                    if (targetingComponent is TargetingComponentFloatRange)
                     {
-                        projectileAttacksFromHex.Add(x as ProjectileAttack);
+                        floatRangedAttackFromHexTargetingComponents.Add(targetingComponent as TargetingComponentFloatRange);
                     }
                 });
             }
@@ -67,16 +69,19 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
             if ( mouseOverHex.UnitHere != null )
             {
                 mouseOverHex.UnitHere.DefendModeAbilities().ForEach(x => {
-                    if (x is ProjectileAttack)
+
+                    TargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
+
+                    if (targetingComponent is TargetingComponentFloatRange)
                     {
-                        projectileAttacksFromHex.Add(x as ProjectileAttack);
+                        floatRangedAttackFromHexTargetingComponents.Add(targetingComponent as TargetingComponentFloatRange);
                     }
                 });
             }
 
-            for (int i = 0; i < projectileAttacksFromHex.Count; i++)
+            for (int i = 0; i < floatRangedAttackFromHexTargetingComponents.Count; i++)
             {
-                SetUpRangeIndicator(i, projectileAttacksFromHex[i].ProjectileAttackTemplate.Range);
+                SetUpRangeIndicator(i, floatRangedAttackFromHexTargetingComponents[i].Range);
 
                 indicatorsToRender = i + 1;
             }
@@ -108,11 +113,11 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
 
         foreach (AbilityTemplate abilityTemplate in selectedStructureTemplate.BaseAbilities)
         {
-            if ( abilityTemplate is ProjectileAttackTemplate)
+            if ( abilityTemplate is DefendModeAbilityTemplate && ((DefendModeAbilityTemplate)abilityTemplate).TargetingComponent is TargetingComponentFloatRange )
             {
-                ProjectileAttackTemplate projectileAttackTemplate = abilityTemplate as ProjectileAttackTemplate;
+                TargetingComponentFloatRange targetingComponentFloatRange = ((DefendModeAbilityTemplate)abilityTemplate).TargetingComponent as TargetingComponentFloatRange;
 
-                SetUpRangeIndicator(i, projectileAttackTemplate.Range);
+                SetUpRangeIndicator(i, targetingComponentFloatRange.Range);
 
                 i++;
             }

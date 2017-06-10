@@ -1,10 +1,17 @@
 ﻿using UnityEngine;
 using System;
 
+[CreateAssetMenu(fileName = "NewDefendModeAbilityTemplate", menuName = "Abilities/Defend Mode Ability")]
 public class DefendModeAbilityTemplate : AbilityTemplate {
 
     [SerializeField]
     protected float cooldown;
+
+    [SerializeField]
+    protected TargetingComponent targetingComponent;
+
+    [SerializeField]
+    protected EffectComponent effectComponent;
 
     public float Cooldown
     {
@@ -14,9 +21,25 @@ public class DefendModeAbilityTemplate : AbilityTemplate {
         }
     }
 
+    public TargetingComponent TargetingComponent
+    {
+        get
+        {
+            return targetingComponent;
+        }
+    }
+
+    public EffectComponent EffectComponent
+    {
+        get
+        {
+            return effectComponent;
+        }
+    }
+
     public override Ability GenerateAbility()
     {
-        throw new NotImplementedException("Cannot Generate from DefendModeAbilityTemplate - it is pseudo-abstract");
+        return new DefendModeAbility(this);
     }
 
 }
