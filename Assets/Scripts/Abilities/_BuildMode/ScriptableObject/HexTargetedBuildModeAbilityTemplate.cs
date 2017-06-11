@@ -41,7 +41,7 @@ public class HexTargetedBuildModeAbilityTemplate : BuildModeAbilityTemplate {
         }
     }
 
-    public override Ability GenerateAbility()
+    public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
     {
         throw new System.NotImplementedException("Cannot Generate from HexTargetedBuildModeAbilityTemplate - it is pseudo-abstract");
     }

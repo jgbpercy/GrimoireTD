@@ -15,7 +15,7 @@ public class AbilityTemplate : ScriptableObject {
         }
     }
 
-    public virtual Ability GenerateAbility()
+    public virtual Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
     {
         throw new NotImplementedException("Cannot Generate from AbilityTemplate - it is pseudo-abstract");
     }

@@ -75,6 +75,11 @@ public class Coord : object
         }
     }
 
+    public Vector3 ToFirePointVector()
+    {
+        return new Vector3(ToPositionVector().x, ToPositionVector().y, -0.5f);
+    }
+
     public override string ToString()
     {
         return "(" + x + ", " + y + ")";

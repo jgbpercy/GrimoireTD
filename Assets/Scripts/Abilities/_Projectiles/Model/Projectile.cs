@@ -5,9 +5,10 @@ public class Projectile : IFrameUpdatee {
 
     protected int id;
 
-    //TODO check objects like this are destroyed and garbage collected somehow :)
     private Vector3 position;
     private Vector3 currentDirection;
+
+    protected DefendingEntity sourceDefendingEntity;
 
     private ITargetable target;
 
@@ -42,13 +43,14 @@ public class Projectile : IFrameUpdatee {
         }
     }
 
-    public Projectile(Vector3 startPosition, ITargetable target, ProjectileTemplate template)
+    public Projectile(Vector3 startPosition, ITargetable target, ProjectileTemplate template, DefendingEntity sourceDefendingEntity)
     {
         id = IdGen.GetNextId();
 
         position = startPosition;
         this.target = target;
         target.RegisterForOnDiedCallback(() => this.target = null);
+        this.sourceDefendingEntity = sourceDefendingEntity;
 
         projectileTemplate = template;
 
@@ -91,7 +93,8 @@ public class Projectile : IFrameUpdatee {
     {
         CDebug.Log(CDebug.combatLog, Id + " (" + projectileTemplate.name + ") hit " + creep.Id + " (" + creep.GetName() + ")");
 
-        creep.ApplyAttackEffects(projectileTemplate.AttackEffects);
+        //TODO: apply modifiers from defending entity at the point of projectile creation, rather than at the point of effect application?
+        creep.ApplyAttackEffects(projectileTemplate.AttackEffects, sourceDefendingEntity);
         destroyingForHitTarget = true;
         Destroy(destructionDelay);
     }

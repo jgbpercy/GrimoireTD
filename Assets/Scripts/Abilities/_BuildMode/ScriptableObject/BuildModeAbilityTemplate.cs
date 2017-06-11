@@ -14,7 +14,7 @@ public class BuildModeAbilityTemplate : AbilityTemplate {
         }
     }
 
-    public override Ability GenerateAbility()
+    public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
     {
         throw new NotImplementedException("Cannot Generate from BuildModeAbilityTemplate - it is pseudo-abstract");
     }

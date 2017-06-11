@@ -82,13 +82,13 @@ public static class CDebug {
         buildModeAbilities = new DebugChannel("Build Mode Abilities", false);
         channelList.Add(buildModeAbilities);
 
-        combatLog = new DebugChannel("Combat Log", false);
+        combatLog = new DebugChannel("Combat Log", true);
         channelList.Add(combatLog);
 
         experienceAndFatigue = new DebugChannel("XP and Fatigue", false);
         channelList.Add(experienceAndFatigue);
 
-        unitAttributes = new DebugChannel("Unit Attributes", false);
+        unitAttributes = new DebugChannel("Unit Attributes", true);
         channelList.Add(unitAttributes);
 
         structureUpgrades = new DebugChannel("Structure Upgrades", false);

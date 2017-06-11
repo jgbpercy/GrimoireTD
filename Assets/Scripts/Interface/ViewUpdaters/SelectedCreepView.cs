@@ -53,6 +53,7 @@ public class SelectedCreepView : MonoBehaviour {
 
     private void OnNewSelection(Creep creep)
     {
+        ClearEffectLists();
         DeregisterCallbacksWithSelectedCreep();
 
         selectedCreep = creep;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public enum AttributeName
@@ -114,6 +115,8 @@ public abstract class DefendingEntity
 
     protected Dictionary<AttributeName, Attribute> attributes;
 
+    private Dictionary<AttributeName, Action<float>> OnAttributeChangedCallbackDictionary;
+
     //Economy
     private List<HexOccupationBonus> flatHexOccupationBonuses;
 
@@ -177,6 +180,8 @@ public abstract class DefendingEntity
     {
         defendingEntityTemplate = template;
 
+        SetUpAttributes();
+
         SetUpBaseAbilities();
 
         SetUpBaseFlatHexOccupationBonuses();
@@ -190,7 +195,7 @@ public abstract class DefendingEntity
 
         for (int i = 0; i < defendingEntityTemplate.BaseAbilities.Length; i++)
         {
-            abilities.Add(i, defendingEntityTemplate.BaseAbilities[i].GenerateAbility());
+            abilities.Add(i, defendingEntityTemplate.BaseAbilities[i].GenerateAbility(this));
         }
     }
 
@@ -201,6 +206,23 @@ public abstract class DefendingEntity
         foreach (HexOccupationBonus hexOccupationBonus in defendingEntityTemplate.BaseFlatHexOccupationBonuses)
         {
             flatHexOccupationBonuses.Add(hexOccupationBonus);
+        }
+    }
+
+    private void SetUpAttributes()
+    {
+        attributes = new Dictionary<AttributeName, Attribute>
+        {
+            { AttributeName.rangeBonus, new AdditiveAttribute("Range Bonus") },
+            { AttributeName.damageBonus, new AdditiveAttribute("Damage Bonus") },
+            { AttributeName.cooldownReduction, new DiminishingAttribute("Cooldown Reduction") }
+        };
+
+        OnAttributeChangedCallbackDictionary = new Dictionary<AttributeName, Action<float>>();
+
+        foreach (KeyValuePair<AttributeName, Attribute> attributePair in attributes)
+        {
+            OnAttributeChangedCallbackDictionary.Add(attributePair.Key, null);
         }
     }
 
@@ -257,12 +279,21 @@ public abstract class DefendingEntity
         }
 
         attributeToModify.AddModifier(modifier);
+
+        if (OnAttributeChangedCallbackDictionary[attribute] != null)
+        {
+            OnAttributeChangedCallbackDictionary[attribute](GetAttribute(attribute));
+        }
     }
 
     public bool TryRemoveAttributeModifier(AttributeName attribute, AttributeModifier modifier)
     {
         if (attributes[attribute].TryRemoveModifier(modifier))
         {
+            if (OnAttributeChangedCallbackDictionary[attribute] != null)
+            {
+                OnAttributeChangedCallbackDictionary[attribute](GetAttribute(attribute));
+            }
             return true;
         }
 
@@ -296,6 +327,17 @@ public abstract class DefendingEntity
     public string TempDebugGetAttributeDisplayName(AttributeName attributeName)
     {
         return attributes[attributeName].DisplayName;
+    }
+
+    //Attribute Callbacks
+    public void RegisterForOnAttributeChangedCallback(Action<float> callback, AttributeName attribute)
+    {
+        OnAttributeChangedCallbackDictionary[attribute] += callback;
+    }
+
+    public void DeregisterForOnAttributeChangedCallback(Action<float> callback, AttributeName attribute)
+    {
+        OnAttributeChangedCallbackDictionary[attribute] -= callback;
     }
 
 }

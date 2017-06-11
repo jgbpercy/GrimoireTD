@@ -68,7 +68,7 @@ public class AbilityController : MonoBehaviour {
         {
             if (defendModeAbilities[i].OffCooldown())
             {
-                if ( defendModeAbilities[i].ExecuteAbility(firePoint.position) )
+                if ( defendModeAbilities[i].ExecuteAbility(attachedToDefendingEntity) )
                 {
                     defendModeAbilities[i].WasExecuted();
                     CDebug.Log(CDebug.combatLog, attachedToDefendingEntity.Id + " (" + attachedToDefendingEntity.CurrentName() + ") executed ability " + defendModeAbilities[i].DefendModeAbilityTemplate.NameInGame, this);

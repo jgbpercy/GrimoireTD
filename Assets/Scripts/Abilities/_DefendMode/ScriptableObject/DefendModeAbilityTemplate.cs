@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System;
 
-[CreateAssetMenu(fileName = "NewDefendModeAbilityTemplate", menuName = "Abilities/Defend Mode Ability")]
+[CreateAssetMenu(fileName = "NewDefendModeAbilityTemplate", menuName = "Defend Mode Abilities/Defend Mode Ability")]
 public class DefendModeAbilityTemplate : AbilityTemplate {
 
     [SerializeField]
-    protected float cooldown;
+    protected float baseCooldown;
 
     [SerializeField]
     protected TargetingComponent targetingComponent;
@@ -13,11 +13,11 @@ public class DefendModeAbilityTemplate : AbilityTemplate {
     [SerializeField]
     protected EffectComponent effectComponent;
 
-    public float Cooldown
+    public float BaseCooldown
     {
         get
         {
-            return cooldown;
+            return baseCooldown;
         }
     }
 
@@ -37,9 +37,9 @@ public class DefendModeAbilityTemplate : AbilityTemplate {
         }
     }
 
-    public override Ability GenerateAbility()
+    public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
     {
-        return new DefendModeAbility(this);
+        return new DefendModeAbility(this, attachedToDefendingEntity);
     }
 
 }

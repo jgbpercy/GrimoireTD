@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EffectComponent : ScriptableObject {
 
-    public virtual void ExecuteEffect(Vector3 position, List<ITargetable> targets)
+    public virtual void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<ITargetable> targets)
     {
         return;
     }

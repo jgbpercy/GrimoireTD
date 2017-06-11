@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class DefendModeAbility : Ability, IFrameUpdatee {
 
+    private int id;
+
     private float timeSinceExecuted;
+    private float actualCooldown;
 
     private DefendModeAbilityTemplate defendModeAbilityTemplate;
+
+    private DefendingEntity attachedToDefendingEntity;
 
     public float TimeSinceExecuted
     {
@@ -17,11 +22,35 @@ public class DefendModeAbility : Ability, IFrameUpdatee {
         }
     }
 
+    public float TimeSinceExecutedClamped
+    {
+        get
+        {
+            return Mathf.Clamp(timeSinceExecuted, 0f, actualCooldown);
+        }
+    }
+
+    public float ActualCooldown
+    {
+        get
+        {
+            return actualCooldown;
+        }
+    }
+
     public float PercentOfCooldownPassed
     {
         get
         {
-            return Mathf.Clamp(timeSinceExecuted / defendModeAbilityTemplate.Cooldown, 0f, 1f);
+            return Mathf.Clamp(timeSinceExecuted / actualCooldown, 0f, 1f);
+        }
+    }
+
+    public string Id
+    {
+        get
+        {
+            return "DefAb-" + id;
         }
     }
 
@@ -33,10 +62,18 @@ public class DefendModeAbility : Ability, IFrameUpdatee {
         }
     }
 
-    public DefendModeAbility(DefendModeAbilityTemplate template) : base(template)
+    public DefendModeAbility(DefendModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
     {
+        id = IdGen.GetNextId();
+
         timeSinceExecuted = 0f;
         defendModeAbilityTemplate = template;
+
+        this.attachedToDefendingEntity = attachedToDefendingEntity;
+
+        actualCooldown = GetActualCooldown();
+
+        attachedToDefendingEntity.RegisterForOnAttributeChangedCallback(OnAttachedDefendingEntityCooldownReductionChange, AttributeName.cooldownReduction);
 
         ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
     }
@@ -46,19 +83,42 @@ public class DefendModeAbility : Ability, IFrameUpdatee {
         return defendModeAbilityTemplate.NameInGame;
     }
 
-    public bool ExecuteAbility(Vector3 executionPosition)
+    public bool ExecuteAbility(DefendingEntity attachedToDefendingEntity)
     {
-        List<ITargetable> targetList = defendModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
+        List<ITargetable> targetList = defendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity);
 
         if ( targetList == null ) { return false; }
 
-        defendModeAbilityTemplate.EffectComponent.ExecuteEffect(executionPosition, targetList);
+        defendModeAbilityTemplate.EffectComponent.ExecuteEffect(attachedToDefendingEntity, targetList);
         return true;
+    }
+
+    private float GetActualCooldown()
+    {
+        float cooldown = GetCooldownAfterReduction(attachedToDefendingEntity.GetAttribute(AttributeName.cooldownReduction));
+
+        CDebug.Log(CDebug.unitAttributes, Id + " (" + defendModeAbilityTemplate.NameInGame + ") cooldown: " + cooldown + " = " + defendModeAbilityTemplate.BaseCooldown + " * " + (1 - attachedToDefendingEntity.GetAttribute(AttributeName.cooldownReduction)));
+
+        return cooldown;
+    }
+
+    private float GetCooldownAfterReduction(float cooldownReduction)
+    {
+        return defendModeAbilityTemplate.BaseCooldown * (1 - cooldownReduction);
+    }
+
+    private void OnAttachedDefendingEntityCooldownReductionChange(float newCooldownReduction)
+    {
+        float newCooldown = GetCooldownAfterReduction(newCooldownReduction);
+
+        timeSinceExecuted = newCooldown * PercentOfCooldownPassed;
+
+        actualCooldown = newCooldown;
     }
 
     public bool OffCooldown()
     {
-        return timeSinceExecuted > defendModeAbilityTemplate.Cooldown;
+        return timeSinceExecuted > actualCooldown;
     }
 
     public void ModelObjectFrameUpdate()

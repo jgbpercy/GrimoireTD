@@ -22,8 +22,7 @@ public class DefendModeAbilityUIComponent : MonoBehaviour {
 
         this.defendModeAbility = defendModeAbility;
 
-        ownText.text = defendModeAbility.DefendModeAbilityTemplate.NameInGame;
-
+        ownText.text = defendModeAbility.DefendModeAbilityTemplate.NameInGame + " ( " + defendModeAbility.TimeSinceExecutedClamped.ToString("0.00") + " / " + defendModeAbility.ActualCooldown.ToString("0.00") + " )" ;
         ownSlider.value = defendModeAbility.PercentOfCooldownPassed;
     }
 
@@ -34,6 +33,7 @@ public class DefendModeAbilityUIComponent : MonoBehaviour {
             return;
         }
 
+        ownText.text = defendModeAbility.DefendModeAbilityTemplate.NameInGame + " ( " + defendModeAbility.TimeSinceExecutedClamped.ToString("0.00") + " / " + defendModeAbility.ActualCooldown.ToString("0.00") + " )";
         ownSlider.value = defendModeAbility.PercentOfCooldownPassed;
     }
 

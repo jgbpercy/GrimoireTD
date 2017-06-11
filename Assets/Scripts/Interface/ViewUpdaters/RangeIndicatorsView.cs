@@ -51,7 +51,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
         if (cursorMode == InterfaceCursorMode.SELECT)
         {
             indicatorsToRender = 0;
-            List<TargetingComponentFloatRange> floatRangedAttackFromHexTargetingComponents = new List<TargetingComponentFloatRange>();
+            List<float> ranges = new List<float>();
             
             if ( mouseOverHex.StructureHere != null )
             {
@@ -61,7 +61,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
 
                     if (targetingComponent is TargetingComponentFloatRange)
                     {
-                        floatRangedAttackFromHexTargetingComponents.Add(targetingComponent as TargetingComponentFloatRange);
+                        ranges.Add(((TargetingComponentFloatRange)targetingComponent).GetActualRange(mouseOverHex.StructureHere));
                     }
                 });
             }
@@ -74,14 +74,14 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
 
                     if (targetingComponent is TargetingComponentFloatRange)
                     {
-                        floatRangedAttackFromHexTargetingComponents.Add(targetingComponent as TargetingComponentFloatRange);
+                        ranges.Add(((TargetingComponentFloatRange)targetingComponent).GetActualRange(mouseOverHex.UnitHere));
                     }
                 });
             }
 
-            for (int i = 0; i < floatRangedAttackFromHexTargetingComponents.Count; i++)
+            for (int i = 0; i < ranges.Count; i++)
             {
-                SetUpRangeIndicator(i, floatRangedAttackFromHexTargetingComponents[i].Range);
+                SetUpRangeIndicator(i, ranges[i]);
 
                 indicatorsToRender = i + 1;
             }
@@ -117,7 +117,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
             {
                 TargetingComponentFloatRange targetingComponentFloatRange = ((DefendModeAbilityTemplate)abilityTemplate).TargetingComponent as TargetingComponentFloatRange;
 
-                SetUpRangeIndicator(i, targetingComponentFloatRange.Range);
+                SetUpRangeIndicator(i, targetingComponentFloatRange.BaseRange);
 
                 i++;
             }

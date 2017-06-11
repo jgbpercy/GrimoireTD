@@ -117,8 +117,6 @@ public class Unit : DefendingEntity
 
         DefendingEntityView.Instance.CreateUnit(this, position);
 
-        SetUpAttributes();
-
         SetUpTalentsAchieved();
 
         SetUpBaseConditionalHexOccupationBonuses();
@@ -129,16 +127,6 @@ public class Unit : DefendingEntity
         fatigue = 0;
         levelUpsPending = 0;
         level = 0;
-    }
-
-    private void SetUpAttributes()
-    {
-        attributes = new Dictionary<AttributeName, Attribute>
-        {
-            { AttributeName.rangeBonus, new AdditiveAttribute("Range Bonus") },
-            { AttributeName.damageBonus, new AdditiveAttribute("Damage Bonus") },
-            { AttributeName.cooldownReduction, new DiminishingAttribute("Cooldown Reduction") }
-        };
     }
 
     private void SetUpTalentsAchieved()

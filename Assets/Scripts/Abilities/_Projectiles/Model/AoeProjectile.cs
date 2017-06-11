@@ -28,7 +28,7 @@ public class AoeProjectile : Projectile {
         }
     }
 
-    public AoeProjectile(Vector3 startPosition, ITargetable target, AoeProjectileTemplate template) : base(startPosition, target, template)
+    public AoeProjectile(Vector3 startPosition, ITargetable target, AoeProjectileTemplate template, DefendingEntity sourceDefendingEntity) : base(startPosition, target, template, sourceDefendingEntity)
     {
         aoeProjectileTemplate = template;
         currentAoeRadius = 0.001f;
@@ -57,7 +57,7 @@ public class AoeProjectile : Projectile {
 
     public virtual void HitCreepInAoe(Creep creep)
     {
-        creep.ApplyAttackEffects(aoeProjectileTemplate.AoeAttackEffects);
+        creep.ApplyAttackEffects(aoeProjectileTemplate.AoeAttackEffects, sourceDefendingEntity);
     }
 
     public void RegisterForOnExplosionCallback(Action callback)

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewProjectile", menuName = "Abilities/Projectiles/Projectile")]
+[CreateAssetMenu(fileName = "NewProjectile", menuName = "Defend Mode Abilities/Projectiles/Projectile")]
 public class ProjectileTemplate : ScriptableObject {
 
     [SerializeField]
@@ -36,9 +36,9 @@ public class ProjectileTemplate : ScriptableObject {
         }
     }
 
-    public virtual Projectile GenerateProjectile(Vector3 startPosition, ITargetable target)
+    public virtual Projectile GenerateProjectile(Vector3 startPosition, ITargetable target, DefendingEntity sourceDefendingEntity)
     {
-        return new Projectile(startPosition, target, this);
+        return new Projectile(startPosition, target, this, sourceDefendingEntity);
     } 
 
 }

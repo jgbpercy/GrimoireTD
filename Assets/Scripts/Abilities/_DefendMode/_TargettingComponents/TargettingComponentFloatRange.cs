@@ -5,13 +5,18 @@ using UnityEngine;
 public class TargetingComponentFloatRange : TargetingComponent {
 
     [SerializeField]
-    protected float range;
+    private float baseRange;
 
-    public float Range
+    public float BaseRange
     {
         get
         {
-            return range;
+            return baseRange;
         }
+    }
+
+    public float GetActualRange(DefendingEntity attachedToDefendingEntity)
+    {
+        return baseRange * (1 + attachedToDefendingEntity.GetAttribute(AttributeName.rangeBonus));
     }
 }

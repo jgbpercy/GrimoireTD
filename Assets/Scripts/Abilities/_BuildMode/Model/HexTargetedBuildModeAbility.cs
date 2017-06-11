@@ -17,7 +17,7 @@ public abstract class HexTargetedBuildModeAbility : BuildModeAbility {
         }
     }
 
-    public HexTargetedBuildModeAbility(HexTargetedBuildModeAbilityTemplate template) : base(template)
+    public HexTargetedBuildModeAbility(HexTargetedBuildModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
     {
         hexTargetedBuildModeAbilityTemplate = template;
 

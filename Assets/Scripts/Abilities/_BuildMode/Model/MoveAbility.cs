@@ -14,7 +14,7 @@ public class MoveAbility : HexTargetedBuildModeAbility
         }
     }
 
-    public MoveAbility(MoveAbilityTemplate template) : base(template)
+    public MoveAbility(MoveAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
     {
         moveAbilityTemplate = template;
     }

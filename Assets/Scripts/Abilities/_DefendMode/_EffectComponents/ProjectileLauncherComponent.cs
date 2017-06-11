@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewProjectileLauncher", menuName = "Abilities/Effect Components/Projectile Launcher")]
+[CreateAssetMenu(fileName = "NewProjectileLauncher", menuName = "Defend Mode Abilities/Effect Components/Projectile Launcher")]
 public class ProjectileLauncherComponent : EffectComponent {
 
     [SerializeField]
@@ -15,11 +15,11 @@ public class ProjectileLauncherComponent : EffectComponent {
         }
     }
 
-    public override void ExecuteEffect(Vector3 position, List<ITargetable> targets)
+    public override void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<ITargetable> targets)
     {
         foreach (ITargetable target in targets)
         {
-            projectileToFireTemplate.GenerateProjectile(position, target);
+            projectileToFireTemplate.GenerateProjectile(attachedToDefendingEntity.CoordPosition.ToFirePointVector(), target, attachedToDefendingEntity);
         }
     }
 }

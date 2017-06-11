@@ -1,63 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
-public enum AttackEffectType
-{
-    PiercingDamage,
-    BluntDamage,
-    PoisonDamage,
-    AcidDamage,
-    FireDamage,
-    ColdDamage,
-    LightningDamage,
-    EarthDamage,
-    FrostSlow,
-    MaimSlow,
-    TrapSlow,
-    DazeSlow,
-    ArmorReduction,
-    ArmorCorrosion
-}
-
-//TODO: make this less stupid
-public static class AttackEffectNames
-{
-    private static Dictionary<AttackEffectType, string> names = null;
-
-    public static string NameOf(AttackEffectType attackEffectType)
-    {
-        if ( names == null)
-        {
-            names = CreateAttackEffectNames();
-        }
-
-        return names[attackEffectType];
-    }
-
-    private static Dictionary<AttackEffectType, string> CreateAttackEffectNames()
-    {
-        Dictionary<AttackEffectType, string> names = new Dictionary<AttackEffectType, string>
-        {
-            { AttackEffectType.PiercingDamage, "Piercing Damage" },
-            { AttackEffectType.BluntDamage, "Blunt Damage" },
-            { AttackEffectType.PoisonDamage, "Poison Damage" },
-            { AttackEffectType.AcidDamage, "Acid Damage" },
-            { AttackEffectType.FireDamage, "Fire Damage" },
-            { AttackEffectType.ColdDamage, "Cold Damage" },
-            { AttackEffectType.LightningDamage, "Lightning Damage" },
-            { AttackEffectType.EarthDamage, "Earth Damage" },
-            { AttackEffectType.FrostSlow, "Slow (Frost)" },
-            { AttackEffectType.MaimSlow, "Slow (Maim)" },
-            { AttackEffectType.TrapSlow, "Slow (Trap)" },
-            { AttackEffectType.DazeSlow, "Slow (Daze)" },
-            { AttackEffectType.ArmorReduction, "Armor Reduction" },
-            { AttackEffectType.ArmorCorrosion, "Armor Corrosion" }
-        };
-        return names;
-    }
-}
 
 [Serializable]
 public class AttackEffect {
@@ -65,13 +7,11 @@ public class AttackEffect {
     [SerializeField]
     private AttackEffectType attackEffectType;
 
-    private string effectName = "";
+    [SerializeField]
+    private int baseMagnitude;
 
     [SerializeField]
-    private int magnitude;
-
-    [SerializeField]
-    private float duration;
+    private float baseDuration;
 
     public AttackEffectType AttackEffectType
     {
@@ -85,28 +25,45 @@ public class AttackEffect {
     {
         get
         {
-            if ( effectName == "" )
-            {
-                effectName = AttackEffectNames.NameOf(attackEffectType);
-            }
-            return effectName;
+            return attackEffectType.EffectName();
         }
     }
 
-    public int Magnitude
+    public int BaseMagnitude
     {
         get
         {
-            return magnitude;
+            return baseMagnitude;
         }
     }
 
-    public float Duration
+    public float BaseDuration
     {
         get
         {
-            return duration;
+            return baseDuration;
         }
+    }
+
+    public int GetActualMagnitude(DefendingEntity sourceDefendingEntity)
+    {
+        DamageEffectType damageEffectType = attackEffectType as DamageEffectType;
+        if ( damageEffectType != null )
+        {
+            return GetDamage(sourceDefendingEntity, damageEffectType);
+        }
+
+        return baseMagnitude;
+    }
+        
+    private int GetDamage(DefendingEntity sourceDefendingEntity, DamageEffectType damageEffectType)
+    {
+        return Mathf.RoundToInt((1 + sourceDefendingEntity.GetAttribute(AttributeName.damageBonus)) * baseMagnitude);
+    }
+
+    public float GetActualDuration(DefendingEntity sourceDefendingEntity)
+    {
+        return BaseDuration;
     }
 
 }

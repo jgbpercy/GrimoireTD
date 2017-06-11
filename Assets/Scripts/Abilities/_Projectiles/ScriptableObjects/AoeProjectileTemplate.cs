@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewAoeProjectile", menuName = "Abilities/Projectiles/AOE Projectile")]
+[CreateAssetMenu(fileName = "NewAoeProjectile", menuName = "Defend Mode Abilities/Projectiles/AOE Projectile")]
 public class AoeProjectileTemplate : ProjectileTemplate {
 
     [SerializeField]
@@ -38,8 +38,8 @@ public class AoeProjectileTemplate : ProjectileTemplate {
         }
     }
 
-    public override Projectile GenerateProjectile(Vector3 startPosition, ITargetable target)
+    public override Projectile GenerateProjectile(Vector3 startPosition, ITargetable target, DefendingEntity sourceDefendingEntity)
     {
-        return new AoeProjectile(startPosition, target, this);
+        return new AoeProjectile(startPosition, target, this, sourceDefendingEntity);
     }
 }

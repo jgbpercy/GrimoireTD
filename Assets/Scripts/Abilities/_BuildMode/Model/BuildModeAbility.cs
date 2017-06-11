@@ -12,7 +12,7 @@ public abstract class BuildModeAbility : Ability {
         }
     }
 
-    public BuildModeAbility(BuildModeAbilityTemplate template) : base(template)
+    public BuildModeAbility(BuildModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
     {
         buildModeAbilityTemplate = template;
     }

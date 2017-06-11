@@ -66,19 +66,7 @@ public class Structure : DefendingEntity {
 
         DefendingEntityView.Instance.CreateStructure(this, position);
 
-        SetUpAttributes();
-
         SetUpUpgradesAndEnhancements();
-    }
-
-    private void SetUpAttributes()
-    {
-        attributes = new Dictionary<AttributeName, Attribute>
-        {
-            { AttributeName.rangeBonus, new AdditiveAttribute("Range Bonus") },
-            { AttributeName.damageBonus, new AdditiveAttribute("Damage Bonus") },
-            { AttributeName.cooldownReduction, new DiminishingAttribute("Cooldown Reduction") }
-        };
     }
 
     private void SetUpUpgradesAndEnhancements()

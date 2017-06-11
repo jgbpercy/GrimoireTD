@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TargetingComponent : ScriptableObject {
 
-    public virtual List<ITargetable> FindTargets(Vector3 position)
+    public virtual List<ITargetable> FindTargets(DefendingEntity attachedToDefendingEntity)
     {
         return null;
     }
