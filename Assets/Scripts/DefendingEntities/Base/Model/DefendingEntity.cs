@@ -178,6 +178,8 @@ public abstract class DefendingEntity
 
     public DefendingEntity(DefendingEntityTemplate template)
     {
+        id = IdGen.GetNextId();
+
         defendingEntityTemplate = template;
 
         SetUpAttributes();

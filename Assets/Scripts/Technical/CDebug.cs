@@ -82,19 +82,19 @@ public static class CDebug {
         buildModeAbilities = new DebugChannel("Build Mode Abilities", false);
         channelList.Add(buildModeAbilities);
 
-        combatLog = new DebugChannel("Combat Log", true);
+        combatLog = new DebugChannel("Combat Log", false);
         channelList.Add(combatLog);
 
         experienceAndFatigue = new DebugChannel("XP and Fatigue", false);
         channelList.Add(experienceAndFatigue);
 
-        unitAttributes = new DebugChannel("Unit Attributes", true);
+        unitAttributes = new DebugChannel("Unit Attributes", false);
         channelList.Add(unitAttributes);
 
         structureUpgrades = new DebugChannel("Structure Upgrades", false);
         channelList.Add(structureUpgrades);
 
-        hexEconomy = new DebugChannel("Hex Economy", false);
+        hexEconomy = new DebugChannel("Hex Economy", true);
         channelList.Add(hexEconomy);
 
         pathing = new DebugChannel("Pathing", false);

@@ -28,6 +28,8 @@ public class Unit : DefendingEntity
     //Economy
     private List<HexOccupationBonus> conditionalHexOccupationBonuses;
 
+    private List<StructureOccupationBonus> conditionalStructureOccupationBonuses;
+
     //Public Properties
     public override string Id
     {
@@ -111,8 +113,6 @@ public class Unit : DefendingEntity
 
     public Unit(UnitTemplate unitTemplate, Vector3 position) : base(unitTemplate)
     {
-        id = IdGen.GetNextId();
-
         this.unitTemplate = unitTemplate;
 
         DefendingEntityView.Instance.CreateUnit(this, position);
@@ -120,6 +120,7 @@ public class Unit : DefendingEntity
         SetUpTalentsAchieved();
 
         SetUpBaseConditionalHexOccupationBonuses();
+        SetUpBaseConditionalStructureOccupationBonuses();
 
         timeIdle = 0f;
         timeActive = 0f;
@@ -146,6 +147,16 @@ public class Unit : DefendingEntity
         foreach (HexOccupationBonus hexOccupationBonus in unitTemplate.BaseConditionalHexOccupationBonuses)
         {
             conditionalHexOccupationBonuses.Add(hexOccupationBonus);
+        }
+    }
+
+    private void SetUpBaseConditionalStructureOccupationBonuses()
+    {
+        conditionalStructureOccupationBonuses = new List<StructureOccupationBonus>();
+
+        foreach (StructureOccupationBonus conditionalStructureOccupationBonus in unitTemplate.BaseConditionalStructureOccupationBonuses)
+        {
+            conditionalStructureOccupationBonuses.Add(conditionalStructureOccupationBonus);
         }
     }
 
@@ -192,12 +203,38 @@ public class Unit : DefendingEntity
         CDebug.Log(CDebug.hexEconomy, "Active Proportion: " + activeProportion.ToString("0.000"));
 
         EconomyTransaction grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
-        CDebug.Log(CDebug.hexEconomy, "Gross Bonus: " + grossConditionalHexOccuationBonus);
+        CDebug.Log(CDebug.hexEconomy, "Gross Hex Oc Bonus: " + grossConditionalHexOccuationBonus);
 
         EconomyTransaction netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(activeProportion);
-        CDebug.Log(CDebug.hexEconomy, "Net Bonus: " + netConditionalHexOccupationBonus);
+        CDebug.Log(CDebug.hexEconomy, "Net Hex Oc Bonus: " + netConditionalHexOccupationBonus);
 
-        EconomyManager.Instance.DoTransaction(grossConditionalHexOccuationBonus);
+        EconomyManager.Instance.DoTransaction(netConditionalHexOccupationBonus);
+
+        EconomyTransaction grossConditionalStructureOccupationBonus = GetStructureOccupationBonus(OnHex.StructureHere, conditionalStructureOccupationBonuses);
+        CDebug.Log(CDebug.hexEconomy, "Gross Structure Oc Bonus: " + grossConditionalStructureOccupationBonus);
+
+        EconomyTransaction netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(activeProportion);
+        CDebug.Log(CDebug.hexEconomy, "Net Structure Oc Bonus: " + netConditionalStructureOccupationBonus);
+
+        EconomyManager.Instance.DoTransaction(netConditionalStructureOccupationBonus);
+    }
+
+    private EconomyTransaction GetStructureOccupationBonus(Structure structure, List<StructureOccupationBonus> structureOccupationBonuses)
+    {
+        EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
+
+        StructureTemplate template = structure != null ? structure.StructureTemplate : null;
+        StructureUpgrade upgrade = structure != null ? structure.CurrentUpgradeLevel() : null;
+
+        foreach (StructureOccupationBonus structureOccupationBonus in structureOccupationBonuses)
+        {
+            if ( structureOccupationBonus.StructureTemplate == template && structureOccupationBonus.StructureUpgradeLevel == upgrade )
+            {
+                occupationBonusTransaction += structureOccupationBonus.ResourceGain;
+            }
+        }
+
+        return occupationBonusTransaction;
     }
 
     private void OnEnterBuildModeExperienceAndFatigueChanges()

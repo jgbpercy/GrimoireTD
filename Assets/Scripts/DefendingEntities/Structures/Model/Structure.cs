@@ -57,8 +57,6 @@ public class Structure : DefendingEntity {
 
     public Structure(StructureTemplate structureTemplate, Vector3 position) : base(structureTemplate)
     {
-        id = IdGen.GetNextId();
-
         this.structureTemplate = structureTemplate;
 
         currentName = structureTemplate.StartingNameInGame;
@@ -93,6 +91,23 @@ public class Structure : DefendingEntity {
     public override string UIText()
     {
         return currentDescription;
+    }
+
+    public StructureUpgrade CurrentUpgradeLevel()
+    {
+        StructureUpgrade currentUpgrade = null;
+
+        foreach (KeyValuePair<StructureUpgrade, bool> structureUpgrade in upgradesBought)
+        {
+            if (structureUpgrade.Value == false)
+            {
+                break;
+            }
+
+            currentUpgrade = structureUpgrade.Key;
+        }
+
+        return currentUpgrade;
     }
 
     public bool TryUpgrade(StructureUpgrade upgrade, StructureEnhancement chosenEnhancement, bool isFree)

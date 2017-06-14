@@ -18,6 +18,9 @@ public class UnitTemplate : DefendingEntityTemplate {
     [SerializeField]
     private HexOccupationBonus[] baseConditionalHexOccupationBonuses;
 
+    [SerializeField]
+    private StructureOccupationBonus[] baseConditionalStructureOccupationBonuses;
+
     public string NameInGame
     {
         get
@@ -55,6 +58,14 @@ public class UnitTemplate : DefendingEntityTemplate {
         get
         {
             return baseConditionalHexOccupationBonuses;
+        }
+    }
+
+    public StructureOccupationBonus[] BaseConditionalStructureOccupationBonuses
+    {
+        get
+        {
+            return baseConditionalStructureOccupationBonuses;
         }
     }
 

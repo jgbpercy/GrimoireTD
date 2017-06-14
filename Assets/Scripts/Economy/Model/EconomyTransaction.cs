@@ -73,7 +73,7 @@ public struct EconomyTransaction {
 
     public override string ToString()
     {
-        return "(F: " + goldChange + ", W: " + woodChange + ", S: " + stoneChange + ", G: " + goldChange + ", M: " + manaChange + ")";
+        return "(F: " + foodChange + ", W: " + woodChange + ", S: " + stoneChange + ", G: " + goldChange + ", M: " + manaChange + ")";
     }
 
     public string ToString(bool absolute)
