@@ -10,6 +10,14 @@ public class BuildModeAbilityUIComponent : MonoBehaviour {
     [SerializeField]
     private Text ownText;
 
+    public BuildModeAbility BuildModeAbility
+    {
+        get
+        {
+            return buildModeAbility;
+        }
+    }
+
     public void SetUp(BuildModeAbility buildModeAbility)
     {
         if (initialised)

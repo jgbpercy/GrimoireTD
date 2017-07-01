@@ -126,16 +126,10 @@ public class Structure : DefendingEntity {
         {
             EconomyManager.Instance.DoTransaction(chosenEnhancement.Cost);
         }
+        
+        DefendingEntityImprovement combinedImprovement = upgrade.MainUpgradeBonus.Combine(chosenEnhancement.EnhancementBonus);
 
-        List<NamedAttributeModifier> namedModifiersToApply = new List<NamedAttributeModifier>();
-
-        namedModifiersToApply.AddRange(upgrade.MainUpgradeBonus);
-        namedModifiersToApply.AddRange(chosenEnhancement.EnhancementBonuses);
-
-        foreach (NamedAttributeModifier namedAttributeModifier in namedModifiersToApply) 
-        {
-            AddAttributeModifier(namedAttributeModifier.AttributeName, namedAttributeModifier.AttributeModifier);
-        }
+        ApplyImprovement(combinedImprovement);
 
         upgradesBought[upgrade] = true;
         enhancementsChosen[chosenEnhancement] = true;

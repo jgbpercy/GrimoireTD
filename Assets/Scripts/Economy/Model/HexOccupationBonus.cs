@@ -2,13 +2,10 @@
 using UnityEngine;
 
 [Serializable]
-public class HexOccupationBonus {
+public class HexOccupationBonus : OccupationBonus {
 
     [SerializeField]
     private BaseHexTypeEnum hexType;
-
-    [SerializeField]
-    private EconomyTransaction resourceGain;
 
     public HexType HexType
     {
@@ -18,11 +15,4 @@ public class HexOccupationBonus {
         }
     }
 
-    public EconomyTransaction ResourceGain
-    {
-        get
-        {
-            return resourceGain;
-        }
-    }
 }

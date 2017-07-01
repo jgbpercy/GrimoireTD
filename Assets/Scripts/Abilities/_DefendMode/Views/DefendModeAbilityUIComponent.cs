@@ -12,6 +12,14 @@ public class DefendModeAbilityUIComponent : MonoBehaviour {
     [SerializeField]
     private Slider ownSlider;
 
+    public DefendModeAbility DefendModeAbility
+    {
+        get
+        {
+            return defendModeAbility;
+        }
+    }
+
     public void SetUp(DefendModeAbility defendModeAbility)
     {
         if (initialised)

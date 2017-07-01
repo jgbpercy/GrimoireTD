@@ -88,7 +88,7 @@ public static class CDebug {
         experienceAndFatigue = new DebugChannel("XP and Fatigue", false);
         channelList.Add(experienceAndFatigue);
 
-        unitAttributes = new DebugChannel("Unit Attributes", false);
+        unitAttributes = new DebugChannel("Unit Attributes", true);
         channelList.Add(unitAttributes);
 
         structureUpgrades = new DebugChannel("Structure Upgrades", false);

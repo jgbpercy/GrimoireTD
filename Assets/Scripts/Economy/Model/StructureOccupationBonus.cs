@@ -8,16 +8,13 @@ using UnityEngine;
  * almost same amount of code
 */
 [Serializable]
-public class StructureOccupationBonus {
+public class StructureOccupationBonus : OccupationBonus {
 
     [SerializeField]
     private StructureTemplate structureTemplate;
 
     [SerializeField]
     private StructureUpgrade structureUpgradeLevel;
-
-    [SerializeField]
-    private EconomyTransaction resourceGain;
 
     public StructureTemplate StructureTemplate
     {
@@ -35,11 +32,4 @@ public class StructureOccupationBonus {
         }
     }
 
-    public EconomyTransaction ResourceGain
-    {
-        get
-        {
-            return resourceGain;
-        }
-    }
 }

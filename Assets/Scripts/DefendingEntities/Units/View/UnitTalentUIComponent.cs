@@ -35,13 +35,13 @@ public class UnitTalentUIComponent : MonoBehaviour {
     {
         ownText.text = TalentText(unitTalent);
 
-        ownSlider.maxValue = unitTalent.AttributeBonuses.Length;
+        ownSlider.maxValue = unitTalent.UnitImprovements.Length;
         ownSlider.value = selectedUnit.LevelledTalents[unitTalent];
     }
 
     private string TalentText(UnitTalent talent)
     {
-        return selectedUnit.LevelledTalents[talent] + " / " + talent.AttributeBonuses.Length + "\n" + talent.DescriptionText;
+        return selectedUnit.LevelledTalents[talent] + " / " + talent.UnitImprovements.Length + "\n" + talent.DescriptionText;
     }
 
     public void UIComponentClicked()

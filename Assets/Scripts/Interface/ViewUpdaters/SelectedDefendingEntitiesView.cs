@@ -70,13 +70,18 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
     private Structure selectedStructure = null;
 
-    private List<GameObject> abilitySliders = new List<GameObject>();
-    private List<GameObject> abilityButtons = new List<GameObject>();
+    private List<DefendModeAbilityUIComponent> abilitySliders = new List<DefendModeAbilityUIComponent>();
+    private List<BuildModeAbilityUIComponent> abilityButtons = new List<BuildModeAbilityUIComponent>();
 
     private List<GameObject> talentDisplays = new List<GameObject>();
 
     private List<GameObject> upgradeDisplays = new List<GameObject>();
     private List<GameObject> enhancementDisplays = new List<GameObject>();
+
+    private Action<Ability> OnStructureAbilityAdded;
+    private Action<Ability> OnStructureAbilityRemoved;
+    private Action<Ability> OnUnitAbilityAdded;
+    private Action<Ability> OnUnitAbilityRemoved;
 
     private void Start()
     {
@@ -89,6 +94,8 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         InterfaceController.Instance.RegisterForOnDefendingEntitySelectedCallback(OnNewSelection);
         InterfaceController.Instance.RegisterForOnDefendingEntityDeselectedCallback(OnDefendingEntitiesDeselected);
+
+        GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
     }
 
     private void Update()
@@ -121,13 +128,19 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         {
             OnDefendingEntitySelected(newSelectedStructure, selectedStructurePanel, selectedStructureName, selectedStructureText, structureAbilityVerticalLayout);
 
-            CallbackSafeSetSelectedStructureNull();
+            SetSelectedStructureNullCallbackSafe();
 
             selectedStructure = newSelectedStructure;
 
             SetUpUpgradeView();
 
             selectedStructure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
+
+            OnStructureAbilityAdded = new Action<Ability>(x => OnNewAbilityAdded(x, structureAbilityVerticalLayout));
+            OnStructureAbilityRemoved = new Action<Ability>(x => OnAbilityRemoved(x, structureAbilityVerticalLayout));
+
+            selectedStructure.RegisterForOnAbilityAddedCallback(OnStructureAbilityAdded);
+            selectedStructure.RegisterForOnAbilityRemovedCallback(OnStructureAbilityRemoved);
 
             if (CDebug.structureUpgrades.Enabled)
             {
@@ -143,7 +156,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         {
             OnDefendingEntitySelected(newSelectedUnit, selectedUnitPanel, selectedUnitName, selectedUnitText, unitAbilityVerticalLayout);
 
-            CallbackSafeSetSelectedUnitNull();
+            SetSelectedUnitNullCallbackSafe();
 
             selectedUnit = newSelectedUnit;
 
@@ -151,6 +164,12 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
             SetUpTalentDisplay();
 
             selectedUnit.RegisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+
+            OnUnitAbilityAdded = new Action<Ability>(x => OnNewAbilityAdded(x, unitAbilityVerticalLayout));
+            OnUnitAbilityRemoved = new Action<Ability>(x => OnAbilityRemoved(x, unitAbilityVerticalLayout));
+
+            selectedUnit.RegisterForOnAbilityAddedCallback(OnUnitAbilityAdded);
+            selectedUnit.RegisterForOnAbilityRemovedCallback(OnUnitAbilityRemoved);
 
             if ( CDebug.unitAttributes.Enabled )
             {
@@ -174,23 +193,89 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         foreach (DefendModeAbility defendModeAbility in entityDefendModeAbilities)
         {
-            GameObject newSliderGo = Instantiate(abilitySliderPrefab) as GameObject;
-            newSliderGo.transform.SetParent(abilityVerticalLayout.transform);
-
-            newSliderGo.GetComponent<DefendModeAbilityUIComponent>().SetUp(defendModeAbility);
-
-            abilitySliders.Add(newSliderGo);
+            AddDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
         }
 
         foreach (BuildModeAbility buildModeAbility in entityBuildModeAbilities)
         {
-            GameObject newButtonGo = Instantiate(abilityButtonPrefab) as GameObject;
-            newButtonGo.transform.SetParent(abilityVerticalLayout.transform);
-
-            newButtonGo.GetComponentInChildren<BuildModeAbilityUIComponent>().SetUp(buildModeAbility);
-
-            abilityButtons.Add(newButtonGo);
+            AddBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
         }
+    }
+
+    private void OnNewAbilityAdded(Ability ability, GameObject abilityVerticalLayout)
+    {
+        DefendModeAbility defendModeAbility = ability as DefendModeAbility;
+        if (defendModeAbility != null)
+        {
+            AddDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
+            return;
+        }
+
+        BuildModeAbility buildModeAbility = ability as BuildModeAbility;
+        if (buildModeAbility != null)
+        {
+            AddBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
+            return;
+        }
+
+        throw new Exception("Unknown Ability class");
+    }
+
+    private void AddDefendModeAbilitySlider(DefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
+    {
+        DefendModeAbilityUIComponent newSlider = Instantiate(abilitySliderPrefab).GetComponent<DefendModeAbilityUIComponent>();
+        newSlider.transform.SetParent(abilityVerticalLayout.transform);
+
+        newSlider.SetUp(defendModeAbility);
+
+        abilitySliders.Add(newSlider);
+    }
+
+    private void AddBuildModeAbilityButton(BuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
+    {
+        BuildModeAbilityUIComponent newButton = Instantiate(abilityButtonPrefab).GetComponent<BuildModeAbilityUIComponent>();
+        newButton.transform.SetParent(abilityVerticalLayout.transform);
+
+        newButton.SetUp(buildModeAbility);
+
+        abilityButtons.Add(newButton);
+    }
+
+    private void OnAbilityRemoved(Ability ability, GameObject abilityVerticalLayout)
+    {
+        DefendModeAbility defendModeAbility = ability as DefendModeAbility;
+        if (defendModeAbility != null)
+        {
+            RemoveDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
+            return;
+        }
+
+        BuildModeAbility buildModeAbility = ability as BuildModeAbility;
+        if (buildModeAbility != null)
+        {
+            RemoveBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
+            return;
+        }
+
+        throw new Exception("Unknown Ability class");
+    }
+
+    private void RemoveDefendModeAbilitySlider(DefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
+    {
+        DefendModeAbilityUIComponent uiComponentToRemove = abilitySliders.Find(x => x.DefendModeAbility == defendModeAbility);
+
+        Destroy(uiComponentToRemove.gameObject);
+
+        abilitySliders.Remove(uiComponentToRemove);
+    }
+
+    private void RemoveBuildModeAbilityButton(BuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
+    {
+        BuildModeAbilityUIComponent uiComponentToRemove = abilityButtons.Find(x => x.BuildModeAbility == buildModeAbility);
+
+        Destroy(uiComponentToRemove.gameObject);
+
+        abilityButtons.Remove(uiComponentToRemove);
     }
 
     private void SetNameAndDescription(DefendingEntity selectedEntity, Text nameText, Text descriptionText)
@@ -207,7 +292,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
     private void OnStructureDeselection()
     {
-        CallbackSafeSetSelectedStructureNull();
+        SetSelectedStructureNullCallbackSafe();
 
         selectedStructurePanel.SetActive(false);
         structureUpgradePanel.SetActive(false);
@@ -218,17 +303,19 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         ClearAbilityLists();
         ClearTalentDisplays();
 
-        CallbackSafeSetSelectedUnitNull();
+        SetSelectedUnitNullCallbackSafe();
 
         selectedUnitPanel.SetActive(false);
         unitTalentPanel.SetActive(false);
     }
 
-    private void CallbackSafeSetSelectedStructureNull()
+    private void SetSelectedStructureNullCallbackSafe()
     {
         if ( selectedStructure != null )
         {
             selectedStructure.DeregisterForOnUpgradedCallback(OnStructureUpgraded);
+            selectedStructure.DeregisterForOnAbilityAddedCallback(OnStructureAbilityAdded);
+            selectedStructure.DeregisterForOnAbilityRemovedCallback(OnStructureAbilityRemoved);
         }
 
         selectedStructure = null;
@@ -246,11 +333,13 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         }
     }
 
-    private void CallbackSafeSetSelectedUnitNull()
+    private void SetSelectedUnitNullCallbackSafe()
     {
         if ( selectedUnit != null )
         {
             selectedUnit.DeregisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+            selectedUnit.DeregisterForOnAbilityAddedCallback(OnUnitAbilityAdded);
+            selectedUnit.DeregisterForOnAbilityRemovedCallback(OnUnitAbilityRemoved);
         }
 
         selectedUnit = null;
@@ -307,8 +396,8 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
     private void ClearUpgradeAndEnhancementDisplays()
     {
-        enhancementDisplays.ForEach(x => Destroy(x));
-        upgradeDisplays.ForEach(x => Destroy(x));
+        enhancementDisplays.ForEach(x => Destroy(x.gameObject));
+        upgradeDisplays.ForEach(x => Destroy(x.gameObject));
 
         enhancementDisplays = new List<GameObject>();
         upgradeDisplays = new List<GameObject>();
@@ -361,6 +450,12 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         }
     }
 
+    private void OnEnterDefendMode()
+    {
+        unitTalentPanel.SetActive(false);
+        structureUpgradePanel.SetActive(false);
+    }
+
     private void OnUnitExperienceChange()
     {
         SetExperienceFatigueLevelView();
@@ -368,16 +463,16 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
     private void ClearAbilityLists()
     {
-        abilitySliders.ForEach(x => Destroy(x));
-        abilityButtons.ForEach(x => Destroy(x));
+        abilitySliders.ForEach(x => Destroy(x.gameObject));
+        abilityButtons.ForEach(x => Destroy(x.gameObject));
 
-        abilitySliders = new List<GameObject>();
-        abilityButtons = new List<GameObject>();
+        abilitySliders = new List<DefendModeAbilityUIComponent>();
+        abilityButtons = new List<BuildModeAbilityUIComponent>();
     }
 
     private void ClearTalentDisplays()
     {
-        talentDisplays.ForEach(x => Destroy(x));
+        talentDisplays.ForEach(x => Destroy(x.gameObject));
 
         talentDisplays = new List<GameObject>();
     }

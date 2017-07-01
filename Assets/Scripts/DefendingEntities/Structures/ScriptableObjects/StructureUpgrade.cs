@@ -9,7 +9,7 @@ public class StructureUpgrade : ScriptableObject {
     private StructureEnhancement[] optionalEnhancements;
 
     [SerializeField]
-    private NamedAttributeModifier[] mainUpgradeBonus;
+    private DefendingEntityImprovement mainUpgradeBonus;
 
     [SerializeField]
     private string newStructureName;
@@ -28,7 +28,7 @@ public class StructureUpgrade : ScriptableObject {
         }
     }
 
-    public NamedAttributeModifier[] MainUpgradeBonus
+    public DefendingEntityImprovement MainUpgradeBonus
     {
         get
         {

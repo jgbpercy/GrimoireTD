@@ -118,10 +118,118 @@ public abstract class DefendingEntity
     private Dictionary<AttributeName, Action<float>> OnAttributeChangedCallbackDictionary;
 
     //Economy
-    private List<HexOccupationBonus> flatHexOccupationBonuses;
+    protected class OccupationBonusList<T> where T : OccupationBonus
+    {
+        private List<T> list;
+
+        private Action AddCallback;
+        private Action RemoveCallback;
+
+        public List<T> List
+        {
+            get
+            {
+                return list;
+            }
+        }
+
+        public OccupationBonusList(Action addCallback, Action removeCallback)
+        {
+            AddCallback = addCallback;
+            RemoveCallback = removeCallback;
+
+            list = new List<T>();
+        }
+
+        public void AddBonus(T occupationBonus)
+        {
+            list.Add(occupationBonus);
+
+            if ( AddCallback != null )
+            {
+                AddCallback();
+            }
+        }
+
+        public bool TryRemoveBonus(T occupationBonus)
+        {
+            if ( !list.Contains(occupationBonus) )
+            {
+                return false;
+            }
+
+            list.Remove(occupationBonus);
+
+            if ( RemoveCallback != null)
+            {
+                RemoveCallback();
+            }
+
+            return true;
+        }
+    }
+
+    private OccupationBonusList<HexOccupationBonus> flatHexOccupationBonuses;
+
+    private Action OnFlatHexOccupationBonusChanged;
 
     //Abilities
-    protected SortedList<int, Ability> abilities;
+    protected class AbilityList
+    {
+        private SortedList<int, Ability> list;
+
+        private DefendingEntity attachedToDefendingEntity;
+
+        public SortedList<int, Ability> List
+        {
+            get
+            {
+                return list;
+            }
+        }
+
+        public AbilityList(DefendingEntity attachedToDefendingEntity)
+        {
+            this.attachedToDefendingEntity = attachedToDefendingEntity;
+
+            list = new SortedList<int, Ability>();
+        }
+
+        public void AddAbility(Ability ability)
+        {
+            list.Add(list.Count, ability);
+            
+            if ( attachedToDefendingEntity.OnAbilityAddedCallback != null )
+            {
+                attachedToDefendingEntity.OnAbilityAddedCallback(ability);
+            }
+        }
+
+        public bool TryRemoveAbility(Ability ability)
+        {
+            if ( !list.ContainsValue(ability) )
+            {
+                return false;
+            }
+
+            int indexOfAbility = list.IndexOfValue(ability);
+            list.RemoveAt(indexOfAbility);
+
+            if ( attachedToDefendingEntity.OnAbilityRemovedCallback != null )
+            {
+                attachedToDefendingEntity.OnAbilityRemovedCallback(ability);
+            }
+
+            return true;
+        }
+
+        //public bool TryReplaceAbility ?? (needed?)
+    }
+
+    protected AbilityList abilities;
+
+    private Action<Ability> OnAbilityAddedCallback;
+    private Action<Ability> OnAbilityRemovedCallback;
 
     //Template
     private DefendingEntityTemplate defendingEntityTemplate;
@@ -139,7 +247,7 @@ public abstract class DefendingEntity
     {
         get
         {
-            return abilities;
+            return abilities.List;
         }
     }
 
@@ -176,6 +284,7 @@ public abstract class DefendingEntity
         }
     }
 
+    //Constructor
     public DefendingEntity(DefendingEntityTemplate template)
     {
         id = IdGen.GetNextId();
@@ -191,23 +300,24 @@ public abstract class DefendingEntity
         GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
     }
 
+    //Set up
     private void SetUpBaseAbilities()
     {
-        abilities = new SortedList<int, Ability>();
+        abilities = new AbilityList(this);
 
         for (int i = 0; i < defendingEntityTemplate.BaseAbilities.Length; i++)
         {
-            abilities.Add(i, defendingEntityTemplate.BaseAbilities[i].GenerateAbility(this));
+            abilities.AddAbility(defendingEntityTemplate.BaseAbilities[i].GenerateAbility(this));
         }
     }
 
     private void SetUpBaseFlatHexOccupationBonuses()
     {
-        flatHexOccupationBonuses = new List<HexOccupationBonus>();
+        flatHexOccupationBonuses = new OccupationBonusList<HexOccupationBonus>(OnFlatHexOccupationBonusChanged, OnFlatHexOccupationBonusChanged);
 
         foreach (HexOccupationBonus hexOccupationBonus in defendingEntityTemplate.BaseFlatHexOccupationBonuses)
         {
-            flatHexOccupationBonuses.Add(hexOccupationBonus);
+            flatHexOccupationBonuses.AddBonus(hexOccupationBonus);
         }
     }
 
@@ -228,15 +338,16 @@ public abstract class DefendingEntity
         }
     }
 
+    //Public Ability Lists
     public List<DefendModeAbility> DefendModeAbilities()
     {
         List<DefendModeAbility> defendModeAbilities = new List<DefendModeAbility>();
 
-        for (int i = 0; i < abilities.Count; i++)
+        for (int i = 0; i < abilities.List.Count; i++)
         {
-            if (abilities[i] is DefendModeAbility)
+            if (abilities.List[i] is DefendModeAbility)
             {
-                defendModeAbilities.Add((DefendModeAbility)abilities[i]);
+                defendModeAbilities.Add((DefendModeAbility)abilities.List[i]);
             }
         }
 
@@ -247,11 +358,11 @@ public abstract class DefendingEntity
     {
         List<BuildModeAbility> buildModeAbilities = new List<BuildModeAbility>();
 
-        for (int i = 0; i < abilities.Count; i++)
+        for (int i = 0; i < abilities.List.Count; i++)
         {
-            if (abilities[i] is BuildModeAbility)
+            if (abilities.List[i] is BuildModeAbility)
             {
-                buildModeAbilities.Add((BuildModeAbility)abilities[i]);
+                buildModeAbilities.Add((BuildModeAbility)abilities.List[i]);
             }
         }
 
@@ -267,6 +378,24 @@ public abstract class DefendingEntity
         EconomyManager.Instance.DoTransaction(flatHexOccupationBonus);
 
         CDebug.Log(CDebug.hexEconomy, Id + " added flat occupation bonus " + flatHexOccupationBonus);
+    }
+
+    protected void ApplyImprovement(DefendingEntityImprovement improvement)
+    {
+        foreach (NamedAttributeModifier attributeModifier in improvement.AttributeModifiers)
+        {
+            AddAttributeModifier(attributeModifier.AttributeName, attributeModifier.AttributeModifier);
+        }
+
+        foreach (HexOccupationBonus hexOccupationBonus in improvement.FlatHexOccupationBonuses)
+        {
+            flatHexOccupationBonuses.AddBonus(hexOccupationBonus);
+        }
+
+        foreach (AbilityTemplate abilityTemplate in improvement.Abilities)
+        {
+            abilities.AddAbility(abilityTemplate.GenerateAbility(this));
+        }
     }
 
     public void AddAttributeModifier(AttributeName attribute, AttributeModifier modifier)
@@ -307,11 +436,11 @@ public abstract class DefendingEntity
         return attributes[attributeName].Value();
     }
 
-    protected EconomyTransaction GetHexOccupationBonus(HexType hexType, List<HexOccupationBonus> occupationBonusList)
+    protected EconomyTransaction GetHexOccupationBonus(HexType hexType, OccupationBonusList<HexOccupationBonus> occupationBonusList)
     {
         EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
 
-        foreach (HexOccupationBonus hexOccupationBonus in occupationBonusList)
+        foreach (HexOccupationBonus hexOccupationBonus in occupationBonusList.List)
         {
             if ( hexOccupationBonus.HexType == hexType)
             {
@@ -331,7 +460,37 @@ public abstract class DefendingEntity
         return attributes[attributeName].DisplayName;
     }
 
-    //Attribute Callbacks
+    //Callbacks
+    public void RegisterForOnFlatHexOccupationBonusChangedCallback(Action callback)
+    {
+        OnFlatHexOccupationBonusChanged += callback;
+    }
+
+    public void DeregisterForOnFlatHexOccupationBonusChangedCallback(Action callback)
+    {
+        OnFlatHexOccupationBonusChanged -= callback;
+    }
+
+    public void RegisterForOnAbilityAddedCallback(Action<Ability> callback)
+    {
+        OnAbilityAddedCallback += callback;
+    }
+
+    public void DeregisterForOnAbilityAddedCallback(Action<Ability> callback)
+    {
+        OnAbilityAddedCallback -= callback;
+    }
+
+    public void RegisterForOnAbilityRemovedCallback(Action<Ability> callback)
+    {
+        OnAbilityRemovedCallback += callback;
+    }
+
+    public void DeregisterForOnAbilityRemovedCallback(Action<Ability> callback)
+    {
+        OnAbilityRemovedCallback -= callback;
+    }
+
     public void RegisterForOnAttributeChangedCallback(Action<float> callback, AttributeName attribute)
     {
         OnAttributeChangedCallbackDictionary[attribute] += callback;

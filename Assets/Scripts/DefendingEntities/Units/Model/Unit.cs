@@ -26,9 +26,11 @@ public class Unit : DefendingEntity
     private Action OnExperienceFatigueLevelChangedCallback;
 
     //Economy
-    private List<HexOccupationBonus> conditionalHexOccupationBonuses;
+    private OccupationBonusList<HexOccupationBonus> conditionalHexOccupationBonuses;
+    private Action OnConditionalHexOccupationBonusChanged;
 
-    private List<StructureOccupationBonus> conditionalStructureOccupationBonuses;
+    private OccupationBonusList<StructureOccupationBonus> conditionalStructureOccupationBonuses;
+    private Action OnConditionalStructureOccupationBonusChanged;
 
     //Public Properties
     public override string Id
@@ -142,21 +144,21 @@ public class Unit : DefendingEntity
 
     private void SetUpBaseConditionalHexOccupationBonuses()
     {
-        conditionalHexOccupationBonuses = new List<HexOccupationBonus>();
+        conditionalHexOccupationBonuses = new OccupationBonusList<HexOccupationBonus>(OnConditionalHexOccupationBonusChanged, OnConditionalHexOccupationBonusChanged);
 
         foreach (HexOccupationBonus hexOccupationBonus in unitTemplate.BaseConditionalHexOccupationBonuses)
         {
-            conditionalHexOccupationBonuses.Add(hexOccupationBonus);
+            conditionalHexOccupationBonuses.AddBonus(hexOccupationBonus);
         }
     }
 
     private void SetUpBaseConditionalStructureOccupationBonuses()
     {
-        conditionalStructureOccupationBonuses = new List<StructureOccupationBonus>();
+        conditionalStructureOccupationBonuses = new OccupationBonusList<StructureOccupationBonus>(OnConditionalStructureOccupationBonusChanged, OnConditionalStructureOccupationBonusChanged);
 
         foreach (StructureOccupationBonus conditionalStructureOccupationBonus in unitTemplate.BaseConditionalStructureOccupationBonuses)
         {
-            conditionalStructureOccupationBonuses.Add(conditionalStructureOccupationBonus);
+            conditionalStructureOccupationBonuses.AddBonus(conditionalStructureOccupationBonus);
         }
     }
 
@@ -219,14 +221,14 @@ public class Unit : DefendingEntity
         EconomyManager.Instance.DoTransaction(netConditionalStructureOccupationBonus);
     }
 
-    private EconomyTransaction GetStructureOccupationBonus(Structure structure, List<StructureOccupationBonus> structureOccupationBonuses)
+    private EconomyTransaction GetStructureOccupationBonus(Structure structure, OccupationBonusList<StructureOccupationBonus> structureOccupationBonuses)
     {
         EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
 
         StructureTemplate template = structure != null ? structure.StructureTemplate : null;
         StructureUpgrade upgrade = structure != null ? structure.CurrentUpgradeLevel() : null;
 
-        foreach (StructureOccupationBonus structureOccupationBonus in structureOccupationBonuses)
+        foreach (StructureOccupationBonus structureOccupationBonus in structureOccupationBonuses.List)
         {
             if ( structureOccupationBonus.StructureTemplate == template && structureOccupationBonus.StructureUpgradeLevel == upgrade )
             {
@@ -297,20 +299,22 @@ public class Unit : DefendingEntity
             return false;
         }
 
-        if ( levelledTalents[talentChosen] >= talentChosen.AttributeBonuses.Length)
+        if ( levelledTalents[talentChosen] >= talentChosen.UnitImprovements.Length)
         {
             return false;
         }
 
         if (levelledTalents[talentChosen] != 0)
         {
-            NamedAttributeModifier outgoingNamedModifier = talentChosen.AttributeBonuses[levelledTalents[talentChosen] - 1];
-            bool removedModifier = TryRemoveAttributeModifier(outgoingNamedModifier.AttributeName, outgoingNamedModifier.AttributeModifier);
-            Assert.IsTrue(removedModifier);
+            NamedAttributeModifier[] outgoingNamedModifiers = talentChosen.UnitImprovements[levelledTalents[talentChosen] - 1].AttributeModifiers;
+            foreach (NamedAttributeModifier outgoingNamedModifier in outgoingNamedModifiers)
+            {
+                bool removedModifier = TryRemoveAttributeModifier(outgoingNamedModifier.AttributeName, outgoingNamedModifier.AttributeModifier);
+                Assert.IsTrue(removedModifier);
+            }
         }
 
-        NamedAttributeModifier incomingNamedModifier = talentChosen.AttributeBonuses[levelledTalents[talentChosen]];
-        AddAttributeModifier(incomingNamedModifier.AttributeName, incomingNamedModifier.AttributeModifier);
+        ApplyUnitImprovement(talentChosen.UnitImprovements[LevelledTalents[talentChosen]]);
 
         levelledTalents[talentChosen] += 1;
 
@@ -323,6 +327,21 @@ public class Unit : DefendingEntity
         }
 
         return true;
+    }
+
+    private void ApplyUnitImprovement(UnitImprovement improvement)
+    {
+        ApplyImprovement(improvement);
+
+        foreach (StructureOccupationBonus occupationBonus in improvement.ConditionalStructureOccupationBonuses)
+        {
+            conditionalStructureOccupationBonuses.AddBonus(occupationBonus);
+        }
+
+        foreach (HexOccupationBonus occupationBonus in improvement.ConditionalHexOccupationBonuses)
+        {
+            conditionalHexOccupationBonuses.AddBonus(occupationBonus);
+        }
     }
 
     public void RegisterForOnMovedCallback(Action<Coord> callback)
@@ -344,4 +363,25 @@ public class Unit : DefendingEntity
     {
         OnExperienceFatigueLevelChangedCallback -= callback;
     }
+
+    public void RegisterForOnConditionalHexOccupationBonusChangedCallback(Action callback)
+    {
+        OnConditionalHexOccupationBonusChanged += callback;
+    }
+
+    public void DeregisterForOnConditionalHexOccupationBonusChangedCallback(Action callback)
+    {
+        OnConditionalHexOccupationBonusChanged -= callback;
+    }
+
+    public void RegisterForOnConditionalStructureOccupationBonusChangedCallback(Action callback)
+    {
+        OnConditionalStructureOccupationBonusChanged += callback;
+    }
+
+    public void DeregisterForOnConditionalStructureOccupationBonusChangedCallback(Action callback)
+    {
+        OnConditionalStructureOccupationBonusChanged -= callback;
+    }
+
 }

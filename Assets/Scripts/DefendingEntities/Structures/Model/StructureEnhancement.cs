@@ -5,7 +5,7 @@ using System;
 public class StructureEnhancement {
 
     [SerializeField]
-    private NamedAttributeModifier[] enhancementBonuses;
+    private DefendingEntityImprovement enhancementBonus;
 
     [SerializeField]
     private string descriptionText;
@@ -13,11 +13,11 @@ public class StructureEnhancement {
     [SerializeField]
     private EconomyTransaction cost;
 
-    public NamedAttributeModifier[] EnhancementBonuses
+    public DefendingEntityImprovement EnhancementBonus
     {
         get
         {
-            return enhancementBonuses;
+            return enhancementBonus;
         }
     }
 
