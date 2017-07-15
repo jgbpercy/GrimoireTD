@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
-using System;
 
+[CreateAssetMenu(fileName = "NewBuildModeAbilityTemplate", menuName = "Build Mode Abilities/Build Mode Ability")]
 public class BuildModeAbilityTemplate : AbilityTemplate {
 
     [SerializeField]
     private EconomyTransaction cost;
+
+    [SerializeField]
+    private BMTargetingComponent targetingComponent;
+
+    [SerializeField]
+    private BMEffectComponent effectComponent;
 
     public EconomyTransaction Cost
     {
@@ -14,9 +20,25 @@ public class BuildModeAbilityTemplate : AbilityTemplate {
         }
     }
 
+    public BMTargetingComponent TargetingComponent
+    {
+        get
+        {
+            return targetingComponent;
+        }
+    }
+
+    public BMEffectComponent EffectComponent
+    {
+        get
+        {
+            return effectComponent;
+        }
+    }
+
     public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
     {
-        throw new NotImplementedException("Cannot Generate from BuildModeAbilityTemplate - it is pseudo-abstract");
+        return new BuildModeAbility(this, attachedToDefendingEntity);
     }
 
 }

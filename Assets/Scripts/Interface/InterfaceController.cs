@@ -2,6 +2,7 @@
 using UnityEngine.EventSystems;
 using System;
 using UnityEngine.Assertions;
+using System.Collections.Generic;
 
 public enum InterfaceCursorMode
 {
@@ -10,6 +11,7 @@ public enum InterfaceCursorMode
     EXECUTE_BUILD_MODE_ABILITY
 }
 
+//TODO: Handle individual entity selection (for DefendingEntity-targetted Build Mode Abilities)
 public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     [SerializeField]
@@ -25,7 +27,8 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private Structure selectedStructureInstance = null;
     private Unit selectedUnitInstance = null;
 
-    private HexTargetedBuildModeAbility hexTargetedAbilityToActivate = null;
+    private PlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
+    private BuildModeAbility selectedBuildModeAbility = null;
 
     [SerializeField]
     private float maxRayFromCameraDistance = 100f;
@@ -83,11 +86,11 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         }
     }
 
-    public HexTargetedBuildModeAbility HexTargetedAbilityToActivate
+    public PlayerTargetedComponent SelectedBuildModeAbilityTargetingComponent
     {
         get
         {
-            return hexTargetedAbilityToActivate;
+            return selectedBuildModeAbilityTargetingComponent;
         }
     }
 
@@ -191,7 +194,6 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         throw new Exception("Mouse Raycast hit unhandled");
     }
 
-
     private void HandleMouseClick()
     {
         if (mouseOverCoord == null && mouseOverCreep == null)
@@ -206,7 +208,10 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             return;
         }
 
-        if (cursorMode == InterfaceCursorMode.SELECT && (mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null))
+        if (
+            cursorMode == InterfaceCursorMode.SELECT && 
+            (mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null) 
+        )
         {
             SelectHexContents(mouseOverHex);
             DeselectCreep();
@@ -223,11 +228,17 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             map.TryBuildStructureAt(mouseOverCoord, selectedStructureTemplate, false);
         }
 
-        if (cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY && hexTargetedAbilityToActivate.IsTargetSuitable(map.WhereAmI(selectedUnitInstance), mouseOverCoord))
+        if (
+            cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY && 
+            selectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, mouseOverCoord) 
+        )
         {
             CDebug.Log(CDebug.buildModeAbilities, "InterfaceController detected hex targeted build mode ability click");
-            hexTargetedAbilityToActivate.ExecuteAbility(map.WhereAmI(selectedUnitInstance), mouseOverCoord, selectedUnitInstance);
+
+            selectedBuildModeAbility.ExecuteAbility(selectedUnitInstance, mouseOverCoord);
+
             SetCursorModeSelect();
+
             SelectHexContents(mouseOverHex);
         }
 
@@ -316,21 +327,22 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             return;
         }
 
-        Coord unitCoord = map.WhereAmI(selectedUnitInstance);
-
-        if (abilityToActivate is HexTargetedBuildModeAbility)
+        PlayerTargetedComponent playerTargetedComponent = abilityToActivate.BuildModeAbilityTemplate.TargetingComponent as PlayerTargetedComponent;
+        if (playerTargetedComponent != null)
         {
-            CDebug.Log(CDebug.buildModeAbilities, "Hex Targeted ability activated");
+            CDebug.Log(CDebug.buildModeAbilities, "Player Targeted ability activated");
 
             cursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
 
-            hexTargetedAbilityToActivate = abilityToActivate as HexTargetedBuildModeAbility;
+            selectedBuildModeAbilityTargetingComponent = playerTargetedComponent;
+            selectedBuildModeAbility = abilityToActivate;
 
-            hexTargetedAbilityToActivate.RegenerateCachedDisallowedTargetHexes(map, unitCoord);
+            //TODO: optimisation: only do for a movement ability?
+            selectedUnitInstance.RegenerateCachedDisallowedMovementDestinations();
         }
         else
         {
-            abilityToActivate.ExecuteAbility(unitCoord, unitCoord, selectedUnitInstance);
+            abilityToActivate.ExecuteAbility(selectedUnitInstance, selectedUnitInstance.CoordPosition);
 
             SetCursorModeSelect();
         }

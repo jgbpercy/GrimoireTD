@@ -65,7 +65,7 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         creepList.Sort((x, y) => x.DistanceFromEnd.CompareTo(y.DistanceFromEnd));
     }
 
-    public static ITargetable CreepInRangeNearestToEnd(Vector3 fromPosition, float range)
+    public static IDefendModeTargetable CreepInRangeNearestToEnd(Vector3 fromPosition, float range)
     {
         float creepDistanceFromPosition;
 

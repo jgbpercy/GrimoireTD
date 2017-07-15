@@ -38,7 +38,7 @@ public class AoeProjectileTemplate : ProjectileTemplate {
         }
     }
 
-    public override Projectile GenerateProjectile(Vector3 startPosition, ITargetable target, DefendingEntity sourceDefendingEntity)
+    public override Projectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, DefendingEntity sourceDefendingEntity)
     {
         return new AoeProjectile(startPosition, target, this, sourceDefendingEntity);
     }

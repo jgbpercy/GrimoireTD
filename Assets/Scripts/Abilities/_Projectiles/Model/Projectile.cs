@@ -10,7 +10,7 @@ public class Projectile : IFrameUpdatee {
 
     protected DefendingEntity sourceDefendingEntity;
 
-    private ITargetable target;
+    private IDefendModeTargetable target;
 
     protected bool destroyingForHitTarget;
     private bool destroyingForNoTarget;
@@ -43,7 +43,7 @@ public class Projectile : IFrameUpdatee {
         }
     }
 
-    public Projectile(Vector3 startPosition, ITargetable target, ProjectileTemplate template, DefendingEntity sourceDefendingEntity)
+    public Projectile(Vector3 startPosition, IDefendModeTargetable target, ProjectileTemplate template, DefendingEntity sourceDefendingEntity)
     {
         id = IdGen.GetNextId();
 

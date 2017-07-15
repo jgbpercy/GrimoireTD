@@ -36,7 +36,7 @@ public class ProjectileTemplate : ScriptableObject {
         }
     }
 
-    public virtual Projectile GenerateProjectile(Vector3 startPosition, ITargetable target, DefendingEntity sourceDefendingEntity)
+    public virtual Projectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, DefendingEntity sourceDefendingEntity)
     {
         return new Projectile(startPosition, target, this, sourceDefendingEntity);
     } 

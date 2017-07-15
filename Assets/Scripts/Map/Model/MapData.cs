@@ -312,18 +312,11 @@ public class MapData {
     }
 
     //  Unit Movement
-    public bool CanMoveUnitTo(Coord targetCoord, EconomyTransaction cost, List<Coord> disallowedCoordsForMove)
+    public bool CanMoveUnitTo(Coord targetCoord, List<Coord> disallowedCoordsForMove)
     {
         if (!GetHexAt(targetCoord).CanPlaceUnitHere())
         {
             //CDebug.Log(something)
-            return false;
-        }
-
-            //CDebug.Log(something);
-        if (!EconomyManager.Instance.CanDoTransaction(cost))
-        {
-            //CDebug.Log(something);
             return false;
         }
 
@@ -336,9 +329,9 @@ public class MapData {
         return true;
     }
 
-    public bool TryMoveUnitTo(Coord fromCoord, Coord targetCoord, Unit unit, EconomyTransaction cost, List<Coord> disallowedCoordsForMove)
+    public bool TryMoveUnitTo(Coord fromCoord, Coord targetCoord, Unit unit, List<Coord> disallowedCoordsForMove)
     {
-        if ( !CanMoveUnitTo(targetCoord, cost, disallowedCoordsForMove) )
+        if ( !CanMoveUnitTo(targetCoord, disallowedCoordsForMove) )
         {
             return false;
         }
@@ -348,8 +341,6 @@ public class MapData {
 
         defendingEntityPositions.Remove(unit);
         defendingEntityPositions.Add(unit, targetCoord);
-
-        EconomyManager.Instance.DoTransaction(cost);
 
         TempRegeneratePath();
 

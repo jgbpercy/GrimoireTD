@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 
 [CreateAssetMenu(fileName = "NewDefendModeAbilityTemplate", menuName = "Defend Mode Abilities/Defend Mode Ability")]
 public class DefendModeAbilityTemplate : AbilityTemplate {
@@ -8,10 +7,10 @@ public class DefendModeAbilityTemplate : AbilityTemplate {
     protected float baseCooldown;
 
     [SerializeField]
-    protected TargetingComponent targetingComponent;
+    protected DMTargetingComponent targetingComponent;
 
     [SerializeField]
-    protected EffectComponent effectComponent;
+    protected DMEffectComponent effectComponent;
 
     public float BaseCooldown
     {
@@ -21,7 +20,7 @@ public class DefendModeAbilityTemplate : AbilityTemplate {
         }
     }
 
-    public TargetingComponent TargetingComponent
+    public DMTargetingComponent TargetingComponent
     {
         get
         {
@@ -29,7 +28,7 @@ public class DefendModeAbilityTemplate : AbilityTemplate {
         }
     }
 
-    public EffectComponent EffectComponent
+    public DMEffectComponent EffectComponent
     {
         get
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 //all currently assumes tileScale = 1 whops
 [Serializable]
-public class Coord : object
+public class Coord : object, IBuildModeTargetable
 {
     [SerializeField]
     private int x;

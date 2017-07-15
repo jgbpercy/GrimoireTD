@@ -12,6 +12,8 @@ public class Unit : DefendingEntity
     //Movement
     private Action<Coord> OnMovedCallback;
 
+    private List<Coord> cachedDisallowedMovementDestinations = new List<Coord>();
+
     //Talents & levelling
     private Dictionary<UnitTalent, int> levelledTalents;
 
@@ -52,6 +54,14 @@ public class Unit : DefendingEntity
         get
         {
             return unitTemplate;
+        }
+    }
+
+    public List<Coord> CachedDisallowedMovementDestinations
+    {
+        get
+        {
+            return cachedDisallowedMovementDestinations;
         }
     }
 
@@ -385,6 +395,11 @@ public class Unit : DefendingEntity
     //Movement
     public void Move(Coord targetCoord)
     {
+        if ( !MapGenerator.Instance.Map.TryMoveUnitTo(coordPosition, targetCoord, this, cachedDisallowedMovementDestinations) )
+        {
+            throw new Exception("Invalid unit movement attempted");
+        }
+
         OnHex.DeregisterForOnDefenderAuraAddedCallback(OnNewDefenderAura);
         OnHex.DeregisterForOnDefenderAuraRemovedCallback(OnClearDefenderAura);
 
@@ -401,6 +416,11 @@ public class Unit : DefendingEntity
 
             OnInitialiseAura(x);
         });
+    }
+
+    public void RegenerateCachedDisallowedMovementDestinations()
+    {
+        cachedDisallowedMovementDestinations = MapGenerator.Instance.Map.GetDisallowedCoordsAfterUnitMove(CoordPosition);
     }
 
     //Callbacks

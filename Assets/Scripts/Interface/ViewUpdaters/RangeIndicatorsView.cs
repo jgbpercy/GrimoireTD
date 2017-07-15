@@ -57,7 +57,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
             {
                 mouseOverHex.StructureHere.DefendModeAbilities().ForEach(x => {
 
-                    TargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
+                    DMTargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
 
                     if (targetingComponent is TargetingComponentFloatRange)
                     {
@@ -70,7 +70,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
             {
                 mouseOverHex.UnitHere.DefendModeAbilities().ForEach(x => {
 
-                    TargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
+                    DMTargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
 
                     if (targetingComponent is TargetingComponentFloatRange)
                     {

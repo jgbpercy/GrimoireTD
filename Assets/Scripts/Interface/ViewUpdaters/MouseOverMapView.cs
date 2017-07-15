@@ -101,7 +101,7 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
 
             tileHighlighter.position = mouseOverCoord.ToPositionVector();
 
-            if (interfaceController.HexTargetedAbilityToActivate.IsTargetSuitable(interfaceController.SelectedUnitLocation, mouseOverCoord))
+            if (interfaceController.SelectedBuildModeAbilityTargetingComponent.IsValidTarget(interfaceController.SelectedUnitInstance, mouseOverCoord))
             {
                 tileHighlighterRenderer.material.color = tileHighlighterTestBright;
             }

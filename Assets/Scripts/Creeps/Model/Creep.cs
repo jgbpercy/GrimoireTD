@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
-public class Creep : ITargetable, IFrameUpdatee {
+public class Creep : IDefendModeTargetable, IFrameUpdatee {
 
     public class PersistentEffect
     {

@@ -28,7 +28,7 @@ public class AoeProjectile : Projectile {
         }
     }
 
-    public AoeProjectile(Vector3 startPosition, ITargetable target, AoeProjectileTemplate template, DefendingEntity sourceDefendingEntity) : base(startPosition, target, template, sourceDefendingEntity)
+    public AoeProjectile(Vector3 startPosition, IDefendModeTargetable target, AoeProjectileTemplate template, DefendingEntity sourceDefendingEntity) : base(startPosition, target, template, sourceDefendingEntity)
     {
         aoeProjectileTemplate = template;
         currentAoeRadius = 0.001f;

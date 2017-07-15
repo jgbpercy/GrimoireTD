@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-public abstract class BuildModeAbility : Ability {
+public class BuildModeAbility : Ability {
 
     private BuildModeAbilityTemplate buildModeAbilityTemplate;
 
@@ -17,5 +19,15 @@ public abstract class BuildModeAbility : Ability {
         buildModeAbilityTemplate = template;
     }
 
-    public abstract bool ExecuteAbility(Coord fromCoord, Coord targetCoord, DefendingEntity executingEntity);
+    public void ExecuteAbility(DefendingEntity executingEntity, Coord executionPosition)
+    {
+        List<IBuildModeTargetable> targetList = buildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
+
+        buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
+    }
+
+    public override string UIText()
+    {
+        throw new NotImplementedException();
+    }
 }

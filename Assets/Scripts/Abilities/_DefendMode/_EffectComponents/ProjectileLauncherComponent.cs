@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewProjectileLauncher", menuName = "Defend Mode Abilities/Effect Components/Projectile Launcher")]
-public class ProjectileLauncherComponent : EffectComponent {
+public class ProjectileLauncherComponent : DMEffectComponent {
 
     [SerializeField]
     protected ProjectileTemplate projectileToFireTemplate;
@@ -15,9 +15,9 @@ public class ProjectileLauncherComponent : EffectComponent {
         }
     }
 
-    public override void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<ITargetable> targets)
+    public override void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<IDefendModeTargetable> targets)
     {
-        foreach (ITargetable target in targets)
+        foreach (IDefendModeTargetable target in targets)
         {
             projectileToFireTemplate.GenerateProjectile(attachedToDefendingEntity.CoordPosition.ToFirePointVector(), target, attachedToDefendingEntity);
         }

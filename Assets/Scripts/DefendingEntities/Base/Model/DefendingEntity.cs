@@ -10,7 +10,7 @@ public enum AttributeName
     cooldownReduction
 }
 
-public abstract class DefendingEntity
+public abstract class DefendingEntity : IBuildModeTargetable
 {
     protected int id;
 
