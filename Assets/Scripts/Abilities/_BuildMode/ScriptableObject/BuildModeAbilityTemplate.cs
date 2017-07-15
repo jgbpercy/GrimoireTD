@@ -10,7 +10,7 @@ public class BuildModeAbilityTemplate : AbilityTemplate {
     private BMTargetingComponent targetingComponent;
 
     [SerializeField]
-    private BMEffectComponent effectComponent;
+    private SoBuildModeEffectComponent effectComponent;
 
     public EconomyTransaction Cost
     {
@@ -28,7 +28,7 @@ public class BuildModeAbilityTemplate : AbilityTemplate {
         }
     }
 
-    public BMEffectComponent EffectComponent
+    public IBuildModeEffectComponent EffectComponent
     {
         get
         {

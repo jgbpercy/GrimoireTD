@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BMEffectComponent : ScriptableObject {
+public class SoBuildModeEffectComponent : ScriptableObject, IBuildModeEffectComponent {
 
     public virtual void ExecuteEffect(DefendingEntity executingEntity, List<IBuildModeTargetable> targets)
     {

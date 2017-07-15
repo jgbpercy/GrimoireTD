@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 [CreateAssetMenu(fileName = "NewMoveEffectComponent", menuName = "Build Mode Abilities/Effect Components/Move")]
-public class MoveEffectComponent : BMEffectComponent
+public class SoMoveEffectComponent : SoBuildModeEffectComponent, IMoveEffectComponent
 {
     public override void ExecuteEffect(DefendingEntity executingEntity, List<IBuildModeTargetable> targets)
     {
