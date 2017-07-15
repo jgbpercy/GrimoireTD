@@ -287,8 +287,7 @@ public class Unit : DefendingEntity
 
         if (levelledTalents[talentChosen] != 0)
         {
-            NamedAttributeModifier[] outgoingNamedModifiers = talentChosen.UnitImprovements[levelledTalents[talentChosen] - 1].AttributeModifiers;
-            foreach (NamedAttributeModifier outgoingNamedModifier in outgoingNamedModifiers)
+            foreach (NamedAttributeModifier outgoingNamedModifier in talentChosen.UnitImprovements[levelledTalents[talentChosen] - 1].AttributeModifiers)
             {
                 bool removedModifier = TryRemoveAttributeModifier(outgoingNamedModifier.AttributeName, outgoingNamedModifier.AttributeModifier);
                 Assert.IsTrue(removedModifier);

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class CUnitImprovement : CDefendingEntityImprovement, IUnitImprovement {
 
@@ -8,7 +6,7 @@ public class CUnitImprovement : CDefendingEntityImprovement, IUnitImprovement {
 
     private StructureOccupationBonus[] conditionalStructureOccupationBonuses;
 
-    public HexOccupationBonus[] ConditionalHexOccupationBonuses
+    public IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses
     {
         get
         {
@@ -16,7 +14,7 @@ public class CUnitImprovement : CDefendingEntityImprovement, IUnitImprovement {
         }
     }
 
-    public StructureOccupationBonus[] ConditionalStructureOccupationBonuses
+    public IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses
     {
         get
         {

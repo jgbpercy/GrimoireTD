@@ -1,5 +1,5 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "NewUnitImprovement", menuName = "Structures and Units/Unit Improvement")]
 public class SoUnitImprovement : SoDefendingEntityImprovement, IUnitImprovement {
@@ -10,7 +10,7 @@ public class SoUnitImprovement : SoDefendingEntityImprovement, IUnitImprovement 
     [SerializeField]
     private StructureOccupationBonus[] conditionalStructureOccupationBonuses;
 
-    public HexOccupationBonus[] ConditionalHexOccupationBonuses
+    public IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses
     {
         get
         {
@@ -18,7 +18,7 @@ public class SoUnitImprovement : SoDefendingEntityImprovement, IUnitImprovement 
         }
     }
 
-    public StructureOccupationBonus[] ConditionalStructureOccupationBonuses
+    public IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses
     {
         get
         {

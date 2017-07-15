@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public interface IUnitImprovement : IDefendingEntityImprovement {
 
-    HexOccupationBonus[] ConditionalHexOccupationBonuses { get; }
+    IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses { get; }
 
-    StructureOccupationBonus[] ConditionalStructureOccupationBonuses { get; }
+    IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
 
 }

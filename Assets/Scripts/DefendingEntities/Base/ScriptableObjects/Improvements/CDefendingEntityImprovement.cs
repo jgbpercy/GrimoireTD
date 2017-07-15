@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class CDefendingEntityImprovement : IDefendingEntityImprovement {
 
@@ -12,7 +10,7 @@ public class CDefendingEntityImprovement : IDefendingEntityImprovement {
 
     private DefenderAuraTemplate[] auras;
 
-    public NamedAttributeModifier[] AttributeModifiers
+    public IEnumerable<NamedAttributeModifier> AttributeModifiers
     {
         get
         {
@@ -20,7 +18,7 @@ public class CDefendingEntityImprovement : IDefendingEntityImprovement {
         }
     }
 
-    public HexOccupationBonus[] FlatHexOccupationBonuses
+    public IEnumerable<HexOccupationBonus> FlatHexOccupationBonuses
     {
         get
         {
@@ -28,7 +26,7 @@ public class CDefendingEntityImprovement : IDefendingEntityImprovement {
         }
     }
 
-    public AbilityTemplate[] Abilities
+    public IEnumerable<AbilityTemplate> Abilities
     {
         get
         {
@@ -36,7 +34,7 @@ public class CDefendingEntityImprovement : IDefendingEntityImprovement {
         }
     }
 
-    public DefenderAuraTemplate[] Auras
+    public IEnumerable<DefenderAuraTemplate> Auras
     {
         get
         {

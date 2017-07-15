@@ -1,12 +1,14 @@
-﻿public interface IDefendingEntityImprovement {
+﻿using System.Collections.Generic;
 
-    NamedAttributeModifier[] AttributeModifiers { get; }
+public interface IDefendingEntityImprovement {
 
-    HexOccupationBonus[] FlatHexOccupationBonuses { get; }
+    IEnumerable<NamedAttributeModifier> AttributeModifiers { get; }
 
-    AbilityTemplate[] Abilities { get; }
+    IEnumerable<HexOccupationBonus> FlatHexOccupationBonuses { get; }
 
-    DefenderAuraTemplate[] Auras { get; }
+    IEnumerable<AbilityTemplate> Abilities { get; }
+
+    IEnumerable<DefenderAuraTemplate> Auras { get; }
 
     IDefendingEntityImprovement Combine(IDefendingEntityImprovement otherImprovement);
 }
