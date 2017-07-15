@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class BuildModeAbility : Ability {
 
@@ -24,6 +23,8 @@ public class BuildModeAbility : Ability {
         List<IBuildModeTargetable> targetList = buildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
 
         buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
+
+        EconomyManager.Instance.DoTransaction(buildModeAbilityTemplate.Cost);
     }
 
     public override string UIText()
