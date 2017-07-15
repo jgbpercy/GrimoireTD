@@ -10,7 +10,7 @@ public class Unit : DefendingEntity
     private UnitTemplate unitTemplate;
 
     //Movement
-    private Action<Coord> onMovedCallback;
+    private Action<Coord> OnMovedCallback;
 
     //Talents & levelling
     private Dictionary<UnitTalent, int> levelledTalents;
@@ -26,11 +26,9 @@ public class Unit : DefendingEntity
     private Action OnExperienceFatigueLevelChangedCallback;
 
     //Economy
-    private OccupationBonusList<HexOccupationBonus> conditionalHexOccupationBonuses;
-    private Action OnConditionalHexOccupationBonusChanged;
+    private CallbackList<HexOccupationBonus> conditionalHexOccupationBonuses;
 
-    private OccupationBonusList<StructureOccupationBonus> conditionalStructureOccupationBonuses;
-    private Action OnConditionalStructureOccupationBonusChanged;
+    private CallbackList<StructureOccupationBonus> conditionalStructureOccupationBonuses;
 
     //Public Properties
     public override string Id
@@ -54,14 +52,6 @@ public class Unit : DefendingEntity
         get
         {
             return unitTemplate;
-        }
-    }
-
-    public Action<Coord> OnMovedCallback
-    {
-        get
-        {
-            return onMovedCallback;
         }
     }
 
@@ -113,16 +103,21 @@ public class Unit : DefendingEntity
         }
     }
 
-    public Unit(UnitTemplate unitTemplate, Vector3 position) : base(unitTemplate)
+    //Constructor
+    public Unit(UnitTemplate unitTemplate, Coord coordPosition) : base(unitTemplate, coordPosition)
     {
+        Assert.IsTrue(unitTemplate.BaseCharacteristics is IUnitImprovement);
+
         this.unitTemplate = unitTemplate;
 
-        DefendingEntityView.Instance.CreateUnit(this, position);
+        DefendingEntityView.Instance.CreateUnit(this, coordPosition.ToPositionVector());
 
         SetUpTalentsAchieved();
 
-        SetUpBaseConditionalHexOccupationBonuses();
-        SetUpBaseConditionalStructureOccupationBonuses();
+        conditionalHexOccupationBonuses = new CallbackList<HexOccupationBonus>();
+        conditionalStructureOccupationBonuses = new CallbackList<StructureOccupationBonus>();
+
+        ApplyUnitImprovement(unitTemplate.BaseUnitCharacteristics);
 
         timeIdle = 0f;
         timeActive = 0f;
@@ -132,6 +127,7 @@ public class Unit : DefendingEntity
         level = 0;
     }
 
+    //Set Up
     private void SetUpTalentsAchieved()
     {
         levelledTalents = new Dictionary<UnitTalent, int>();
@@ -142,26 +138,7 @@ public class Unit : DefendingEntity
         }
     }
 
-    private void SetUpBaseConditionalHexOccupationBonuses()
-    {
-        conditionalHexOccupationBonuses = new OccupationBonusList<HexOccupationBonus>(OnConditionalHexOccupationBonusChanged, OnConditionalHexOccupationBonusChanged);
-
-        foreach (HexOccupationBonus hexOccupationBonus in unitTemplate.BaseConditionalHexOccupationBonuses)
-        {
-            conditionalHexOccupationBonuses.AddBonus(hexOccupationBonus);
-        }
-    }
-
-    private void SetUpBaseConditionalStructureOccupationBonuses()
-    {
-        conditionalStructureOccupationBonuses = new OccupationBonusList<StructureOccupationBonus>(OnConditionalStructureOccupationBonusChanged, OnConditionalStructureOccupationBonusChanged);
-
-        foreach (StructureOccupationBonus conditionalStructureOccupationBonus in unitTemplate.BaseConditionalStructureOccupationBonuses)
-        {
-            conditionalStructureOccupationBonuses.AddBonus(conditionalStructureOccupationBonus);
-        }
-    }
-
+    //UI
     public override string CurrentName()
     {
         return unitTemplate.NameInGame;
@@ -172,6 +149,7 @@ public class Unit : DefendingEntity
         return unitTemplate.Description;
     }
 
+    //Time Tracking
     public void TrackTime(bool wasIdle, float time)
     {
         if (wasIdle)
@@ -184,6 +162,7 @@ public class Unit : DefendingEntity
         }
     }
 
+    //Enter Build Mode
     protected override void OnEnterBuildMode()
     {
         base.OnEnterBuildMode();
@@ -196,6 +175,7 @@ public class Unit : DefendingEntity
         timeActive = 0f;
     }
 
+    //Economy
     private void OnEnterBuildModeEconomyChanges()
     {
         CDebug.Log(CDebug.hexEconomy, "Time Active: " + timeActive.ToString("0.0"));
@@ -221,7 +201,7 @@ public class Unit : DefendingEntity
         EconomyManager.Instance.DoTransaction(netConditionalStructureOccupationBonus);
     }
 
-    private EconomyTransaction GetStructureOccupationBonus(Structure structure, OccupationBonusList<StructureOccupationBonus> structureOccupationBonuses)
+    private EconomyTransaction GetStructureOccupationBonus(Structure structure, CallbackList<StructureOccupationBonus> structureOccupationBonuses)
     {
         EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
 
@@ -239,6 +219,7 @@ public class Unit : DefendingEntity
         return occupationBonusTransaction;
     }
 
+    //Experience, Fatigue and Talents
     private void OnEnterBuildModeExperienceAndFatigueChanges()
     {
         CDebug.Log(CDebug.experienceAndFatigue, "Time Active: " + timeActive.ToString("0.0"));
@@ -329,31 +310,113 @@ public class Unit : DefendingEntity
         return true;
     }
 
-    private void ApplyUnitImprovement(UnitImprovement improvement)
+    //Improvement
+    private void ApplyUnitImprovement(IUnitImprovement improvement)
     {
         ApplyImprovement(improvement);
 
         foreach (StructureOccupationBonus occupationBonus in improvement.ConditionalStructureOccupationBonuses)
         {
-            conditionalStructureOccupationBonuses.AddBonus(occupationBonus);
+            conditionalStructureOccupationBonuses.Add(occupationBonus);
         }
 
         foreach (HexOccupationBonus occupationBonus in improvement.ConditionalHexOccupationBonuses)
         {
-            conditionalHexOccupationBonuses.AddBonus(occupationBonus);
+            conditionalHexOccupationBonuses.Add(occupationBonus);
         }
     }
 
+    private void RemoveUnitImprovement(IUnitImprovement improvement)
+    {
+        RemoveImprovement(improvement);
+
+        bool wasPresent;
+
+        foreach (StructureOccupationBonus occupationBonus in improvement.ConditionalStructureOccupationBonuses) 
+        {
+            wasPresent = conditionalStructureOccupationBonuses.TryRemove(occupationBonus);
+            Assert.IsTrue(wasPresent);
+        }
+
+        foreach (HexOccupationBonus occupationBonus in improvement.ConditionalHexOccupationBonuses)
+        {
+            wasPresent = conditionalHexOccupationBonuses.TryRemove(occupationBonus);
+            Assert.IsTrue(wasPresent);
+        }
+    }
+
+    //Defender Auras Affected By
+    protected override void OnNewDefenderAura(DefenderAura aura)
+    {
+        if ( aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.UNITS )
+        {
+            affectedByDefenderAuras.Add(aura);
+
+            IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
+            if ( unitImprovement != null )
+            {
+                ApplyUnitImprovement(unitImprovement);
+            }
+            else
+            {
+                ApplyImprovement(aura.DefenderEffectTemplate.Improvement);
+            }
+        }
+    }
+
+    protected override void OnClearDefenderAura(DefenderAura aura)
+    {
+        if (aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.UNITS)
+        {
+            bool wasPresent = affectedByDefenderAuras.Contains(aura);
+            Assert.IsTrue(wasPresent);
+
+            IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
+            if (unitImprovement != null)
+            {
+                RemoveUnitImprovement(unitImprovement);
+            }
+            else
+            {
+                RemoveImprovement(aura.DefenderEffectTemplate.Improvement);
+            }
+        }
+    }
+
+    //Movement
+    public void Move(Coord targetCoord)
+    {
+        OnHex.DeregisterForOnDefenderAuraAddedCallback(OnNewDefenderAura);
+        OnHex.DeregisterForOnDefenderAuraRemovedCallback(OnClearDefenderAura);
+
+        coordPosition = targetCoord;
+
+        OnHex.RegisterForOnDefenderAuraAddedCallback(OnNewDefenderAura);
+        OnHex.RegisterForOnDefenderAuraRemovedCallback(OnClearDefenderAura);
+
+        OnMovedCallback(targetCoord);
+
+        auras.List.ForEach(x => {
+
+            x.ClearAura();
+
+            OnInitialiseAura(x);
+        });
+    }
+
+    //Callbacks
+    //  Moves
     public void RegisterForOnMovedCallback(Action<Coord> callback)
     {
-        onMovedCallback += callback;
+        OnMovedCallback += callback;
     }
 
     public void DeregisterForOnMovedCallback(Action<Coord> callback)
     {
-        onMovedCallback -= callback;
+        OnMovedCallback -= callback;
     }
 
+    //  Experience/Fatigue Change
     public void RegisterForExperienceFatigueChangedCallback(Action callback)
     {
         OnExperienceFatigueLevelChangedCallback += callback;
@@ -364,24 +427,46 @@ public class Unit : DefendingEntity
         OnExperienceFatigueLevelChangedCallback -= callback;
     }
 
-    public void RegisterForOnConditionalHexOccupationBonusChangedCallback(Action callback)
+    //  Hex Occupation Bonus
+    public void RegisterForOnConditionalHexOccupationBonusAddedCallback(Action<HexOccupationBonus> callback)
     {
-        OnConditionalHexOccupationBonusChanged += callback;
+        conditionalHexOccupationBonuses.RegisterForAdd(callback);
     }
 
-    public void DeregisterForOnConditionalHexOccupationBonusChangedCallback(Action callback)
+    public void DeregisterForOnConditionalHexOccupationBonusAddedCallback(Action<HexOccupationBonus> callback)
     {
-        OnConditionalHexOccupationBonusChanged -= callback;
+        conditionalHexOccupationBonuses.DeregisterForAdd(callback);
     }
 
-    public void RegisterForOnConditionalStructureOccupationBonusChangedCallback(Action callback)
+    public void RegisterForOnConditionalHexOccupationBonusRemovedCallback(Action<HexOccupationBonus> callback)
     {
-        OnConditionalStructureOccupationBonusChanged += callback;
+        conditionalHexOccupationBonuses.RegisterForRemove(callback);
     }
 
-    public void DeregisterForOnConditionalStructureOccupationBonusChangedCallback(Action callback)
+    public void DeregisterForOnConditionalHexOccupationBonusRemovedCallback(Action<HexOccupationBonus> callback)
     {
-        OnConditionalStructureOccupationBonusChanged -= callback;
+        conditionalHexOccupationBonuses.DeregisterForRemove(callback);
+    }
+
+    //  Structure Occupation Bonus
+    public void RegisterForOnConditionalStructureOccupationBonusAddedCallback(Action<StructureOccupationBonus> callback)
+    {
+        conditionalStructureOccupationBonuses.RegisterForAdd(callback);
+    }
+
+    public void DeregisterForOnConditionalStructureOccupationBonusAddedCallback(Action<StructureOccupationBonus> callback)
+    {
+        conditionalStructureOccupationBonuses.DeregisterForAdd(callback);
+    }
+
+    public void RegisterForOnConditionalStructureOccupationBonusRemovedCallback(Action<StructureOccupationBonus> callback)
+    {
+        conditionalStructureOccupationBonuses.RegisterForRemove(callback);
+    }
+
+    public void DeregisterForOnConditionalStructureOccupationBonusRemovedCallback(Action<StructureOccupationBonus> callback)
+    {
+        conditionalStructureOccupationBonuses.DeregisterForRemove(callback);
     }
 
 }

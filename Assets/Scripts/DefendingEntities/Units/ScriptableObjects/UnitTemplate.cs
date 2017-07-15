@@ -14,13 +14,7 @@ public class UnitTemplate : DefendingEntityTemplate {
 
     [SerializeField]
     private UnitTalent[] unitTalents;
-
-    [SerializeField]
-    private HexOccupationBonus[] baseConditionalHexOccupationBonuses;
-
-    [SerializeField]
-    private StructureOccupationBonus[] baseConditionalStructureOccupationBonuses;
-
+    
     public string NameInGame
     {
         get
@@ -53,23 +47,20 @@ public class UnitTemplate : DefendingEntityTemplate {
         }
     }
 
-    public HexOccupationBonus[] BaseConditionalHexOccupationBonuses
+    public IUnitImprovement BaseUnitCharacteristics
     {
         get
         {
-            return baseConditionalHexOccupationBonuses;
+            SoUnitImprovement baseUnitCharacteristics = BaseCharacteristics as SoUnitImprovement;
+            if ( baseUnitCharacteristics != null )
+            {
+                return baseUnitCharacteristics;
+            }
+            throw new System.Exception("Unit BaseCharacteristics is not a SoUnitImprovement");
         }
     }
 
-    public StructureOccupationBonus[] BaseConditionalStructureOccupationBonuses
-    {
-        get
-        {
-            return baseConditionalStructureOccupationBonuses;
-        }
-    }
-
-    public virtual Unit GenerateUnit(Vector3 position)
+    public virtual Unit GenerateUnit(Coord position)
     {
         return new Unit(this, position);
     }

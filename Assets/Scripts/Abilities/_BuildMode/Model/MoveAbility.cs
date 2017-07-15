@@ -26,11 +26,11 @@ public class MoveAbility : HexTargetedBuildModeAbility
         Assert.IsTrue(executingEntity is Unit);
         Unit executingUnit = (Unit)executingEntity;
 
+        //TODO: make unit responsible for its movement??
         if ( MapGenerator.Instance.Map.TryMoveUnitTo(fromCoord, targetCoord, executingUnit, moveAbilityTemplate.Cost, cachedDisallowedTargetHexes ) ) {
-            if ( executingUnit.OnMovedCallback != null )
-            {
-                executingUnit.OnMovedCallback(targetCoord);
-            }
+
+            executingUnit.Move(targetCoord);
+
             return true;
         }
 

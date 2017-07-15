@@ -1,20 +1,25 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 using System.Collections;
 using System.Collections.Generic;
 using System;
 
 public class Structure : DefendingEntity {
 
+    //Name and Description
     private string currentName;
     private string currentDescription;
 
+    //Template
     private StructureTemplate structureTemplate;
 
+    //Upgrades
     private Dictionary<StructureUpgrade, bool> upgradesBought;
     private Dictionary<StructureEnhancement, bool> enhancementsChosen;
 
     private Action OnUpgradedCallback;
 
+    //Public properties
     public override string Id
     {
         get
@@ -46,7 +51,6 @@ public class Structure : DefendingEntity {
             return upgradesBought;
         }
     }
-
     public Dictionary<StructureEnhancement, bool> EnhancementsChosen
     {
         get
@@ -55,18 +59,22 @@ public class Structure : DefendingEntity {
         }
     }
 
-    public Structure(StructureTemplate structureTemplate, Vector3 position) : base(structureTemplate)
+    //Constructor
+    public Structure(StructureTemplate structureTemplate, Coord coordPosition) : base(structureTemplate, coordPosition)
     {
         this.structureTemplate = structureTemplate;
 
         currentName = structureTemplate.StartingNameInGame;
         currentDescription = structureTemplate.StartingDescription;
 
-        DefendingEntityView.Instance.CreateStructure(this, position);
+        DefendingEntityView.Instance.CreateStructure(this, coordPosition.ToPositionVector());
+
+        ApplyImprovement(structureTemplate.BaseCharacteristics);
 
         SetUpUpgradesAndEnhancements();
     }
 
+    //Upgrades
     private void SetUpUpgradesAndEnhancements()
     {
         upgradesBought = new Dictionary<StructureUpgrade, bool>();
@@ -81,16 +89,6 @@ public class Structure : DefendingEntity {
                 EnhancementsChosen.Add(enhancement, false);
             }
         }
-    }
-
-    public override string CurrentName()
-    {
-        return currentName;
-    }
-
-    public override string UIText()
-    {
-        return currentDescription;
     }
 
     public StructureUpgrade CurrentUpgradeLevel()
@@ -127,7 +125,7 @@ public class Structure : DefendingEntity {
             EconomyManager.Instance.DoTransaction(chosenEnhancement.Cost);
         }
         
-        DefendingEntityImprovement combinedImprovement = upgrade.MainUpgradeBonus.Combine(chosenEnhancement.EnhancementBonus);
+        IDefendingEntityImprovement combinedImprovement = upgrade.MainUpgradeBonus.Combine(chosenEnhancement.EnhancementBonus);
 
         ApplyImprovement(combinedImprovement);
 
@@ -145,6 +143,40 @@ public class Structure : DefendingEntity {
         return true;
     }
 
+    //Defender Auras Affected By
+    protected override void OnNewDefenderAura(DefenderAura aura)
+    {
+        if (aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.STRUCTURES)
+        {
+            affectedByDefenderAuras.Add(aura);
+
+            ApplyImprovement(aura.DefenderEffectTemplate.Improvement);
+        }
+    }
+
+    protected override void OnClearDefenderAura(DefenderAura aura)
+    {
+        if (aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectTemplate.AffectsType.UNITS)
+        {
+            bool wasPresent = affectedByDefenderAuras.Contains(aura);
+            Assert.IsTrue(wasPresent);
+
+            RemoveImprovement(aura.DefenderEffectTemplate.Improvement);
+        }
+    }
+
+    //UI
+    public override string CurrentName()
+    {
+        return currentName;
+    }
+
+    public override string UIText()
+    {
+        return currentDescription;
+    }
+
+    //Callbacks
     public void RegisterForOnUpgradedCallback(Action callback)
     {
         OnUpgradedCallback += callback;

@@ -12,6 +12,8 @@ public class HexData {
 
     private Unit unitHere = null;
 
+    private CallbackList<DefenderAura> defenderAurasHere;
+
     public HexType HexType
     {
         get
@@ -36,6 +38,14 @@ public class HexData {
         }
     }
 
+    public List<DefenderAura> DefenderAurasHere
+    {
+        get
+        {
+            return defenderAurasHere.List;
+        }
+    }
+
     public float pathingFScore;
     public float pathingGScore;
     public Coord pathingCameFrom;
@@ -44,6 +54,8 @@ public class HexData {
     {
         hexType = createWithType;
         ResetPathingData();
+
+        defenderAurasHere = new CallbackList<DefenderAura>();
     }
 
     public void ResetPathingData()
@@ -103,5 +115,40 @@ public class HexData {
     public void RemoveUnitHere()
     {
         unitHere = null;
+    }
+    
+    public void AddDefenderAura(DefenderAura aura)
+    {
+        defenderAurasHere.Add(aura);
+
+        aura.RegisterForOnClearAuraCallback(OnClearDefenderAura);
+    }
+
+    private void OnClearDefenderAura(DefenderAura aura)
+    {
+        defenderAurasHere.TryRemove(aura);
+
+        aura.DeregisterForOnClearAuraCallback(OnClearDefenderAura);
+    }
+
+    //Callbacks
+    public void RegisterForOnDefenderAuraAddedCallback(Action<DefenderAura> callback)
+    {
+        defenderAurasHere.RegisterForAdd(callback);
+    }
+
+    public void DeregisterForOnDefenderAuraAddedCallback(Action<DefenderAura> callback)
+    {
+        defenderAurasHere.DeregisterForAdd(callback);
+    }
+
+    public void RegisterForOnDefenderAuraRemovedCallback(Action<DefenderAura> callback)
+    {
+        defenderAurasHere.RegisterForRemove(callback);
+    }
+
+    public void DeregisterForOnDefenderAuraRemovedCallback(Action<DefenderAura> callback)
+    {
+        defenderAurasHere.DeregisterForRemove(callback);
     }
 }

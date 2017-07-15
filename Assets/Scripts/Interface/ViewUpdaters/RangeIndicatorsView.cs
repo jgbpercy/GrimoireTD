@@ -111,7 +111,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
     {
         int i = 0;
 
-        foreach (AbilityTemplate abilityTemplate in selectedStructureTemplate.BaseAbilities)
+        foreach (AbilityTemplate abilityTemplate in selectedStructureTemplate.BaseCharacteristics.Abilities)
         {
             if ( abilityTemplate is DefendModeAbilityTemplate && ((DefendModeAbilityTemplate)abilityTemplate).TargetingComponent is TargetingComponentFloatRange )
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 public enum AttributeName
 {
@@ -118,60 +119,7 @@ public abstract class DefendingEntity
     private Dictionary<AttributeName, Action<float>> OnAttributeChangedCallbackDictionary;
 
     //Economy
-    protected class OccupationBonusList<T> where T : OccupationBonus
-    {
-        private List<T> list;
-
-        private Action AddCallback;
-        private Action RemoveCallback;
-
-        public List<T> List
-        {
-            get
-            {
-                return list;
-            }
-        }
-
-        public OccupationBonusList(Action addCallback, Action removeCallback)
-        {
-            AddCallback = addCallback;
-            RemoveCallback = removeCallback;
-
-            list = new List<T>();
-        }
-
-        public void AddBonus(T occupationBonus)
-        {
-            list.Add(occupationBonus);
-
-            if ( AddCallback != null )
-            {
-                AddCallback();
-            }
-        }
-
-        public bool TryRemoveBonus(T occupationBonus)
-        {
-            if ( !list.Contains(occupationBonus) )
-            {
-                return false;
-            }
-
-            list.Remove(occupationBonus);
-
-            if ( RemoveCallback != null)
-            {
-                RemoveCallback();
-            }
-
-            return true;
-        }
-    }
-
-    private OccupationBonusList<HexOccupationBonus> flatHexOccupationBonuses;
-
-    private Action OnFlatHexOccupationBonusChanged;
+    private CallbackList<HexOccupationBonus> flatHexOccupationBonuses;
 
     //Abilities
     protected class AbilityList
@@ -231,8 +179,17 @@ public abstract class DefendingEntity
     private Action<Ability> OnAbilityAddedCallback;
     private Action<Ability> OnAbilityRemovedCallback;
 
+    //Auras (that this is the source of)
+    protected CallbackList<DefenderAura> auras;
+
+    //Affected By Auras
+    protected List<DefenderAura> affectedByDefenderAuras;
+
     //Template
     private DefendingEntityTemplate defendingEntityTemplate;
+
+    //Position
+    protected Coord coordPosition;
 
     //Properties
     public virtual string Id
@@ -264,7 +221,7 @@ public abstract class DefendingEntity
     {
         get
         {
-            return MapGenerator.Instance.Map.WhereAmI(this);
+            return coordPosition;
         }
     }
 
@@ -285,7 +242,7 @@ public abstract class DefendingEntity
     }
 
     //Constructor
-    public DefendingEntity(DefendingEntityTemplate template)
+    public DefendingEntity(DefendingEntityTemplate template, Coord position)
     {
         id = IdGen.GetNextId();
 
@@ -293,34 +250,24 @@ public abstract class DefendingEntity
 
         SetUpAttributes();
 
-        SetUpBaseAbilities();
+        abilities = new AbilityList(this);
 
-        SetUpBaseFlatHexOccupationBonuses();
+        flatHexOccupationBonuses = new CallbackList<HexOccupationBonus>();
+
+        auras = new CallbackList<DefenderAura>();
+        RegisterForOnAuraAddedCallback(OnInitialiseAura);
+        RegisterForOnAuraRemovedCallback(OnRemoveAura);
+
+        coordPosition = position;
+        OnHex.RegisterForOnDefenderAuraAddedCallback(OnNewDefenderAura);
+        OnHex.RegisterForOnDefenderAuraRemovedCallback(OnClearDefenderAura);
+
+        SetUpAffectedByDefenderAuras();
 
         GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
     }
 
-    //Set up
-    private void SetUpBaseAbilities()
-    {
-        abilities = new AbilityList(this);
-
-        for (int i = 0; i < defendingEntityTemplate.BaseAbilities.Length; i++)
-        {
-            abilities.AddAbility(defendingEntityTemplate.BaseAbilities[i].GenerateAbility(this));
-        }
-    }
-
-    private void SetUpBaseFlatHexOccupationBonuses()
-    {
-        flatHexOccupationBonuses = new OccupationBonusList<HexOccupationBonus>(OnFlatHexOccupationBonusChanged, OnFlatHexOccupationBonusChanged);
-
-        foreach (HexOccupationBonus hexOccupationBonus in defendingEntityTemplate.BaseFlatHexOccupationBonuses)
-        {
-            flatHexOccupationBonuses.AddBonus(hexOccupationBonus);
-        }
-    }
-
+    //Set Up
     private void SetUpAttributes()
     {
         attributes = new Dictionary<AttributeName, Attribute>
@@ -335,6 +282,16 @@ public abstract class DefendingEntity
         foreach (KeyValuePair<AttributeName, Attribute> attributePair in attributes)
         {
             OnAttributeChangedCallbackDictionary.Add(attributePair.Key, null);
+        }
+    }
+
+    private void SetUpAffectedByDefenderAuras()
+    {
+        affectedByDefenderAuras = new List<DefenderAura>();
+
+        foreach (DefenderAura defenderAura in OnHex.DefenderAurasHere)
+        {
+
         }
     }
 
@@ -369,6 +326,7 @@ public abstract class DefendingEntity
         return buildModeAbilities;
     }
 
+    //Enter Build Mode
     protected virtual void OnEnterBuildMode()
     {
         CDebug.Log(CDebug.hexEconomy, Id + " entered build mode:");
@@ -380,7 +338,8 @@ public abstract class DefendingEntity
         CDebug.Log(CDebug.hexEconomy, Id + " added flat occupation bonus " + flatHexOccupationBonus);
     }
 
-    protected void ApplyImprovement(DefendingEntityImprovement improvement)
+    //Improvements
+    protected void ApplyImprovement(IDefendingEntityImprovement improvement)
     {
         foreach (NamedAttributeModifier attributeModifier in improvement.AttributeModifiers)
         {
@@ -389,15 +348,50 @@ public abstract class DefendingEntity
 
         foreach (HexOccupationBonus hexOccupationBonus in improvement.FlatHexOccupationBonuses)
         {
-            flatHexOccupationBonuses.AddBonus(hexOccupationBonus);
+            flatHexOccupationBonuses.Add(hexOccupationBonus);
         }
 
         foreach (AbilityTemplate abilityTemplate in improvement.Abilities)
         {
             abilities.AddAbility(abilityTemplate.GenerateAbility(this));
         }
+
+        foreach (DefenderAuraTemplate auraTemplate in improvement.Auras)
+        {
+            auras.Add(auraTemplate.GenerateDefenderAura(this));
+        }
     }
 
+    protected void RemoveImprovement(IDefendingEntityImprovement improvement)
+    {
+        bool wasPresent;
+
+        foreach (NamedAttributeModifier attributeModifier in improvement.AttributeModifiers)
+        {
+            wasPresent = TryRemoveAttributeModifier(attributeModifier.AttributeName, attributeModifier.AttributeModifier);
+            Assert.IsTrue(wasPresent);
+        }
+
+        foreach (HexOccupationBonus hexOccupationBonus in improvement.FlatHexOccupationBonuses)
+        {
+            wasPresent = flatHexOccupationBonuses.TryRemove(hexOccupationBonus);
+            Assert.IsTrue(wasPresent);
+        }
+
+        foreach (AbilityTemplate abilityTemplate in improvement.Abilities)
+        {
+            wasPresent = abilities.TryRemoveAbility(abilityTemplate.GenerateAbility(this));
+            Assert.IsTrue(wasPresent);
+        }
+
+        foreach (DefenderAuraTemplate auraTemplate in improvement.Auras)
+        {
+            wasPresent = auras.TryRemove(auraTemplate.GenerateDefenderAura(this));
+            Assert.IsTrue(wasPresent);
+        }
+    }
+
+    //Attributes
     public void AddAttributeModifier(AttributeName attribute, AttributeModifier modifier)
     {
         Attribute attributeToModify = null;
@@ -436,7 +430,8 @@ public abstract class DefendingEntity
         return attributes[attributeName].Value();
     }
 
-    protected EconomyTransaction GetHexOccupationBonus(HexType hexType, OccupationBonusList<HexOccupationBonus> occupationBonusList)
+    //Economy
+    protected EconomyTransaction GetHexOccupationBonus(HexType hexType, CallbackList<HexOccupationBonus> occupationBonusList)
     {
         EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
 
@@ -451,6 +446,7 @@ public abstract class DefendingEntity
         return occupationBonusTransaction;
     }
 
+    //UI Stuff
     public abstract string UIText();
 
     public abstract string CurrentName();
@@ -460,17 +456,51 @@ public abstract class DefendingEntity
         return attributes[attributeName].DisplayName;
     }
 
+    //Defender Auras that this is the source of
+    protected void OnInitialiseAura(DefenderAura aura)
+    {
+        List<Coord> affectedCoords = MapData.CoordsInRange(aura.Range, CoordPosition);
+
+        foreach (Coord coord in affectedCoords)
+        {
+            MapGenerator.Instance.Map.GetHexAt(coord).AddDefenderAura(aura);
+        }
+    }
+
+    private void OnRemoveAura(DefenderAura aura)
+    {
+        aura.ClearAura();
+    }
+
+    //Defender Auras Affected By
+    protected abstract void OnNewDefenderAura(DefenderAura aura);
+
+    protected abstract void OnClearDefenderAura(DefenderAura aura);
+
     //Callbacks
-    public void RegisterForOnFlatHexOccupationBonusChangedCallback(Action callback)
+
+    //  Flat Hex Occupation Bonus
+    public void RegisterForOnFlatHexOccupationBonusAddedCallback(Action<HexOccupationBonus> callback)
     {
-        OnFlatHexOccupationBonusChanged += callback;
+        flatHexOccupationBonuses.RegisterForAdd(callback);
     }
 
-    public void DeregisterForOnFlatHexOccupationBonusChangedCallback(Action callback)
+    public void DeregisterForOnFlatHexOccupationBonusAddedCallback(Action<HexOccupationBonus> callback)
     {
-        OnFlatHexOccupationBonusChanged -= callback;
+        flatHexOccupationBonuses.DeregisterForAdd(callback);
     }
 
+    public void RegisterForOnFlatHexOccupationBonusRemovedCallback(Action<HexOccupationBonus> callback)
+    {
+        flatHexOccupationBonuses.RegisterForRemove(callback);
+    }
+
+    public void DeregisterForOnFlatHexOccupationBonusRemovedCallback(Action<HexOccupationBonus> callback)
+    {
+        flatHexOccupationBonuses.DeregisterForRemove(callback);
+    }
+
+    //  Abilities
     public void RegisterForOnAbilityAddedCallback(Action<Ability> callback)
     {
         OnAbilityAddedCallback += callback;
@@ -491,6 +521,7 @@ public abstract class DefendingEntity
         OnAbilityRemovedCallback -= callback;
     }
 
+    //  Attributes
     public void RegisterForOnAttributeChangedCallback(Action<float> callback, AttributeName attribute)
     {
         OnAttributeChangedCallbackDictionary[attribute] += callback;
@@ -501,4 +532,24 @@ public abstract class DefendingEntity
         OnAttributeChangedCallbackDictionary[attribute] -= callback;
     }
 
+    //  Auras
+    public void RegisterForOnAuraAddedCallback(Action<DefenderAura> callback)
+    {
+        auras.RegisterForAdd(callback);
+    }
+
+    public void DeregisterForOnAuraAddedCallback(Action<DefenderAura> callback)
+    {
+        auras.DeregisterForAdd(callback);
+    }
+
+    public void RegisterForOnAuraRemovedCallback(Action<DefenderAura> callback)
+    {
+        auras.RegisterForRemove(callback);
+    }
+
+    public void DeregisterForOnAuraRemovedCallback(Action<DefenderAura> callback)
+    {
+        auras.DeregisterForRemove(callback);
+    }
 }

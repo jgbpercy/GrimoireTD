@@ -244,7 +244,7 @@ public class MapData {
             return false;
         }
 
-        Structure newStructure = structureTemplate.GenerateStructure(coord.ToPositionVector());
+        Structure newStructure = structureTemplate.GenerateStructure(coord);
 
         GetHexAt(coord).AddStructureHere(newStructure);
 
@@ -293,7 +293,7 @@ public class MapData {
             return false;
         }
 
-        Unit newUnit = unitTemplate.GenerateUnit(targetCoord.ToPositionVector());
+        Unit newUnit = unitTemplate.GenerateUnit(targetCoord);
 
         GetHexAt(targetCoord).PlaceUnitHere(newUnit);
 
@@ -393,6 +393,29 @@ public class MapData {
         return baseVerticalDistance + Mathf.Max(baseHorizontalDistance - (baseVerticalDistance / 2), 0);
     }
 
+    public static List<Coord> CoordsInRange(int range, Coord startHex)
+    {
+        //TODO: do this more efficiently. Find the Coords in a sensible way, not by looping through all possibles :)
+        List<Coord> coordsInRange = new List<Coord>();
+
+        Coord currentCoord;
+
+        for (int x = 0; x < MapGenerator.Instance.Map.width; x++)
+        {
+            for (int y = 0; y < MapGenerator.Instance.Map.height; y++)
+            {
+                currentCoord = new Coord(x, y);
+
+                if ( HexIsInRange(range, startHex, currentCoord))
+                {
+                    coordsInRange.Add(currentCoord);
+                }
+            }
+        }
+
+        return coordsInRange;
+    }
+
     public Coord WhereAmI(DefendingEntity defendingEntity)
     {
         return defendingEntityPositions[defendingEntity];
@@ -413,7 +436,7 @@ public class MapData {
         return PathingService.DisallowedCoords(Path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1), newlyPathableCoords);
     }
 
-    //Callback registering
+    //Callbacks
     public void RegisterForOnPathGeneratedOrChangedCallback(Action callback)
     {
         OnPathGeneratedOrChangedCallback += callback;

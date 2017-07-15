@@ -1,21 +1,19 @@
 ﻿using UnityEngine;
 
-public class DefendingEntityTemplate : ScriptableObject {
+public class DefendingEntityTemplate : ScriptableObject
+{
 
     [SerializeField]
-    protected AbilityTemplate[] baseAbilities;
+    private SoDefendingEntityImprovement baseCharacteristics;
 
     [SerializeField]
     protected GameObject prefab;
 
-    [SerializeField]
-    protected HexOccupationBonus[] baseFlatHexOccupationBonuses;
-
-    public AbilityTemplate[] BaseAbilities
+    public IDefendingEntityImprovement BaseCharacteristics
     {
         get
         {
-            return baseAbilities;
+            return baseCharacteristics;
         }
     }
 
@@ -26,13 +24,4 @@ public class DefendingEntityTemplate : ScriptableObject {
             return prefab;
         }
     }
-
-    public HexOccupationBonus[] BaseFlatHexOccupationBonuses
-    {
-        get
-        {
-            return baseFlatHexOccupationBonuses;
-        }
-    }
-
 }
