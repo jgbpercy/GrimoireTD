@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewBuildModeAbilityTemplate", menuName = "Build Mode Abilities/Build Mode Ability")]
-public class BuildModeAbilityTemplate : AbilityTemplate {
+public class SoBuildModeAbilityTemplate : SoAbilityTemplate, IBuildModeAbilityTemplate {
 
     [SerializeField]
     private EconomyTransaction cost;
 
     [SerializeField]
-    private BMTargetingComponent targetingComponent;
+    private SoBuildModeTargetingComponent targetingComponent;
 
     [SerializeField]
     private SoBuildModeEffectComponent effectComponent;
@@ -20,7 +20,7 @@ public class BuildModeAbilityTemplate : AbilityTemplate {
         }
     }
 
-    public BMTargetingComponent TargetingComponent
+    public IBuildModeTargetingComponent TargetingComponent
     {
         get
         {

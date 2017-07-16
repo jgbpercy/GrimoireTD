@@ -88,13 +88,13 @@ public static class CDebug {
         experienceAndFatigue = new DebugChannel("XP and Fatigue", false);
         channelList.Add(experienceAndFatigue);
 
-        unitAttributes = new DebugChannel("Unit Attributes", true);
+        unitAttributes = new DebugChannel("Unit Attributes", false);
         channelList.Add(unitAttributes);
 
         structureUpgrades = new DebugChannel("Structure Upgrades", false);
         channelList.Add(structureUpgrades);
 
-        hexEconomy = new DebugChannel("Hex Economy", true);
+        hexEconomy = new DebugChannel("Hex Economy", false);
         channelList.Add(hexEconomy);
 
         pathing = new DebugChannel("Pathing", false);

@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewAoeProjectile", menuName = "Defend Mode Abilities/Projectiles/AOE Projectile")]
-public class AoeProjectileTemplate : ProjectileTemplate {
+public class SoAoeProjectileTemplate : SoProjectileTemplate, IAoeProjectileTemplate {
 
     [SerializeField]
     protected AttackEffect[] aoeAttackEffects;
@@ -14,7 +13,7 @@ public class AoeProjectileTemplate : ProjectileTemplate {
     [SerializeField]
     protected float aoeExpansionLerpFactor = 0.15f;
 
-    public AttackEffect[] AoeAttackEffects
+    public IEnumerable<AttackEffect> AoeAttackEffects
     {
         get
         {

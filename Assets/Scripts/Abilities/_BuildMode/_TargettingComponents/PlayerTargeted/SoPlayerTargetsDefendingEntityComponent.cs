@@ -2,7 +2,7 @@
 using UnityEngine.Assertions;
 
 [CreateAssetMenu(fileName = "NewPlayerTargetsDefendingEntityComponent", menuName = "Build Mode Abilities/Player Targeted/DefendingEntity Targeted")]
-public class PlayerTargetsDefendingEntityComponent : PlayerTargetedComponent {
+public class SoPlayerTargetsDefendingEntityComponent : SoPlayerTargetedComponent, IPlayerTargetsDefendingEntityComponent {
 
     [SerializeField]
     private BuildModeAbilityDefendingEntityTargetingRuleService.RuleName targetingRule;

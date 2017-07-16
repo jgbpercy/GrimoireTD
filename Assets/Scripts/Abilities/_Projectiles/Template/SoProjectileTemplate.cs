@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "NewProjectile", menuName = "Defend Mode Abilities/Projectiles/Projectile")]
-public class ProjectileTemplate : ScriptableObject {
+public class SoProjectileTemplate : ScriptableObject, IProjectileTemplate {
 
     [SerializeField]
     protected AttackEffect[] attackEffects;
@@ -12,7 +13,7 @@ public class ProjectileTemplate : ScriptableObject {
     [SerializeField]
     protected GameObject projectilePrefab;
 
-    public AttackEffect[] AttackEffects
+    public IEnumerable<AttackEffect> AttackEffects
     {
         get
         {

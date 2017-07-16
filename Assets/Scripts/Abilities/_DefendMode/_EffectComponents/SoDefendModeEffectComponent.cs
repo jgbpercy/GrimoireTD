@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DMEffectComponent : ScriptableObject {
+public class SoDefendModeEffectComponent : ScriptableObject, IDefendModeEffectComponent {
 
     public virtual void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<IDefendModeTargetable> targets)
     {

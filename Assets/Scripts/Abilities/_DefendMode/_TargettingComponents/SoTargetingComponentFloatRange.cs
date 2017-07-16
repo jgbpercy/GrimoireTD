@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetingComponentFloatRange : DMTargetingComponent {
+public class SoTargetingComponentFloatRange : SoDefendModeTargetingComponent, ITargetingComponentFloatRange {
 
     [SerializeField]
     private float baseRange;

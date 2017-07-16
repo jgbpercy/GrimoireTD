@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DMTargetingComponent : ScriptableObject {
+public class SoDefendModeTargetingComponent : ScriptableObject, IDefendModeTargetingComponent {
 
     public virtual List<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity)
     {

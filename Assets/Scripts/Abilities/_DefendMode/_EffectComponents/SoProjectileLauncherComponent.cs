@@ -2,12 +2,12 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewProjectileLauncher", menuName = "Defend Mode Abilities/Effect Components/Projectile Launcher")]
-public class ProjectileLauncherComponent : DMEffectComponent {
+public class SoProjectileLauncherComponent : SoDefendModeEffectComponent, IProjectileLauncherComponent {
 
     [SerializeField]
-    protected ProjectileTemplate projectileToFireTemplate;
+    protected SoProjectileTemplate projectileToFireTemplate;
 
-    public ProjectileTemplate ProjectileToFireTemplate
+    public IProjectileTemplate ProjectileToFireTemplate
     {
         get
         {

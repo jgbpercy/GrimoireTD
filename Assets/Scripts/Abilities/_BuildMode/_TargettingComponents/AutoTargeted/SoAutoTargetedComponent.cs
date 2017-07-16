@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class AutoTargetedComponent : BMTargetingComponent {
+public class SoAutoTargetedComponent : SoBuildModeTargetingComponent, IAutoTargetedComponent {
 
     [SerializeField]
     private BuildModeAbilityAutoTargetedRuleService.RuleName targetingRule;

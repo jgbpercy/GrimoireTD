@@ -351,7 +351,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
             flatHexOccupationBonuses.Add(hexOccupationBonus);
         }
 
-        foreach (AbilityTemplate abilityTemplate in improvement.Abilities)
+        foreach (IAbilityTemplate abilityTemplate in improvement.Abilities)
         {
             abilities.AddAbility(abilityTemplate.GenerateAbility(this));
         }
@@ -378,7 +378,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
             Assert.IsTrue(wasPresent);
         }
 
-        foreach (AbilityTemplate abilityTemplate in improvement.Abilities)
+        foreach (IAbilityTemplate abilityTemplate in improvement.Abilities)
         {
             wasPresent = abilities.TryRemoveAbility(abilityTemplate.GenerateAbility(this));
             Assert.IsTrue(wasPresent);

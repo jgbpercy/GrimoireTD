@@ -10,7 +10,7 @@ public class DefendModeAbility : Ability, IFrameUpdatee {
     private float timeSinceExecuted;
     private float actualCooldown;
 
-    private DefendModeAbilityTemplate defendModeAbilityTemplate;
+    private IDefendModeAbilityTemplate defendModeAbilityTemplate;
 
     private DefendingEntity attachedToDefendingEntity;
 
@@ -54,7 +54,7 @@ public class DefendModeAbility : Ability, IFrameUpdatee {
         }
     }
 
-    public DefendModeAbilityTemplate DefendModeAbilityTemplate
+    public IDefendModeAbilityTemplate DefendModeAbilityTemplate
     {
         get
         {
@@ -62,7 +62,7 @@ public class DefendModeAbility : Ability, IFrameUpdatee {
         }
     }
 
-    public DefendModeAbility(DefendModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
+    public DefendModeAbility(IDefendModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
     {
         id = IdGen.GetNextId();
 

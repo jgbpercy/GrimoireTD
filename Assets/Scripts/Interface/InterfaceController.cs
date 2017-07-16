@@ -2,7 +2,6 @@
 using UnityEngine.EventSystems;
 using System;
 using UnityEngine.Assertions;
-using System.Collections.Generic;
 
 public enum InterfaceCursorMode
 {
@@ -11,7 +10,7 @@ public enum InterfaceCursorMode
     EXECUTE_BUILD_MODE_ABILITY
 }
 
-//TODO: Handle individual entity selection (for DefendingEntity-targetted Build Mode Abilities)
+//TODO: Handle individual defending entity selection (for DefendingEntity-targetted Build Mode Abilities)
 public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     [SerializeField]
@@ -27,7 +26,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private Structure selectedStructureInstance = null;
     private Unit selectedUnitInstance = null;
 
-    private PlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
+    private IPlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
     private BuildModeAbility selectedBuildModeAbility = null;
 
     [SerializeField]
@@ -86,7 +85,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         }
     }
 
-    public PlayerTargetedComponent SelectedBuildModeAbilityTargetingComponent
+    public IPlayerTargetedComponent SelectedBuildModeAbilityTargetingComponent
     {
         get
         {
@@ -327,7 +326,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
             return;
         }
 
-        PlayerTargetedComponent playerTargetedComponent = abilityToActivate.BuildModeAbilityTemplate.TargetingComponent as PlayerTargetedComponent;
+        IPlayerTargetedComponent playerTargetedComponent = abilityToActivate.BuildModeAbilityTemplate.TargetingComponent as IPlayerTargetedComponent;
         if (playerTargetedComponent != null)
         {
             CDebug.Log(CDebug.buildModeAbilities, "Player Targeted ability activated");

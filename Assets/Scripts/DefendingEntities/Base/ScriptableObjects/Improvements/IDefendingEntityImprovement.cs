@@ -6,7 +6,7 @@ public interface IDefendingEntityImprovement {
 
     IEnumerable<HexOccupationBonus> FlatHexOccupationBonuses { get; }
 
-    IEnumerable<AbilityTemplate> Abilities { get; }
+    IEnumerable<IAbilityTemplate> Abilities { get; }
 
     IEnumerable<DefenderAuraTemplate> Auras { get; }
 

@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewTargetEnemyClosestToFinishInRange", menuName = "Defend Mode Abilities/Targeting Components/Enemy Closest To Finish In Range")]
-public class TargetEnemyClosestToFinishInRange : TargetingComponentFloatRange {
+[CreateAssetMenu(fileName = "TargetEnemyClosestToFinishInRange", menuName = "Defend Mode Abilities/Targeting Components/Enemy Closest To Finish In Range")]
+public class SoTargetEnemyClosestToFinishInRange : SoTargetingComponentFloatRange, ITargetEnemyClosestToFinishInRange {
 
     public override List<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity)
     {

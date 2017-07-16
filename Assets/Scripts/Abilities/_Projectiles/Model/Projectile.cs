@@ -15,7 +15,7 @@ public class Projectile : IFrameUpdatee {
     protected bool destroyingForHitTarget;
     private bool destroyingForNoTarget;
 
-    private ProjectileTemplate projectileTemplate;
+    private IProjectileTemplate projectileTemplate;
 
     private Action<float> OnDestroyCallback;
 
@@ -35,7 +35,7 @@ public class Projectile : IFrameUpdatee {
         }
     }
 
-    public ProjectileTemplate ProjectileClassTemplate
+    public IProjectileTemplate ProjectileClassTemplate
     {
         get
         {
@@ -43,7 +43,7 @@ public class Projectile : IFrameUpdatee {
         }
     }
 
-    public Projectile(Vector3 startPosition, IDefendModeTargetable target, ProjectileTemplate template, DefendingEntity sourceDefendingEntity)
+    public Projectile(Vector3 startPosition, IDefendModeTargetable target, IProjectileTemplate template, DefendingEntity sourceDefendingEntity)
     {
         id = IdGen.GetNextId();
 
@@ -58,7 +58,7 @@ public class Projectile : IFrameUpdatee {
 
         ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
 
-        CDebug.Log(CDebug.combatLog, Id + " (" + projectileTemplate.name + ") " + "was created, target: " + target.GetId() + " (" + target.GetName() + ")");
+        CDebug.Log(CDebug.combatLog, "Projectile " + Id + " was created, target: " + target.GetId() + " (" + target.GetName() + ")");
     }
 
     public virtual void ModelObjectFrameUpdate()
@@ -91,7 +91,7 @@ public class Projectile : IFrameUpdatee {
 
     public void HitCreep(Creep creep, float destructionDelay)
     {
-        CDebug.Log(CDebug.combatLog, Id + " (" + projectileTemplate.name + ") hit " + creep.Id + " (" + creep.GetName() + ")");
+        CDebug.Log(CDebug.combatLog, "Projectile " + Id + " hit " + creep.Id + " (" + creep.GetName() + ")");
 
         //TODO: apply modifiers from defending entity at the point of projectile creation, rather than at the point of effect application?
         creep.ApplyAttackEffects(projectileTemplate.AttackEffects, sourceDefendingEntity);

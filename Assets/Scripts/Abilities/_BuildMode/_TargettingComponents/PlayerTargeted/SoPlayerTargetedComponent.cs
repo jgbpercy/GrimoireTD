@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class PlayerTargetedComponent : BMTargetingComponent {
+public class SoPlayerTargetedComponent : SoBuildModeTargetingComponent, IPlayerTargetedComponent {
 
     public virtual bool IsValidTarget(DefendingEntity sourceDefendingEntity, IBuildModeTargetable potentialTarget)
     {

@@ -1,10 +1,8 @@
-﻿using UnityEngine;
+﻿public abstract class Ability {
 
-public abstract class Ability {
+    protected IAbilityTemplate template;
 
-    protected AbilityTemplate template;
-
-    public Ability(AbilityTemplate template, DefendingEntity attachedToDefendingEntity)
+    public Ability(IAbilityTemplate template, DefendingEntity attachedToDefendingEntity)
     {
         this.template = template;
     }

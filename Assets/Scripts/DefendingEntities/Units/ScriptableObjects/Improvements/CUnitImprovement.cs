@@ -25,7 +25,7 @@ public class CUnitImprovement : CDefendingEntityImprovement, IUnitImprovement {
     public CUnitImprovement(
         ICollection<NamedAttributeModifier> attributeModifiers,
         ICollection<HexOccupationBonus> flatHexOccupationBonuses,
-        ICollection<AbilityTemplate> abilities,
+        ICollection<IAbilityTemplate> abilities,
         ICollection<DefenderAuraTemplate> auras,
         ICollection<HexOccupationBonus> conditionalHexOccupationBonuses,
         ICollection<StructureOccupationBonus> conditionalStructureOccupationBonuses

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 [CreateAssetMenu(fileName = "NewPlayerTargetsHexComponent", menuName = "Build Mode Abilities/Player Targeted/Hex Targeted")]
-public class PlayerTargetsHexComponent : PlayerTargetedComponent {
+public class SoPlayerTargetsHexComponent : SoPlayerTargetedComponent, IPlayerTargetsHexComponent {
 
     [SerializeField]
     private BuildModeAbilityHexTargetingRuleService.RuleName targetingRule;

@@ -2,7 +2,7 @@
 using System;
 
 //[CreateAssetMenu(fileName = "NewAbilityTemplate", menuName = "Abilities")]
-public class AbilityTemplate : ScriptableObject {
+public class SoAbilityTemplate : ScriptableObject, IAbilityTemplate {
 
     [SerializeField]
     protected string nameInGame;

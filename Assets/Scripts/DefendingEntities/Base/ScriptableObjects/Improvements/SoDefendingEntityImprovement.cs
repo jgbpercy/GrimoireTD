@@ -13,7 +13,7 @@ public class SoDefendingEntityImprovement : ScriptableObject, IDefendingEntityIm
     private HexOccupationBonus[] flatHexOccupationBonuses;
 
     [SerializeField]
-    private AbilityTemplate[] abilities;
+    private SoAbilityTemplate[] abilities;
 
     [SerializeField]
     private DefenderAuraTemplate[] auras;
@@ -34,7 +34,7 @@ public class SoDefendingEntityImprovement : ScriptableObject, IDefendingEntityIm
         }
     }
 
-    public IEnumerable<AbilityTemplate> Abilities
+    public IEnumerable<IAbilityTemplate> Abilities
     {
         get
         {
@@ -60,7 +60,7 @@ public class SoDefendingEntityImprovement : ScriptableObject, IDefendingEntityIm
         combinedFlatHexOccupationBonuses.AddRange(firstImprovement.FlatHexOccupationBonuses);
         combinedFlatHexOccupationBonuses.AddRange(secondImprovement.FlatHexOccupationBonuses);
 
-        List<AbilityTemplate> combinedAbilities = new List<AbilityTemplate>();
+        List<IAbilityTemplate> combinedAbilities = new List<IAbilityTemplate>();
         combinedAbilities.AddRange(firstImprovement.Abilities);
         combinedAbilities.AddRange(secondImprovement.Abilities);
 

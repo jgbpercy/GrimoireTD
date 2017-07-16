@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class BuildModeAbility : Ability {
 
-    private BuildModeAbilityTemplate buildModeAbilityTemplate;
+    private IBuildModeAbilityTemplate buildModeAbilityTemplate;
 
-    public BuildModeAbilityTemplate BuildModeAbilityTemplate
+    public IBuildModeAbilityTemplate BuildModeAbilityTemplate
     {
         get
         {
@@ -13,7 +13,7 @@ public class BuildModeAbility : Ability {
         }
     }
 
-    public BuildModeAbility(BuildModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
+    public BuildModeAbility(IBuildModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
     {
         buildModeAbilityTemplate = template;
     }

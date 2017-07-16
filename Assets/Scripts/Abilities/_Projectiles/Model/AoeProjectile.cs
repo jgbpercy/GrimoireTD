@@ -3,7 +3,7 @@ using System;
 
 public class AoeProjectile : Projectile {
 
-    private AoeProjectileTemplate aoeProjectileTemplate;
+    private IAoeProjectileTemplate aoeProjectileTemplate;
 
     private float currentAoeRadius;
 
@@ -12,7 +12,7 @@ public class AoeProjectile : Projectile {
     protected Action OnExplosionCallback;
     protected Action OnExplosionFinishedCallback;
 
-    public AoeProjectileTemplate AoeProjectileClassTemplate
+    public IAoeProjectileTemplate AoeProjectileClassTemplate
     {
         get
         {
@@ -28,7 +28,7 @@ public class AoeProjectile : Projectile {
         }
     }
 
-    public AoeProjectile(Vector3 startPosition, IDefendModeTargetable target, AoeProjectileTemplate template, DefendingEntity sourceDefendingEntity) : base(startPosition, target, template, sourceDefendingEntity)
+    public AoeProjectile(Vector3 startPosition, IDefendModeTargetable target, IAoeProjectileTemplate template, DefendingEntity sourceDefendingEntity) : base(startPosition, target, template, sourceDefendingEntity)
     {
         aoeProjectileTemplate = template;
         currentAoeRadius = 0.001f;

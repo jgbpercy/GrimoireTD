@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BMTargetingComponent : ScriptableObject {
+public class SoBuildModeTargetingComponent : ScriptableObject, IBuildModeTargetingComponent {
 
     [SerializeField]
     protected int range;

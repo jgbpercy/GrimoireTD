@@ -57,11 +57,10 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
             {
                 mouseOverHex.StructureHere.DefendModeAbilities().ForEach(x => {
 
-                    DMTargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
-
-                    if (targetingComponent is TargetingComponentFloatRange)
+                    ITargetingComponentFloatRange targetingComponentFloatRange = x.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
+                    if (targetingComponentFloatRange != null)
                     {
-                        ranges.Add(((TargetingComponentFloatRange)targetingComponent).GetActualRange(mouseOverHex.StructureHere));
+                        ranges.Add(targetingComponentFloatRange.GetActualRange(mouseOverHex.StructureHere));
                     }
                 });
             }
@@ -70,11 +69,10 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
             {
                 mouseOverHex.UnitHere.DefendModeAbilities().ForEach(x => {
 
-                    DMTargetingComponent targetingComponent = x.DefendModeAbilityTemplate.TargetingComponent;
-
-                    if (targetingComponent is TargetingComponentFloatRange)
+                    ITargetingComponentFloatRange targetingComponentFloatRange = x.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
+                    if (targetingComponentFloatRange != null)
                     {
-                        ranges.Add(((TargetingComponentFloatRange)targetingComponent).GetActualRange(mouseOverHex.UnitHere));
+                        ranges.Add(targetingComponentFloatRange.GetActualRange(mouseOverHex.UnitHere));
                     }
                 });
             }
@@ -111,15 +109,20 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
     {
         int i = 0;
 
-        foreach (AbilityTemplate abilityTemplate in selectedStructureTemplate.BaseCharacteristics.Abilities)
+        foreach (IAbilityTemplate abilityTemplate in selectedStructureTemplate.BaseCharacteristics.Abilities)
         {
-            if ( abilityTemplate is DefendModeAbilityTemplate && ((DefendModeAbilityTemplate)abilityTemplate).TargetingComponent is TargetingComponentFloatRange )
+
+            IDefendModeAbilityTemplate defendModeAbilityTemplate = abilityTemplate as IDefendModeAbilityTemplate;
+            if ( defendModeAbilityTemplate != null ) 
             {
-                TargetingComponentFloatRange targetingComponentFloatRange = ((DefendModeAbilityTemplate)abilityTemplate).TargetingComponent as TargetingComponentFloatRange;
 
-                SetUpRangeIndicator(i, targetingComponentFloatRange.BaseRange);
+                ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
+                if ( targetingComponentFloatRange != null )
+                {
+                    SetUpRangeIndicator(i, targetingComponentFloatRange.BaseRange);
 
-                i++;
+                    i++;
+                }
             }
         }
 

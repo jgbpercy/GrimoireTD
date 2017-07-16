@@ -249,9 +249,9 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         }
     }
 
-    public void ApplyAttackEffects(AttackEffect[] attackEffects, DefendingEntity sourceDefendingEntity)
+    public void ApplyAttackEffects(IEnumerable<AttackEffect> attackEffects, DefendingEntity sourceDefendingEntity)
     {
-        CDebug.Log(CDebug.combatLog, Id + " receiving " + attackEffects.Length + " attack effects:");
+        CDebug.Log(CDebug.combatLog, Id + " receiving attack effects:");
 
         foreach (AttackEffect attackEffect in attackEffects)
         {

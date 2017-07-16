@@ -6,7 +6,7 @@ public class CDefendingEntityImprovement : IDefendingEntityImprovement {
 
     private HexOccupationBonus[] flatHexOccupationBonuses;
 
-    private AbilityTemplate[] abilities;
+    private IAbilityTemplate[] abilities;
 
     private DefenderAuraTemplate[] auras;
 
@@ -26,7 +26,7 @@ public class CDefendingEntityImprovement : IDefendingEntityImprovement {
         }
     }
 
-    public IEnumerable<AbilityTemplate> Abilities
+    public IEnumerable<IAbilityTemplate> Abilities
     {
         get
         {
@@ -45,12 +45,12 @@ public class CDefendingEntityImprovement : IDefendingEntityImprovement {
     public CDefendingEntityImprovement(
         ICollection<NamedAttributeModifier> attributeModifiers, 
         ICollection<HexOccupationBonus> flatHexOccupationBonuses, 
-        ICollection<AbilityTemplate> abilities, 
+        ICollection<IAbilityTemplate> abilities, 
         ICollection<DefenderAuraTemplate> auras)
     {
         this.attributeModifiers = new NamedAttributeModifier[attributeModifiers.Count];
         this.flatHexOccupationBonuses = new HexOccupationBonus[flatHexOccupationBonuses.Count];
-        this.abilities = new AbilityTemplate[abilities.Count];
+        this.abilities = new IAbilityTemplate[abilities.Count];
         this.auras = new DefenderAuraTemplate[auras.Count];
 
         attributeModifiers.CopyTo(this.attributeModifiers, 0);
