@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 [CreateAssetMenu(fileName = "NewWave", menuName = "Levels/Wave")]
-public class WaveTemplate : ScriptableObject {
+public class SoWaveTemplate : ScriptableObject,  IWaveTemplate {
 
     [Serializable]
     public class Spawn
@@ -12,7 +12,7 @@ public class WaveTemplate : ScriptableObject {
         [SerializeField]
         private float timing;
         [SerializeField]
-        private CreepTemplate creep;
+        private SoCreepTemplate creep;
 
         public float Timing
         {
@@ -22,7 +22,7 @@ public class WaveTemplate : ScriptableObject {
             }
         }
 
-        public CreepTemplate Creep
+        public ICreepTemplate Creep
         {
             get
             {
@@ -37,7 +37,7 @@ public class WaveTemplate : ScriptableObject {
     public Wave GenerateWave()
     {
         float[] timings = new float[spawns.Length];
-        CreepTemplate[] creeps = new CreepTemplate[spawns.Length];
+        ICreepTemplate[] creeps = new ICreepTemplate[spawns.Length];
 
         for (int i = 0; i < spawns.Length; i++)
         {

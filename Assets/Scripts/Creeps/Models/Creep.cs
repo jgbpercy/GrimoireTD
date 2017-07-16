@@ -103,7 +103,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
     private Vector3 position;
     private float distanceFromEnd;
 
-    private CreepTemplate creepTemplate;
+    private ICreepTemplate creepTemplate;
 
     private List<PersistentEffect> persistentEffects = new List<PersistentEffect>();
 
@@ -155,7 +155,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         }
     }
 
-    public CreepTemplate CreepTemplate
+    public ICreepTemplate CreepTemplate
     {
         get
         {
@@ -179,7 +179,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         }
     }
 
-    public Creep(CreepTemplate template, Vector3 spawnPosition)
+    public Creep(ICreepTemplate template, Vector3 spawnPosition)
     {
         id = IdGen.GetNextId();
 

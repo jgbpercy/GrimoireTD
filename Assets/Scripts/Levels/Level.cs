@@ -72,7 +72,7 @@ public class Level : ScriptableObject {
 
     //waves
     [SerializeField]
-    private WaveTemplate[] waves;
+    private SoWaveTemplate[] waves;
 
     public Texture2D LevelImage
     {
@@ -106,7 +106,7 @@ public class Level : ScriptableObject {
         }
     }
 
-    public WaveTemplate[] Waves
+    public IWaveTemplate[] Waves
     {
         get {
             return waves;

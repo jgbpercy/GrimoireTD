@@ -48,7 +48,7 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         //test waves hacky hacky make scriptable objects
         WaveList = new List<Wave>();
 
-        foreach (WaveTemplate waveTemplate in MapGenerator.Instance.Level.Waves)
+        foreach (IWaveTemplate waveTemplate in MapGenerator.Instance.Level.Waves)
         {
             WaveList.Add(waveTemplate.GenerateWave());
         }
@@ -89,7 +89,7 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
         Wave waveToSpawn = WaveList[currentWave];
         float prevSpawnTime = 0f;
-        CreepTemplate creepToSpawn;
+        ICreepTemplate creepToSpawn;
 
         waveIsSpawning = true;
 
@@ -116,7 +116,7 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
     }
 
-    private void SpawnCreep(CreepTemplate creepToSpawn)
+    private void SpawnCreep(ICreepTemplate creepToSpawn)
     {
         CDebug.Log(CDebug.creepSpawning, "SpawnCreep called for " + creepToSpawn.NameInGame);
 

@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Wave {
 
-    private SortedList<float, CreepTemplate> spawns; 
+    private SortedList<float, ICreepTemplate> spawns; 
 
     private bool debugOn;
 
-    public SortedList<float, CreepTemplate> Spawns
+    public SortedList<float, ICreepTemplate> Spawns
     {
         get
         {
@@ -18,17 +18,17 @@ public class Wave {
 
     public Wave()
     {
-        spawns = new SortedList<float, CreepTemplate>();
+        spawns = new SortedList<float, ICreepTemplate>();
     }
 
-    public Wave(SortedList<float, CreepTemplate> spawns)
+    public Wave(SortedList<float, ICreepTemplate> spawns)
     {
         this.spawns = spawns;
     }
 
-    public Wave(float[] timings, CreepTemplate[] creeps)
+    public Wave(float[] timings, ICreepTemplate[] creeps)
     {
-        spawns = new SortedList<float, CreepTemplate>();
+        spawns = new SortedList<float, ICreepTemplate>();
 
         for (int i = 0; i < timings.Length; i++)
         {
@@ -39,7 +39,7 @@ public class Wave {
         }
     }
 
-    public bool AddCreepToSpawns(float timeOffset, CreepTemplate creep)
+    public bool AddCreepToSpawns(float timeOffset, ICreepTemplate creep)
     {
         if ( spawns.ContainsKey(timeOffset) )
         {
@@ -61,9 +61,9 @@ public class Wave {
         return spawns.Keys[0];
     }
 
-    public CreepTemplate SpawnNextCreep()
+    public ICreepTemplate SpawnNextCreep()
     {
-        CreepTemplate returnCreep = spawns.Values[0];
+        ICreepTemplate returnCreep = spawns.Values[0];
 
         spawns.RemoveAt(0);
 

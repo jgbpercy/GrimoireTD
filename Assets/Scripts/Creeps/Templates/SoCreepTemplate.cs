@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
+//TODO: refactor
 [Serializable]
 public class Resistances
 {
@@ -238,7 +239,7 @@ public class Resistances
 }
 
 [CreateAssetMenu(fileName = "NewCreep", menuName = "Creeps/Creep")]
-public class CreepTemplate : ScriptableObject {
+public class SoCreepTemplate : ScriptableObject, ICreepTemplate {
 
     [SerializeField]
     private string nameInGame;
