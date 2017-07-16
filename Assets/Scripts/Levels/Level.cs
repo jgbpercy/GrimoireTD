@@ -8,11 +8,11 @@ public class Level : ScriptableObject {
     public class StartingUnit
     {
         [SerializeField]
-        private UnitTemplate unitTemplate;
+        private SoUnitTemplate unitTemplate;
         [SerializeField]
         private Coord startingPosition;
 
-        public UnitTemplate UnitTemplate
+        public IUnitTemplate UnitTemplate
         {
             get
             {
@@ -33,11 +33,11 @@ public class Level : ScriptableObject {
     public class StartingStructure
     {
         [SerializeField]
-        private StructureTemplate structureTemplate;
+        private SoStructureTemplate structureTemplate;
         [SerializeField]
         private Coord startingPosition;
 
-        public StructureTemplate StructureTemplate
+        public IStructureTemplate StructureTemplate
         {
             get
             {

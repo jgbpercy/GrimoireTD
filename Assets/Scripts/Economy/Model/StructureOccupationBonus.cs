@@ -11,12 +11,12 @@ using UnityEngine;
 public class StructureOccupationBonus : OccupationBonus {
 
     [SerializeField]
-    private StructureTemplate structureTemplate;
+    private SoStructureTemplate structureTemplate;
 
     [SerializeField]
-    private StructureUpgrade structureUpgradeLevel;
+    private SoStructureUpgrade structureUpgradeLevel;
 
-    public StructureTemplate StructureTemplate
+    public IStructureTemplate StructureTemplate
     {
         get
         {
@@ -24,7 +24,7 @@ public class StructureOccupationBonus : OccupationBonus {
         }
     }
 
-    public StructureUpgrade StructureUpgradeLevel
+    public IStructureUpgrade StructureUpgradeLevel
     {
         get
         {

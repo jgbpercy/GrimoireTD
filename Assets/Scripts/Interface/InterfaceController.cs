@@ -21,7 +21,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     private InterfaceCursorMode cursorMode = InterfaceCursorMode.SELECT;
 
-    private StructureTemplate selectedStructureTemplate;
+    private IStructureTemplate selectedStructureTemplate;
 
     private Structure selectedStructureInstance = null;
     private Unit selectedUnitInstance = null;
@@ -48,7 +48,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private Action<Structure, Unit> OnDefendingEntitySelectedCallback;
     private Action OnDefendingEntityDeselectedCallback;
 
-    private Action<StructureTemplate> OnStructureToBuildSelectedCallback;
+    private Action<IStructureTemplate> OnStructureToBuildSelectedCallback;
 
     private Action<Creep> OnCreepSelectedCallback;
     private Action OnCreepDeselectedCallback;
@@ -260,7 +260,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         SetCursorModeSelect();
     }
 
-    public void SelectStructureToBuild(StructureTemplate selectedStructureTemplate)
+    public void SelectStructureToBuild(IStructureTemplate selectedStructureTemplate)
     {
         this.selectedStructureTemplate = selectedStructureTemplate;
 
@@ -352,12 +352,12 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         SetCursorModeSelect();
     }
 
-    public void ClickUnitTalent(Unit unit, UnitTalent unitTalent)
+    public void ClickUnitTalent(Unit unit, IUnitTalent unitTalent)
     {
         unit.TryLevelUp(unitTalent);
     }
 
-    public void ClickStructureEnhancement(Structure structure, StructureUpgrade upgrade, StructureEnhancement enhancement)
+    public void ClickStructureEnhancement(Structure structure, IStructureUpgrade upgrade, StructureEnhancement enhancement)
     {
         structure.TryUpgrade(upgrade, enhancement, false);
     }
@@ -382,12 +382,12 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         OnDefendingEntityDeselectedCallback -= callback;
     }
 
-    public void RegisterForStructureToBuildSelectedCallback(Action<StructureTemplate> callback)
+    public void RegisterForStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
     {
         OnStructureToBuildSelectedCallback += callback;
     }
 
-    public void DeregisterForStructureToBuildSelectedCallback(Action<StructureTemplate> callback)
+    public void DeregisterForStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
     {
         OnStructureToBuildSelectedCallback -= callback;
     }

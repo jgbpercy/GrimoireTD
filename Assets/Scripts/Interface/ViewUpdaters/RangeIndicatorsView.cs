@@ -105,7 +105,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
         rangeIndicatorPositioner.position = mouseOverCoord.ToPositionVector();
     }
 
-    private void OnSelectedStructureChange(StructureTemplate selectedStructureTemplate)
+    private void OnSelectedStructureChange(IStructureTemplate selectedStructureTemplate)
     {
         int i = 0;
 

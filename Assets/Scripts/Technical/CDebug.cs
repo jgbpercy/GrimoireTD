@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class DebugChannel
@@ -49,6 +48,7 @@ public static class CDebug {
     public static DebugChannel structureUpgrades;
     public static DebugChannel hexEconomy;
     public static DebugChannel pathing;
+    public static DebugChannel debugCommands;
 
     public static void InitialiseDebugChannels()
     {
@@ -99,6 +99,9 @@ public static class CDebug {
 
         pathing = new DebugChannel("Pathing", false);
         channelList.Add(pathing);
+
+        debugCommands = new DebugChannel("Debug Commands", true);
+        channelList.Add(debugCommands);
 
         foreach (DebugChannel debugChannel in channelList)
         {

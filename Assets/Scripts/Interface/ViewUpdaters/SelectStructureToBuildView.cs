@@ -9,7 +9,7 @@ public class SelectStructureToBuildView : SingletonMonobehaviour<SelectStructure
     private GameObject structureSelectPanel;
 
     [SerializeField]
-    private StructureTemplate[] buildableStructureTemplates;
+    private SoStructureTemplate[] buildableStructureTemplates;
 
     private void Start()
     {
@@ -20,7 +20,7 @@ public class SelectStructureToBuildView : SingletonMonobehaviour<SelectStructure
 
     private void SetUpStructurePanel()
     {
-        foreach (StructureTemplate structureTemplate in buildableStructureTemplates)
+        foreach (IStructureTemplate structureTemplate in buildableStructureTemplates)
         {
             GameObject structurePanel = Instantiate(structurePanelPrefab) as GameObject;
             structurePanel.transform.SetParent(structureSelectPanel.transform, false);

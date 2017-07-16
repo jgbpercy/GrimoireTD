@@ -100,8 +100,8 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
     private void Update()
     {
-        //TEMP DEBUG
-        if (CDebug.unitAttributes.Enabled && Input.GetAxisRaw("DebugSpawnWave") > 0)
+        //TEMP DEBUG ADDEXPERIENCE TODO: REMOVE
+        if (CDebug.debugCommands.Enabled && Input.GetAxisRaw("DebugSpawnWave") > 0)
         {
             selectedUnit.TempDebugAddExperience();
         }
@@ -349,7 +349,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     {
         ClearUpgradeAndEnhancementDisplays();
 
-        foreach (StructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
+        foreach (IStructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
         {
             AddUpgradeDisplay(upgrade);
 
@@ -360,7 +360,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         }
     }
 
-    private void AddUpgradeDisplay(StructureUpgrade upgrade)
+    private void AddUpgradeDisplay(IStructureUpgrade upgrade)
     {
         GameObject newUpgradeDisplay = Instantiate(structureUpgradeDisplayPrefab) as GameObject;
         newUpgradeDisplay.transform.SetParent(structureUpgradeLayout);
@@ -384,7 +384,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     {
         SetNameAndDescription(selectedStructure, selectedStructureName, selectedStructureText);
 
-        foreach (StructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
+        foreach (IStructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
         {
             if (!selectedStructure.UpgradesBought[upgrade])
             {
@@ -439,7 +439,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     {
         ClearTalentDisplays();
 
-        foreach (UnitTalent talent in selectedUnit.UnitTemplate.UnitTalents)
+        foreach (IUnitTalent talent in selectedUnit.UnitTemplate.UnitTalents)
         {
             GameObject newTalentDisplay = Instantiate(unitTalentDisplayPrefab) as GameObject;
             newTalentDisplay.transform.SetParent(unitTalentLayout);

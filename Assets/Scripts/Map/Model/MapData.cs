@@ -221,7 +221,7 @@ public class MapData {
         return true;
     }
 
-    public bool CanBuildStructureAt(Coord coord, StructureTemplate structureTemplate, bool isFree)
+    public bool CanBuildStructureAt(Coord coord, IStructureTemplate structureTemplate, bool isFree)
     {
         if ( !CanBuildGenericStructureAt(coord) )
         {
@@ -237,7 +237,7 @@ public class MapData {
         return true;
     }
 
-    public bool TryBuildStructureAt(Coord coord, StructureTemplate structureTemplate, bool isFree)
+    public bool TryBuildStructureAt(Coord coord, IStructureTemplate structureTemplate, bool isFree)
     {
         if ( !CanBuildStructureAt(coord, structureTemplate, isFree) )
         {
@@ -286,7 +286,7 @@ public class MapData {
         return true;
     }
 
-    public bool TryCreateUnitAt(Coord targetCoord, UnitTemplate unitTemplate)
+    public bool TryCreateUnitAt(Coord targetCoord, IUnitTemplate unitTemplate)
     {
         if (!CanCreateUnitAt(targetCoord))
         {

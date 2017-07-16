@@ -117,7 +117,7 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
 
     }
 
-    private void OnSelectedStructureChange(StructureTemplate selectedStructureTemplate)
+    private void OnSelectedStructureChange(IStructureTemplate selectedStructureTemplate)
     {
         //TODO: get and cache these at start (and also generally do better)
         MeshFilter selectedStructureMeshFilter = selectedStructureTemplate.Prefab.GetComponentInChildren<MeshFilter>();
