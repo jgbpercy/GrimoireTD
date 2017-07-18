@@ -17,8 +17,11 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
     private HexType[] hexTypes;
     private Dictionary<BaseHexTypeEnum, HexType> hexTypeDictionary;
 
+    /*TODO: Make this fit the template/generator pattern better so that MapGenerator (rename) is a pure 
+     * class with a constructor not a singleton monobehaviour and something else bootstraps the level load?
+     * */
     [SerializeField]
-    private Level level;
+    private SoLevel level;
 
     [SerializeField]
     private ColorToType[] colorsToTypes;
@@ -32,7 +35,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         }
     }
 
-    public Level Level
+    public ILevel Level
     {
         get
         {
@@ -83,7 +86,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     private void PlaceStartingStructures()
     {
-        foreach(Level.StartingStructure startingStructure in level.StartingStructures)
+        foreach(StartingStructure startingStructure in level.StartingStructures)
         {
             if (!map.CanBuildStructureAt(startingStructure.StartingPosition, startingStructure.StructureTemplate, true))
             {
@@ -98,7 +101,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     private void PlaceStartingUnits()
     {
-        foreach(Level.StartingUnit startingUnit in level.StartingUnits)
+        foreach(StartingUnit startingUnit in level.StartingUnits)
         {
             if (!map.CanCreateUnitAt(startingUnit.StartingPosition) )
             {
