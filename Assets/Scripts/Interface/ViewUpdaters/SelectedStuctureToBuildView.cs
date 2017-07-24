@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelectedStuctureToBuildView : MonoBehaviour {
+public class SelectedStuctureToBuildView : SingletonMonobehaviour<SelectedStuctureToBuildView> {
 
     [SerializeField]
     private GameObject selectedStructureToBuildPanel;

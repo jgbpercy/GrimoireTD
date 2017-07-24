@@ -263,9 +263,9 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     public void SelectStructureToBuild(IStructureTemplate selectedStructureTemplate)
     {
-        this.selectedStructureTemplate = selectedStructureTemplate;
-
         SetCursorModeBuild();
+
+        this.selectedStructureTemplate = selectedStructureTemplate;
 
         OnStructureToBuildSelectedCallback(selectedStructureTemplate);
     }
