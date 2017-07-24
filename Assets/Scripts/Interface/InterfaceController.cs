@@ -49,6 +49,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     private Action OnDefendingEntityDeselectedCallback;
 
     private Action<IStructureTemplate> OnStructureToBuildSelectedCallback;
+    private Action OnStructureToBuildDeselectedCallback;
 
     private Action<Creep> OnCreepSelectedCallback;
     private Action OnCreepDeselectedCallback;
@@ -284,10 +285,16 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     {
         selectedStructureInstance = null;
         selectedUnitInstance = null;
+        selectedStructureTemplate = null;
 
         if (OnDefendingEntityDeselectedCallback != null)
         {
             OnDefendingEntityDeselectedCallback();
+        }
+
+        if (OnStructureToBuildDeselectedCallback != null)
+        {
+            OnStructureToBuildDeselectedCallback();
         }
     }
 
@@ -382,7 +389,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         OnDefendingEntityDeselectedCallback -= callback;
     }
 
-    public void RegisterForStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
+    public void RegisterForOnStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
     {
         OnStructureToBuildSelectedCallback += callback;
     }
@@ -390,6 +397,16 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     public void DeregisterForStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
     {
         OnStructureToBuildSelectedCallback -= callback;
+    }
+
+    public void RegisterForOnStructureToBuildDeselectedCallback(Action callback)
+    {
+        OnStructureToBuildDeselectedCallback += callback;
+    }
+
+    public void DeregisterForOnStructureToBuildDeselectedCallback(Action callback)
+    {
+        OnStructureToBuildDeselectedCallback -= callback;
     }
 
     public void RegisterForOnCreepSelectedCallback(Action<Creep> callback)

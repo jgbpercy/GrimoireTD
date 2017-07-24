@@ -27,7 +27,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
 
         interfaceController = InterfaceController.Instance;
 
-        interfaceController.RegisterForStructureToBuildSelectedCallback(OnSelectedStructureChange);
+        interfaceController.RegisterForOnStructureToBuildSelectedCallback(OnSelectedStructureChange);
 	}
 	
 	void Update ()

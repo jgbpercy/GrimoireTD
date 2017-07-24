@@ -40,7 +40,7 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
         structureGhostRenderer = structureGhost.GetComponent<MeshRenderer>();
         structureGhostRenderer.enabled = false;
 
-        interfaceController.RegisterForStructureToBuildSelectedCallback(OnSelectedStructureChange);
+        interfaceController.RegisterForOnStructureToBuildSelectedCallback(OnSelectedStructureChange);
     }
 
     private void Update()
