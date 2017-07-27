@@ -44,5 +44,4 @@ public class DefendModeAbilityUIComponent : MonoBehaviour {
         ownText.text = defendModeAbility.DefendModeAbilityTemplate.NameInGame + " ( " + defendModeAbility.TimeSinceExecutedClamped.ToString("0.00") + " / " + defendModeAbility.ActualCooldown.ToString("0.00") + " )";
         ownSlider.value = defendModeAbility.PercentOfCooldownPassed;
     }
-
 }

@@ -11,5 +11,4 @@ public class CreepView : SingletonMonobehaviour<CreepView> {
 
         creepComponent.SetUp(creepModel);
     }
-
 }

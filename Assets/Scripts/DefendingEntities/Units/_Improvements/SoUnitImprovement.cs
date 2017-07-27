@@ -25,5 +25,4 @@ public class SoUnitImprovement : SoDefendingEntityImprovement, IUnitImprovement 
             return conditionalStructureOccupationBonuses;
         }
     }
-
 }

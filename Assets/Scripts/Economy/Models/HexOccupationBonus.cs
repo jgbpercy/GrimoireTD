@@ -7,7 +7,7 @@ public class HexOccupationBonus : OccupationBonus {
     [SerializeField]
     private BaseHexTypeEnum hexType;
 
-    public HexType HexType
+    public IHexType HexType
     {
         get
         {

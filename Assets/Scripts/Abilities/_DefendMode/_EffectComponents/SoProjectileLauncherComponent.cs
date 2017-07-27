@@ -15,7 +15,7 @@ public class SoProjectileLauncherComponent : SoDefendModeEffectComponent, IProje
         }
     }
 
-    public override void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<IDefendModeTargetable> targets)
+    public override void ExecuteEffect(DefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
     {
         foreach (IDefendModeTargetable target in targets)
         {

@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "TargetEnemyClosestToFinishInRange", menuName = "Defend Mode Abilities/Targeting Components/Enemy Closest To Finish In Range")]
 public class SoTargetEnemyClosestToFinishInRange : SoTargetingComponentFloatRange, ITargetEnemyClosestToFinishInRange {
 
-    public override List<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity)
+    public override IReadOnlyList<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity)
     {
         IDefendModeTargetable target = CreepManager.CreepInRangeNearestToEnd(
             attachedToDefendingEntity.CoordPosition.ToPositionVector(), 

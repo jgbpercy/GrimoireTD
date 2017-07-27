@@ -1,4 +1,4 @@
-﻿ using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,13 +7,13 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
 
     private List<Wave> WaveList;
 
-    private int currentWave = 0;
+    private int currentWave;
 
     private List<Creep> creepList;
 
-    private bool waveIsActive = false;
-    private bool waveIsSpawning = false;
-    private bool trackIdleTime = false;
+    private bool waveIsActive;
+    private bool waveIsSpawning;
+    private bool trackIdleTime;
 
     public bool WaveIsActive
     {
@@ -44,17 +44,22 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         CDebug.Log(CDebug.applicationLoading, "Creep Manager Start");
 
         creepList = new List<Creep>();
-
-        //test waves hacky hacky make scriptable objects
+        
         WaveList = new List<Wave>();
+
+        currentWave = 0;
+
+        waveIsActive = false;
+        waveIsSpawning = false;
+        trackIdleTime = false;
 
         foreach (IWaveTemplate waveTemplate in MapGenerator.Instance.Level.Waves)
         {
             WaveList.Add(waveTemplate.GenerateWave());
         }
-
     }
 
+    //TODO: Make modelFrameUpdatee rather the monobehaviour
     void Update () {
 
         if ( creepList.Count == 0 && !waveIsSpawning )
@@ -113,7 +118,6 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         CDebug.Log(CDebug.creepSpawning, "SpawnWave coroutine finished");
 
         yield return null;
-
     }
 
     private void SpawnCreep(ICreepTemplate creepToSpawn)

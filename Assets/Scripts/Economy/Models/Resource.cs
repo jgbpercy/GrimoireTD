@@ -5,6 +5,12 @@ public class Resource {
     [SerializeField]
     private string nameInGame;
 
+    [SerializeField]
+    private int amountOwned;
+
+    [SerializeField]
+    private int maxAmount;
+
     public string NameInGame
     {
         get
@@ -13,9 +19,6 @@ public class Resource {
         }
     }
 
-    [SerializeField]
-    private int amountOwned;
-
     public int AmountOwned
     {
         get
@@ -23,9 +26,6 @@ public class Resource {
             return amountOwned;
         }
     }
-
-    [SerializeField]
-    private int maxAmount;
 
     public Resource(string name, int maxAmount, int baseAmount)
     {

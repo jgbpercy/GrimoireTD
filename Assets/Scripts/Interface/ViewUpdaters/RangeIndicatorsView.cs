@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
@@ -20,7 +19,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
     [SerializeField]
     private Transform rangeIndicatorPositioner;
 
-	void Start ()
+	private void Start ()
     {
         rangeIndicators = new List<GameObject>();
         rangeIndicatorRenderers = new Dictionary<GameObject, MeshRenderer>();
@@ -30,7 +29,7 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
         interfaceController.RegisterForOnStructureToBuildSelectedCallback(OnSelectedStructureChange);
 	}
 	
-	void Update ()
+	private void Update ()
     {
         bool mouseRaycastHitMap = interfaceController.MouseRaycastHitMap;
 
@@ -55,26 +54,26 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
             
             if ( mouseOverHex.StructureHere != null )
             {
-                mouseOverHex.StructureHere.DefendModeAbilities().ForEach(x => {
-
-                    ITargetingComponentFloatRange targetingComponentFloatRange = x.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
+                foreach (DefendModeAbility defendModeAbility in mouseOverHex.StructureHere.DefendModeAbilities())
+                {
+                    ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
                     if (targetingComponentFloatRange != null)
                     {
                         ranges.Add(targetingComponentFloatRange.GetActualRange(mouseOverHex.StructureHere));
                     }
-                });
+                }
             }
 
             if ( mouseOverHex.UnitHere != null )
             {
-                mouseOverHex.UnitHere.DefendModeAbilities().ForEach(x => {
-
-                    ITargetingComponentFloatRange targetingComponentFloatRange = x.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
+                foreach (DefendModeAbility defendModeAbility in mouseOverHex.UnitHere.DefendModeAbilities())
+                {
+                    ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
                     if (targetingComponentFloatRange != null)
                     {
                         ranges.Add(targetingComponentFloatRange.GetActualRange(mouseOverHex.UnitHere));
                     }
-                });
+                }
             }
 
             for (int i = 0; i < ranges.Count; i++)
@@ -111,11 +110,9 @@ public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView> {
 
         foreach (IAbilityTemplate abilityTemplate in selectedStructureTemplate.BaseCharacteristics.Abilities)
         {
-
             IDefendModeAbilityTemplate defendModeAbilityTemplate = abilityTemplate as IDefendModeAbilityTemplate;
             if ( defendModeAbilityTemplate != null ) 
             {
-
                 ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
                 if ( targetingComponentFloatRange != null )
                 {

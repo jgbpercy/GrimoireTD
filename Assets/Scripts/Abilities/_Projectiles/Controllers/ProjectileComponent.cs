@@ -8,6 +8,7 @@ public class ProjectileComponent : MonoBehaviour {
     private ParticleSystem hitExplosion;
     [SerializeField]
     private MeshRenderer ownRenderer;
+
     protected SphereCollider ownCollider;
 
     public virtual void SetUp(Projectile projectileModel)
@@ -43,5 +44,4 @@ public class ProjectileComponent : MonoBehaviour {
     {
         projectileModel.GameObjectDestroyed();
     }
-
 }

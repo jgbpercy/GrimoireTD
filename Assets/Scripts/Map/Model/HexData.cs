@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HexData {
 
-    private HexType hexType;
+    private IHexType hexType;
 
     private Structure structureHere = null;
 
@@ -12,7 +12,7 @@ public class HexData {
 
     private CallbackList<DefenderAura> defenderAurasHere;
 
-    public HexType HexType
+    public IHexType HexType
     {
         get
         {
@@ -48,7 +48,7 @@ public class HexData {
     public float pathingGScore;
     public Coord pathingCameFrom;
 
-    public HexData(HexType createWithType)
+    public HexData(IHexType createWithType)
     {
         hexType = createWithType;
         ResetPathingData();

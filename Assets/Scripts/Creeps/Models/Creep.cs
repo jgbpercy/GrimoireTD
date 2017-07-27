@@ -1,7 +1,6 @@
 ﻿using System;
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 public class Creep : IDefendModeTargetable, IFrameUpdatee {
@@ -9,9 +8,12 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
     public class PersistentEffect
     {
         private int magnitude;
+
         private float duration;
         private float elapsed;
+
         private AttackEffectType attackEffectType;
+
         private string effectName;
 
         public int Magnitude
@@ -105,7 +107,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
 
     private ICreepTemplate creepTemplate;
 
-    private List<PersistentEffect> persistentEffects = new List<PersistentEffect>();
+    private List<PersistentEffect> persistentEffects;
 
     private Action OnHealthChangedCallback;
     private Action OnDiedCallback;
@@ -171,7 +173,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         }
     }
 
-    public List<PersistentEffect> PersistentEffects
+    public IReadOnlyList<PersistentEffect> PersistentEffects
     {
         get
         {
@@ -189,10 +191,12 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
 
         position = spawnPosition;
 
-        currentDestinationPathNode = MapGenerator.Instance.Map.Path.Count - 2;
-        currentDestinationVector = MapGenerator.Instance.Map.Path[currentDestinationPathNode].ToPositionVector();
+        currentDestinationPathNode = MapGenerator.Instance.Map.CreepPath.Count - 2;
+        currentDestinationVector = MapGenerator.Instance.Map.CreepPath[currentDestinationPathNode].ToPositionVector();
 
         creepTemplate = template;
+
+        persistentEffects = new List<PersistentEffect>();
 
         ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
 
@@ -214,13 +218,14 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         if (distanceFromCurrentDestination < currentSpeed * Time.deltaTime)
         {
             currentDestinationPathNode = currentDestinationPathNode - 1 < 0 ? 0 : currentDestinationPathNode - 1;
-            currentDestinationVector = MapGenerator.Instance.Map.Path[currentDestinationPathNode].ToPositionVector();
+            currentDestinationVector = MapGenerator.Instance.Map.CreepPath[currentDestinationPathNode].ToPositionVector();
         }
 
         position = Vector3.MoveTowards(position, currentDestinationVector, currentSpeed * Time.deltaTime);
 
         bool speedChanged = false;
 
+        //TODO: make persistent effects a callback list?
         for (int i = 0; i < persistentEffects.Count; i++)
         {
             persistentEffects[i].IncreaseElapsed();
@@ -228,11 +233,8 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
             if ( persistentEffects[i].HasElapsed())
             {
                 CDebug.Log(CDebug.combatLog, Id + " persistent effect ended: " + persistentEffects[i].EffectName);
-                
-                if ( OnPersistentEffectExpiredCallback != null )
-                {
-                    OnPersistentEffectExpiredCallback(i);
-                }
+
+                OnPersistentEffectExpiredCallback?.Invoke(i);
 
                 if (persistentEffects[i].AttackEffectType is SlowEffectType )
                 {
@@ -379,7 +381,8 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
 
             persistentEffects.Add(newPersistentEffect);
 
-            if (OnNewPersistentEffectCallback != null) { OnNewPersistentEffectCallback(newPersistentEffect); }
+            OnNewPersistentEffectCallback?.Invoke(newPersistentEffect);
+
             if (isSpeedChange) { OnSpeedChange(); }
 
             return;
@@ -388,8 +391,11 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         if (currentEffect.Magnitude < newEffectMagnitude)
         {
             currentEffect.ApplyNewEffect(attackEffect, newEffectMagnitude, newEffectDuration);
+
             CDebug.Log(CDebug.combatLog, "Current effect with lower magnitude, applying effect");
+
             if (isSpeedChange) { OnSpeedChange(); }
+
             return;
         }
         else if (currentEffect.Magnitude == newEffectMagnitude)
@@ -397,8 +403,11 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
             if ( currentEffect.TimeRemaining() < newEffectDuration)
             {
                 currentEffect.ApplyNewEffect(attackEffect, newEffectMagnitude, newEffectDuration);
+
                 CDebug.Log(CDebug.combatLog, "Current effect with same magnitude and lower remaining duration, applying effect");
+
                 if (isSpeedChange) { OnSpeedChange(); }
+
                 return;
             }
         }
@@ -424,6 +433,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
     {
         float actualResistance = 0f;
 
+
         for (int i = 0; i < GetActualArmor(); i++)
         {
             actualResistance = actualResistance + (1 - actualResistance) * resistanceFromArmor;
@@ -433,6 +443,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         actualResistance = actualResistance + (1 - actualResistance) * specificResistance;
 
         CDebug.Log(CDebug.combatLog, "Calculated actual resistance as " + actualResistance);
+
         return actualResistance;
     }
 
@@ -487,6 +498,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         CDebug.Log(CDebug.combatLog, Id + " current speed is " + currentSpeed + " = " + creepTemplate.BaseSpeed + " * " + speedFactor);
     }
 
+    //TODO: make callback? Or change? Seems bad
     public void GameObjectDestroyed()
     {
         ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class Wave {
 
@@ -8,7 +6,7 @@ public class Wave {
 
     private bool debugOn;
 
-    public SortedList<float, ICreepTemplate> Spawns
+    public IReadOnlyDictionary<float, ICreepTemplate> Spawns
     {
         get
         {

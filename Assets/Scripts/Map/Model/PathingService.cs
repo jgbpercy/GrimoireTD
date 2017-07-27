@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public static class PathingService {
@@ -49,7 +48,7 @@ public static class PathingService {
         return CalculatePath(hexes, start, end, graphEdges);
     }
 
-    public static List<Coord> DisallowedCoords(List<Coord> path, MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end)
+    public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end)
     {
         return DisallowedCoords(path, map, hexes, start, end, new List<Coord>());
     }
@@ -64,7 +63,7 @@ public static class PathingService {
      * OR!
      * You can probably do something where you start with a non-zero open set?
     */
-    public static List<Coord> DisallowedCoords(List<Coord> path, MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end, List<Coord> newlyPathableCoords)
+    public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end, List<Coord> newlyPathableCoords)
     {
         List<Coord> disallowedList = new List<Coord>();
 

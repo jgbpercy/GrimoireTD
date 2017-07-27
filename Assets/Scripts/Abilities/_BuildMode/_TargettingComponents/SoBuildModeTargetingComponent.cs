@@ -15,7 +15,7 @@ public class SoBuildModeTargetingComponent : ScriptableObject, IBuildModeTargeti
         }
     }
 
-    public virtual List<IBuildModeTargetable> FindTargets(Coord position)
+    public virtual IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
     {
         throw new NotImplementedException("Base BMTargetingComponent cannot find targets and should not be used.");
     }

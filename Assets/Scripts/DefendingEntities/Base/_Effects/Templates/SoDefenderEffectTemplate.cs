@@ -34,5 +34,4 @@ public class SoDefenderEffectTemplate : ScriptableObject, IDefenderEffectTemplat
             return improvement;
         }
     }
-    
 }

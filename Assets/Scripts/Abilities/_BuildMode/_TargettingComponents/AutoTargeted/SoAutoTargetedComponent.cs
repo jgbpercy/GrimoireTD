@@ -6,7 +6,7 @@ public class SoAutoTargetedComponent : SoBuildModeTargetingComponent, IAutoTarge
     [SerializeField]
     private BuildModeAbilityAutoTargetedRuleService.RuleName targetingRule;
 
-    public override List<IBuildModeTargetable> FindTargets(Coord position)
+    public override IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
     {
         return BuildModeAbilityAutoTargetedRuleService.RunRule(targetingRule, position);
     }

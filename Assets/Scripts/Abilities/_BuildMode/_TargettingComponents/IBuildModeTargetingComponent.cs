@@ -4,5 +4,5 @@ public interface IBuildModeTargetingComponent {
 
     int Range { get; }
 
-    List<IBuildModeTargetable> FindTargets(Coord position);
+    IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position);
 }

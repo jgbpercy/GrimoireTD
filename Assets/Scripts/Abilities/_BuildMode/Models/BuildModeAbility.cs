@@ -20,7 +20,7 @@ public class BuildModeAbility : Ability {
 
     public void ExecuteAbility(DefendingEntity executingEntity, Coord executionPosition)
     {
-        List<IBuildModeTargetable> targetList = buildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
+        IReadOnlyList<IBuildModeTargetable> targetList = buildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
 
         buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
 

@@ -2,5 +2,5 @@
 
 public interface IBuildModeEffectComponent {
 
-    void ExecuteEffect(DefendingEntity executingEntity, List<IBuildModeTargetable> targets);
+    void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets);
 }

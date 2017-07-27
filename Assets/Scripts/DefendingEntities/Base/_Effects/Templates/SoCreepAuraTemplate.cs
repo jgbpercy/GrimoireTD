@@ -2,7 +2,6 @@
 
 public class SoCreepAuraTemplate : SoDefenderEffectTemplate, ICreepAuraTemplate
 {
-
     [SerializeField]
     private float baseRange;
 

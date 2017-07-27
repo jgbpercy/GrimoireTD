@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
-public class DefendingEntityView : SingletonMonobehaviour<DefendingEntityView> {
-
+//TODO: Change these dumb things to hook into some central management callback so the model isn't talking to them
+public class DefendingEntityView : SingletonMonobehaviour<DefendingEntityView>
+{
     [SerializeField]
     private Transform structureFolder;
 

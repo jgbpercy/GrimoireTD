@@ -11,14 +11,14 @@ public class AoeProjectileComponent : ProjectileComponent {
     {
         base.SetUp(projectileModel);
 
-        aoeProjectileModel = (AoeProjectile)projectileModel;
-        Assert.IsTrue(aoeProjectileModel != null);
+        aoeProjectileModel = projectileModel as AoeProjectile;
+        Assert.IsNotNull(aoeProjectileModel);
 
         aoeProjectileModel.RegisterForOnExplosionCallback( () => { isExploding = true; } );
         aoeProjectileModel.RegisterForOnExplosionFinishedCallback(() => { ownCollider.enabled = false; isExploding = false; });
-
     }
 
+    //TODO handle this in the model where it should be?
     protected override void OnTriggerEnter(Collider other)
     {
         if ( !isExploding )

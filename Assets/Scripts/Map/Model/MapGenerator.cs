@@ -14,8 +14,8 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
     private MapData map;
 
     [SerializeField]
-    private HexType[] hexTypes;
-    private Dictionary<BaseHexTypeEnum, HexType> hexTypeDictionary;
+    private SoHexType[] hexTypes;
+    private Dictionary<BaseHexTypeEnum, IHexType> hexTypeDictionary;
 
     /*TODO: Make this fit the template/generator pattern better so that MapGenerator (rename) is a pure 
      * class with a constructor not a singleton monobehaviour and something else bootstraps the level load?
@@ -25,7 +25,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     [SerializeField]
     private ColorToType[] colorsToTypes;
-    private Dictionary<Color32, HexType> colorsToTypesDictionary;
+    private Dictionary<Color32, IHexType> colorsToTypesDictionary;
 
     public MapData Map
     {
@@ -61,9 +61,9 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     private void BuildHexTypesDictionary()
     {
-        hexTypeDictionary = new Dictionary<BaseHexTypeEnum, HexType>();
+        hexTypeDictionary = new Dictionary<BaseHexTypeEnum, IHexType>();
 
-        foreach (HexType hexType in hexTypes)
+        foreach (IHexType hexType in hexTypes)
         {
             hexTypeDictionary.Add(hexType.BaseHexType, hexType);
         }
@@ -71,7 +71,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     private void ColorsToTypesArrayToDictionary()
     {
-        colorsToTypesDictionary = new Dictionary<Color32, HexType>();
+        colorsToTypesDictionary = new Dictionary<Color32, IHexType>();
 
         foreach (ColorToType colorToType in colorsToTypes)
         {
@@ -79,7 +79,7 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         }
     }
 
-    public HexType HexTypeFromName(BaseHexTypeEnum nameEnum)
+    public IHexType HexTypeFromName(BaseHexTypeEnum nameEnum)
     {
         return hexTypeDictionary[nameEnum];
     }

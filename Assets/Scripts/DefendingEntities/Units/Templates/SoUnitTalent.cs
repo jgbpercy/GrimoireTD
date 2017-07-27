@@ -10,10 +10,7 @@ public class SoUnitTalent : ScriptableObject, IUnitTalent {
     [SerializeField]
     private string descriptionText;
 
-    //Eugh https://stackoverflow.com/questions/5968708/why-array-implements-ilist
-    //IList needed as these need to be accessed by index
-    //TODO: .NET 4.5 fixes this with IReadOnlyList? Try once available
-    public IList<IUnitImprovement> UnitImprovements
+    public IReadOnlyList<IUnitImprovement> UnitImprovements
     {
         get
         {
@@ -28,5 +25,4 @@ public class SoUnitTalent : ScriptableObject, IUnitTalent {
             return descriptionText;
         }
     }
-
 }

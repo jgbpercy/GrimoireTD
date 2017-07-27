@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System;
 
-public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>
+public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>, IReadOnlyList<T>
 {
-
     private List<T> list;
 
     private Action<T> OnAdd;
@@ -26,6 +25,14 @@ public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>
         }
     }
 
+    public T this[int index]
+    {
+        get
+        {
+            return list[index];
+        }
+    }
+
     public CallbackList()
     {
         list = new List<T>();
@@ -35,10 +42,7 @@ public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>
     {
         list.Add(item);
 
-        if ( OnAdd != null )
-        {
-            OnAdd(item);
-        }
+        OnAdd?.Invoke(item);
     }
 
     public bool Contains(T item)
@@ -55,10 +59,7 @@ public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>
 
         list.Remove(item);
 
-        if( OnRemove != null )
-        {
-            OnRemove(item);
-        }
+        OnRemove?.Invoke(item);
 
         return true;
     }

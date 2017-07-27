@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 public class Unit : DefendingEntity
@@ -40,7 +40,7 @@ public class Unit : DefendingEntity
         }
     }
 
-    public Dictionary<IUnitTalent, int> LevelledTalents
+    public IReadOnlyDictionary<IUnitTalent, int> LevelledTalents
     {
         get
         {
@@ -56,7 +56,7 @@ public class Unit : DefendingEntity
         }
     }
 
-    public List<Coord> CachedDisallowedMovementDestinations
+    public IReadOnlyList<Coord> CachedDisallowedMovementDestinations
     {
         get
         {
@@ -277,7 +277,7 @@ public class Unit : DefendingEntity
         return occupationBonusTransaction;
     }
 
-    public EconomyTransaction GetConditionalHexOccupationBonus(HexType hexType)
+    public EconomyTransaction GetConditionalHexOccupationBonus(IHexType hexType)
     {
         return GetHexOccupationBonus(hexType, conditionalHexOccupationBonuses);
     }
@@ -308,10 +308,7 @@ public class Unit : DefendingEntity
 
         levelUpsPending = (experience - level * UnitTemplate.ExperienceToLevelUp) / UnitTemplate.ExperienceToLevelUp;
 
-        if (OnExperienceFatigueLevelChangedCallback != null)
-        {
-            OnExperienceFatigueLevelChangedCallback();
-        }
+        OnExperienceFatigueLevelChangedCallback?.Invoke();
     }
 
     private float FatigueFactor()
@@ -364,10 +361,7 @@ public class Unit : DefendingEntity
         level += 1;
         levelUpsPending -= 1;
 
-        if ( OnExperienceFatigueLevelChangedCallback != null )
-        {
-            OnExperienceFatigueLevelChangedCallback();
-        }
+        OnExperienceFatigueLevelChangedCallback?.Invoke();
 
         return true;
     }

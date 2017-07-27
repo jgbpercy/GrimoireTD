@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewHexType", menuName = "Hexes/Hex Type")]
-public class HexType : ScriptableObject {
-
+public class SoHexType : ScriptableObject, IHexType
+{
     [SerializeField]
     private string nameInGame;
 
@@ -41,13 +38,21 @@ public class HexType : ScriptableObject {
         }
     }
 
-    public int[] TextureOffset
+    public int TextureOffsetX
     {
         get
         {
-            return textureOffset;
+            return textureOffset[0];
         }
-    } 
+    }
+
+    public int TextureOffsetY
+    {
+        get
+        {
+            return textureOffset[1];
+        }
+    }
 
     public bool IsBuildable
     {
@@ -72,8 +77,6 @@ public class HexType : ScriptableObject {
             return unitCanOccupy;
         }
     }
-
-
 }
 
 public enum BaseHexTypeEnum
@@ -84,5 +87,3 @@ public enum BaseHexTypeEnum
     DESERT,
     FOREST
 }
-
-

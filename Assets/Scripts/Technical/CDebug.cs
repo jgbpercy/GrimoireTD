@@ -127,6 +127,4 @@ public static class CDebug {
             Debug.Log(channel.Name + ": " + message, context);
         }
     }
-
-
 }

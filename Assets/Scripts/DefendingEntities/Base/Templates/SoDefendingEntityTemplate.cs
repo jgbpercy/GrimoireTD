@@ -2,7 +2,6 @@
 
 public class SoDefendingEntityTemplate : ScriptableObject, IDefendingEntityTemplate
 {
-
     [SerializeField]
     private SoDefendingEntityImprovement baseCharacteristics;
 

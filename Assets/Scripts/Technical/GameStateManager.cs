@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using System;
 
 public enum GameMode
 {
@@ -57,10 +54,7 @@ public class GameStateManager : SingletonMonobehaviour<GameStateManager> {
 
         CreepManager.Instance.StartNextWave();
 
-        if ( OnEnterDefendModeCallback != null )
-        {
-            OnEnterDefendModeCallback();
-        }
+        OnEnterDefendModeCallback?.Invoke();
 
         return true;
     }
@@ -71,10 +65,7 @@ public class GameStateManager : SingletonMonobehaviour<GameStateManager> {
 
         gameMode = GameMode.BUILD;
 
-        if ( OnEnterBuildModeCallback != null )
-        {
-            OnEnterBuildModeCallback();
-        }
+        OnEnterBuildModeCallback?.Invoke();
 
         return true;
     }
@@ -98,5 +89,4 @@ public class GameStateManager : SingletonMonobehaviour<GameStateManager> {
     {
         OnEnterBuildModeCallback -= callback;
     }
-
 }

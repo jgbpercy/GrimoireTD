@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public struct EconomyTransaction {
 
     public EconomyTransaction(int foodChange, int woodChange, int stoneChange, int goldChange, int manaChange)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -9,15 +10,15 @@ public class AbilityController : MonoBehaviour {
 
     private DefendingEntity attachedToDefendingEntity;
 
-    private List<DefendModeAbility> defendModeAbilities;
+    private IReadOnlyList<DefendModeAbility> defendModeAbilities;
 
     private bool trackIdleTime = false;
 
     [SerializeField]
     private Transform firePoint;
 
-    void Start () {
-
+    private void Start ()
+    {
         StructureComponent attachedToStructureComponent = attachedToDefendingEntityComponent as StructureComponent;
         UnitComponent attachedToUnitComponent = attachedToDefendingEntityComponent as UnitComponent;
 
@@ -50,7 +51,7 @@ public class AbilityController : MonoBehaviour {
 
         if ( trackIdleTime && CreepManager.Instance.TrackIdleTime )
         {
-            if ( defendModeAbilities.Exists(x => !x.OffCooldown() ))
+            if ( defendModeAbilities.Any(x => !x.OffCooldown() ))
             {
                 ((Unit)attachedToDefendingEntity).TrackTime(false, Time.deltaTime);
             }
@@ -92,5 +93,4 @@ public class AbilityController : MonoBehaviour {
             ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(defendModeAbility);
         }
     }
-
 }

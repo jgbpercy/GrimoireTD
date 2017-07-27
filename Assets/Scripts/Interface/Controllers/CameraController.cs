@@ -57,8 +57,8 @@ public class CameraController : SingletonMonobehaviour<CameraController> {
     private Transform cameraRotator;
     private Vector3 cameraRigTargetPosition;
 
-    void Start () {
-
+    private void Start ()
+    {
         CDebug.Log(CDebug.applicationLoading, "Camera Controller Start");
 
         //camera components
@@ -73,13 +73,12 @@ public class CameraController : SingletonMonobehaviour<CameraController> {
         cameraTopClamp = map.Height * 0.75f;
     }
 
-    void Update () {
-
+    private void Update ()
+    {
         CameraPanning();
         CameraRotation();
         CameraDollying();
         CameraTilting();
-
     }
 
     private void CameraPanning()
@@ -109,6 +108,7 @@ public class CameraController : SingletonMonobehaviour<CameraController> {
     {
         cameraRigTargetPosition.x = Mathf.Clamp(cameraRigTargetPosition.x + Mathf.Cos(Mathf.Deg2Rad * cameraRotator.eulerAngles.z) * hor - Mathf.Sin(Mathf.Deg2Rad * cameraRotator.eulerAngles.z) * ver, cameraLeftClamp, cameraRightClamp);
         cameraRigTargetPosition.y = Mathf.Clamp(cameraRigTargetPosition.y + Mathf.Sin(Mathf.Deg2Rad * cameraRotator.eulerAngles.z) * hor + Mathf.Cos(Mathf.Deg2Rad * cameraRotator.eulerAngles.z) * ver, cameraBottomClamp, cameraTopClamp);
+
         if (debugOn) Debug.Log(cameraRigTargetPosition);
     }
 
@@ -135,6 +135,4 @@ public class CameraController : SingletonMonobehaviour<CameraController> {
 
         cameraTilter.localRotation = Quaternion.Lerp(cameraTilter.localRotation, Quaternion.Euler(cameraTiltTarget, 0f, 0f), cameraTiltLerpFactor);
     }
-
-
 }

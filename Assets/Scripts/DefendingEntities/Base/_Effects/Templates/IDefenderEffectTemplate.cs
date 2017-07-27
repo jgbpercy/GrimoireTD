@@ -12,5 +12,4 @@ public interface IDefenderEffectTemplate  {
     string NameInGame { get; }
 
     IDefendingEntityImprovement Improvement { get; }
-
 }

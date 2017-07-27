@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//TODO: make this and MouseOverMapView work on callbacks rather than polling each frame
+//TODO: make this and MouseOverMapView work on callbacks rather than polling each frame?
 public class MouseOverHexTextView : SingletonMonobehaviour<MouseOverHexTextView> {
 
     private InterfaceController interfaceController;

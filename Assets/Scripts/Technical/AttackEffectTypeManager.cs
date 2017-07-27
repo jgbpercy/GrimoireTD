@@ -6,15 +6,11 @@ public class AttackEffectTypeManager : SingletonMonobehaviour<AttackEffectTypeMa
     [SerializeField]
     private AttackEffectType[] attackEffectTypes;
 
-    //private Dictionary<SpecificDamageType, AttackEffectType> specificDamageTypeDict;
-    //private Dictionary<MetaDamageType, AttackEffectType> metaDamageTypeDict;
     private Dictionary<SlowType, AttackEffectType> slowTypeDict;
     private Dictionary<SingularPersistentType, AttackEffectType> singularPersistentDict;
 
     private void Start()
     {
-        //specificDamageTypeDict = new Dictionary<SpecificDamageType, AttackEffectType>();
-        //metaDamageTypeDict = new Dictionary<MetaDamageType, AttackEffectType>();
         slowTypeDict = new Dictionary<SlowType, AttackEffectType>();
         singularPersistentDict = new Dictionary<SingularPersistentType, AttackEffectType>();
 
@@ -34,16 +30,6 @@ public class AttackEffectTypeManager : SingletonMonobehaviour<AttackEffectTypeMa
             }
         }
     }
-
-    //public static AttackEffectType GetAttackEffectType(SpecificDamageType specificDamageType)
-    //{
-
-    //}
-
-    //public static AttackEffectType GetAttackEffectType(MetaDamageType metaDamageType)
-    //{
-
-    //}
 
     public static AttackEffectType GetAttackEffectType(SlowType slowType)
     {

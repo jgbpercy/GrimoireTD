@@ -2,7 +2,7 @@
 
 public interface IUnitTalent {
 
-    IList<IUnitImprovement> UnitImprovements { get; }
+    IReadOnlyList<IUnitImprovement> UnitImprovements { get; }
 
     string DescriptionText { get; }
 }

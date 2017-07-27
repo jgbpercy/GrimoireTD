@@ -2,5 +2,5 @@
 
 public interface IDefendModeEffectComponent
 {
-    void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<IDefendModeTargetable> targets);
+    void ExecuteEffect(DefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets);
 }

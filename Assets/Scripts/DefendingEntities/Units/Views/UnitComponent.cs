@@ -23,5 +23,4 @@ public class UnitComponent : MonoBehaviour {
     {
         transform.position = coord.ToPositionVector();
     }
-
 }

@@ -20,7 +20,7 @@ public class SoPlayerTargetsHexComponent : SoPlayerTargetedComponent, IPlayerTar
         return BuildModeAbilityHexTargetingRuleService.RunRule(targetingRule, sourceDefendingEntity, potentialTargetCoord, range);
     }
 
-    public override List<IBuildModeTargetable> FindTargets(Coord position)
+    public override IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
     {
         return BuildModeAbilityAutoTargetedRuleService.RunRule(aoeRule, position);
     }

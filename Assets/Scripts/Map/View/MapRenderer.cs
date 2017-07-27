@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
 
@@ -184,9 +182,8 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
                     }
                 }
 
-                textureOffsetX = map.GetHexAt(new Coord(x, y)).HexType.TextureOffset[0];
-
-                textureOffsetY = map.GetHexAt(new Coord(x, y)).HexType.TextureOffset[1];
+                textureOffsetX = map.GetHexAt(new Coord(x, y)).HexType.TextureOffsetX;
+                textureOffsetY = map.GetHexAt(new Coord(x, y)).HexType.TextureOffsetY;
                      
                 currentUvs = hexUvs(textureOffsetX, textureScaleMultiplierX, textureOffsetY, textureScaleMultiplierY);
 
@@ -206,7 +203,6 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
 
         mapGraphicsFilter.mesh = mapMesh;
         mapGraphicsCollider.sharedMesh = mapGraphicsFilter.sharedMesh;
-        
     }
 
     private void InitialiseOffMap()
@@ -404,7 +400,6 @@ public class MapRenderer : SingletonMonobehaviour<MapRenderer> {
             Debug.Log("6: " + uvs[6]);
         }
             
-
         return uvs;
     }
 }

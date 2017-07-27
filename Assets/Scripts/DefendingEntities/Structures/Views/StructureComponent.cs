@@ -16,5 +16,4 @@ public class StructureComponent : MonoBehaviour {
     {
         this.structureModel = structureModel;
     }
-
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Assertions;
+﻿using UnityEngine;
 
 public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
 
@@ -94,7 +91,7 @@ public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView> {
                 tileHighlighterRenderer.material.color = tileHighlightNoAction;
             }
         }
-        else if ( cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY)
+        else if (cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY)
         {
             tileHighlighterRenderer.enabled = true;
             structureGhostRenderer.enabled = false;

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using System;
 using UnityEngine.Assertions;
 
 public enum InterfaceCursorMode
@@ -19,6 +19,9 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
     [SerializeField]
     private LayerMask mainRayHitLayer;
 
+    [SerializeField]
+    private float maxRayFromCameraDistance = 100f;
+
     private InterfaceCursorMode cursorMode = InterfaceCursorMode.SELECT;
 
     private IStructureTemplate selectedStructureTemplate;
@@ -28,9 +31,6 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     private IPlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
     private BuildModeAbility selectedBuildModeAbility = null;
-
-    [SerializeField]
-    private float maxRayFromCameraDistance = 100f;
 
     private Ray cameraToMouseRay;
     private RaycastHit mouseHit;
@@ -141,8 +141,8 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     }
 
-    void Update() {
-
+    private void Update()
+    {
         mouseOverCoord = null;
         mouseOverHex = null;
         mouseOverCreep = null;
@@ -275,10 +275,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         selectedStructureInstance = hex.StructureHere;
         selectedUnitInstance = hex.UnitHere;
 
-        if (OnDefendingEntitySelectedCallback != null)
-        {
-            OnDefendingEntitySelectedCallback(selectedStructureInstance, selectedUnitInstance);
-        }
+        OnDefendingEntitySelectedCallback?.Invoke(selectedStructureInstance, selectedUnitInstance);
     }
 
     private void DeselectDefendingEntities()
@@ -287,31 +284,19 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
         selectedUnitInstance = null;
         selectedStructureTemplate = null;
 
-        if (OnDefendingEntityDeselectedCallback != null)
-        {
-            OnDefendingEntityDeselectedCallback();
-        }
+        OnDefendingEntityDeselectedCallback?.Invoke();
 
-        if (OnStructureToBuildDeselectedCallback != null)
-        {
-            OnStructureToBuildDeselectedCallback();
-        }
+        OnStructureToBuildDeselectedCallback?.Invoke();
     }
 
     private void SelectCreep(Creep creep)
     {
-        if ( OnCreepSelectedCallback != null )
-        {
-            OnCreepSelectedCallback(creep);
-        }
+        OnCreepSelectedCallback?.Invoke(creep);
     }
 
     private void DeselectCreep()
     {
-        if ( OnCreepDeselectedCallback != null)
-        {
-            OnCreepDeselectedCallback();
-        }
+        OnCreepDeselectedCallback?.Invoke();
     }
 
     private void SetCursorModeBuild()

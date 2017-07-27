@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
@@ -202,7 +201,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
         }
     }
 
-    public SortedList<int, Ability> Abilities
+    public IReadOnlyDictionary<int, Ability> Abilities
     {
         get
         {
@@ -259,7 +258,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
         }
     }
 
-    protected HexType OnHexType
+    protected IHexType OnHexType
     {
         get
         {
@@ -330,7 +329,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
     }
 
     //Public Ability Lists
-    public List<DefendModeAbility> DefendModeAbilities()
+    public IReadOnlyList<DefendModeAbility> DefendModeAbilities()
     {
         List<DefendModeAbility> defendModeAbilities = new List<DefendModeAbility>();
 
@@ -345,7 +344,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
         return defendModeAbilities;
     }
 
-    public List<BuildModeAbility> BuildModeAbilities()
+    public IReadOnlyList<BuildModeAbility> BuildModeAbilities()
     {
         List<BuildModeAbility> buildModeAbilities = new List<BuildModeAbility>();
 
@@ -434,22 +433,16 @@ public abstract class DefendingEntity : IBuildModeTargetable
 
         if ( !hasAttribute )
         {
-            throw new System.Exception("Attempted to add a modifier to attribute " + attribute + ", which " + id + " does not have.");
+            throw new Exception("Attempted to add a modifier to attribute " + attribute + ", which " + id + " does not have.");
         }
 
         attributeToModify.AddModifier(modifier);
 
         float newAttributeValue = GetAttribute(attribute);
 
-        if (OnAttributeChangedCallbackDictionary[attribute] != null)
-        {
-            OnAttributeChangedCallbackDictionary[attribute](newAttributeValue);
-        }
+        OnAttributeChangedCallbackDictionary[attribute]?.Invoke(newAttributeValue);
 
-        if (OnAnyAttributeChangedCallback != null)
-        {
-            OnAnyAttributeChangedCallback(attribute, newAttributeValue);
-        }
+        OnAnyAttributeChangedCallback?.Invoke(attribute, newAttributeValue);
     }
 
     public bool TryRemoveAttributeModifier(AttributeName attribute, AttributeModifier modifier)
@@ -458,15 +451,9 @@ public abstract class DefendingEntity : IBuildModeTargetable
         {
             float newAttributeValue = GetAttribute(attribute);
 
-            if (OnAttributeChangedCallbackDictionary[attribute] != null)
-            {
-                OnAttributeChangedCallbackDictionary[attribute](GetAttribute(attribute));
-            }
+            OnAttributeChangedCallbackDictionary[attribute]?.Invoke(GetAttribute(attribute));
 
-            if (OnAnyAttributeChangedCallback != null)
-            {
-                OnAnyAttributeChangedCallback(attribute, newAttributeValue);
-            }
+            OnAnyAttributeChangedCallback?.Invoke(attribute, newAttributeValue);
 
             return true;
         }
@@ -480,7 +467,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
     }
 
     //Economy
-    protected EconomyTransaction GetHexOccupationBonus(HexType hexType, CallbackList<HexOccupationBonus> occupationBonusList)
+    protected EconomyTransaction GetHexOccupationBonus(IHexType hexType, CallbackList<HexOccupationBonus> occupationBonusList)
     {
         EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
 
@@ -495,7 +482,7 @@ public abstract class DefendingEntity : IBuildModeTargetable
         return occupationBonusTransaction;
     }
 
-    public EconomyTransaction GetFlatHexOccupationBonus(HexType hexType)
+    public EconomyTransaction GetFlatHexOccupationBonus(IHexType hexType)
     {
         return GetHexOccupationBonus(hexType, flatHexOccupationBonuses);
     }
@@ -636,5 +623,4 @@ public abstract class DefendingEntity : IBuildModeTargetable
     {
         affectedByDefenderAuras.DeregisterForRemove(callback);
     }
-
 }

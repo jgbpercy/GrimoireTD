@@ -35,5 +35,4 @@ public class EconomyView : SingletonMonobehaviour<EconomyView> {
     {
         resourceUIText.text = ResourceUIText();
     }
-
 }

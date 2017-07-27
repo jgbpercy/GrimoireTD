@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
 
 public class SelectedCreepView : MonoBehaviour {
@@ -47,7 +46,6 @@ public class SelectedCreepView : MonoBehaviour {
                 effectSliders[i].value = Mathf.Max(selectedCreep.PersistentEffects[i].TimeRemaining(), 0f);
                 effectSliderTexts[i].text = selectedCreep.PersistentEffects[i].EffectName + " - " + selectedCreep.PersistentEffects[i].Magnitude + " - " + selectedCreep.PersistentEffects[i].TimeRemaining().ToString("0.0");
             }
-
         }
     }
 

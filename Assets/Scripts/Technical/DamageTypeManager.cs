@@ -1,7 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class DamageTypeManager : SingletonMonobehaviour<DamageTypeManager> {
 
@@ -21,7 +20,8 @@ public class DamageTypeManager : SingletonMonobehaviour<DamageTypeManager> {
 
     private Dictionary<SpecificDamageType, MetaDamageType> specificToMeta;
 
-	void Start () {
+	private void Start ()
+    {
         metaToSpecific = new Dictionary<MetaDamageType, List<SpecificDamageType>>();
         specificToMeta = new Dictionary<SpecificDamageType, MetaDamageType>();
 
@@ -49,5 +49,4 @@ public class DamageTypeManager : SingletonMonobehaviour<DamageTypeManager> {
     {
         return Instance.specificToMeta[specificDamageType];
     }
-	
 }

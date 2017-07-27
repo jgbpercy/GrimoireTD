@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System;
 
-public class EconomyManager : SingletonMonobehaviour<EconomyManager> {
-
+public class EconomyManager : SingletonMonobehaviour<EconomyManager>
+{
     [SerializeField]
     private int maxFood;
     [SerializeField]
@@ -62,7 +62,7 @@ public class EconomyManager : SingletonMonobehaviour<EconomyManager> {
         }
     }
 
-    void Start ()
+    private void Start ()
     {
         CDebug.Log(CDebug.applicationLoading, "Econonmy Manager Start");
 
@@ -74,10 +74,7 @@ public class EconomyManager : SingletonMonobehaviour<EconomyManager> {
 
         DoTransaction(MapGenerator.Instance.Level.StartingResources);
 
-        if ( OnResourceValueChangeCallback != null )
-        {
-            OnResourceValueChangeCallback();
-        }
+        OnResourceValueChangeCallback?.Invoke();
     }
 
     public bool CanDoTransaction(EconomyTransaction transaction)
@@ -99,10 +96,7 @@ public class EconomyManager : SingletonMonobehaviour<EconomyManager> {
         gold.DoTransaction(transaction.GoldChange);
         mana.DoTransaction(transaction.ManaChange);
 
-        if (OnResourceValueChangeCallback != null)
-        {
-            OnResourceValueChangeCallback();
-        }
+        OnResourceValueChangeCallback?.Invoke();
     }
 
     public void RegisterForOnResourceValueChangeCallback(Action callback)
@@ -119,5 +113,4 @@ public class EconomyManager : SingletonMonobehaviour<EconomyManager> {
     {
         DoTransaction(bounty);
     }
-
 }

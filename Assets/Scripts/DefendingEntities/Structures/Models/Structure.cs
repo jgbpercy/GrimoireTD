@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.Assertions;
-using System.Collections;
+﻿using UnityEngine.Assertions;
 using System.Collections.Generic;
 using System;
 
@@ -44,7 +42,7 @@ public class Structure : DefendingEntity {
         }
     }
 
-    public Dictionary<IStructureUpgrade, bool> UpgradesBought
+    public IReadOnlyDictionary<IStructureUpgrade, bool> UpgradesBought
     {
         get
         {
@@ -52,7 +50,7 @@ public class Structure : DefendingEntity {
         }
     }
 
-    public Dictionary<StructureEnhancement, bool> EnhancementsChosen
+    public IReadOnlyDictionary<StructureEnhancement, bool> EnhancementsChosen
     {
         get
         {
@@ -90,7 +88,7 @@ public class Structure : DefendingEntity {
 
             foreach (StructureEnhancement enhancement in upgrade.OptionalEnhancements)
             {
-                EnhancementsChosen.Add(enhancement, false);
+                enhancementsChosen.Add(enhancement, false);
             }
         }
     }
@@ -139,10 +137,7 @@ public class Structure : DefendingEntity {
         currentName = upgrade.NewStructureName;
         currentDescription = upgrade.NewStructureDescription;
 
-        if ( OnUpgradedCallback != null )
-        {
-            OnUpgradedCallback();
-        }
+        OnUpgradedCallback?.Invoke();
 
         return true;
     }

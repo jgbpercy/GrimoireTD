@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: Make this not crap
 [ExecuteInEditMode]
-public class UIModeToggler : MonoBehaviour {
-
+public class UIModeToggler : MonoBehaviour
+{
     private enum UIMode
     {
         BUILD,

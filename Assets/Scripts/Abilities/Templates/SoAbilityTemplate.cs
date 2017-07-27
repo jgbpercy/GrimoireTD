@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 
-//[CreateAssetMenu(fileName = "NewAbilityTemplate", menuName = "Abilities")]
 public class SoAbilityTemplate : ScriptableObject, IAbilityTemplate {
 
     [SerializeField]
@@ -19,5 +18,4 @@ public class SoAbilityTemplate : ScriptableObject, IAbilityTemplate {
     {
         throw new NotImplementedException("Cannot Generate from AbilityTemplate - it is pseudo-abstract");
     }
-
 }

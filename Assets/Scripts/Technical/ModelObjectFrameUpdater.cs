@@ -29,9 +29,6 @@ public class ModelObjectFrameUpdater : SingletonMonobehaviour<ModelObjectFrameUp
 
     public void DeregisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
     {
-        //modelObjectFrameUpdatees.Remove(modelObjectFrameUpdatee);
-
         modelObjectFrameUpdatees.RemoveAll(x => x == modelObjectFrameUpdatee);
     }
-
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-//all currently assumes tileScale = 1 whops
 [Serializable]
 public class Coord : object, IBuildModeTargetable
 {
@@ -90,8 +89,6 @@ public class Coord : object, IBuildModeTargetable
         int mainYSection = Mathf.FloorToInt((positionVector.y + 0.5f) / 1.5f);
         float ySubSection = (positionVector.y + 0.5f) % 1.5f;
 
-        //bool debugOn = Input.GetButtonDown("Fire1");
-
         int mainXSection;
         float normalisedY;
 
@@ -100,23 +97,18 @@ public class Coord : object, IBuildModeTargetable
 
         if ( 0.25f <= ySubSection && ySubSection < 0.75f )
         {
-            //if (debugOn) Debug.Log("Lower Major Section Hit");
             y = mainYSection * 2;
             x = Mathf.FloorToInt((positionVector.x + MapRenderer.HEX_OFFSET) / (MapRenderer.HEX_OFFSET * 2));
         }
         else if ( 1f <= ySubSection && ySubSection < 1.5f )
         {
-            //if (debugOn) Debug.Log("Upper Major Section Hit");
             y = mainYSection * 2 + 1;
             x = Mathf.FloorToInt(positionVector.x / (MapRenderer.HEX_OFFSET * 2));
         }
         else if ( 0f <= ySubSection && ySubSection < 0.25f )
         {
-            //if (debugOn) Debug.Log("Lower Minor Section Hit");
             mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
             normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
-            //if (debugOn) Debug.Log("mainXSection: " + mainXSection);
-            //if (debugOn) Debug.Log("normalisedY: " + normalisedY);
 
             if (mainXSection % 2 == 0)
             {
@@ -147,11 +139,8 @@ public class Coord : object, IBuildModeTargetable
         }
         else if ( 0.75f <= ySubSection && ySubSection < 1f)
         {
-            //if (debugOn) Debug.Log("Upper Minor Section Hit");
             mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
             normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
-            //if (debugOn) Debug.Log("mainXSection: " + mainXSection);
-            //if (debugOn) Debug.Log("normalisedY: " + normalisedY);
 
             if (mainXSection % 2 == 0)
             {

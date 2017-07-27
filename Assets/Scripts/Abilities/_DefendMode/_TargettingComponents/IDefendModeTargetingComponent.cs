@@ -2,5 +2,5 @@
 
 public interface IDefendModeTargetingComponent {
 
-    List<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity);
+    IReadOnlyList<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity);
 }

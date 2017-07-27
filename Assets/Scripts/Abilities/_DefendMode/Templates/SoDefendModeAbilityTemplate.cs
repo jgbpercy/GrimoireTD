@@ -40,5 +40,4 @@ public class SoDefendModeAbilityTemplate : SoAbilityTemplate, IDefendModeAbility
     {
         return new DefendModeAbility(this, attachedToDefendingEntity);
     }
-
 }

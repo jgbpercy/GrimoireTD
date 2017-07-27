@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class DefendModeAbility : Ability, IFrameUpdatee {
@@ -85,7 +83,7 @@ public class DefendModeAbility : Ability, IFrameUpdatee {
 
     public bool ExecuteAbility(DefendingEntity attachedToDefendingEntity)
     {
-        List<IDefendModeTargetable> targetList = defendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity);
+        IReadOnlyList<IDefendModeTargetable> targetList = defendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity);
 
         if ( targetList == null ) { return false; }
 

@@ -13,5 +13,4 @@ public interface IUnitTemplate: IDefendingEntityTemplate {
     IUnitImprovement BaseUnitCharacteristics { get; }
 
     Unit GenerateUnit(Coord position);
-
 }

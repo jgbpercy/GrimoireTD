@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 [CreateAssetMenu(fileName = "NewMoveEffectComponent", menuName = "Build Mode Abilities/Effect Components/Move")]
 public class SoMoveEffectComponent : SoBuildModeEffectComponent, IMoveEffectComponent
 {
-    public override void ExecuteEffect(DefendingEntity executingEntity, List<IBuildModeTargetable> targets)
+    public override void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
     {
         CDebug.Log(CDebug.buildModeAbilities, "Call ExecuteEffect for a MoveEffectComponent");
 

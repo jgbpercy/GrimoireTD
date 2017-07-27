@@ -2,7 +2,6 @@
 
 public class ModeDurationDefenderEffectTemplate : SoDefenderEffectTemplate, IDefenderEffectTemplate
 {
-
     [SerializeField]
     private int baseDuration;
 

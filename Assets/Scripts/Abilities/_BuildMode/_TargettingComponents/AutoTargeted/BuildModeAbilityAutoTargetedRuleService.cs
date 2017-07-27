@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 
 public static class BuildModeAbilityAutoTargetedRuleService {
-
-    //private static MapData map = MapGenerator.Instance.Map;
-
+    
     //Rule names
     public enum RuleName
     {

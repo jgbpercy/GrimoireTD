@@ -20,14 +20,6 @@ public class AttributeModifier
         this.magnitude = magnitude;
     }
 
-    //?
-    /*
-    public void ChangeMagnitude(float newMagnitude)
-    {
-        magnitude = newMagnitude;
-    }
-    */
-
     public string AsPercentString
     {
         get
@@ -60,5 +52,4 @@ public class NamedAttributeModifier
             return attributeModifier;
         }
     }
-
 }

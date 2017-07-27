@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -37,13 +37,17 @@ public class MapData {
         }
     }
 
-    public List<Coord> Path
+    public IReadOnlyList<Coord> CreepPath
     {
         get
         {
             return _path;
         }
-        private set
+    }
+
+    private List<Coord> Path
+    {
+        set
         {
             CDebug.Log(CDebug.pathing, "The _path was changed");
             _path = value;
@@ -61,7 +65,7 @@ public class MapData {
     }
 
     //Constructor
-    public MapData(Texture2D mapImage, Dictionary<Color32, HexType> colorsToTypesDictionary)
+    public MapData(Texture2D mapImage, Dictionary<Color32, IHexType> colorsToTypesDictionary)
     {
         CDebug.Log(CDebug.mapGeneration, "Call to MapData constructor from image");
 
@@ -78,7 +82,7 @@ public class MapData {
 
         CDebug.Log(CDebug.mapGeneration, "Pixels in array " + allPixels.GetLength(0));
 
-        HexType currentHexType;
+        IHexType currentHexType;
         bool foundHexType;
 
         for (int x = 0; x < width; x++)
@@ -121,14 +125,14 @@ public class MapData {
         if ( CDebug.pathing.Enabled)
         {
             string debugString = "";
-            Path.ForEach(x => debugString += x + " ");
+            _path.ForEach(x => debugString += x + " ");
             CDebug.Log(CDebug.pathing, "The path is now: " + debugString);
         }
     }
 
     private void TempRegenerateDisallowedCoords()
     {
-        disallowedCoords = PathingService.DisallowedCoords(Path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1));
+        disallowedCoords = PathingService.DisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1));
     }
 
     //Public Hex/Coord queries
@@ -255,7 +259,7 @@ public class MapData {
 
         defendingEntityPositions.Add(newStructure, coord);
 
-        if ( Path.Contains(coord) )
+        if ( CreepPath.Contains(coord) )
         {
             CDebug.Log(CDebug.pathing,"TryBuildStructureAt found coord " + coord + " in Path and called TempRegeneratePath");
             TempRegeneratePath();
@@ -299,7 +303,7 @@ public class MapData {
 
         defendingEntityPositions.Add(newUnit, targetCoord);
 
-        if (Path.Contains(targetCoord))
+        if (CreepPath.Contains(targetCoord))
         {
             TempRegeneratePath();
         }
@@ -312,7 +316,7 @@ public class MapData {
     }
 
     //  Unit Movement
-    public bool CanMoveUnitTo(Coord targetCoord, List<Coord> disallowedCoordsForMove)
+    public bool CanMoveUnitTo(Coord targetCoord, IReadOnlyList<Coord> disallowedCoordsForMove)
     {
         if (!GetHexAt(targetCoord).CanPlaceUnitHere())
         {
@@ -416,7 +420,7 @@ public class MapData {
     {
         if ( GetHexAt(fromCoord).IsPathableByCreepsWithUnitRemoved() )
         {
-            return PathingService.DisallowedCoords(Path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1), new List<Coord> { fromCoord });
+            return PathingService.DisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1), new List<Coord> { fromCoord });
         }
 
         return disallowedCoords;
@@ -424,7 +428,7 @@ public class MapData {
 
     private List<Coord> GetDisallowedCoords(List<Coord> newlyPathableCoords)
     {
-        return PathingService.DisallowedCoords(Path, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1), newlyPathableCoords);
+        return PathingService.DisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(width - 1, height - 1), newlyPathableCoords);
     }
 
     //Callbacks
