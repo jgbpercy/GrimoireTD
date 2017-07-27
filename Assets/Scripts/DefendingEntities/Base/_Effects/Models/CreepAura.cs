@@ -1,7 +1,5 @@
-﻿
-public class CreepAura : DefenderEffect
+﻿public class CreepAura : DefenderEffect
 {
-
     private ICreepAuraTemplate creepAuraTemplate;
 
     public ICreepAuraTemplate CreepAuraTemplate
@@ -23,5 +21,10 @@ public class CreepAura : DefenderEffect
     public CreepAura(ICreepAuraTemplate creepAuraTemplate) : base(creepAuraTemplate)
     {
         this.creepAuraTemplate = creepAuraTemplate;
+    }
+
+    public override string UIText()
+    {
+        return creepAuraTemplate.NameInGame;
     }
 }

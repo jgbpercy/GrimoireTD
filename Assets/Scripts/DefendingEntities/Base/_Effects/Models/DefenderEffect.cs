@@ -1,6 +1,5 @@
 ﻿public abstract class DefenderEffect
 {
-
     private IDefenderEffectTemplate defenderEffectTemplate;
 
     public IDefenderEffectTemplate DefenderEffectTemplate
@@ -15,4 +14,6 @@
     {
         this.defenderEffectTemplate = defenderEffectTemplate;
     }
+
+    public abstract string UIText();
 }

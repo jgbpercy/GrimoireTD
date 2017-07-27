@@ -72,5 +72,4 @@ public class MouseOverHexTextView : SingletonMonobehaviour<MouseOverHexTextView>
             aurasText.text = "None";
         }
     }
-
 }

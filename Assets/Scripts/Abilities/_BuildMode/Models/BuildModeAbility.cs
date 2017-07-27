@@ -29,6 +29,6 @@ public class BuildModeAbility : Ability {
 
     public override string UIText()
     {
-        throw new NotImplementedException();
+        return buildModeAbilityTemplate.NameInGame;
     }
 }

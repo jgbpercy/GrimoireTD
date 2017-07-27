@@ -51,6 +51,7 @@ public class Structure : DefendingEntity {
             return upgradesBought;
         }
     }
+
     public Dictionary<StructureEnhancement, bool> EnhancementsChosen
     {
         get
@@ -72,6 +73,9 @@ public class Structure : DefendingEntity {
         ApplyImprovement(structureTemplate.BaseCharacteristics);
 
         SetUpUpgradesAndEnhancements();
+
+        OnHex.RegisterForOnDefenderAuraAddedCallback(OnNewDefenderAuraInCurrentHex);
+        OnHex.RegisterForOnDefenderAuraRemovedCallback(OnClearDefenderAuraInCurrentHex);
     }
 
     //Upgrades
@@ -144,17 +148,15 @@ public class Structure : DefendingEntity {
     }
 
     //Defender Auras Affected By
-    protected override void OnNewDefenderAura(DefenderAura aura)
+    protected override void OnNewDefenderAuraInCurrentHex(DefenderAura aura)
     {
         if (aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.STRUCTURES)
         {
             affectedByDefenderAuras.Add(aura);
-
-            ApplyImprovement(aura.DefenderEffectTemplate.Improvement);
         }
     }
 
-    protected override void OnClearDefenderAura(DefenderAura aura)
+    protected override void OnClearDefenderAuraInCurrentHex(DefenderAura aura)
     {
         if (aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
         {

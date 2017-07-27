@@ -1,7 +1,5 @@
-﻿
-public class ModeDurationDefenderEffect : DefenderEffect
+﻿public class ModeDurationDefenderEffect : DefenderEffect
 {
-
     private ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate;
 
     public ModeDurationDefenderEffectTemplate ModeDurationDefenderEffectTemplate
@@ -23,5 +21,10 @@ public class ModeDurationDefenderEffect : DefenderEffect
     public ModeDurationDefenderEffect(ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate) : base(modeDurationDefenderEffectTemplate)
     {
         this.modeDurationDefenderEffectTemplate = modeDurationDefenderEffectTemplate;
+    }
+
+    public override string UIText()
+    {
+        return modeDurationDefenderEffectTemplate.NameInGame;
     }
 }

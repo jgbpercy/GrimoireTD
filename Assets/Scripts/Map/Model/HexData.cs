@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 
 public class HexData {
 
@@ -38,11 +36,11 @@ public class HexData {
         }
     }
 
-    public List<DefenderAura> DefenderAurasHere
+    public IReadOnlyCollection<DefenderAura> DefenderAurasHere
     {
         get
         {
-            return defenderAurasHere.List;
+            return defenderAurasHere;
         }
     }
 

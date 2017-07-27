@@ -2,18 +2,27 @@
 using System.Collections.Generic;
 using System;
 
-public class CallbackList<T> {
+public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>
+{
 
     private List<T> list;
 
     private Action<T> OnAdd;
     private Action<T> OnRemove;
 
-    public List<T> List
+    public IEnumerable<T> AsIEnumarable
     {
         get
         {
             return list;
+        }
+    }
+
+    public int Count
+    {
+        get
+        {
+            return list.Count;
         }
     }
 
@@ -32,6 +41,11 @@ public class CallbackList<T> {
         }
     }
 
+    public bool Contains(T item)
+    {
+        return list.Contains(item);
+    }
+
     public bool TryRemove(T item)
     {
         if ( !list.Contains(item) )
@@ -47,6 +61,18 @@ public class CallbackList<T> {
         }
 
         return true;
+    }
+
+    public void Clear()
+    {
+        while (list.Count > 0)
+        {
+            T item = list[0];
+
+            list.RemoveAt(0);
+
+            OnRemove(item);
+        }
     }
 
     public void RegisterForAdd(Action<T> callback)
@@ -67,5 +93,15 @@ public class CallbackList<T> {
     public void DeregisterForRemove(Action<T> callback)
     {
         OnRemove -= callback;
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return list.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return this.GetEnumerator();
     }
 }

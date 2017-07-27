@@ -1,8 +1,8 @@
 ﻿using UnityEngine.Assertions;
 using UnityEngine;
 
-public static class CustomMath  {
-
+public static class CustomMath
+{
     public static float SignedOddRoot(float value, int nthRoot)
     {
         Assert.IsTrue(nthRoot % 2 == 1);
@@ -15,5 +15,4 @@ public static class CustomMath  {
 
         return rawRoot * sign;
     }
-
 }

@@ -2,7 +2,6 @@
 
 public class DefenderAura : DefenderEffect
 {
-
     private IDefenderAuraTemplate defenderAuraTemplate;
 
     private DefendingEntity sourceDefendingEntity;
@@ -52,5 +51,10 @@ public class DefenderAura : DefenderEffect
     public void DeregisterForOnClearAuraCallback(Action<DefenderAura> callback)
     {
         OnClearAuraCallback -= callback;
+    }
+
+    public override string UIText()
+    {
+        return defenderAuraTemplate.NameInGame;
     }
 }

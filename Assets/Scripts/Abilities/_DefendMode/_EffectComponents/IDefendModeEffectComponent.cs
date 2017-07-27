@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public interface IDefendModeEffectComponent {
-
+public interface IDefendModeEffectComponent
+{
     void ExecuteEffect(DefendingEntity attachedToDefendingEntity, List<IDefendModeTargetable> targets);
 }

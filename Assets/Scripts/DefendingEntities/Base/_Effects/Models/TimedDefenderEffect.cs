@@ -1,7 +1,5 @@
-﻿
-public class TimedDefenderEffect : DefenderEffect
+﻿public class TimedDefenderEffect : DefenderEffect
 {
-
     private ITimedDefenderEffectTemplate timedDefenderEffectTemplate;
 
     public ITimedDefenderEffectTemplate TimedDefenderEffectTemplate
@@ -23,5 +21,10 @@ public class TimedDefenderEffect : DefenderEffect
     public TimedDefenderEffect(ITimedDefenderEffectTemplate timedDefenderEffectTemplate) : base(timedDefenderEffectTemplate)
     {
         this.timedDefenderEffectTemplate = timedDefenderEffectTemplate;
+    }
+
+    public override string UIText()
+    {
+        return timedDefenderEffectTemplate.NameInGame;
     }
 }

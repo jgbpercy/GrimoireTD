@@ -65,6 +65,28 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     [SerializeField]
     private Text idleText;
 
+    [SerializeField]
+    private GameObject structureDetailsPanel;
+    [SerializeField]
+    private Text structureAbilitiesText;
+    [SerializeField]
+    private Text structureAurasText;
+    [SerializeField]
+    private Text structureAttributesText;
+    [SerializeField]
+    private Text structureEconomyText;
+
+    [SerializeField]
+    private GameObject unitDetailsPanel;
+    [SerializeField]
+    private Text unitAbilitiesText;
+    [SerializeField]
+    private Text unitAurasText;
+    [SerializeField]
+    private Text unitAttributesText;
+    [SerializeField]
+    private Text unitEconomyText;
+
     private Unit selectedUnit = null;
 
     private Structure selectedStructure = null;
@@ -123,7 +145,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     {
         ClearAbilityLists();
 
-        if ( newSelectedStructure != null )
+        if (newSelectedStructure != null)
         {
             OnDefendingEntitySelected(newSelectedStructure, selectedStructurePanel, selectedStructureName, selectedStructureText, structureAbilityVerticalLayout);
 
@@ -132,14 +154,31 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
             selectedStructure = newSelectedStructure;
 
             SetUpUpgradeView();
+            SetUpStructureDetailsView();
 
             selectedStructure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
 
-            OnStructureAbilityAdded = new Action<Ability>(x => OnNewAbilityAdded(x, structureAbilityVerticalLayout));
-            OnStructureAbilityRemoved = new Action<Ability>(x => OnAbilityRemoved(x, structureAbilityVerticalLayout));
+            OnStructureAbilityAdded = new Action<Ability>(x => {
+                structureAbilitiesText.text = GetAbilityText(selectedStructure);
+                OnNewAbilityAdded(x, structureAbilityVerticalLayout);
+            });
+            OnStructureAbilityRemoved = new Action<Ability>(x => {
+                structureAbilitiesText.text = GetAbilityText(selectedStructure);
+                OnAbilityRemoved(x, structureAbilityVerticalLayout);
+            });
 
             selectedStructure.RegisterForOnAbilityAddedCallback(OnStructureAbilityAdded);
             selectedStructure.RegisterForOnAbilityRemovedCallback(OnStructureAbilityRemoved);
+
+            selectedStructure.RegisterForOnAuraEmittedAddedCallback(OnStructureAuraChange);
+            selectedStructure.RegisterForOnAuraEmittedAddedCallback(OnStructureAuraChange);
+            selectedStructure.RegisterForOnAffectedByDefenderAuraAddedCallback(OnStructureAuraChange);
+            selectedStructure.RegisterForOnAffectedByDefenderAuraRemovedCallback(OnStructureAuraChange);
+
+            selectedStructure.RegisterForOnAttributeChangedCallback(OnStructureAttributesChange);
+
+            selectedStructure.RegisterForOnFlatHexOccupationBonusAddedCallback(OnStructureEconomyChange);
+            selectedStructure.RegisterForOnFlatHexOccupationBonusRemovedCallback(OnStructureEconomyChange);
 
             if (CDebug.structureUpgrades.Enabled)
             {
@@ -160,15 +199,36 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
             selectedUnit = newSelectedUnit;
 
             SetExperienceFatigueLevelView();
-            SetUpTalentDisplay();
+            SetUpTalentView();
+            SetUpUnitDetailsView();
 
             selectedUnit.RegisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
 
-            OnUnitAbilityAdded = new Action<Ability>(x => OnNewAbilityAdded(x, unitAbilityVerticalLayout));
-            OnUnitAbilityRemoved = new Action<Ability>(x => OnAbilityRemoved(x, unitAbilityVerticalLayout));
+            OnUnitAbilityAdded = new Action<Ability>(x => {
+                unitAbilitiesText.text = GetAbilityText(selectedUnit);
+                OnNewAbilityAdded(x, unitAbilityVerticalLayout);
+            });
+            OnUnitAbilityRemoved = new Action<Ability>(x => {
+                unitAbilitiesText.text = GetAbilityText(selectedUnit);
+                OnAbilityRemoved(x, unitAbilityVerticalLayout);
+            });
 
             selectedUnit.RegisterForOnAbilityAddedCallback(OnUnitAbilityAdded);
             selectedUnit.RegisterForOnAbilityRemovedCallback(OnUnitAbilityRemoved);
+
+            selectedUnit.RegisterForOnAuraEmittedAddedCallback(OnUnitAuraChange);
+            selectedUnit.RegisterForOnAuraEmittedRemovedCallback(OnUnitAuraChange);
+            selectedUnit.RegisterForOnAffectedByDefenderAuraAddedCallback(OnUnitAuraChange);
+            selectedUnit.RegisterForOnAffectedByDefenderAuraRemovedCallback(OnUnitAuraChange);
+
+            selectedUnit.RegisterForOnAttributeChangedCallback(OnUnitAttributesChange);
+
+            selectedUnit.RegisterForOnFlatHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.RegisterForOnFlatHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.RegisterForOnConditionalHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.RegisterForOnConditionalHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.RegisterForOnConditionalStructureOccupationBonusAddedCallback(OnUnitStuctureOccupationBonusChange);
+            selectedUnit.RegisterForOnConditionalStructureOccupationBonusRemovedCallback(OnUnitStuctureOccupationBonusChange);
 
             if ( CDebug.unitAttributes.Enabled )
             {
@@ -295,6 +355,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         selectedStructurePanel.SetActive(false);
         structureUpgradePanel.SetActive(false);
+        structureDetailsPanel.SetActive(false);
     }
 
     private void OnUnitDeselection()
@@ -306,6 +367,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         selectedUnitPanel.SetActive(false);
         unitTalentPanel.SetActive(false);
+        unitDetailsPanel.SetActive(false);
     }
 
     private void SetSelectedStructureNullCallbackSafe()
@@ -313,8 +375,19 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         if ( selectedStructure != null )
         {
             selectedStructure.DeregisterForOnUpgradedCallback(OnStructureUpgraded);
+
             selectedStructure.DeregisterForOnAbilityAddedCallback(OnStructureAbilityAdded);
             selectedStructure.DeregisterForOnAbilityRemovedCallback(OnStructureAbilityRemoved);
+
+            selectedStructure.DeregisterForOnAuraEmittedAddedCallback(OnStructureAuraChange);
+            selectedStructure.DeregisterForOnAuraEmittedRemovedCallback(OnStructureAuraChange);
+            selectedStructure.DeregisterForOnAffectedByDefenderAuraAddedCallback(OnStructureAuraChange);
+            selectedStructure.DeregisterForOnAffectedByDefenderAuraRemovedCallback(OnStructureAuraChange);
+
+            selectedStructure.DeregisterForOnAttributeChangedCallback(OnStructureAttributesChange);
+
+            selectedStructure.DeregisterForOnFlatHexOccupationBonusAddedCallback(OnStructureEconomyChange);
+            selectedStructure.DeregisterForOnFlatHexOccupationBonusRemovedCallback(OnStructureEconomyChange);
         }
 
         selectedStructure = null;
@@ -337,8 +410,23 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         if ( selectedUnit != null )
         {
             selectedUnit.DeregisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+
             selectedUnit.DeregisterForOnAbilityAddedCallback(OnUnitAbilityAdded);
             selectedUnit.DeregisterForOnAbilityRemovedCallback(OnUnitAbilityRemoved);
+
+            selectedUnit.DeregisterForOnAuraEmittedAddedCallback(OnUnitAuraChange);
+            selectedUnit.DeregisterForOnAuraEmittedRemovedCallback(OnUnitAuraChange);
+            selectedUnit.DeregisterForOnAffectedByDefenderAuraAddedCallback(OnUnitAuraChange);
+            selectedUnit.DeregisterForOnAffectedByDefenderAuraRemovedCallback(OnUnitAuraChange);
+
+            selectedUnit.DeregisterForOnAttributeChangedCallback(OnUnitAttributesChange);
+
+            selectedUnit.DeregisterForOnFlatHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.DeregisterForOnFlatHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.DeregisterForOnConditionalHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.DeregisterForOnConditionalHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
+            selectedUnit.DeregisterForOnConditionalStructureOccupationBonusAddedCallback(OnUnitStuctureOccupationBonusChange);
+            selectedUnit.DeregisterForOnConditionalStructureOccupationBonusRemovedCallback(OnUnitStuctureOccupationBonusChange);
         }
 
         selectedUnit = null;
@@ -402,6 +490,14 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         upgradeDisplays = new List<GameObject>();
     }
 
+    private void SetUpStructureDetailsView()
+    {
+        structureAbilitiesText.text = GetAbilityText(selectedStructure);
+        structureAurasText.text = GetAuraText(selectedStructure);
+        structureAttributesText.text = GetAttributesText(selectedStructure);
+        structureEconomyText.text = GetStructureEconomyText(selectedStructure);
+    }
+
     public void ToggleTalentPanel()
     {
         if (unitTalentPanel.activeSelf)
@@ -434,7 +530,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         }
     }
 
-    private void SetUpTalentDisplay()
+    private void SetUpTalentView()
     {
         ClearTalentDisplays();
 
@@ -447,6 +543,165 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
             talentDisplays.Add(newTalentDisplay);
         }
+    }
+
+    private void SetUpUnitDetailsView()
+    {
+        unitAbilitiesText.text = GetAbilityText(selectedUnit);
+        unitAurasText.text = GetAuraText(selectedUnit);
+        unitAttributesText.text = GetAttributesText(selectedUnit);
+        unitEconomyText.text = GetUnitEconomyText(selectedUnit);
+    }
+
+    private string GetAbilityText(DefendingEntity defendingEntity)
+    {
+        string abilityText = "Abilities:\n";
+
+        foreach (Ability ability in defendingEntity.Abilities.Values)
+        {
+            abilityText += ability.UIText() + "\n";
+        }
+
+        return abilityText;
+    }
+
+    private string GetAuraText(DefendingEntity defendingEntity)
+    {
+        string auraText = "Auras:\n" + "Source Of:\n";
+
+        foreach (DefenderAura aura in defendingEntity.AurasEmitted)
+        {
+            auraText += aura.UIText() + "\n";
+        }
+
+        auraText += "Affected By:\n";
+
+        foreach (DefenderAura aura in defendingEntity.AffectedByDefenderAuras)
+        {
+            auraText += aura.UIText() + "\n";
+        }
+
+        return auraText;
+    }
+
+    private string GetAttributesText(DefendingEntity defendingEntity)
+    {
+        string attributesText = "Attributes:\n";
+
+        //TODO: temp hack until refactor
+        foreach (AttributeName attribute in Enum.GetValues(typeof(AttributeName)))
+        {
+            attributesText += defendingEntity.TempDebugGetAttributeDisplayName(attribute) + ": " + defendingEntity.GetAttribute(attribute) + "\n";
+        }
+
+        return attributesText;
+    }
+
+    private string GetUnitEconomyText(Unit unit)
+    {
+        string economyText = "Economy:\n";
+
+        economyText += "Structures:\n";
+
+        //This will duplicate but it's fine for now
+        foreach (StructureOccupationBonus structureOccupationBonus in unit.ConditionalStructureOccupationBonuses)
+        {
+            economyText += structureOccupationBonus.StructureUpgradeLevel == null ? structureOccupationBonus.StructureTemplate.StartingNameInGame : structureOccupationBonus.StructureUpgradeLevel.NewStructureName + "\n";
+            economyText += structureOccupationBonus.ResourceGain.ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+        }
+
+        economyText += "Hexes (conditional):\n";
+
+        foreach (BaseHexTypeEnum hexType in Enum.GetValues(typeof(BaseHexTypeEnum)))
+        {
+            economyText += unit.GetConditionalHexOccupationBonus(MapGenerator.Instance.HexTypeFromName(hexType)).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+        }
+
+        return economyText + GetStaticEconomyText(unit);
+    }
+
+    private string GetStructureEconomyText(Structure structure)
+    {
+        string economyText = "Economy:\n";
+
+        return economyText + GetStaticEconomyText(structure);
+    }
+
+    private string GetStaticEconomyText(DefendingEntity defendingEntity)
+    {
+        string economyText = "Hexes (flat):\n";
+
+        //TODO: Also temp hack
+        foreach (BaseHexTypeEnum hexType in Enum.GetValues(typeof(BaseHexTypeEnum)))
+        {
+            economyText += defendingEntity.GetFlatHexOccupationBonus(MapGenerator.Instance.HexTypeFromName(hexType)).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+        }
+
+        return economyText;
+    }
+
+    public void ToggleStructureDetailsPanel()
+    {
+        if (structureDetailsPanel.activeSelf)
+        {
+            structureDetailsPanel.SetActive(false);
+        }
+        else
+        {
+            structureDetailsPanel.SetActive(true);
+        }
+    }
+
+    public void ToggleUnitDetailsPanel()
+    {
+        if (unitDetailsPanel.activeSelf)
+        {
+            unitDetailsPanel.SetActive(false);
+        }
+        else
+        {
+            unitDetailsPanel.SetActive(true);
+        }
+    }
+
+    private void OnStructureAuraChange(DefenderAura aura)
+    {
+        structureAurasText.text = GetAuraText(selectedStructure);
+    }
+
+    private void OnStructureAttributesChange(AttributeName attributeName, float newAttributeValue)
+    {
+        structureAbilitiesText.text = GetAttributesText(selectedStructure);
+    }
+
+    private void OnStructureEconomyChange(HexOccupationBonus hexOccupationBonus)
+    {
+        structureEconomyText.text = GetStructureEconomyText(selectedStructure);
+    }
+
+    private void OnUnitAuraChange(DefenderAura aura)
+    {
+        unitAurasText.text = GetAuraText(selectedUnit);
+    }
+
+    private void OnUnitAttributesChange(AttributeName attributeName, float newAttrbuteValue)
+    {
+        unitAttributesText.text = GetAttributesText(selectedUnit);
+    }
+
+    private void OnUnitHexOccupationBonusChange(HexOccupationBonus hexOccupationBonus)
+    {
+        OnUnitEconomyChange();
+    } 
+
+    private void OnUnitStuctureOccupationBonusChange(StructureOccupationBonus structureOccupationBonus)
+    {
+        OnUnitEconomyChange();
+    }
+
+    private void OnUnitEconomyChange()
+    {
+        unitEconomyText.text = GetUnitEconomyText(selectedUnit);
     }
 
     private void OnEnterDefendMode()
@@ -476,7 +731,6 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         talentDisplays = new List<GameObject>();
     }
 
-
     private void DebugLogSelectedUnitAttributes()
     {
         foreach (AttributeName attributeName in Enum.GetValues(typeof(AttributeName)))
@@ -492,5 +746,4 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
             CDebug.Log(CDebug.structureUpgrades, selectedStructure.TempDebugGetAttributeDisplayName(attributeName) + ": " + selectedStructure.GetAttribute(attributeName));
         }
     }
-
 }

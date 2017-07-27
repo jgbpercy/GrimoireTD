@@ -112,6 +112,22 @@ public class Unit : DefendingEntity
         }
     }
 
+    public IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses
+    {
+        get
+        {
+            return conditionalHexOccupationBonuses;
+        }
+    }
+
+    public IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses
+    {
+        get
+        {
+            return conditionalStructureOccupationBonuses;
+        }
+    }
+
     //Constructor
     public Unit(IUnitTemplate unitTemplate, Coord coordPosition) : base(unitTemplate, coordPosition)
     {
@@ -145,6 +161,39 @@ public class Unit : DefendingEntity
         {
             levelledTalents.Add(talent, 0);
         }
+    }
+
+    protected override void SetUpAffectedByDefenderAuras()
+    {
+        affectedByDefenderAuras = new CallbackList<DefenderAura>();
+
+        affectedByDefenderAuras.RegisterForAdd(aura =>
+        {
+            IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
+            if (unitImprovement != null)
+            {
+                ApplyUnitImprovement(unitImprovement);
+            }
+            else
+            {
+                ApplyImprovement(aura.DefenderEffectTemplate.Improvement);
+            }
+        });
+
+        affectedByDefenderAuras.RegisterForRemove(aura =>
+        {
+            IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
+            if (unitImprovement != null)
+            {
+                RemoveUnitImprovement(unitImprovement);
+            }
+            else
+            {
+                RemoveImprovement(aura.DefenderEffectTemplate.Improvement);
+            }
+        });
+
+        GetDefenderAurasFromCurrentHex();
     }
 
     //UI
@@ -217,7 +266,7 @@ public class Unit : DefendingEntity
         IStructureTemplate template = structure != null ? structure.StructureTemplate : null;
         IStructureUpgrade upgrade = structure != null ? structure.CurrentUpgradeLevel() : null;
 
-        foreach (StructureOccupationBonus structureOccupationBonus in structureOccupationBonuses.List)
+        foreach (StructureOccupationBonus structureOccupationBonus in structureOccupationBonuses)
         {
             if ( structureOccupationBonus.StructureTemplate == template && structureOccupationBonus.StructureUpgradeLevel == upgrade )
             {
@@ -226,6 +275,11 @@ public class Unit : DefendingEntity
         }
 
         return occupationBonusTransaction;
+    }
+
+    public EconomyTransaction GetConditionalHexOccupationBonus(HexType hexType)
+    {
+        return GetHexOccupationBonus(hexType, conditionalHexOccupationBonuses);
     }
 
     //Experience, Fatigue and Talents
@@ -354,40 +408,22 @@ public class Unit : DefendingEntity
     }
 
     //Defender Auras Affected By
-    protected override void OnNewDefenderAura(DefenderAura aura)
+    protected override void OnNewDefenderAuraInCurrentHex(DefenderAura aura)
     {
         if ( aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS )
         {
             affectedByDefenderAuras.Add(aura);
-
-            IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
-            if ( unitImprovement != null )
-            {
-                ApplyUnitImprovement(unitImprovement);
-            }
-            else
-            {
-                ApplyImprovement(aura.DefenderEffectTemplate.Improvement);
-            }
         }
     }
 
-    protected override void OnClearDefenderAura(DefenderAura aura)
+    protected override void OnClearDefenderAuraInCurrentHex(DefenderAura aura)
     {
         if (aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
         {
             bool wasPresent = affectedByDefenderAuras.Contains(aura);
             Assert.IsTrue(wasPresent);
 
-            IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
-            if (unitImprovement != null)
-            {
-                RemoveUnitImprovement(unitImprovement);
-            }
-            else
-            {
-                RemoveImprovement(aura.DefenderEffectTemplate.Improvement);
-            }
+            affectedByDefenderAuras.TryRemove(aura);
         }
     }
 
@@ -399,22 +435,26 @@ public class Unit : DefendingEntity
             throw new Exception("Invalid unit movement attempted");
         }
 
-        OnHex.DeregisterForOnDefenderAuraAddedCallback(OnNewDefenderAura);
-        OnHex.DeregisterForOnDefenderAuraRemovedCallback(OnClearDefenderAura);
+        OnHex.DeregisterForOnDefenderAuraAddedCallback(OnNewDefenderAuraInCurrentHex);
+        OnHex.DeregisterForOnDefenderAuraRemovedCallback(OnClearDefenderAuraInCurrentHex);
 
         coordPosition = targetCoord;
 
-        OnHex.RegisterForOnDefenderAuraAddedCallback(OnNewDefenderAura);
-        OnHex.RegisterForOnDefenderAuraRemovedCallback(OnClearDefenderAura);
+        OnHex.RegisterForOnDefenderAuraAddedCallback(OnNewDefenderAuraInCurrentHex);
+        OnHex.RegisterForOnDefenderAuraRemovedCallback(OnClearDefenderAuraInCurrentHex);
 
         OnMovedCallback(targetCoord);
 
-        auras.List.ForEach(x => {
+        foreach (DefenderAura auraEmitted in aurasEmitted)
+        {
+            auraEmitted.ClearAura();
 
-            x.ClearAura();
+            OnInitialiseAura(auraEmitted);
+        }
 
-            OnInitialiseAura(x);
-        });
+        affectedByDefenderAuras.Clear();
+        
+        GetDefenderAurasFromCurrentHex();
     }
 
     public void RegenerateCachedDisallowedMovementDestinations()
