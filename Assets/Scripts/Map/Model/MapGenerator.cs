@@ -5,8 +5,27 @@ using UnityEngine;
 [Serializable]
 public class ColorToType
 {
-    public Color32 color;
-    public BaseHexTypeEnum baseHexType;
+    [SerializeField]
+    private Color32 color;
+
+    [SerializeField]
+    public SoHexType hexType;
+
+    public Color32 Color
+    {
+        get
+        {
+            return color;
+        }
+    }
+
+    public IHexType HexType
+    {
+        get
+        {
+            return hexType;
+        }
+    }
 }
 
 public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
@@ -15,7 +34,6 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     [SerializeField]
     private SoHexType[] hexTypes;
-    private Dictionary<BaseHexTypeEnum, IHexType> hexTypeDictionary;
 
     /*TODO: Make this fit the template/generator pattern better so that MapGenerator (rename) is a pure 
      * class with a constructor not a singleton monobehaviour and something else bootstraps the level load?
@@ -35,6 +53,14 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         }
     }
 
+    public IReadOnlyCollection<IHexType> HexTypes
+    {
+        get
+        {
+            return hexTypes;
+        }
+    }
+
     public ILevel Level
     {
         get
@@ -45,7 +71,6 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
 
     private void Awake()
     {
-        BuildHexTypesDictionary();
         ColorsToTypesArrayToDictionary();
     }
 
@@ -59,29 +84,14 @@ public class MapGenerator : SingletonMonobehaviour<MapGenerator> {
         PlaceStartingUnits();
     }
 
-    private void BuildHexTypesDictionary()
-    {
-        hexTypeDictionary = new Dictionary<BaseHexTypeEnum, IHexType>();
-
-        foreach (IHexType hexType in hexTypes)
-        {
-            hexTypeDictionary.Add(hexType.BaseHexType, hexType);
-        }
-    }
-
     private void ColorsToTypesArrayToDictionary()
     {
         colorsToTypesDictionary = new Dictionary<Color32, IHexType>();
 
         foreach (ColorToType colorToType in colorsToTypes)
         {
-            colorsToTypesDictionary.Add(colorToType.color, hexTypeDictionary[colorToType.baseHexType]);
+            colorsToTypesDictionary.Add(colorToType.Color, colorToType.hexType);
         }
-    }
-
-    public IHexType HexTypeFromName(BaseHexTypeEnum nameEnum)
-    {
-        return hexTypeDictionary[nameEnum];
     }
 
     private void PlaceStartingStructures()

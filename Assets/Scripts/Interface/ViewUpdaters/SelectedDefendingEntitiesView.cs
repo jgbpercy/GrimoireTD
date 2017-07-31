@@ -623,9 +623,9 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
 
         economyText += "Hexes (conditional):\n";
 
-        foreach (BaseHexTypeEnum hexType in Enum.GetValues(typeof(BaseHexTypeEnum)))
+        foreach (IHexType hexType in MapGenerator.Instance.HexTypes)
         {
-            economyText += unit.GetConditionalHexOccupationBonus(MapGenerator.Instance.HexTypeFromName(hexType)).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+            economyText += unit.GetConditionalHexOccupationBonus(hexType).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
         }
 
         return economyText + GetStaticEconomyText(unit);
@@ -641,11 +641,10 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
     private string GetStaticEconomyText(DefendingEntity defendingEntity)
     {
         string economyText = "Hexes (flat):\n";
-
-        //TODO: Also temp hack
-        foreach (BaseHexTypeEnum hexType in Enum.GetValues(typeof(BaseHexTypeEnum)))
+        
+        foreach (IHexType hexType in MapGenerator.Instance.HexTypes)
         {
-            economyText += defendingEntity.GetFlatHexOccupationBonus(MapGenerator.Instance.HexTypeFromName(hexType)).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+            economyText += defendingEntity.GetFlatHexOccupationBonus(hexType).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
         }
 
         return economyText;

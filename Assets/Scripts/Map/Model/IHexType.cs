@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-
-public interface IHexType {
+﻿public interface IHexType {
 
     string NameInGame { get; }
-
-    BaseHexTypeEnum BaseHexType { get; }
 
     int TextureOffsetX { get; }
     int TextureOffsetY { get; }

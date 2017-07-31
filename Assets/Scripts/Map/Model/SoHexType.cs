@@ -7,9 +7,6 @@ public class SoHexType : ScriptableObject, IHexType
     private string nameInGame;
 
     [SerializeField]
-    private BaseHexTypeEnum baseHexType;
-
-    [SerializeField]
     private int[] textureOffset;
 
     //temporary
@@ -27,14 +24,6 @@ public class SoHexType : ScriptableObject, IHexType
         get
         {
             return nameInGame;
-        }
-    }
-
-    public BaseHexTypeEnum BaseHexType
-    {
-        get
-        {
-            return baseHexType;
         }
     }
 
@@ -77,13 +66,4 @@ public class SoHexType : ScriptableObject, IHexType
             return unitCanOccupy;
         }
     }
-}
-
-public enum BaseHexTypeEnum
-{
-    GRASSLANDS,
-    MOUNTAINS,
-    WATER,
-    DESERT,
-    FOREST
 }

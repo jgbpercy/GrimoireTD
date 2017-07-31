@@ -5,13 +5,13 @@ using UnityEngine;
 public class HexOccupationBonus : OccupationBonus {
 
     [SerializeField]
-    private BaseHexTypeEnum hexType;
+    private SoHexType hexType;
 
     public IHexType HexType
     {
         get
         {
-            return MapGenerator.Instance.HexTypeFromName(hexType);
+            return hexType;
         }
     }
 
