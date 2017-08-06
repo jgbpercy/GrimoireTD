@@ -254,7 +254,7 @@ public class SoCreepTemplate : ScriptableObject, ICreepTemplate {
     private GameObject creepPrefab;
 
     [SerializeField]
-    private EconomyTransaction bounty;
+    private SEconomyTransaction bounty;
 
     [SerializeField]
     private Resistances resistances;
@@ -291,7 +291,7 @@ public class SoCreepTemplate : ScriptableObject, ICreepTemplate {
         }
     }
 
-    public EconomyTransaction Bounty
+    public IEconomyTransaction Bounty
     {
         get
         {

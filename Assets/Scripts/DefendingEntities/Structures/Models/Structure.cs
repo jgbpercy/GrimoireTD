@@ -117,14 +117,14 @@ public class Structure : DefendingEntity {
             return false;
         }
 
-        if ( !isFree && !EconomyManager.Instance.CanDoTransaction(chosenEnhancement.Cost) )
+        if ( !isFree && !chosenEnhancement.Cost.CanDoTransaction() )
         {
             return false;
         }
 
         if ( !isFree )
         {
-            EconomyManager.Instance.DoTransaction(chosenEnhancement.Cost);
+            chosenEnhancement.Cost.DoTransaction();
         }
         
         IDefendingEntityImprovement combinedImprovement = upgrade.MainUpgradeBonus.Combine(chosenEnhancement.EnhancementBonus);

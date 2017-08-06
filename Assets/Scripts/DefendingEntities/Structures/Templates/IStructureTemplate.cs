@@ -7,7 +7,7 @@ public interface IStructureTemplate : IDefendingEntityTemplate {
 
     string StartingDescription { get; }
 
-    EconomyTransaction Cost { get; }
+    IEconomyTransaction Cost { get; }
 
     IEnumerable<IStructureUpgrade> StructureUpgrades { get; }
 

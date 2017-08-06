@@ -5,9 +5,9 @@ using UnityEngine;
 public abstract class OccupationBonus {
 
     [SerializeField]
-    private EconomyTransaction resourceGain;
+    private SEconomyTransaction resourceGain;
 
-    public EconomyTransaction ResourceGain
+    public IEconomyTransaction ResourceGain
     {
         get
         {

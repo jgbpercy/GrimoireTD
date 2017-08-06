@@ -364,9 +364,9 @@ public abstract class DefendingEntity : IBuildModeTargetable
     {
         CDebug.Log(CDebug.hexEconomy, Id + " entered build mode:");
 
-        EconomyTransaction flatHexOccupationBonus = GetHexOccupationBonus(OnHexType, flatHexOccupationBonuses);
+        IEconomyTransaction flatHexOccupationBonus = GetHexOccupationBonus(OnHexType, flatHexOccupationBonuses);
 
-        EconomyManager.Instance.DoTransaction(flatHexOccupationBonus);
+        flatHexOccupationBonus.DoTransaction();
 
         CDebug.Log(CDebug.hexEconomy, Id + " added flat occupation bonus " + flatHexOccupationBonus);
     }
@@ -467,22 +467,22 @@ public abstract class DefendingEntity : IBuildModeTargetable
     }
 
     //Economy
-    protected EconomyTransaction GetHexOccupationBonus(IHexType hexType, CallbackList<HexOccupationBonus> occupationBonusList)
+    protected IEconomyTransaction GetHexOccupationBonus(IHexType hexType, CallbackList<HexOccupationBonus> occupationBonusList)
     {
-        EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
+        IEconomyTransaction occupationBonusTransaction = new CEconomyTransaction();
 
         foreach (HexOccupationBonus hexOccupationBonus in occupationBonusList)
         {
             if ( hexOccupationBonus.HexType == hexType)
             {
-                occupationBonusTransaction += hexOccupationBonus.ResourceGain;
+                occupationBonusTransaction = occupationBonusTransaction.Add(hexOccupationBonus.ResourceGain);
             }
         }
 
         return occupationBonusTransaction;
     }
 
-    public EconomyTransaction GetFlatHexOccupationBonus(IHexType hexType)
+    public IEconomyTransaction GetFlatHexOccupationBonus(IHexType hexType)
     {
         return GetHexOccupationBonus(hexType, flatHexOccupationBonuses);
     }

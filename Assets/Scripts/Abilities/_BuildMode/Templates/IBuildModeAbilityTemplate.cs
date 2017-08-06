@@ -1,6 +1,6 @@
 ﻿public interface IBuildModeAbilityTemplate : IAbilityTemplate {
 
-    EconomyTransaction Cost { get; }
+    IEconomyTransaction Cost { get; }
 
     IBuildModeTargetingComponent TargetingComponent { get; }
 

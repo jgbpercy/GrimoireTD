@@ -5,7 +5,7 @@ public interface ILevel {
 
     Texture2D LevelImage { get; }
 
-    EconomyTransaction StartingResources { get; }
+    IEconomyTransaction StartingResources { get; }
 
     IEnumerable<StartingUnit> StartingUnits { get; }
 

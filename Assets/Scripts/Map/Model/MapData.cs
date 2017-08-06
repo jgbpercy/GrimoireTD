@@ -232,7 +232,8 @@ public class MapData {
             return false;
         }
 
-        if (!isFree && !EconomyManager.Instance.CanDoTransaction(structureTemplate.Cost))
+        //TODO: don't check this in map, check in controller
+        if (!isFree && !structureTemplate.Cost.CanDoTransaction())
         {
             //CDebug.Log(something);
             return false;
@@ -252,9 +253,10 @@ public class MapData {
 
         GetHexAt(coord).AddStructureHere(newStructure);
 
+        //TODO: don't do this in map, do in controller
         if (!isFree)
         {
-            EconomyManager.Instance.DoTransaction(structureTemplate.Cost);
+            structureTemplate.Cost.DoTransaction();
         }
 
         defendingEntityPositions.Add(newStructure, coord);

@@ -8,7 +8,7 @@ public class SoLevel : ScriptableObject, ILevel {
     private Texture2D levelImage;
 
     [SerializeField]
-    private EconomyTransaction startingResources;
+    private SEconomyTransaction startingResources;
 
     [SerializeField]
     private StartingUnit[] startingUnits;
@@ -27,7 +27,7 @@ public class SoLevel : ScriptableObject, ILevel {
         }
     }
 
-    public EconomyTransaction StartingResources
+    public IEconomyTransaction StartingResources
     {
         get
         {

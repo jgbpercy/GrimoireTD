@@ -49,7 +49,7 @@ public class SelectedStuctureToBuildView : SingletonMonobehaviour<SelectedStuctu
 
         selectedStructureToBuildNameHeader.text = structureTemplate.StartingNameInGame;
 
-        costText.text = structureTemplate.Cost.ToString(EconomyTransaction.StringFormats.FullNameLineBreaks, true);
+        costText.text = structureTemplate.Cost.ToString(EconomyTransactionStringFormat.FullNameLineBreaks, true);
 
         //TODO when less hungover: I can make a generic version of this as a service probably
         //Involves the added things all having their own UI component, which implements a set up interface
@@ -78,7 +78,7 @@ public class SelectedStuctureToBuildView : SingletonMonobehaviour<SelectedStuctu
         foreach(HexOccupationBonus occupationBonus in structureTemplate.BaseCharacteristics.FlatHexOccupationBonuses)
         {
             hexOccupationBonusText.text += occupationBonus.HexType.NameInGame + "\n";
-            hexOccupationBonusText.text += occupationBonus.ResourceGain.ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+            hexOccupationBonusText.text += occupationBonus.ResourceGain.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
         }
     }
 

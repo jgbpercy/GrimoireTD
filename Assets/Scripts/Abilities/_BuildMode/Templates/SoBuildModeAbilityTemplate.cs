@@ -4,7 +4,7 @@
 public class SoBuildModeAbilityTemplate : SoAbilityTemplate, IBuildModeAbilityTemplate {
 
     [SerializeField]
-    private EconomyTransaction cost;
+    private SEconomyTransaction cost;
 
     [SerializeField]
     private SoBuildModeTargetingComponent targetingComponent;
@@ -12,7 +12,7 @@ public class SoBuildModeAbilityTemplate : SoAbilityTemplate, IBuildModeAbilityTe
     [SerializeField]
     private SoBuildModeEffectComponent effectComponent;
 
-    public EconomyTransaction Cost
+    public IEconomyTransaction Cost
     {
         get
         {

@@ -477,6 +477,7 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         {
             CDebug.Log(CDebug.combatLog, Id + " died");
             OnDiedCallback();
+            CreepTemplate.Bounty.DoTransaction();
         }
 
     }

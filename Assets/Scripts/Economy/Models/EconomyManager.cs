@@ -1,116 +1,57 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class EconomyManager : SingletonMonobehaviour<EconomyManager>
 {
     [SerializeField]
-    private int maxFood;
-    [SerializeField]
-    private int maxWood;
-    [SerializeField]
-    private int maxStone;
-    [SerializeField]
-    private int maxGold;
-    [SerializeField]
-    private int maxMana;
+    private SoResource[] resources;
 
-    private Resource food;
-    private Resource wood;
-    private Resource stone;
-    private Resource gold;
-    private Resource mana;
-
-    private Action OnResourceValueChangeCallback;
-
-    public Resource Food
+    public IReadOnlyCollection<IResource> Resources
     {
         get
         {
-            return food;
+            return resources;
         }
     }
 
-    public Resource Wood
+    public IEconomyTransaction ResourcesAsTransaction
     {
         get
         {
-            return wood;
+            var resourceTransactions = resources.Select(x => new CResourceTransaction(x, x.AmountOwned));
+
+            return new CEconomyTransaction(resourceTransactions);
         }
     }
 
-    public Resource Stone
-    {
-        get
-        {
-            return stone;
-        }
-    }
+    private Action<IResource, int, int> OnAnyResourceChangedCallback;
 
-    public Resource Gold
-    {
-        get
-        {
-            return gold;
-        }
-    }
-
-    public Resource Mana
-    {
-        get
-        {
-            return mana;
-        }
-    }
-
-    private void Start ()
+    private void Start()
     {
         CDebug.Log(CDebug.applicationLoading, "Econonmy Manager Start");
 
-        food = new Resource("Food", maxFood, 0);
-        wood = new Resource("Wood", maxWood, 0);
-        stone = new Resource("Stone", maxStone, 0);
-        gold = new Resource("Gold", maxGold, 0);
-        mana = new Resource("Mana", maxMana, 0);
+        foreach (IResource resource in Resources)
+        {
+            resource.RegisterForOnResourceChangedCallback((int byAmount, int newAmount) => OnResourceChanged(resource, byAmount, newAmount));
+        }
 
-        DoTransaction(MapGenerator.Instance.Level.StartingResources);
-
-        OnResourceValueChangeCallback?.Invoke();
+        MapGenerator.Instance.Level.StartingResources.DoTransaction();
     }
 
-    public bool CanDoTransaction(EconomyTransaction transaction)
+    private void OnResourceChanged(IResource resource, int byAmount, int newAmount)
     {
-        if (!food.CanDoTransaction(transaction.FoodChange)) return false;
-        if (!wood.CanDoTransaction(transaction.WoodChange)) return false;
-        if (!stone.CanDoTransaction(transaction.StoneChange)) return false;
-        if (!gold.CanDoTransaction(transaction.GoldChange)) return false;
-        if (!mana.CanDoTransaction(transaction.ManaChange)) return false;
-
-        return true;
-    }
-    
-    public void DoTransaction(EconomyTransaction transaction)
-    {
-        food.DoTransaction(transaction.FoodChange);
-        wood.DoTransaction(transaction.WoodChange);
-        stone.DoTransaction(transaction.StoneChange);
-        gold.DoTransaction(transaction.GoldChange);
-        mana.DoTransaction(transaction.ManaChange);
-
-        OnResourceValueChangeCallback?.Invoke();
+        OnAnyResourceChangedCallback?.Invoke(resource, byAmount, newAmount);
     }
 
-    public void RegisterForOnResourceValueChangeCallback(Action callback)
+    public void RegisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
     {
-        OnResourceValueChangeCallback += callback;
+        OnAnyResourceChangedCallback += callback;
     }
 
-    public void DeregisterForOnResourceValueChangeCallback(Action callback)
+    public void DeregisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
     {
-        OnResourceValueChangeCallback -= callback;
-    }
-
-    public void OnCreepDied(EconomyTransaction bounty)
-    {
-        DoTransaction(bounty);
+        OnAnyResourceChangedCallback -= callback;
     }
 }

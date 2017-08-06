@@ -130,7 +130,6 @@ public class CreepManager : SingletonMonobehaviour<CreepManager> {
         creepList.Add(newCreep);
 
         newCreep.RegisterForOnDiedCallback(() => creepList.Remove(newCreep));
-        newCreep.RegisterForOnDiedCallback(() => EconomyManager.Instance.OnCreepDied(creepToSpawn.Bounty));
     }
 
     public bool StartNextWave()

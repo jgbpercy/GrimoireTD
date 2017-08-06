@@ -242,26 +242,26 @@ public class Unit : DefendingEntity
         float activeProportion = timeActive / (timeActive + timeIdle);
         CDebug.Log(CDebug.hexEconomy, "Active Proportion: " + activeProportion.ToString("0.000"));
 
-        EconomyTransaction grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
+        IEconomyTransaction grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
         CDebug.Log(CDebug.hexEconomy, "Gross Hex Oc Bonus: " + grossConditionalHexOccuationBonus);
 
-        EconomyTransaction netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(activeProportion);
+        IEconomyTransaction netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(activeProportion);
         CDebug.Log(CDebug.hexEconomy, "Net Hex Oc Bonus: " + netConditionalHexOccupationBonus);
 
-        EconomyManager.Instance.DoTransaction(netConditionalHexOccupationBonus);
+        netConditionalHexOccupationBonus.DoTransaction();
 
-        EconomyTransaction grossConditionalStructureOccupationBonus = GetStructureOccupationBonus(OnHex.StructureHere, conditionalStructureOccupationBonuses);
+        IEconomyTransaction grossConditionalStructureOccupationBonus = GetStructureOccupationBonus(OnHex.StructureHere, conditionalStructureOccupationBonuses);
         CDebug.Log(CDebug.hexEconomy, "Gross Structure Oc Bonus: " + grossConditionalStructureOccupationBonus);
 
-        EconomyTransaction netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(activeProportion);
+        IEconomyTransaction netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(activeProportion);
         CDebug.Log(CDebug.hexEconomy, "Net Structure Oc Bonus: " + netConditionalStructureOccupationBonus);
 
-        EconomyManager.Instance.DoTransaction(netConditionalStructureOccupationBonus);
+        netConditionalStructureOccupationBonus.DoTransaction();
     }
 
-    private EconomyTransaction GetStructureOccupationBonus(Structure structure, CallbackList<StructureOccupationBonus> structureOccupationBonuses)
+    private IEconomyTransaction GetStructureOccupationBonus(Structure structure, CallbackList<StructureOccupationBonus> structureOccupationBonuses)
     {
-        EconomyTransaction occupationBonusTransaction = new EconomyTransaction();
+        IEconomyTransaction occupationBonusTransaction = new CEconomyTransaction();
 
         IStructureTemplate template = structure != null ? structure.StructureTemplate : null;
         IStructureUpgrade upgrade = structure != null ? structure.CurrentUpgradeLevel() : null;
@@ -270,14 +270,14 @@ public class Unit : DefendingEntity
         {
             if ( structureOccupationBonus.StructureTemplate == template && structureOccupationBonus.StructureUpgradeLevel == upgrade )
             {
-                occupationBonusTransaction += structureOccupationBonus.ResourceGain;
+                occupationBonusTransaction = occupationBonusTransaction.Add(structureOccupationBonus.ResourceGain);
             }
         }
 
         return occupationBonusTransaction;
     }
 
-    public EconomyTransaction GetConditionalHexOccupationBonus(IHexType hexType)
+    public IEconomyTransaction GetConditionalHexOccupationBonus(IHexType hexType)
     {
         return GetHexOccupationBonus(hexType, conditionalHexOccupationBonuses);
     }
@@ -347,6 +347,7 @@ public class Unit : DefendingEntity
 
         if (levelledTalents[talentChosen] != 0)
         {
+            //TODO: remove entire previous level improvement, not just attributes
             foreach (NamedAttributeModifier outgoingNamedModifier in talentChosen.UnitImprovements[levelledTalents[talentChosen] - 1].AttributeModifiers)
             {
                 bool removedModifier = TryRemoveAttributeModifier(outgoingNamedModifier.AttributeName, outgoingNamedModifier.AttributeModifier);
@@ -520,5 +521,4 @@ public class Unit : DefendingEntity
     {
         conditionalStructureOccupationBonuses.DeregisterForRemove(callback);
     }
-
 }

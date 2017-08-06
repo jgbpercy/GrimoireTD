@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 public class BuildModeAbility : Ability {
 
@@ -24,7 +23,7 @@ public class BuildModeAbility : Ability {
 
         buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
 
-        EconomyManager.Instance.DoTransaction(buildModeAbilityTemplate.Cost);
+        buildModeAbilityTemplate.Cost.DoTransaction();
     }
 
     public override string UIText()

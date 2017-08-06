@@ -12,7 +12,7 @@ public class StructureEnhancement {
     private string descriptionText;
 
     [SerializeField]
-    private EconomyTransaction cost;
+    private SEconomyTransaction cost;
 
     public IDefendingEntityImprovement EnhancementBonus
     {
@@ -30,7 +30,7 @@ public class StructureEnhancement {
         }
     }
 
-    public EconomyTransaction Cost
+    public IEconomyTransaction Cost
     {
         get
         {

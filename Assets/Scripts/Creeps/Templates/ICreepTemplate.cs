@@ -10,7 +10,7 @@ public interface ICreepTemplate {
 
     GameObject CreepPrefab { get; }
 
-    EconomyTransaction Bounty { get; }
+    IEconomyTransaction Bounty { get; }
 
     Resistances Resistances { get; }
 

@@ -313,7 +313,7 @@ public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
 
     public void ActivateBuildModeAbility(BuildModeAbility abilityToActivate)
     {
-        if (!EconomyManager.Instance.CanDoTransaction(abilityToActivate.BuildModeAbilityTemplate.Cost))
+        if (!abilityToActivate.BuildModeAbilityTemplate.Cost.CanDoTransaction())
         {
             return;
         }

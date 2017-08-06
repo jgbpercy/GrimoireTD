@@ -40,7 +40,7 @@ public class StructureEnhancementUIComponent : MonoBehaviour {
     private void SetDisplay()
     {
         ownText.text = enhancement.DescriptionText;
-        ownCostText.text = enhancement.Cost.ToString(EconomyTransaction.StringFormats.ShortNameLineBreaks, true);
+        ownCostText.text = enhancement.Cost.ToString(EconomyTransactionStringFormat.ShortNameLineBreaks, true);
 
         if ( selectedStructure.EnhancementsChosen[enhancement] == true )
         {

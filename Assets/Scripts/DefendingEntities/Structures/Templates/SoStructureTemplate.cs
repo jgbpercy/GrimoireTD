@@ -11,7 +11,7 @@ public class SoStructureTemplate : SoDefendingEntityTemplate, IStructureTemplate
     private string startingDescription;
 
     [SerializeField]
-    private EconomyTransaction cost;
+    private SEconomyTransaction cost;
 
     [SerializeField]
     private SoStructureUpgrade[] structureUpgrades;
@@ -32,7 +32,7 @@ public class SoStructureTemplate : SoDefendingEntityTemplate, IStructureTemplate
         }
     }
 
-    public EconomyTransaction Cost
+    public IEconomyTransaction Cost
     {
         get
         {
@@ -50,7 +50,7 @@ public class SoStructureTemplate : SoDefendingEntityTemplate, IStructureTemplate
 
     public string UIText()
     {
-        string uiText = Cost.ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, true) + "\n";
+        string uiText = Cost.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, true) + "\n";
 
         return uiText;
     }

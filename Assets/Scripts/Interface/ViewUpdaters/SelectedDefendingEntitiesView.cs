@@ -618,14 +618,14 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         foreach (StructureOccupationBonus structureOccupationBonus in unit.ConditionalStructureOccupationBonuses)
         {
             economyText += structureOccupationBonus.StructureUpgradeLevel == null ? structureOccupationBonus.StructureTemplate.StartingNameInGame : structureOccupationBonus.StructureUpgradeLevel.NewStructureName + "\n";
-            economyText += structureOccupationBonus.ResourceGain.ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+            economyText += structureOccupationBonus.ResourceGain.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
         }
 
         economyText += "Hexes (conditional):\n";
 
         foreach (IHexType hexType in MapGenerator.Instance.HexTypes)
         {
-            economyText += unit.GetConditionalHexOccupationBonus(hexType).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+            economyText += unit.GetConditionalHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
         }
 
         return economyText + GetStaticEconomyText(unit);
@@ -644,7 +644,7 @@ public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefe
         
         foreach (IHexType hexType in MapGenerator.Instance.HexTypes)
         {
-            economyText += defendingEntity.GetFlatHexOccupationBonus(hexType).ToString(EconomyTransaction.StringFormats.ShortNameSingleLine, false) + "\n";
+            economyText += defendingEntity.GetFlatHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
         }
 
         return economyText;

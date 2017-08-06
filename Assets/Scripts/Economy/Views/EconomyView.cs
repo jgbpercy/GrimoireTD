@@ -8,6 +8,7 @@ public class EconomyView : SingletonMonobehaviour<EconomyView> {
     [SerializeField]
     private Text resourceUIText;
 
+    //TODO: stop this enabling the Economy Manager
     void Start () {
 
         CDebug.Log(CDebug.applicationLoading, "Economy Manager Start");
@@ -15,24 +16,11 @@ public class EconomyView : SingletonMonobehaviour<EconomyView> {
         economyManager = EconomyManager.Instance;
         economyManager.enabled = true;
 
-        economyManager.RegisterForOnResourceValueChangeCallback(OnResourceValueChange);
+        economyManager.RegisterForOnAnyResourceChangedCallback(OnResourceValueChange);
 	}
-	
-    private string ResourceUIText()
+
+    private void OnResourceValueChange(IResource changedResource, int byAmount, int newAmount)
     {
-        string resourceUIText = "";
-
-        resourceUIText += economyManager.Food.NameInGame + ": <i>" + economyManager.Food.AmountOwned + "</i>\n";
-        resourceUIText += economyManager.Wood.NameInGame + ": <i>" + economyManager.Wood.AmountOwned + "</i>\n";
-        resourceUIText += economyManager.Stone.NameInGame + ": <i>" + economyManager.Stone.AmountOwned + "</i>\n";
-        resourceUIText += economyManager.Gold.NameInGame + ": <i>" + economyManager.Gold.AmountOwned + "</i>\n";
-        resourceUIText += economyManager.Mana.NameInGame + ": <i>" + economyManager.Mana.AmountOwned + "</i>\n";
-
-        return resourceUIText;
-    }
-
-    private void OnResourceValueChange()
-    {
-        resourceUIText.text = ResourceUIText();
+        resourceUIText.text = economyManager.ResourcesAsTransaction.ToString(EconomyTransactionStringFormat.FullNameLineBreaks, false);
     }
 }
