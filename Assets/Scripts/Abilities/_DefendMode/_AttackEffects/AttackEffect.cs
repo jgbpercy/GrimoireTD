@@ -45,7 +45,7 @@ public class AttackEffect {
         }
     }
 
-    public int GetActualMagnitude(DefendingEntity sourceDefendingEntity)
+    public float GetActualMagnitude(DefendingEntity sourceDefendingEntity)
     {
         DamageEffectType damageEffectType = attackEffectType as DamageEffectType;
         if ( damageEffectType != null )
@@ -56,9 +56,9 @@ public class AttackEffect {
         return baseMagnitude;
     }
         
-    private int GetDamage(DefendingEntity sourceDefendingEntity, DamageEffectType damageEffectType)
+    private float GetDamage(DefendingEntity sourceDefendingEntity, DamageEffectType damageEffectType)
     {
-        return Mathf.RoundToInt((1 + sourceDefendingEntity.GetAttribute(AttributeName.damageBonus)) * baseMagnitude);
+        return (1 + sourceDefendingEntity.GetAttribute(AttributeName.damageBonus)) * baseMagnitude;
     }
 
     public float GetActualDuration(DefendingEntity sourceDefendingEntity)

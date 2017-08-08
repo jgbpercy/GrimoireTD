@@ -2,21 +2,10 @@
 
 [CreateAssetMenu(
     fileName = "NewSlowEffectType",
-    menuName = "Attack Effects/Slow"
+    menuName = "Attack Effects/Persistent/Slow"
 )]
-public class SlowEffectType : PersistentEffectType {
-
-    [SerializeField]
-    private SlowType slowType;
-
-    public SlowType SlowType
-    {
-        get
-        {
-            return slowType;
-        }
-    }
-
+public class SlowEffectType : PersistentEffectType
+{
     public override string EffectName()
     {
         return "Slow (" + base.EffectName() + ")";

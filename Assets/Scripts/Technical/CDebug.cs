@@ -82,7 +82,7 @@ public static class CDebug {
         buildModeAbilities = new DebugChannel("Build Mode Abilities", false);
         channelList.Add(buildModeAbilities);
 
-        combatLog = new DebugChannel("Combat Log", false);
+        combatLog = new DebugChannel("Combat Log", true);
         channelList.Add(combatLog);
 
         experienceAndFatigue = new DebugChannel("XP and Fatigue", false);

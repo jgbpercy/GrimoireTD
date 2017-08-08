@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -278,10 +279,10 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
                 continue;
             }
 
-            SingularInstantEffectType singularInstantEffectType = attackEffect.AttackEffectType as SingularInstantEffectType;
-            if ( singularInstantEffectType != null)
+            InstantEffectType instantEffectType = attackEffect.AttackEffectType as InstantEffectType;
+            if ( instantEffectType != null)
             {
-                ApplySingularInstantEffect(attackEffect, sourceDefendingEntity, singularInstantEffectType);
+                ApplyInstantEffect(attackEffect, sourceDefendingEntity);
                 continue;
             }
 
@@ -291,66 +292,17 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
 
     private void ApplyDamageEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, DamageEffectType damageEffectType)
     {
-        SpecificDamageEffectType specificDamageEffectType = damageEffectType as SpecificDamageEffectType;
-        if (specificDamageEffectType != null)
-        {
-            ApplySpecificDamageEffect(attackEffect, sourceDefendingEntity, specificDamageEffectType);
-            return;
-        }
+        float magnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
+        int block = creepTemplate.Resistances.GetBlock(damageEffectType);
+        float resistance = creepTemplate.Resistances.GetResistance(damageEffectType, GetCurrentMinusArmor());
 
-        MetaDamageEffectType metaDamageEffectType = damageEffectType as MetaDamageEffectType;
-        if (metaDamageEffectType != null)
-        {
-            ApplyMetaDamageEffect(attackEffect, sourceDefendingEntity, metaDamageEffectType);
-            return;
-        }
-    }
+        CDebug.Log(CDebug.combatLog, "Bl: " + block + ", Res: " + resistance);
 
-    //TODO: refactor resistances, blocks etc with the new way that attack effects/damage types work
-    private void ApplySpecificDamageEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, SpecificDamageEffectType specificDamageEffectType)
-    {
-        switch (specificDamageEffectType.SpecificDamageType)
-        {
-            case SpecificDamageType.PiercingDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", Phy Bl: " + creepTemplate.Resistances.PhysicalBlock + ", Pi Bl: " + creepTemplate.Resistances.PiercingBlock + ", Ar Fac: " + physicalResistFromArmor + ", Ar: " + GetActualArmor() + ", Phy Res: " + creepTemplate.Resistances.BasePhysicalResistance + ", Pi Res: " + creepTemplate.Resistances.PiercingResistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.PhysicalBlock - creepTemplate.Resistances.PiercingBlock) * (1 - GetActualResistance(physicalResistFromArmor, creepTemplate.Resistances.BasePhysicalResistance, creepTemplate.Resistances.PiercingResistance))));
-                break;
-            case SpecificDamageType.BluntDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", Phy Bl: " + creepTemplate.Resistances.PhysicalBlock + ", Bl Bl: " + creepTemplate.Resistances.BluntBlock + ", Ar Fac: " + physicalResistFromArmor + ", Ar: " + GetActualArmor() + ", Phy Res: " + creepTemplate.Resistances.BasePhysicalResistance + ", Bl Res: " + creepTemplate.Resistances.BluntResistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.PhysicalBlock - creepTemplate.Resistances.BluntBlock) * (1 - GetActualResistance(physicalResistFromArmor, creepTemplate.Resistances.BasePhysicalResistance, creepTemplate.Resistances.BluntResistance))));
-                break;
-            case SpecificDamageType.PoisonDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", Phy Bl: " + creepTemplate.Resistances.PhysicalBlock + ", Po Bl: " + creepTemplate.Resistances.PoisonBlock + ", Ar Fac: " + physicalResistFromArmor + ", Ar: " + GetActualArmor() + ", Phy Res: " + creepTemplate.Resistances.BasePhysicalResistance + ", Po Res: " + creepTemplate.Resistances.PoisonReistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.PhysicalBlock - creepTemplate.Resistances.PoisonBlock) * (1 - GetActualResistance(physicalResistFromArmor, creepTemplate.Resistances.BasePhysicalResistance, creepTemplate.Resistances.PoisonReistance))));
-                break;
-            case SpecificDamageType.AcidDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", Phy Bl: " + creepTemplate.Resistances.PhysicalBlock + ", Ac Bl: " + creepTemplate.Resistances.AcidBlock + ", Ar Fac: " + physicalResistFromArmor + ", Ar: " + GetActualArmor() + ", Phy Res: " + creepTemplate.Resistances.BasePhysicalResistance + ", Ac Res: " + creepTemplate.Resistances.AcidResistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.PhysicalBlock - creepTemplate.Resistances.AcidBlock) * (1 - GetActualResistance(physicalResistFromArmor, creepTemplate.Resistances.BasePhysicalResistance, creepTemplate.Resistances.AcidResistance))));
-                break;
-            case SpecificDamageType.FireDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", El Bl: " + creepTemplate.Resistances.ElementalBlock + ", Fi Bl: " + creepTemplate.Resistances.FireBlock + ", Ar Fac: " + elementalResistFromArmor + ", Ar: " + GetActualArmor() + ", El Res: " + creepTemplate.Resistances.BaseElementalResistance + ", Fi Res: " + creepTemplate.Resistances.FireResistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.ElementalBlock - creepTemplate.Resistances.FireBlock) * (1 - GetActualResistance(elementalResistFromArmor, creepTemplate.Resistances.BaseElementalResistance, creepTemplate.Resistances.FireResistance))));
-                break;
-            case SpecificDamageType.ColdDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", El Bl: " + creepTemplate.Resistances.ElementalBlock + ", Co Bl: " + creepTemplate.Resistances.ColdBlock + ", Ar Fac: " + elementalResistFromArmor + ", Ar: " + GetActualArmor() + ", El Res: " + creepTemplate.Resistances.BaseElementalResistance + ", Co Res: " + creepTemplate.Resistances.ColdResistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.ElementalBlock - creepTemplate.Resistances.ColdBlock) * (1 - GetActualResistance(elementalResistFromArmor, creepTemplate.Resistances.BaseElementalResistance, creepTemplate.Resistances.ColdResistance))));
-                break;
-            case SpecificDamageType.LightningDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", El Bl: " + creepTemplate.Resistances.ElementalBlock + ", Li Bl: " + creepTemplate.Resistances.LightningBlock + ", Ar Fac: " + elementalResistFromArmor + ", Ar: " + GetActualArmor() + ", El Res: " + creepTemplate.Resistances.BaseElementalResistance + ", Li Res: " + creepTemplate.Resistances.LightningResistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.ElementalBlock - creepTemplate.Resistances.LightningBlock) * (1 - GetActualResistance(elementalResistFromArmor, creepTemplate.Resistances.BaseElementalResistance, creepTemplate.Resistances.LightningResistance))));
-                break;
-            case SpecificDamageType.EarthDamage:
-                CDebug.Log(CDebug.combatLog, "Dam Bl: " + creepTemplate.Resistances.DamageBlock + ", El Bl: " + creepTemplate.Resistances.ElementalBlock + ", Ea Bl: " + creepTemplate.Resistances.EarthBlock + ", Ar Fac: " + elementalResistFromArmor + ", Ar: " + GetActualArmor() + ", El Res: " + creepTemplate.Resistances.BaseElementalResistance + ", Ea Res: " + creepTemplate.Resistances.EarthResistance);
-                TakeDamage(Mathf.RoundToInt((attackEffect.GetActualMagnitude(sourceDefendingEntity) - creepTemplate.Resistances.DamageBlock - creepTemplate.Resistances.ElementalBlock - creepTemplate.Resistances.EarthBlock) * (1 - GetActualResistance(elementalResistFromArmor, creepTemplate.Resistances.BaseElementalResistance, creepTemplate.Resistances.EarthResistance))));
-                break;
-            default:
-                throw new NotImplementedException("Non-implemented damage type");
-        }
-    }
-
-    private void ApplyMetaDamageEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, MetaDamageEffectType metaDamageEffectType)
-    {
-        throw new NotImplementedException("Meta damage not implemented");
+        TakeDamage(
+            Mathf.RoundToInt(
+                (magnitude - block) * (1 - resistance)
+            )
+        );
     }
 
     private int GetCurrentEffectMagnitude(AttackEffectType effectType)
@@ -369,8 +321,9 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
     {
         PersistentEffect currentEffect = persistentEffects.Find(x => x.AttackEffectType == attackEffect.AttackEffectType);
 
-        int newEffectMagnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
+        int newEffectMagnitude = Mathf.RoundToInt(attackEffect.GetActualMagnitude(sourceDefendingEntity));
         float newEffectDuration = attackEffect.GetActualDuration(sourceDefendingEntity);
+
         bool isSpeedChange = persistentEffectType is SlowEffectType;
 
         if (currentEffect == null)
@@ -415,49 +368,38 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
         CDebug.Log(CDebug.combatLog, "Current effect already better than new effect");
     }
 
-    private void ApplySingularInstantEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, SingularInstantEffectType singularInstantEffectType)
+    private void ApplyInstantEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity)
     {
-        switch (singularInstantEffectType.SingularInstantType)
+        ArmorCorrosionEffectType armorCorrosionEffect = attackEffect.AttackEffectType as ArmorCorrosionEffectType;
+        if( armorCorrosionEffect != null )
         {
-            case SingularInstantType.ArmorCorrosion:
-                currentPermanentMinusArmor += attackEffect.GetActualMagnitude(sourceDefendingEntity);
-                CDebug.Log(CDebug.combatLog, Id + " permanent minus armor is now " + currentPermanentMinusArmor);
-                break;
-            default:
-                throw new NotImplementedException("Non-implemented singular instant effect type");
-        }
-                
-    }
-
-    private float GetActualResistance(float resistanceFromArmor, float baseResistance, float specificResistance)
-    {
-        float actualResistance = 0f;
-
-
-        for (int i = 0; i < GetActualArmor(); i++)
-        {
-            actualResistance = actualResistance + (1 - actualResistance) * resistanceFromArmor;
+            currentPermanentMinusArmor += Mathf.RoundToInt(attackEffect.GetActualMagnitude(sourceDefendingEntity));
+            CDebug.Log(CDebug.combatLog, Id + " permanent minus armor is now " + currentPermanentMinusArmor);
+            return;
         }
 
-        actualResistance = actualResistance + (1 - actualResistance) * baseResistance;
-        actualResistance = actualResistance + (1 - actualResistance) * specificResistance;
-
-        CDebug.Log(CDebug.combatLog, "Calculated actual resistance as " + actualResistance);
-
-        return actualResistance;
+        throw new Exception("Unhandled InstantEffectType");
     }
 
-    private int GetActualArmor()
+    private int GetCurrentMinusArmor()
     {
-        AttackEffectType armorReductionAttackEffectType = AttackEffectTypeManager.GetAttackEffectType(SingularPersistentType.ArmorReduction);
+        int minusArmor = 0;
 
-        int minusArmor = GetCurrentEffectMagnitude(armorReductionAttackEffectType) + currentPermanentMinusArmor;
+        IReadOnlyList<ArmorReductionEffectType> armorReductionTypes = AttackEffectTypeManager.Instance.ArmorReductionTypes;
 
-        int currentArmor = CreepTemplate.Resistances.Armor - minusArmor;
+        foreach (PersistentEffect persistentEffect in persistentEffects)
+        {
+            if (armorReductionTypes.Contains(persistentEffect.AttackEffectType))
+            {
+                minusArmor += persistentEffect.Magnitude;
+            }
+        }
 
-        CDebug.Log(CDebug.combatLog, Id + " current armor is " + currentArmor + " = " + CreepTemplate.Resistances.Armor + " - " + GetCurrentEffectMagnitude(armorReductionAttackEffectType) + " (temp) - " + currentPermanentMinusArmor + " (perm)" );
+        minusArmor += currentPermanentMinusArmor;
 
-        return currentArmor;
+        CDebug.Log(CDebug.combatLog, Id + " current minus armor is " + minusArmor);
+
+        return minusArmor;
     }
 
     private void TakeDamage(int damage)
@@ -479,19 +421,17 @@ public class Creep : IDefendModeTargetable, IFrameUpdatee {
             OnDiedCallback();
             CreepTemplate.Bounty.DoTransaction();
         }
-
     }
 
     private void OnSpeedChange()
     {
         float speedFactor = 1;
 
-        foreach (SlowType slowType in Enum.GetValues(typeof(SlowType)))
+        foreach (SlowEffectType slowEffectType in AttackEffectTypeManager.Instance.SlowTypes)
         {
-            AttackEffectType attackEffectType = AttackEffectTypeManager.GetAttackEffectType(slowType);
-            float speedFactorForType = (1 - GetCurrentEffectMagnitude(attackEffectType) / 100f);
+            float speedFactorForType = (1 - GetCurrentEffectMagnitude(slowEffectType) / 100f);
             speedFactor *= speedFactorForType;
-            CDebug.Log(CDebug.combatLog, "Speed change: " + attackEffectType.EffectName() + " applying speed factor of " + speedFactorForType + ". Overall factor now " + speedFactor);
+            CDebug.Log(CDebug.combatLog, "Speed change: " + slowEffectType.EffectName() + " applying speed factor of " + speedFactorForType + ". Overall factor now " + speedFactor);
         }
         
         currentSpeed = creepTemplate.BaseSpeed * speedFactor;

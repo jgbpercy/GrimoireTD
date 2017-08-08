@@ -12,7 +12,7 @@ public interface ICreepTemplate {
 
     IEconomyTransaction Bounty { get; }
 
-    Resistances Resistances { get; }
+    IResistances Resistances { get; }
 
     Creep GenerateCreep(Vector3 spawnPosition);
 }

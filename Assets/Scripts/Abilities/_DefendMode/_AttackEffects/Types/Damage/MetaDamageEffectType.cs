@@ -1,24 +1,12 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-public class MetaDamageEffectType : DamageEffectType {
-
-    [SerializeField]
-    private MetaDamageType metaDamageType;
-
-    public MetaDamageType MetaDamageType
+public class MetaDamageEffectType : DamageEffectType
+{
+    public IReadOnlyList<SpecificDamageEffectType> SpecificDamageTypes
     {
         get
         {
-            return MetaDamageType;
-        }
-    }
-
-    public List<SpecificDamageType> SpecificDamageTypes
-    {
-        get
-        {
-            return DamageTypeManager.GetSpecificDamageTypes(metaDamageType);
+            return AttackEffectTypeManager.Instance.GetSpecificDamageTypes(this);
         }
     }
 }

@@ -4,24 +4,16 @@
     fileName = "NewSpecificDamageEffectType",
     menuName = "Attack Effects/Damage Types/Specific Damage"
 )]
-public class SpecificDamageEffectType : DamageEffectType {
-
+public class SpecificDamageEffectType : DamageEffectType
+{
     [SerializeField]
-    private SpecificDamageType specificDamageType;
+    private BasicMetaDamageEffectType basicMetaDamageEffectType;
 
-    public SpecificDamageType SpecificDamageType
+    public BasicMetaDamageEffectType BasicMetaDamageEffectType
     {
         get
         {
-            return specificDamageType;
-        }
-    }
-
-    public MetaDamageType MetaDamageType
-    {
-        get
-        {
-            return DamageTypeManager.GetMetaDamageType(specificDamageType);
+            return basicMetaDamageEffectType;
         }
     }
 }
