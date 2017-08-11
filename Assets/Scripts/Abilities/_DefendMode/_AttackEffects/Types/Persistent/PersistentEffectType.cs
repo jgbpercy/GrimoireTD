@@ -1,3 +1,7 @@
-﻿public class PersistentEffectType : AttackEffectType {
+﻿namespace GrimoireTD.Abilities.DefendMode.AttackEffects
+{
+    public class PersistentEffectType : AttackEffectType
+    {
 
+    }
 }

@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 
-public class ModeDurationDefenderEffectTemplate : SoDefenderEffectTemplate, IDefenderEffectTemplate
+namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    [SerializeField]
-    private int baseDuration;
-
-    public int BaseDuration
+    public class ModeDurationDefenderEffectTemplate : SoDefenderEffectTemplate, IDefenderEffectTemplate
     {
-        get
+        [SerializeField]
+        private int baseDuration;
+
+        public int BaseDuration
         {
-            return baseDuration;
+            get
+            {
+                return baseDuration;
+            }
         }
     }
 }

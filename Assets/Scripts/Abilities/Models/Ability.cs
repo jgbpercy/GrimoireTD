@@ -1,11 +1,16 @@
-﻿public abstract class Ability {
+﻿using GrimoireTD.DefendingEntities;
 
-    protected IAbilityTemplate template;
-
-    public Ability(IAbilityTemplate template, DefendingEntity attachedToDefendingEntity)
+namespace GrimoireTD.Abilities
+{
+    public abstract class Ability
     {
-        this.template = template;
-    }
+        protected IAbilityTemplate template;
 
-    public abstract string UIText();
+        public Ability(IAbilityTemplate template, DefendingEntity attachedToDefendingEntity)
+        {
+            this.template = template;
+        }
+
+        public abstract string UIText();
+    }
 }

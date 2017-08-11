@@ -1,92 +1,99 @@
 ﻿using System;
+using GrimoireTD.Creeps;
+using GrimoireTD.Technical;
+using GrimoireTD.ChannelDebug;
 
-public enum GameMode
+namespace GrimoireTD
 {
-    BUILD,
-    DEFEND
-}
-
-public class GameStateManager : SingletonMonobehaviour<GameStateManager> {
-
-    private GameMode gameMode = GameMode.BUILD;
-
-    private Action OnEnterDefendModeCallback;
-    private Action OnEnterBuildModeCallback;
-
-    public GameMode CurrentGameMode
+    public enum GameMode
     {
-        get
+        BUILD,
+        DEFEND
+    }
+
+    public class GameStateManager : SingletonMonobehaviour<GameStateManager>
+    {
+
+        private GameMode gameMode = GameMode.BUILD;
+
+        private Action OnEnterDefendModeCallback;
+        private Action OnEnterBuildModeCallback;
+
+        public GameMode CurrentGameMode
         {
-            return gameMode;
-        }
-        set
-        {
-            CDebug.Log(CDebug.gameState, "Game State Manager received state " + value + " through interface.");
-            if ( value == GameMode.DEFEND)
+            get
             {
-                EnterDefendMode();
+                return gameMode;
             }
-            else
+            set
+            {
+                CDebug.Log(CDebug.gameState, "Game State Manager received state " + value + " through interface.");
+                if (value == GameMode.DEFEND)
+                {
+                    EnterDefendMode();
+                }
+                else
+                {
+                    EnterBuildMode();
+                }
+            }
+        }
+
+        private void Start()
+        {
+            CDebug.Log(CDebug.applicationLoading, "Game State Manager Start");
+        }
+
+        private void Update()
+        {
+            if (CurrentGameMode == GameMode.DEFEND && !CreepManager.Instance.WaveIsActive && !CreepManager.Instance.TrackIdleTime)
             {
                 EnterBuildMode();
             }
         }
-    }
 
-    private void Start ()
-    {
-        CDebug.Log(CDebug.applicationLoading, "Game State Manager Start");
-    }
-
-    private void Update()
-    {
-        if ( CurrentGameMode == GameMode.DEFEND && !CreepManager.Instance.WaveIsActive && !CreepManager.Instance.TrackIdleTime )
+        private bool EnterDefendMode()
         {
-            EnterBuildMode();
+            CDebug.Log(CDebug.gameState, "Game State Manager EnterDefendMode called, callback member count: " + OnEnterDefendModeCallback.GetInvocationList().Length);
+
+            gameMode = GameMode.DEFEND;
+
+            CreepManager.Instance.StartNextWave();
+
+            OnEnterDefendModeCallback?.Invoke();
+
+            return true;
         }
-    }
 
-    private bool EnterDefendMode()
-    {
-        CDebug.Log(CDebug.gameState, "Game State Manager EnterDefendMode called, callback member count: " + OnEnterDefendModeCallback.GetInvocationList().Length);
-       
-        gameMode = GameMode.DEFEND;
+        private bool EnterBuildMode()
+        {
+            CDebug.Log(CDebug.gameState, "Game State Manager EnterBuildMode called, callback member count: " + OnEnterBuildModeCallback.GetInvocationList().Length);
 
-        CreepManager.Instance.StartNextWave();
+            gameMode = GameMode.BUILD;
 
-        OnEnterDefendModeCallback?.Invoke();
+            OnEnterBuildModeCallback?.Invoke();
 
-        return true;
-    }
+            return true;
+        }
 
-    private bool EnterBuildMode()
-    {
-        CDebug.Log(CDebug.gameState, "Game State Manager EnterBuildMode called, callback member count: " + OnEnterBuildModeCallback.GetInvocationList().Length);
+        public void RegisterForOnEnterDefendModeCallback(Action callback)
+        {
+            OnEnterDefendModeCallback += callback;
+        }
 
-        gameMode = GameMode.BUILD;
+        public void DeregisterForOnEnterDefendModeCallback(Action callback)
+        {
+            OnEnterDefendModeCallback -= callback;
+        }
 
-        OnEnterBuildModeCallback?.Invoke();
+        public void RegisterForOnEnterBuildModeCallback(Action callback)
+        {
+            OnEnterBuildModeCallback += callback;
+        }
 
-        return true;
-    }
-
-    public void RegisterForOnEnterDefendModeCallback(Action callback)
-    {
-        OnEnterDefendModeCallback += callback;
-    }
-
-    public void DeregisterForOnEnterDefendModeCallback(Action callback)
-    {
-        OnEnterDefendModeCallback -= callback;
-    }
-
-    public void RegisterForOnEnterBuildModeCallback(Action callback)
-    {
-        OnEnterBuildModeCallback += callback;
-    }
-
-    public void DeregisterForOnEnterBuildModeCallback(Action callback)
-    {
-        OnEnterBuildModeCallback -= callback;
+        public void DeregisterForOnEnterBuildModeCallback(Action callback)
+        {
+            OnEnterBuildModeCallback -= callback;
+        }
     }
 }

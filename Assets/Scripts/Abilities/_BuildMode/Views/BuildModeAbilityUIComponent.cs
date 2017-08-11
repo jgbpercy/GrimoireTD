@@ -1,39 +1,42 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using GrimoireTD.UI;
 
-public class BuildModeAbilityUIComponent : MonoBehaviour {
-
-    private BuildModeAbility buildModeAbility;
-
-    private bool initialised = false;
-
-    [SerializeField]
-    private Text ownText;
-
-    public BuildModeAbility BuildModeAbility
+namespace GrimoireTD.Abilities.BuildMode
+{
+    public class BuildModeAbilityUIComponent : MonoBehaviour
     {
-        get
+        private BuildModeAbility buildModeAbility;
+
+        private bool initialised = false;
+
+        [SerializeField]
+        private Text ownText;
+
+        public BuildModeAbility BuildModeAbility
         {
-            return buildModeAbility;
+            get
+            {
+                return buildModeAbility;
+            }
+        }
+
+        public void SetUp(BuildModeAbility buildModeAbility)
+        {
+            if (initialised)
+            {
+                return;
+            }
+            initialised = true;
+
+            this.buildModeAbility = buildModeAbility;
+
+            ownText.text = buildModeAbility.BuildModeAbilityTemplate.NameInGame;
+        }
+
+        public void UIComponentClicked()
+        {
+            InterfaceController.Instance.ActivateBuildModeAbility(buildModeAbility);
         }
     }
-
-    public void SetUp(BuildModeAbility buildModeAbility)
-    {
-        if (initialised)
-        {
-            return;
-        }
-        initialised = true;
-
-        this.buildModeAbility = buildModeAbility;
-
-        ownText.text = buildModeAbility.BuildModeAbilityTemplate.NameInGame;
-    }
-
-    public void UIComponentClicked()
-    {
-        InterfaceController.Instance.ActivateBuildModeAbility(buildModeAbility);
-    }
-
 }

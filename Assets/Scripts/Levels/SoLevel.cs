@@ -1,60 +1,66 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Creeps;
+using GrimoireTD.Economy;
 
-[CreateAssetMenu(fileName = "NewLevel", menuName = "Levels/Level")]
-public class SoLevel : ScriptableObject, ILevel {
-
-    [SerializeField]
-    private Texture2D levelImage;
-
-    [SerializeField]
-    private SEconomyTransaction startingResources;
-
-    [SerializeField]
-    private StartingUnit[] startingUnits;
-
-    [SerializeField]
-    private StartingStructure[] startingStructures;
-
-    [SerializeField]
-    private SoWaveTemplate[] waves;
-
-    public Texture2D LevelImage
+namespace GrimoireTD.Levels
+{
+    [CreateAssetMenu(fileName = "NewLevel", menuName = "Levels/Level")]
+    public class SoLevel : ScriptableObject, ILevel
     {
-        get
+        [SerializeField]
+        private Texture2D levelImage;
+
+        [SerializeField]
+        private SEconomyTransaction startingResources;
+
+        [SerializeField]
+        private StartingUnit[] startingUnits;
+
+        [SerializeField]
+        private StartingStructure[] startingStructures;
+
+        [SerializeField]
+        private SoWaveTemplate[] waves;
+
+        public Texture2D LevelImage
         {
-            return levelImage;
+            get
+            {
+                return levelImage;
+            }
         }
-    }
 
-    public IEconomyTransaction StartingResources
-    {
-        get
+        public IEconomyTransaction StartingResources
         {
-            return startingResources;
+            get
+            {
+                return startingResources;
+            }
         }
-    }
 
-    public IEnumerable<StartingUnit> StartingUnits
-    {
-        get
+        public IEnumerable<StartingUnit> StartingUnits
         {
-            return startingUnits;
+            get
+            {
+                return startingUnits;
+            }
         }
-    }
 
-    public IEnumerable<StartingStructure> StartingStructures
-    {
-        get
+        public IEnumerable<StartingStructure> StartingStructures
         {
-            return startingStructures;
+            get
+            {
+                return startingStructures;
+            }
         }
-    }
 
-    public IEnumerable<IWaveTemplate> Waves
-    {
-        get {
-            return waves;
+        public IEnumerable<IWaveTemplate> Waves
+        {
+            get
+            {
+                return waves;
+            }
         }
     }
 }

@@ -1,44 +1,49 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Abilities.DefendMode.AttackEffects;
+using GrimoireTD.DefendingEntities;
 
-[CreateAssetMenu(fileName = "NewAoeProjectile", menuName = "Defend Mode Abilities/Projectiles/AOE Projectile")]
-public class SoAoeProjectileTemplate : SoProjectileTemplate, IAoeProjectileTemplate {
-
-    [SerializeField]
-    protected AttackEffect[] aoeAttackEffects;
-
-    [SerializeField]
-    protected float aoeRadius;
-
-    [SerializeField]
-    protected float aoeExpansionLerpFactor = 0.15f;
-
-    public IEnumerable<AttackEffect> AoeAttackEffects
+namespace GrimoireTD.Abilities.DefendMode.Projectiles
+{
+    [CreateAssetMenu(fileName = "NewAoeProjectile", menuName = "Defend Mode Abilities/Projectiles/AOE Projectile")]
+    public class SoAoeProjectileTemplate : SoProjectileTemplate, IAoeProjectileTemplate
     {
-        get
+        [SerializeField]
+        protected AttackEffect[] aoeAttackEffects;
+
+        [SerializeField]
+        protected float aoeRadius;
+
+        [SerializeField]
+        protected float aoeExpansionLerpFactor = 0.15f;
+
+        public IEnumerable<AttackEffect> AoeAttackEffects
         {
-            return aoeAttackEffects;
+            get
+            {
+                return aoeAttackEffects;
+            }
         }
-    }
 
-    public float AoeRadius
-    {
-        get
+        public float AoeRadius
         {
-            return aoeRadius;
+            get
+            {
+                return aoeRadius;
+            }
         }
-    }
 
-    public float AoeExpansionLerpFactor
-    {
-        get
+        public float AoeExpansionLerpFactor
         {
-            return aoeExpansionLerpFactor;
+            get
+            {
+                return aoeExpansionLerpFactor;
+            }
         }
-    }
 
-    public override Projectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, DefendingEntity sourceDefendingEntity)
-    {
-        return new AoeProjectile(startPosition, target, this, sourceDefendingEntity);
+        public override Projectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, DefendingEntity sourceDefendingEntity)
+        {
+            return new AoeProjectile(startPosition, target, this, sourceDefendingEntity);
+        }
     }
 }

@@ -1,15 +1,18 @@
-﻿public enum DefenderEffectAffectsType
+﻿namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    UNITS,
-    STRUCTURES,
-    BOTH
-}
+    public enum DefenderEffectAffectsType
+    {
+        UNITS,
+        STRUCTURES,
+        BOTH
+    }
 
-public interface IDefenderEffectTemplate  {
+    public interface IDefenderEffectTemplate
+    {
+        DefenderEffectAffectsType Affects { get; }
 
-    DefenderEffectAffectsType Affects { get; }
+        string NameInGame { get; }
 
-    string NameInGame { get; }
-
-    IDefendingEntityImprovement Improvement { get; }
+        IDefendingEntityImprovement Improvement { get; }
+    }
 }

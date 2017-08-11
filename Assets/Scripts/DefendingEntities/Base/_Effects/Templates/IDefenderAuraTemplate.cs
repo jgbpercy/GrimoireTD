@@ -1,8 +1,11 @@
-﻿public interface IDefenderAuraTemplate : IDefenderEffectTemplate {
+﻿namespace GrimoireTD.DefendingEntities.DefenderEffects
+{
+    public interface IDefenderAuraTemplate : IDefenderEffectTemplate
+    {
+        int BaseRange { get; }
 
-    int BaseRange { get; }
+        bool AffectsSelf { get; }
 
-    bool AffectsSelf { get; }
-
-    DefenderAura GenerateDefenderAura(DefendingEntity sourceDefendingEntity);
+        DefenderAura GenerateDefenderAura(DefendingEntity sourceDefendingEntity);
+    }
 }

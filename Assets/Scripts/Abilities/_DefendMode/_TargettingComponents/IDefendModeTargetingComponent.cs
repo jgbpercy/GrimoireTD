@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using GrimoireTD.DefendingEntities;
 
-public interface IDefendModeTargetingComponent {
-
-    IReadOnlyList<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity);
+namespace GrimoireTD.Abilities.DefendMode
+{
+    public interface IDefendModeTargetingComponent
+    {
+        IReadOnlyList<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity);
+    }
 }

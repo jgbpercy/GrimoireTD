@@ -1,18 +1,21 @@
 ﻿using UnityEngine.Assertions;
 using UnityEngine;
 
-public static class CustomMath
+namespace GrimoireTD.Technical
 {
-    public static float SignedOddRoot(float value, int nthRoot)
+    public static class CustomMath
     {
-        Assert.IsTrue(nthRoot % 2 == 1);
+        public static float SignedOddRoot(float value, int nthRoot)
+        {
+            Assert.IsTrue(nthRoot % 2 == 1);
 
-        int sign = value < 0 ? -1 : 1;
+            int sign = value < 0 ? -1 : 1;
 
-        float exponent = 1f / (float)nthRoot;
+            float exponent = 1f / (float)nthRoot;
 
-        float rawRoot = Mathf.Pow(Mathf.Abs(value), exponent);
+            float rawRoot = Mathf.Pow(Mathf.Abs(value), exponent);
 
-        return rawRoot * sign;
+            return rawRoot * sign;
+        }
     }
 }

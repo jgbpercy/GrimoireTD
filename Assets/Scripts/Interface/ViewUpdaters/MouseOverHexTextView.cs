@@ -1,75 +1,79 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using GrimoireTD.DefendingEntities.DefenderEffects;
+using GrimoireTD.Technical;
+using GrimoireTD.Map;
 
-//TODO: make this and MouseOverMapView work on callbacks rather than polling each frame?
-public class MouseOverHexTextView : SingletonMonobehaviour<MouseOverHexTextView> {
-
-    private InterfaceController interfaceController;
-
-    [SerializeField]
-    private GameObject mouseOverHexPanel;
-
-    [SerializeField]
-    private Text hexTypeText;
-    [SerializeField]
-    private Text unitText;
-    [SerializeField]
-    private Text structureText;
-    [SerializeField]
-    private Text aurasText;
-
-    private void Start()
+namespace GrimoireTD.UI
+{
+    //TODO: make this and MouseOverMapView work on callbacks rather than polling each frame?
+    public class MouseOverHexTextView : SingletonMonobehaviour<MouseOverHexTextView>
     {
-        interfaceController = InterfaceController.Instance;
-    }
+        private InterfaceController interfaceController;
 
-    private void Update()
-    {
-        bool mouseRaycastHitMap = interfaceController.MouseRaycastHitMap;
+        [SerializeField]
+        private GameObject mouseOverHexPanel;
 
-        if (!mouseRaycastHitMap)
+        [SerializeField]
+        private Text hexTypeText;
+        [SerializeField]
+        private Text unitText;
+        [SerializeField]
+        private Text structureText;
+        [SerializeField]
+        private Text aurasText;
+
+        private void Start()
         {
-            mouseOverHexPanel.SetActive(false);
-            return;
+            interfaceController = InterfaceController.Instance;
         }
 
-        mouseOverHexPanel.SetActive(true);
-
-        HexData mouseOverHex = interfaceController.MouseOverHex;
-
-        hexTypeText.text = mouseOverHex.HexType.NameInGame;
-
-        if (mouseOverHex.UnitHere != null)
+        private void Update()
         {
-            unitText.text = mouseOverHex.UnitHere.CurrentName();
-        }
-        else
-        {
-            unitText.text = "None";
-        }
+            bool mouseRaycastHitMap = interfaceController.MouseRaycastHitMap;
 
-        if (mouseOverHex.StructureHere != null)
-        {
-            structureText.text = mouseOverHex.StructureHere.CurrentName();
-        }
-        else
-        {
-            structureText.text = "None";
-        }
-
-        if ( mouseOverHex.DefenderAurasHere.Count > 0 )
-        {
-            aurasText.text = "";
-            foreach (DefenderAura aura in mouseOverHex.DefenderAurasHere)
+            if (!mouseRaycastHitMap)
             {
-                aurasText.text += aura.DefenderAuraTemplate.NameInGame + "\n";
+                mouseOverHexPanel.SetActive(false);
+                return;
             }
-        }
-        else
-        {
-            aurasText.text = "None";
+
+            mouseOverHexPanel.SetActive(true);
+
+            HexData mouseOverHex = interfaceController.MouseOverHex;
+
+            hexTypeText.text = mouseOverHex.HexType.NameInGame;
+
+            if (mouseOverHex.UnitHere != null)
+            {
+                unitText.text = mouseOverHex.UnitHere.CurrentName();
+            }
+            else
+            {
+                unitText.text = "None";
+            }
+
+            if (mouseOverHex.StructureHere != null)
+            {
+                structureText.text = mouseOverHex.StructureHere.CurrentName();
+            }
+            else
+            {
+                structureText.text = "None";
+            }
+
+            if (mouseOverHex.DefenderAurasHere.Count > 0)
+            {
+                aurasText.text = "";
+                foreach (DefenderAura aura in mouseOverHex.DefenderAurasHere)
+                {
+                    aurasText.text += aura.DefenderAuraTemplate.NameInGame + "\n";
+                }
+            }
+            else
+            {
+                aurasText.text = "None";
+            }
         }
     }
 }

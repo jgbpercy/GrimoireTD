@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using GrimoireTD.DefendingEntities;
 
 public interface IDefendingEntityTemplate {
 

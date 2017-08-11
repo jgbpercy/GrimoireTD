@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 
-public class SoCreepAuraTemplate : SoDefenderEffectTemplate, ICreepAuraTemplate
+namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    [SerializeField]
-    private float baseRange;
-
-    public float BaseRange
+    public class SoCreepAuraTemplate : SoDefenderEffectTemplate, ICreepAuraTemplate
     {
-        get
+        [SerializeField]
+        private float baseRange;
+
+        public float BaseRange
         {
-            return baseRange;
+            get
+            {
+                return baseRange;
+            }
         }
     }
 }

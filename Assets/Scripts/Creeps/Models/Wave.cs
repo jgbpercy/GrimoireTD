@@ -1,70 +1,74 @@
 ﻿using System.Collections.Generic;
 
-public class Wave {
-
-    private SortedList<float, ICreepTemplate> spawns; 
-
-    private bool debugOn;
-
-    public IReadOnlyDictionary<float, ICreepTemplate> Spawns
+namespace GrimoireTD.Creeps
+{
+    public class Wave
     {
-        get
+
+        private SortedList<float, ICreepTemplate> spawns;
+
+        private bool debugOn;
+
+        public IReadOnlyDictionary<float, ICreepTemplate> Spawns
         {
-            return spawns;
-        }
-    }
-
-    public Wave()
-    {
-        spawns = new SortedList<float, ICreepTemplate>();
-    }
-
-    public Wave(SortedList<float, ICreepTemplate> spawns)
-    {
-        this.spawns = spawns;
-    }
-
-    public Wave(float[] timings, ICreepTemplate[] creeps)
-    {
-        spawns = new SortedList<float, ICreepTemplate>();
-
-        for (int i = 0; i < timings.Length; i++)
-        {
-            if ( creeps.Length > i )
+            get
             {
-                spawns.Add(timings[i], creeps[i]);
+                return spawns;
             }
         }
-    }
 
-    public bool AddCreepToSpawns(float timeOffset, ICreepTemplate creep)
-    {
-        if ( spawns.ContainsKey(timeOffset) )
+        public Wave()
         {
-            return false;
+            spawns = new SortedList<float, ICreepTemplate>();
         }
-        else
+
+        public Wave(SortedList<float, ICreepTemplate> spawns)
         {
-            spawns.Add(timeOffset, creep);
-            return true;
+            this.spawns = spawns;
         }
-    }
 
-    public float NextSpawnTime()
-    {
-        if ( spawns.Count == 0 )
+        public Wave(float[] timings, ICreepTemplate[] creeps)
         {
-            return 0f;
+            spawns = new SortedList<float, ICreepTemplate>();
+
+            for (int i = 0; i < timings.Length; i++)
+            {
+                if (creeps.Length > i)
+                {
+                    spawns.Add(timings[i], creeps[i]);
+                }
+            }
         }
-        return spawns.Keys[0];
-    }
 
-    public ICreepTemplate SpawnNextCreep()
-    {
-        ICreepTemplate returnCreep = spawns.Values[0];
+        public bool AddCreepToSpawns(float timeOffset, ICreepTemplate creep)
+        {
+            if (spawns.ContainsKey(timeOffset))
+            {
+                return false;
+            }
+            else
+            {
+                spawns.Add(timeOffset, creep);
+                return true;
+            }
+        }
 
-        spawns.RemoveAt(0);
+        public float NextSpawnTime()
+        {
+            if (spawns.Count == 0)
+            {
+                return 0f;
+            }
+            return spawns.Keys[0];
+        }
 
-        return returnCreep;
+        public ICreepTemplate SpawnNextCreep()
+        {
+            ICreepTemplate returnCreep = spawns.Values[0];
+
+            spawns.RemoveAt(0);
+
+            return returnCreep;
+        }
     }
 }

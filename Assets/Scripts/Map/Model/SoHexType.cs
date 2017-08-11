@@ -1,69 +1,72 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewHexType", menuName = "Hexes/Hex Type")]
-public class SoHexType : ScriptableObject, IHexType
+namespace GrimoireTD.Map
 {
-    [SerializeField]
-    private string nameInGame;
-
-    [SerializeField]
-    private int[] textureOffset;
-
-    //temporary
-    [SerializeField]
-    private bool isBuildable;
-
-    [SerializeField]
-    private bool isPathableByCreeps;
-
-    [SerializeField]
-    private bool unitCanOccupy;
-
-    public string NameInGame
+    [CreateAssetMenu(fileName = "NewHexType", menuName = "Hexes/Hex Type")]
+    public class SoHexType : ScriptableObject, IHexType
     {
-        get
+        [SerializeField]
+        private string nameInGame;
+
+        [SerializeField]
+        private int[] textureOffset;
+
+        //temporary
+        [SerializeField]
+        private bool isBuildable;
+
+        [SerializeField]
+        private bool isPathableByCreeps;
+
+        [SerializeField]
+        private bool unitCanOccupy;
+
+        public string NameInGame
         {
-            return nameInGame;
+            get
+            {
+                return nameInGame;
+            }
         }
-    }
 
-    public int TextureOffsetX
-    {
-        get
+        public int TextureOffsetX
         {
-            return textureOffset[0];
+            get
+            {
+                return textureOffset[0];
+            }
         }
-    }
 
-    public int TextureOffsetY
-    {
-        get
+        public int TextureOffsetY
         {
-            return textureOffset[1];
+            get
+            {
+                return textureOffset[1];
+            }
         }
-    }
 
-    public bool IsBuildable
-    {
-        get
+        public bool IsBuildable
         {
-            return isBuildable;
+            get
+            {
+                return isBuildable;
+            }
         }
-    }
 
-    public bool TypeIsPathableByCreeps
-    {
-        get
+        public bool TypeIsPathableByCreeps
         {
-            return isPathableByCreeps;
+            get
+            {
+                return isPathableByCreeps;
+            }
         }
-    }
 
-    public bool UnitCanOccupy
-    {
-        get
+        public bool UnitCanOccupy
         {
-            return unitCanOccupy;
+            get
+            {
+                return unitCanOccupy;
+            }
         }
     }
 }

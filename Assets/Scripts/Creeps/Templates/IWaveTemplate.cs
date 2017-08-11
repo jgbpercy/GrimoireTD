@@ -1,4 +1,7 @@
-﻿public interface IWaveTemplate {
-
-    Wave GenerateWave();
+﻿namespace GrimoireTD.Creeps
+{
+    public interface IWaveTemplate
+    {
+        Wave GenerateWave();
+    }
 }

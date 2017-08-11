@@ -1,30 +1,36 @@
 ﻿using UnityEngine;
+using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Technical;
+using GrimoireTD.ChannelDebug;
 
-public class SelectStructureToBuildView : SingletonMonobehaviour<SelectStructureToBuildView> {
-
-    [SerializeField]
-    private GameObject structurePanelPrefab;
-    [SerializeField]
-    private GameObject structureSelectPanel;
-
-    [SerializeField]
-    private SoStructureTemplate[] buildableStructureTemplates;
-
-    private void Start()
+namespace GrimoireTD.UI
+{
+    public class SelectStructureToBuildView : SingletonMonobehaviour<SelectStructureToBuildView>
     {
-        CDebug.Log(CDebug.applicationLoading, "Structure Select View Start");
+        [SerializeField]
+        private GameObject structurePanelPrefab;
+        [SerializeField]
+        private GameObject structureSelectPanel;
 
-        SetUpStructurePanel();
-    }
+        [SerializeField]
+        private SoStructureTemplate[] buildableStructureTemplates;
 
-    private void SetUpStructurePanel()
-    {
-        foreach (IStructureTemplate structureTemplate in buildableStructureTemplates)
+        private void Start()
         {
-            GameObject structurePanel = Instantiate(structurePanelPrefab) as GameObject;
-            structurePanel.transform.SetParent(structureSelectPanel.transform, false);
+            CDebug.Log(CDebug.applicationLoading, "Structure Select View Start");
 
-            structurePanel.GetComponent<SelectStructureToBuildUIElement>().SetUp(structureTemplate);
+            SetUpStructurePanel();
+        }
+
+        private void SetUpStructurePanel()
+        {
+            foreach (IStructureTemplate structureTemplate in buildableStructureTemplates)
+            {
+                GameObject structurePanel = Instantiate(structurePanelPrefab) as GameObject;
+                structurePanel.transform.SetParent(structureSelectPanel.transform, false);
+
+                structurePanel.GetComponent<SelectStructureToBuildUIElement>().SetUp(structureTemplate);
+            }
         }
     }
 }

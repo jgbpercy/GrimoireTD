@@ -1,28 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using GrimoireTD.Economy;
 
-[CreateAssetMenu(fileName = "NewUnitImprovement", menuName = "Structures and Units/Unit Improvement")]
-public class SoUnitImprovement : SoDefendingEntityImprovement, IUnitImprovement {
-
-    [SerializeField]
-    private HexOccupationBonus[] conditionalHexOccupationBonuses;
-
-    [SerializeField]
-    private StructureOccupationBonus[] conditionalStructureOccupationBonuses;
-
-    public IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses
+namespace GrimoireTD.DefendingEntities.Units
+{
+    [CreateAssetMenu(fileName = "NewUnitImprovement", menuName = "Structures and Units/Unit Improvement")]
+    public class SoUnitImprovement : SoDefendingEntityImprovement, IUnitImprovement
     {
-        get
+        [SerializeField]
+        private HexOccupationBonus[] conditionalHexOccupationBonuses;
+
+        [SerializeField]
+        private StructureOccupationBonus[] conditionalStructureOccupationBonuses;
+
+        public IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses
         {
-            return conditionalHexOccupationBonuses;
+            get
+            {
+                return conditionalHexOccupationBonuses;
+            }
         }
-    }
 
-    public IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses
-    {
-        get
+        public IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses
         {
-            return conditionalStructureOccupationBonuses;
+            get
+            {
+                return conditionalStructureOccupationBonuses;
+            }
         }
     }
 }

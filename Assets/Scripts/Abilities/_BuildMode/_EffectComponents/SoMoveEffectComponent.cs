@@ -1,22 +1,29 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using GrimoireTD.DefendingEntities;
+using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.ChannelDebug;
+using GrimoireTD.Map;
 
-[CreateAssetMenu(fileName = "NewMoveEffectComponent", menuName = "Build Mode Abilities/Effect Components/Move")]
-public class SoMoveEffectComponent : SoBuildModeEffectComponent, IMoveEffectComponent
+namespace GrimoireTD.Abilities.BuildMode
 {
-    public override void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
+    [CreateAssetMenu(fileName = "NewMoveEffectComponent", menuName = "Build Mode Abilities/Effect Components/Move")]
+    public class SoMoveEffectComponent : SoBuildModeEffectComponent, IMoveEffectComponent
     {
-        CDebug.Log(CDebug.buildModeAbilities, "Call ExecuteEffect for a MoveEffectComponent");
+        public override void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
+        {
+            CDebug.Log(CDebug.buildModeAbilities, "Call ExecuteEffect for a MoveEffectComponent");
 
-        Unit executingUnit = executingEntity as Unit;
-        Assert.IsTrue(executingUnit != null);
+            Unit executingUnit = executingEntity as Unit;
+            Assert.IsTrue(executingUnit != null);
 
-        //Assertions regarding what sort of targeting will have been done for a move ability
-        Assert.IsTrue(targets.Count == 1);
-        Coord targetCoord = targets[0] as Coord;
-        Assert.IsTrue(targetCoord != null);
+            //Assertions regarding what sort of targeting will have been done for a move ability
+            Assert.IsTrue(targets.Count == 1);
+            Coord targetCoord = targets[0] as Coord;
+            Assert.IsTrue(targetCoord != null);
 
-        executingUnit.Move(targetCoord);
+            executingUnit.Move(targetCoord);
+        }
     }
 }

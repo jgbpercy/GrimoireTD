@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "NewSlowEffectType",
-    menuName = "Attack Effects/Persistent/Slow"
-)]
-public class SlowEffectType : PersistentEffectType
+namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    public override string EffectName()
+    [CreateAssetMenu(
+        fileName = "NewSlowEffectType",
+        menuName = "Attack Effects/Persistent/Slow"
+    )]
+    public class SlowEffectType : PersistentEffectType
     {
-        return "Slow (" + base.EffectName() + ")";
+        public override string EffectName()
+        {
+            return "Slow (" + base.EffectName() + ")";
+        }
     }
 }

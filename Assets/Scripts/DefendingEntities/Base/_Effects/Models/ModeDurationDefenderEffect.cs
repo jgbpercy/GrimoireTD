@@ -1,30 +1,33 @@
-﻿public class ModeDurationDefenderEffect : DefenderEffect
+﻿namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    private ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate;
-
-    public ModeDurationDefenderEffectTemplate ModeDurationDefenderEffectTemplate
+    public class ModeDurationDefenderEffect : DefenderEffect
     {
-        get
+        private ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate;
+
+        public ModeDurationDefenderEffectTemplate ModeDurationDefenderEffectTemplate
         {
-            return modeDurationDefenderEffectTemplate;
+            get
+            {
+                return modeDurationDefenderEffectTemplate;
+            }
         }
-    }
 
-    public int Duration
-    {
-        get
+        public int Duration
         {
-            return modeDurationDefenderEffectTemplate.BaseDuration;
+            get
+            {
+                return modeDurationDefenderEffectTemplate.BaseDuration;
+            }
         }
-    }
 
-    public ModeDurationDefenderEffect(ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate) : base(modeDurationDefenderEffectTemplate)
-    {
-        this.modeDurationDefenderEffectTemplate = modeDurationDefenderEffectTemplate;
-    }
+        public ModeDurationDefenderEffect(ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate) : base(modeDurationDefenderEffectTemplate)
+        {
+            this.modeDurationDefenderEffectTemplate = modeDurationDefenderEffectTemplate;
+        }
 
-    public override string UIText()
-    {
-        return modeDurationDefenderEffectTemplate.NameInGame;
+        public override string UIText()
+        {
+            return modeDurationDefenderEffectTemplate.NameInGame;
+        }
     }
 }

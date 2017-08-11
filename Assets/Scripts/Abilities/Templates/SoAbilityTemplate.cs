@@ -1,21 +1,25 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
+using GrimoireTD.DefendingEntities;
 
-public class SoAbilityTemplate : ScriptableObject, IAbilityTemplate {
-
-    [SerializeField]
-    protected string nameInGame;
-
-    public string NameInGame
+namespace GrimoireTD.Abilities
+{
+    public class SoAbilityTemplate : ScriptableObject, IAbilityTemplate
     {
-        get
+        [SerializeField]
+        protected string nameInGame;
+
+        public string NameInGame
         {
-            return nameInGame;
+            get
+            {
+                return nameInGame;
+            }
         }
-    }
 
-    public virtual Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
-    {
-        throw new NotImplementedException("Cannot Generate from AbilityTemplate - it is pseudo-abstract");
+        public virtual Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
+        {
+            throw new NotImplementedException("Cannot Generate from AbilityTemplate - it is pseudo-abstract");
+        }
     }
 }

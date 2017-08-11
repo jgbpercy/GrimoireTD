@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Creeps;
+using GrimoireTD.Economy;
 
-public interface ILevel {
+namespace GrimoireTD.Levels
+{
+    public interface ILevel
+    {
+        Texture2D LevelImage { get; }
 
-    Texture2D LevelImage { get; }
+        IEconomyTransaction StartingResources { get; }
 
-    IEconomyTransaction StartingResources { get; }
+        IEnumerable<StartingUnit> StartingUnits { get; }
 
-    IEnumerable<StartingUnit> StartingUnits { get; }
+        IEnumerable<StartingStructure> StartingStructures { get; }
 
-    IEnumerable<StartingStructure> StartingStructures { get; }
-
-    IEnumerable<IWaveTemplate> Waves { get; }
+        IEnumerable<IWaveTemplate> Waves { get; }
+    }
 }

@@ -1,19 +1,22 @@
-﻿public abstract class DefenderEffect
+﻿namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    private IDefenderEffectTemplate defenderEffectTemplate;
-
-    public IDefenderEffectTemplate DefenderEffectTemplate
+    public abstract class DefenderEffect
     {
-        get
+        private IDefenderEffectTemplate defenderEffectTemplate;
+
+        public IDefenderEffectTemplate DefenderEffectTemplate
         {
-            return defenderEffectTemplate;
+            get
+            {
+                return defenderEffectTemplate;
+            }
         }
-    }
 
-    public DefenderEffect(IDefenderEffectTemplate defenderEffectTemplate)
-    {
-        this.defenderEffectTemplate = defenderEffectTemplate;
-    }
+        public DefenderEffect(IDefenderEffectTemplate defenderEffectTemplate)
+        {
+            this.defenderEffectTemplate = defenderEffectTemplate;
+        }
 
-    public abstract string UIText();
+        public abstract string UIText();
+    }
 }

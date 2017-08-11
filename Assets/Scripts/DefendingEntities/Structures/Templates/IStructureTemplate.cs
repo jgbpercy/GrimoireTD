@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
+using GrimoireTD.Economy;
+using GrimoireTD.Map;
 
-public interface IStructureTemplate : IDefendingEntityTemplate {
+namespace GrimoireTD.DefendingEntities.Structures
+{
+    public interface IStructureTemplate : IDefendingEntityTemplate
+    {
+        string StartingNameInGame { get; }
 
-    string StartingNameInGame { get; }
+        string StartingDescription { get; }
 
-    string StartingDescription { get; }
+        IEconomyTransaction Cost { get; }
 
-    IEconomyTransaction Cost { get; }
+        IEnumerable<IStructureUpgrade> StructureUpgrades { get; }
 
-    IEnumerable<IStructureUpgrade> StructureUpgrades { get; }
+        string UIText();
 
-    string UIText();
-
-    Structure GenerateStructure(Coord position);
+        Structure GenerateStructure(Coord position);
+    }
 }

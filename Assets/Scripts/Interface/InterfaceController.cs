@@ -2,415 +2,425 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Assertions;
+using GrimoireTD.Abilities.BuildMode;
+using GrimoireTD.Creeps;
+using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Map;
+using GrimoireTD.Technical;
+using GrimoireTD.ChannelDebug;
 
-public enum InterfaceCursorMode
+namespace GrimoireTD.UI
 {
-    BUILD,
-    SELECT,
-    EXECUTE_BUILD_MODE_ABILITY
-}
-
-//TODO: Handle individual defending entity selection (for DefendingEntity-targetted Build Mode Abilities)
-public class InterfaceController : SingletonMonobehaviour<InterfaceController> {
-
-    [SerializeField]
-    private float debugTimeScale = 1f;
-
-    [SerializeField]
-    private LayerMask mainRayHitLayer;
-
-    [SerializeField]
-    private float maxRayFromCameraDistance = 100f;
-
-    private InterfaceCursorMode cursorMode = InterfaceCursorMode.SELECT;
-
-    private IStructureTemplate selectedStructureTemplate;
-
-    private Structure selectedStructureInstance = null;
-    private Unit selectedUnitInstance = null;
-
-    private IPlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
-    private BuildModeAbility selectedBuildModeAbility = null;
-
-    private Ray cameraToMouseRay;
-    private RaycastHit mouseHit;
-
-    private Coord mouseOverCoord;
-    private HexData mouseOverHex;
-
-    private Creep mouseOverCreep;
-
-    private Camera mainCamera;
-
-    private MapData map;
-    private GameStateManager gameStateManager;
-
-    private Action<Structure, Unit> OnDefendingEntitySelectedCallback;
-    private Action OnDefendingEntityDeselectedCallback;
-
-    private Action<IStructureTemplate> OnStructureToBuildSelectedCallback;
-    private Action OnStructureToBuildDeselectedCallback;
-
-    private Action<Creep> OnCreepSelectedCallback;
-    private Action OnCreepDeselectedCallback;
-
-    public bool MouseRaycastHitMap
+    public enum InterfaceCursorMode
     {
-        get
-        {
-            return mouseOverCoord != null;
-        }
+        BUILD,
+        SELECT,
+        EXECUTE_BUILD_MODE_ABILITY
     }
 
-    public InterfaceCursorMode CurrentCursorMode
+    //TODO: Handle individual defending entity selection (for DefendingEntity-targetted Build Mode Abilities)
+    public class InterfaceController : SingletonMonobehaviour<InterfaceController>
     {
-        get
+        [SerializeField]
+        private float debugTimeScale = 1f;
+
+        [SerializeField]
+        private LayerMask mainRayHitLayer;
+
+        [SerializeField]
+        private float maxRayFromCameraDistance = 100f;
+
+        private InterfaceCursorMode cursorMode = InterfaceCursorMode.SELECT;
+
+        private IStructureTemplate selectedStructureTemplate;
+
+        private Structure selectedStructureInstance = null;
+        private Unit selectedUnitInstance = null;
+
+        private IPlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
+        private BuildModeAbility selectedBuildModeAbility = null;
+
+        private Ray cameraToMouseRay;
+        private RaycastHit mouseHit;
+
+        private Coord mouseOverCoord;
+        private HexData mouseOverHex;
+
+        private Creep mouseOverCreep;
+
+        private Camera mainCamera;
+
+        private MapData map;
+        private GameStateManager gameStateManager;
+
+        private Action<Structure, Unit> OnDefendingEntitySelectedCallback;
+        private Action OnDefendingEntityDeselectedCallback;
+
+        private Action<IStructureTemplate> OnStructureToBuildSelectedCallback;
+        private Action OnStructureToBuildDeselectedCallback;
+
+        private Action<Creep> OnCreepSelectedCallback;
+        private Action OnCreepDeselectedCallback;
+
+        public bool MouseRaycastHitMap
         {
-            return cursorMode;
-        }
-    }
-
-    public HexData MouseOverHex
-    {
-        get
-        {
-            return mouseOverHex;
-        }
-    }
-
-    public Coord MouseOverCoord
-    {
-        get
-        {
-            return mouseOverCoord;
-        }
-    }
-
-    public IPlayerTargetedComponent SelectedBuildModeAbilityTargetingComponent
-    {
-        get
-        {
-            return selectedBuildModeAbilityTargetingComponent;
-        }
-    }
-
-    public Unit SelectedUnitInstance
-    {
-        get
-        {
-            return selectedUnitInstance;
-        }
-    }
-
-    public Coord SelectedUnitLocation
-    {
-        get
-        {
-            return map.WhereAmI(selectedUnitInstance);
-        }
-    }
-
-    public Structure SelectedStructureInstance
-    {
-        get
-        {
-            return selectedStructureInstance;
-        }
-    }
-
-    private void Start()
-    {
-        CDebug.Log(CDebug.applicationLoading, "Interface Controller Start");
-
-        Time.timeScale = debugTimeScale;
-
-        //map
-        map = MapGenerator.Instance.Map;
-
-        //gamestate
-        gameStateManager = GameStateManager.Instance;
-
-        //camera
-        mainCamera = Camera.main;
-
-        //default cursor mode
-        SetCursorModeSelect();
-
-        gameStateManager.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
-        gameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
-
-    }
-
-    private void Update()
-    {
-        mouseOverCoord = null;
-        mouseOverHex = null;
-        mouseOverCreep = null;
-
-        InterfaceControllerRaycast();
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            HandleMouseClick();
+            get
+            {
+                return mouseOverCoord != null;
+            }
         }
 
-        if (Input.GetMouseButtonDown(1))
+        public InterfaceCursorMode CurrentCursorMode
         {
-            SetCursorModeSelect();
-            DeselectDefendingEntities();
-            DeselectCreep();
-        }
-    }
-
-    private void InterfaceControllerRaycast()
-    {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
+            get
+            {
+                return cursorMode;
+            }
         }
 
-        cameraToMouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-        bool mouseRaycastHit = Physics.Raycast(cameraToMouseRay, out mouseHit, maxRayFromCameraDistance, mainRayHitLayer);
-
-        if (!mouseRaycastHit)
+        public HexData MouseOverHex
         {
-            return;
+            get
+            {
+                return mouseOverHex;
+            }
         }
 
-        if (mouseHit.transform.CompareTag("TileMap"))
+        public Coord MouseOverCoord
         {
-            mouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHit.point.x, mouseHit.point.y, 0f));
-            mouseOverHex = map.GetHexAt(mouseOverCoord);
-            return;
+            get
+            {
+                return mouseOverCoord;
+            }
         }
 
-        if (mouseHit.transform.CompareTag("Creep"))
+        public IPlayerTargetedComponent SelectedBuildModeAbilityTargetingComponent
         {
-            mouseOverCreep = mouseHit.transform.GetComponent<CreepComponent>().CreepModel;
-            Assert.IsNotNull(mouseOverCreep);
-            return;
+            get
+            {
+                return selectedBuildModeAbilityTargetingComponent;
+            }
         }
 
-        throw new Exception("Mouse Raycast hit unhandled");
-    }
-
-    private void HandleMouseClick()
-    {
-        if (mouseOverCoord == null && mouseOverCreep == null)
+        public Unit SelectedUnitInstance
         {
-            return;
+            get
+            {
+                return selectedUnitInstance;
+            }
         }
 
-        if (cursorMode == InterfaceCursorMode.SELECT && mouseOverCreep != null)
+        public Coord SelectedUnitLocation
         {
-            SelectCreep(mouseOverCreep);
-            DeselectDefendingEntities();
-            return;
+            get
+            {
+                return map.WhereAmI(selectedUnitInstance);
+            }
         }
 
-        if (
-            cursorMode == InterfaceCursorMode.SELECT && 
-            (mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null) 
-        )
+        public Structure SelectedStructureInstance
         {
-            SelectHexContents(mouseOverHex);
-            DeselectCreep();
-            return;
-        }
-        else if (cursorMode == InterfaceCursorMode.SELECT)
-        {
-            DeselectDefendingEntities();
-            DeselectCreep();
+            get
+            {
+                return selectedStructureInstance;
+            }
         }
 
-        if (cursorMode == InterfaceCursorMode.BUILD)
+        private void Start()
         {
-            map.TryBuildStructureAt(mouseOverCoord, selectedStructureTemplate, false);
-        }
+            CDebug.Log(CDebug.applicationLoading, "Interface Controller Start");
 
-        if (
-            cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY && 
-            selectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, mouseOverCoord) 
-        )
-        {
-            CDebug.Log(CDebug.buildModeAbilities, "InterfaceController detected hex targeted build mode ability click");
+            Time.timeScale = debugTimeScale;
 
-            selectedBuildModeAbility.ExecuteAbility(selectedUnitInstance, mouseOverCoord);
+            //map
+            map = MapGenerator.Instance.Map;
 
+            //gamestate
+            gameStateManager = GameStateManager.Instance;
+
+            //camera
+            mainCamera = Camera.main;
+
+            //default cursor mode
             SetCursorModeSelect();
 
-            SelectHexContents(mouseOverHex);
+            gameStateManager.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
+            gameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
+
         }
 
-    }
-
-    public void ButtonClickDefend()
-    {
-        CDebug.Log(CDebug.gameState, "Interface Controller registered defend button click");
-
-        gameStateManager.CurrentGameMode = GameMode.DEFEND;
-    }
-
-    private void OnEnterBuildMode()
-    {
-        SetCursorModeSelect();
-    }
-
-    private void OnEnterDefendMode()
-    {
-        SetCursorModeSelect();
-    }
-
-    public void SelectStructureToBuild(IStructureTemplate selectedStructureTemplate)
-    {
-        SetCursorModeBuild();
-
-        this.selectedStructureTemplate = selectedStructureTemplate;
-
-        OnStructureToBuildSelectedCallback(selectedStructureTemplate);
-    }
-
-    private void SelectHexContents(HexData hex)
-    {
-        selectedStructureInstance = hex.StructureHere;
-        selectedUnitInstance = hex.UnitHere;
-
-        OnDefendingEntitySelectedCallback?.Invoke(selectedStructureInstance, selectedUnitInstance);
-    }
-
-    private void DeselectDefendingEntities()
-    {
-        selectedStructureInstance = null;
-        selectedUnitInstance = null;
-        selectedStructureTemplate = null;
-
-        OnDefendingEntityDeselectedCallback?.Invoke();
-
-        OnStructureToBuildDeselectedCallback?.Invoke();
-    }
-
-    private void SelectCreep(Creep creep)
-    {
-        OnCreepSelectedCallback?.Invoke(creep);
-    }
-
-    private void DeselectCreep()
-    {
-        OnCreepDeselectedCallback?.Invoke();
-    }
-
-    private void SetCursorModeBuild()
-    {
-        DeselectDefendingEntities();
-
-        cursorMode = InterfaceCursorMode.BUILD;
-    }
-
-    private void SetCursorModeSelect()
-    {
-        cursorMode = InterfaceCursorMode.SELECT;
-    }
-
-    public void ActivateBuildModeAbility(BuildModeAbility abilityToActivate)
-    {
-        if (!abilityToActivate.BuildModeAbilityTemplate.Cost.CanDoTransaction())
+        private void Update()
         {
-            return;
+            mouseOverCoord = null;
+            mouseOverHex = null;
+            mouseOverCreep = null;
+
+            InterfaceControllerRaycast();
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                HandleMouseClick();
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                SetCursorModeSelect();
+                DeselectDefendingEntities();
+                DeselectCreep();
+            }
         }
 
-        IPlayerTargetedComponent playerTargetedComponent = abilityToActivate.BuildModeAbilityTemplate.TargetingComponent as IPlayerTargetedComponent;
-        if (playerTargetedComponent != null)
+        private void InterfaceControllerRaycast()
         {
-            CDebug.Log(CDebug.buildModeAbilities, "Player Targeted ability activated");
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
 
-            cursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
+            cameraToMouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+            bool mouseRaycastHit = Physics.Raycast(cameraToMouseRay, out mouseHit, maxRayFromCameraDistance, mainRayHitLayer);
 
-            selectedBuildModeAbilityTargetingComponent = playerTargetedComponent;
-            selectedBuildModeAbility = abilityToActivate;
+            if (!mouseRaycastHit)
+            {
+                return;
+            }
 
-            //TODO: optimisation: only do for a movement ability?
-            selectedUnitInstance.RegenerateCachedDisallowedMovementDestinations();
+            if (mouseHit.transform.CompareTag("TileMap"))
+            {
+                mouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHit.point.x, mouseHit.point.y, 0f));
+                mouseOverHex = map.GetHexAt(mouseOverCoord);
+                return;
+            }
+
+            if (mouseHit.transform.CompareTag("Creep"))
+            {
+                mouseOverCreep = mouseHit.transform.GetComponent<CreepComponent>().CreepModel;
+                Assert.IsNotNull(mouseOverCreep);
+                return;
+            }
+
+            throw new Exception("Mouse Raycast hit unhandled");
         }
-        else
-        {
-            abilityToActivate.ExecuteAbility(selectedUnitInstance, selectedUnitInstance.CoordPosition);
 
+        private void HandleMouseClick()
+        {
+            if (mouseOverCoord == null && mouseOverCreep == null)
+            {
+                return;
+            }
+
+            if (cursorMode == InterfaceCursorMode.SELECT && mouseOverCreep != null)
+            {
+                SelectCreep(mouseOverCreep);
+                DeselectDefendingEntities();
+                return;
+            }
+
+            if (
+                cursorMode == InterfaceCursorMode.SELECT &&
+                (mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null)
+            )
+            {
+                SelectHexContents(mouseOverHex);
+                DeselectCreep();
+                return;
+            }
+            else if (cursorMode == InterfaceCursorMode.SELECT)
+            {
+                DeselectDefendingEntities();
+                DeselectCreep();
+            }
+
+            if (cursorMode == InterfaceCursorMode.BUILD)
+            {
+                map.TryBuildStructureAt(mouseOverCoord, selectedStructureTemplate, false);
+            }
+
+            if (
+                cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY &&
+                selectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, mouseOverCoord)
+            )
+            {
+                CDebug.Log(CDebug.buildModeAbilities, "InterfaceController detected hex targeted build mode ability click");
+
+                selectedBuildModeAbility.ExecuteAbility(selectedUnitInstance, mouseOverCoord);
+
+                SetCursorModeSelect();
+
+                SelectHexContents(mouseOverHex);
+            }
+
+        }
+
+        public void ButtonClickDefend()
+        {
+            CDebug.Log(CDebug.gameState, "Interface Controller registered defend button click");
+
+            gameStateManager.CurrentGameMode = GameMode.DEFEND;
+        }
+
+        private void OnEnterBuildMode()
+        {
             SetCursorModeSelect();
         }
-    }
 
-    public void ExecuteHexTargetedBuildModeAbility()
-    {
-        SetCursorModeSelect();
-    }
+        private void OnEnterDefendMode()
+        {
+            SetCursorModeSelect();
+        }
 
-    public void ClickUnitTalent(Unit unit, IUnitTalent unitTalent)
-    {
-        unit.TryLevelUp(unitTalent);
-    }
+        public void SelectStructureToBuild(IStructureTemplate selectedStructureTemplate)
+        {
+            SetCursorModeBuild();
 
-    public void ClickStructureEnhancement(Structure structure, IStructureUpgrade upgrade, StructureEnhancement enhancement)
-    {
-        structure.TryUpgrade(upgrade, enhancement, false);
-    }
+            this.selectedStructureTemplate = selectedStructureTemplate;
 
-    public void RegisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
-    {
-        OnDefendingEntitySelectedCallback += callback;
-    }
+            OnStructureToBuildSelectedCallback(selectedStructureTemplate);
+        }
 
-    public void DeregisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
-    {
-        OnDefendingEntitySelectedCallback -= callback;
-    }
+        private void SelectHexContents(HexData hex)
+        {
+            selectedStructureInstance = hex.StructureHere;
+            selectedUnitInstance = hex.UnitHere;
 
-    public void RegisterForOnDefendingEntityDeselectedCallback(Action callback)
-    {
-        OnDefendingEntityDeselectedCallback += callback;
-    }
+            OnDefendingEntitySelectedCallback?.Invoke(selectedStructureInstance, selectedUnitInstance);
+        }
 
-    public void DeregisterForOnDefendingEntityDeselectedCallback(Action callback)
-    {
-        OnDefendingEntityDeselectedCallback -= callback;
-    }
+        private void DeselectDefendingEntities()
+        {
+            selectedStructureInstance = null;
+            selectedUnitInstance = null;
+            selectedStructureTemplate = null;
 
-    public void RegisterForOnStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
-    {
-        OnStructureToBuildSelectedCallback += callback;
-    }
+            OnDefendingEntityDeselectedCallback?.Invoke();
 
-    public void DeregisterForStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
-    {
-        OnStructureToBuildSelectedCallback -= callback;
-    }
+            OnStructureToBuildDeselectedCallback?.Invoke();
+        }
 
-    public void RegisterForOnStructureToBuildDeselectedCallback(Action callback)
-    {
-        OnStructureToBuildDeselectedCallback += callback;
-    }
+        private void SelectCreep(Creep creep)
+        {
+            OnCreepSelectedCallback?.Invoke(creep);
+        }
 
-    public void DeregisterForOnStructureToBuildDeselectedCallback(Action callback)
-    {
-        OnStructureToBuildDeselectedCallback -= callback;
-    }
+        private void DeselectCreep()
+        {
+            OnCreepDeselectedCallback?.Invoke();
+        }
 
-    public void RegisterForOnCreepSelectedCallback(Action<Creep> callback)
-    {
-        OnCreepSelectedCallback += callback;
-    }
+        private void SetCursorModeBuild()
+        {
+            DeselectDefendingEntities();
 
-    public void DeregisterForOnCreepSelectedCallback(Action<Creep> callback)
-    {
-        OnCreepSelectedCallback -= callback;
-    }
+            cursorMode = InterfaceCursorMode.BUILD;
+        }
 
-    public void RegisterForOnCreepDeselectedCallback(Action callback)
-    {
-        OnCreepDeselectedCallback += callback;
-    }
+        private void SetCursorModeSelect()
+        {
+            cursorMode = InterfaceCursorMode.SELECT;
+        }
 
-    public void DeregisterForOnCreepDeselectedCallback(Action callback)
-    {
-        OnCreepDeselectedCallback -= callback;
+        public void ActivateBuildModeAbility(BuildModeAbility abilityToActivate)
+        {
+            if (!abilityToActivate.BuildModeAbilityTemplate.Cost.CanDoTransaction())
+            {
+                return;
+            }
+
+            IPlayerTargetedComponent playerTargetedComponent = abilityToActivate.BuildModeAbilityTemplate.TargetingComponent as IPlayerTargetedComponent;
+            if (playerTargetedComponent != null)
+            {
+                CDebug.Log(CDebug.buildModeAbilities, "Player Targeted ability activated");
+
+                cursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
+
+                selectedBuildModeAbilityTargetingComponent = playerTargetedComponent;
+                selectedBuildModeAbility = abilityToActivate;
+
+                //TODO: optimisation: only do for a movement ability?
+                selectedUnitInstance.RegenerateCachedDisallowedMovementDestinations();
+            }
+            else
+            {
+                abilityToActivate.ExecuteAbility(selectedUnitInstance, selectedUnitInstance.CoordPosition);
+
+                SetCursorModeSelect();
+            }
+        }
+
+        public void ExecuteHexTargetedBuildModeAbility()
+        {
+            SetCursorModeSelect();
+        }
+
+        public void ClickUnitTalent(Unit unit, IUnitTalent unitTalent)
+        {
+            unit.TryLevelUp(unitTalent);
+        }
+
+        public void ClickStructureEnhancement(Structure structure, IStructureUpgrade upgrade, StructureEnhancement enhancement)
+        {
+            structure.TryUpgrade(upgrade, enhancement, false);
+        }
+
+        public void RegisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
+        {
+            OnDefendingEntitySelectedCallback += callback;
+        }
+
+        public void DeregisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
+        {
+            OnDefendingEntitySelectedCallback -= callback;
+        }
+
+        public void RegisterForOnDefendingEntityDeselectedCallback(Action callback)
+        {
+            OnDefendingEntityDeselectedCallback += callback;
+        }
+
+        public void DeregisterForOnDefendingEntityDeselectedCallback(Action callback)
+        {
+            OnDefendingEntityDeselectedCallback -= callback;
+        }
+
+        public void RegisterForOnStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
+        {
+            OnStructureToBuildSelectedCallback += callback;
+        }
+
+        public void DeregisterForStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
+        {
+            OnStructureToBuildSelectedCallback -= callback;
+        }
+
+        public void RegisterForOnStructureToBuildDeselectedCallback(Action callback)
+        {
+            OnStructureToBuildDeselectedCallback += callback;
+        }
+
+        public void DeregisterForOnStructureToBuildDeselectedCallback(Action callback)
+        {
+            OnStructureToBuildDeselectedCallback -= callback;
+        }
+
+        public void RegisterForOnCreepSelectedCallback(Action<Creep> callback)
+        {
+            OnCreepSelectedCallback += callback;
+        }
+
+        public void DeregisterForOnCreepSelectedCallback(Action<Creep> callback)
+        {
+            OnCreepSelectedCallback -= callback;
+        }
+
+        public void RegisterForOnCreepDeselectedCallback(Action callback)
+        {
+            OnCreepDeselectedCallback += callback;
+        }
+
+        public void DeregisterForOnCreepDeselectedCallback(Action callback)
+        {
+            OnCreepDeselectedCallback -= callback;
+        }
     }
 }

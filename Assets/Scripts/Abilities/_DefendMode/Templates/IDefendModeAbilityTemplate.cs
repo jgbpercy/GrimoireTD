@@ -1,8 +1,11 @@
-﻿public interface IDefendModeAbilityTemplate : IAbilityTemplate {
+﻿namespace GrimoireTD.Abilities.DefendMode
+{
+    public interface IDefendModeAbilityTemplate : IAbilityTemplate
+    {
+        float BaseCooldown { get; }
 
-    float BaseCooldown { get; }
+        IDefendModeTargetingComponent TargetingComponent { get; }
 
-    IDefendModeTargetingComponent TargetingComponent { get; }
-
-    IDefendModeEffectComponent EffectComponent { get; }
+        IDefendModeEffectComponent EffectComponent { get; }
+    }
 }

@@ -1,38 +1,41 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class SResourceTransaction : IResourceTransaction {
-
-    [SerializeField]
-    private SoResource resource;
-
-    [SerializeField]
-    private int amount;
-
-    public IResource Resource
+namespace GrimoireTD.Economy
+{
+    [Serializable]
+    public class SResourceTransaction : IResourceTransaction
     {
-        get
+        [SerializeField]
+        private SoResource resource;
+
+        [SerializeField]
+        private int amount;
+
+        public IResource Resource
         {
-            return resource;
+            get
+            {
+                return resource;
+            }
         }
-    }
 
-    public int Amount
-    {
-        get
+        public int Amount
         {
-            return amount;
+            get
+            {
+                return amount;
+            }
         }
-    }
 
-    public bool CanDoTransaction()
-    {
-        return CResourceTransaction.CanDoTransaction(this);
-    }
+        public bool CanDoTransaction()
+        {
+            return CResourceTransaction.CanDoTransaction(this);
+        }
 
-    public void DoTransaction()
-    {
-        CResourceTransaction.DoTransaction(this);
+        public void DoTransaction()
+        {
+            CResourceTransaction.DoTransaction(this);
+        }
     }
 }

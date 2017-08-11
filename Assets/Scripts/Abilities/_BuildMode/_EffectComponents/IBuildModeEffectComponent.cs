@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using GrimoireTD.DefendingEntities;
 
-public interface IBuildModeEffectComponent {
-
-    void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets);
+namespace GrimoireTD.Abilities.BuildMode
+{
+    public interface IBuildModeEffectComponent
+    {
+        void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets);
+    }
 }

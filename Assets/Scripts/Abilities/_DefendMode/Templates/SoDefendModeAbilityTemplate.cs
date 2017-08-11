@@ -1,43 +1,47 @@
 ﻿using UnityEngine;
+using GrimoireTD.DefendingEntities;
 
-[CreateAssetMenu(fileName = "NewDefendModeAbilityTemplate", menuName = "Defend Mode Abilities/Defend Mode Ability")]
-public class SoDefendModeAbilityTemplate : SoAbilityTemplate, IDefendModeAbilityTemplate {
-
-    [SerializeField]
-    protected float baseCooldown;
-
-    [SerializeField]
-    protected SoDefendModeTargetingComponent targetingComponent;
-
-    [SerializeField]
-    protected SoDefendModeEffectComponent effectComponent;
-
-    public float BaseCooldown
+namespace GrimoireTD.Abilities.DefendMode
+{
+    [CreateAssetMenu(fileName = "NewDefendModeAbilityTemplate", menuName = "Defend Mode Abilities/Defend Mode Ability")]
+    public class SoDefendModeAbilityTemplate : SoAbilityTemplate, IDefendModeAbilityTemplate
     {
-        get
+        [SerializeField]
+        protected float baseCooldown;
+
+        [SerializeField]
+        protected SoDefendModeTargetingComponent targetingComponent;
+
+        [SerializeField]
+        protected SoDefendModeEffectComponent effectComponent;
+
+        public float BaseCooldown
         {
-            return baseCooldown;
+            get
+            {
+                return baseCooldown;
+            }
         }
-    }
 
-    public IDefendModeTargetingComponent TargetingComponent
-    {
-        get
+        public IDefendModeTargetingComponent TargetingComponent
         {
-            return targetingComponent;
+            get
+            {
+                return targetingComponent;
+            }
         }
-    }
 
-    public IDefendModeEffectComponent EffectComponent
-    {
-        get
+        public IDefendModeEffectComponent EffectComponent
         {
-            return effectComponent;
+            get
+            {
+                return effectComponent;
+            }
         }
-    }
 
-    public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
-    {
-        return new DefendModeAbility(this, attachedToDefendingEntity);
+        public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
+        {
+            return new DefendModeAbility(this, attachedToDefendingEntity);
+        }
     }
 }

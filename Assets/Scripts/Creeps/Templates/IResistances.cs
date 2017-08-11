@@ -1,8 +1,13 @@
-﻿public interface IResistances
+﻿using GrimoireTD.Abilities.DefendMode.AttackEffects;
+
+namespace GrimoireTD.Creeps
 {
-    int Armor { get; }
+    public interface IResistances
+    {
+        int Armor { get; }
 
-    float GetResistance(DamageEffectType damageEffectType, int currentMinusArmor);
+        float GetResistance(DamageEffectType damageEffectType, int currentMinusArmor);
 
-    int GetBlock(DamageEffectType damageEffectType);
+        int GetBlock(DamageEffectType damageEffectType);
+    }
 }

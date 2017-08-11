@@ -1,152 +1,158 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.DefendingEntities.DefenderEffects;
 
-public class HexData {
-
-    private IHexType hexType;
-
-    private Structure structureHere = null;
-
-    private Unit unitHere = null;
-
-    private CallbackList<DefenderAura> defenderAurasHere;
-
-    public IHexType HexType
+namespace GrimoireTD.Map
+{
+    public class HexData
     {
-        get
+        private IHexType hexType;
+
+        private Structure structureHere = null;
+
+        private Unit unitHere = null;
+
+        private CallbackList<DefenderAura> defenderAurasHere;
+
+        public IHexType HexType
         {
-            return hexType;
+            get
+            {
+                return hexType;
+            }
         }
-    }
 
-    public Structure StructureHere
-    {
-        get
+        public Structure StructureHere
         {
-            return structureHere;
+            get
+            {
+                return structureHere;
+            }
         }
-    }
 
-    public Unit UnitHere
-    {
-        get
+        public Unit UnitHere
         {
-            return unitHere;
+            get
+            {
+                return unitHere;
+            }
         }
-    }
 
-    public IReadOnlyCollection<DefenderAura> DefenderAurasHere
-    {
-        get
+        public IReadOnlyCollection<DefenderAura> DefenderAurasHere
         {
-            return defenderAurasHere;
+            get
+            {
+                return defenderAurasHere;
+            }
         }
-    }
 
-    public float pathingFScore;
-    public float pathingGScore;
-    public Coord pathingCameFrom;
+        public float pathingFScore;
+        public float pathingGScore;
+        public Coord pathingCameFrom;
 
-    public HexData(IHexType createWithType)
-    {
-        hexType = createWithType;
-        ResetPathingData();
+        public HexData(IHexType createWithType)
+        {
+            hexType = createWithType;
+            ResetPathingData();
 
-        defenderAurasHere = new CallbackList<DefenderAura>();
-    }
+            defenderAurasHere = new CallbackList<DefenderAura>();
+        }
 
-    public void ResetPathingData()
-    {
-        pathingFScore = Mathf.Infinity;
-        pathingGScore = Mathf.Infinity;
-        pathingCameFrom = null;
-    }
+        public void ResetPathingData()
+        {
+            pathingFScore = Mathf.Infinity;
+            pathingGScore = Mathf.Infinity;
+            pathingCameFrom = null;
+        }
 
-    //Public non-changing helpers
-    public bool IsPathableByCreeps()
-    {
-        return hexType.TypeIsPathableByCreeps && IsEmpty();
-    }
+        //Public non-changing helpers
+        public bool IsPathableByCreeps()
+        {
+            return hexType.TypeIsPathableByCreeps && IsEmpty();
+        }
 
-    public bool IsPathableByCreepsWithUnitRemoved()
-    {
-        return hexType.TypeIsPathableByCreeps && structureHere == null;
-    }
+        public bool IsPathableByCreepsWithUnitRemoved()
+        {
+            return hexType.TypeIsPathableByCreeps && structureHere == null;
+        }
 
-    public bool IsPathableByCreepsWithTypePathable()
-    {
-        return IsEmpty();
-    }
+        public bool IsPathableByCreepsWithTypePathable()
+        {
+            return IsEmpty();
+        }
 
-    public bool IsPathableByCreepsWithStructureRemoved()
-    {
-        return hexType.TypeIsPathableByCreeps && unitHere == null;
-    }
+        public bool IsPathableByCreepsWithStructureRemoved()
+        {
+            return hexType.TypeIsPathableByCreeps && unitHere == null;
+        }
 
-    public bool CanPlaceStructureHere()
-    {
-        return hexType.IsBuildable && structureHere == null;
-    }
+        public bool CanPlaceStructureHere()
+        {
+            return hexType.IsBuildable && structureHere == null;
+        }
 
-    public bool CanPlaceUnitHere()
-    {
-        return hexType.UnitCanOccupy && unitHere == null;
-    }
+        public bool CanPlaceUnitHere()
+        {
+            return hexType.UnitCanOccupy && unitHere == null;
+        }
 
-    public bool IsEmpty()
-    {
-        return structureHere == null && unitHere == null;
-    }
+        public bool IsEmpty()
+        {
+            return structureHere == null && unitHere == null;
+        }
 
-    //Public change methods
-    public void AddStructureHere(Structure structureAdded)
-    {
-        structureHere = structureAdded;
-    }
+        //Public change methods
+        public void AddStructureHere(Structure structureAdded)
+        {
+            structureHere = structureAdded;
+        }
 
-    public void PlaceUnitHere(Unit unitPlaced)
-    {
-        unitHere = unitPlaced;
-    }
+        public void PlaceUnitHere(Unit unitPlaced)
+        {
+            unitHere = unitPlaced;
+        }
 
-    public void RemoveUnitHere()
-    {
-        unitHere = null;
-    }
-    
-    public void AddDefenderAura(DefenderAura aura)
-    {
-        defenderAurasHere.Add(aura);
+        public void RemoveUnitHere()
+        {
+            unitHere = null;
+        }
 
-        aura.RegisterForOnClearAuraCallback(OnClearDefenderAura);
-    }
+        public void AddDefenderAura(DefenderAura aura)
+        {
+            defenderAurasHere.Add(aura);
 
-    private void OnClearDefenderAura(DefenderAura aura)
-    {
-        defenderAurasHere.TryRemove(aura);
+            aura.RegisterForOnClearAuraCallback(OnClearDefenderAura);
+        }
 
-        aura.DeregisterForOnClearAuraCallback(OnClearDefenderAura);
-    }
+        private void OnClearDefenderAura(DefenderAura aura)
+        {
+            defenderAurasHere.TryRemove(aura);
 
-    //Callbacks
-    public void RegisterForOnDefenderAuraAddedCallback(Action<DefenderAura> callback)
-    {
-        defenderAurasHere.RegisterForAdd(callback);
-    }
+            aura.DeregisterForOnClearAuraCallback(OnClearDefenderAura);
+        }
 
-    public void DeregisterForOnDefenderAuraAddedCallback(Action<DefenderAura> callback)
-    {
-        defenderAurasHere.DeregisterForAdd(callback);
-    }
+        //Callbacks
+        public void RegisterForOnDefenderAuraAddedCallback(Action<DefenderAura> callback)
+        {
+            defenderAurasHere.RegisterForAdd(callback);
+        }
 
-    public void RegisterForOnDefenderAuraRemovedCallback(Action<DefenderAura> callback)
-    {
-        defenderAurasHere.RegisterForRemove(callback);
-    }
+        public void DeregisterForOnDefenderAuraAddedCallback(Action<DefenderAura> callback)
+        {
+            defenderAurasHere.DeregisterForAdd(callback);
+        }
 
-    public void DeregisterForOnDefenderAuraRemovedCallback(Action<DefenderAura> callback)
-    {
-        defenderAurasHere.DeregisterForRemove(callback);
+        public void RegisterForOnDefenderAuraRemovedCallback(Action<DefenderAura> callback)
+        {
+            defenderAurasHere.RegisterForRemove(callback);
+        }
+
+        public void DeregisterForOnDefenderAuraRemovedCallback(Action<DefenderAura> callback)
+        {
+            defenderAurasHere.DeregisterForRemove(callback);
+        }
     }
 }

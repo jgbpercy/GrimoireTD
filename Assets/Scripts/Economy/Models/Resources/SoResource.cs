@@ -1,71 +1,74 @@
 ﻿using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewResource", menuName = "Economy/Resource")]
-public class SoResource : ScriptableObject, IResource {
-
-    [SerializeField]
-    private string nameInGame;
-
-    [SerializeField]
-    private string shortName;
-
-    private int amountOwned = 0;
-
-    [SerializeField]
-    private int maxAmount;
-
-    private Action<int, int> OnResourceChangedCallback = null;
-
-    public string NameInGame
+namespace GrimoireTD.Economy
+{
+    [CreateAssetMenu(fileName = "NewResource", menuName = "Economy/Resource")]
+    public class SoResource : ScriptableObject, IResource
     {
-        get
-        {
-            return nameInGame;
-        }
-    }
+        [SerializeField]
+        private string nameInGame;
 
-    public string ShortName
-    {
-        get
-        {
-            return shortName;
-        }
-    }
+        [SerializeField]
+        private string shortName;
 
-    public int AmountOwned
-    {
-        get
-        {
-            return amountOwned;
-        }
-    }
+        private int amountOwned = 0;
 
-    public bool CanDoTransaction(int amount)
-    {
-        int resultingAmount = amountOwned + amount;
-        if ( resultingAmount > maxAmount || resultingAmount < 0 )
+        [SerializeField]
+        private int maxAmount;
+
+        private Action<int, int> OnResourceChangedCallback = null;
+
+        public string NameInGame
         {
-            return false;
+            get
+            {
+                return nameInGame;
+            }
         }
 
-        return true;
-    }
+        public string ShortName
+        {
+            get
+            {
+                return shortName;
+            }
+        }
 
-    public void DoTransaction(int amount)
-    {
-        amountOwned += amount;
+        public int AmountOwned
+        {
+            get
+            {
+                return amountOwned;
+            }
+        }
 
-        OnResourceChangedCallback?.Invoke(amount, amountOwned);
-    }
+        public bool CanDoTransaction(int amount)
+        {
+            int resultingAmount = amountOwned + amount;
+            if (resultingAmount > maxAmount || resultingAmount < 0)
+            {
+                return false;
+            }
 
-    public void RegisterForOnResourceChangedCallback(Action<int, int> callback)
-    {
-        OnResourceChangedCallback += callback;
-    }
+            return true;
+        }
 
-    public void DeregisterForOnResourceChangedCallback(Action<int, int> callback)
-    {
-        OnResourceChangedCallback -= callback;
+        public void DoTransaction(int amount)
+        {
+            amountOwned += amount;
+
+            OnResourceChangedCallback?.Invoke(amount, amountOwned);
+        }
+
+        public void RegisterForOnResourceChangedCallback(Action<int, int> callback)
+        {
+            OnResourceChangedCallback += callback;
+        }
+
+        public void DeregisterForOnResourceChangedCallback(Action<int, int> callback)
+        {
+            OnResourceChangedCallback -= callback;
+        }
     }
 }

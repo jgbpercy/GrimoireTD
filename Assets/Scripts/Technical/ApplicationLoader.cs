@@ -1,67 +1,75 @@
 ﻿using UnityEngine;
 using UnityEngine.Assertions;
+using GrimoireTD.Creeps;
+using GrimoireTD.Economy;
+using GrimoireTD.UI;
+using GrimoireTD.Map;
+using GrimoireTD.ChannelDebug;
 
-public class ApplicationLoader : SingletonMonobehaviour<ApplicationLoader> {
-
-    [SerializeField]
-    private GameObject gameManager;
-
-    CameraController cameraController;
-    ModelObjectFrameUpdater modelObjectFrameUpdater;
-    MapGenerator mapGenerator;
-    MapRenderer mapRenderer;
-    EconomyView economyView;
-    CreepManager creepManager;
-    InterfaceController interfaceController;
-    GameStateManager gameStateManager;
-
-    private void Awake()
+namespace GrimoireTD.Technical
+{
+    public class ApplicationLoader : SingletonMonobehaviour<ApplicationLoader>
     {
-        CDebug.InitialiseDebugChannels();
+        [SerializeField]
+        private GameObject gameManager;
 
-        CDebug.Log(CDebug.applicationLoading, "Application Loader Awake");
+        CameraController cameraController;
+        ModelObjectFrameUpdater modelObjectFrameUpdater;
+        MapGenerator mapGenerator;
+        MapRenderer mapRenderer;
+        EconomyView economyView;
+        CreepManager creepManager;
+        InterfaceController interfaceController;
+        GameStateManager gameStateManager;
 
-        modelObjectFrameUpdater = gameManager.GetComponent<ModelObjectFrameUpdater>();
-        Assert.IsTrue(modelObjectFrameUpdater != null);
+        private void Awake()
+        {
+            CDebug.InitialiseDebugChannels();
 
-        mapGenerator = gameManager.GetComponent<MapGenerator>(); //loads map model
-        Assert.IsTrue(mapGenerator != null);
+            CDebug.Log(CDebug.applicationLoading, "Application Loader Awake");
 
-        mapRenderer = gameManager.GetComponent<MapRenderer>();
-        Assert.IsTrue(mapRenderer != null);
+            modelObjectFrameUpdater = gameManager.GetComponent<ModelObjectFrameUpdater>();
+            Assert.IsTrue(modelObjectFrameUpdater != null);
 
-        cameraController = gameManager.GetComponent<CameraController>();
-        Assert.IsTrue(cameraController != null);
+            mapGenerator = gameManager.GetComponent<MapGenerator>(); //loads map model
+            Assert.IsTrue(mapGenerator != null);
 
-        economyView = gameManager.GetComponent<EconomyView>(); //loads economy model
-        Assert.IsTrue(economyView != null);
+            mapRenderer = gameManager.GetComponent<MapRenderer>();
+            Assert.IsTrue(mapRenderer != null);
 
-        creepManager = gameManager.GetComponent<CreepManager>();
-        Assert.IsTrue(creepManager != null);
+            cameraController = gameManager.GetComponent<CameraController>();
+            Assert.IsTrue(cameraController != null);
 
-        interfaceController = gameManager.GetComponent<InterfaceController>();
-        Assert.IsTrue(interfaceController != null);
+            economyView = gameManager.GetComponent<EconomyView>(); //loads economy model
+            Assert.IsTrue(economyView != null);
 
-        gameStateManager = gameManager.GetComponent<GameStateManager>();
-        Assert.IsTrue(gameStateManager != null);
+            creepManager = gameManager.GetComponent<CreepManager>();
+            Assert.IsTrue(creepManager != null);
+
+            interfaceController = gameManager.GetComponent<InterfaceController>();
+            Assert.IsTrue(interfaceController != null);
+
+            gameStateManager = gameManager.GetComponent<GameStateManager>();
+            Assert.IsTrue(gameStateManager != null);
 
 
-        CDebug.Log(CDebug.applicationLoading, "Application Loader Finished Awake");
-    }
+            CDebug.Log(CDebug.applicationLoading, "Application Loader Finished Awake");
+        }
 
-    private void Start()
-    {
-        CDebug.Log(CDebug.applicationLoading, "Application Loader Start");
+        private void Start()
+        {
+            CDebug.Log(CDebug.applicationLoading, "Application Loader Start");
 
-        modelObjectFrameUpdater.enabled = true;
-        mapGenerator.enabled = true;
-        mapRenderer.enabled = true;
-        cameraController.enabled = true;
-        economyView.enabled = true;
-        creepManager.enabled = true;
-        interfaceController.enabled = true;
-        gameStateManager.enabled = true;
+            modelObjectFrameUpdater.enabled = true;
+            mapGenerator.enabled = true;
+            mapRenderer.enabled = true;
+            cameraController.enabled = true;
+            economyView.enabled = true;
+            creepManager.enabled = true;
+            interfaceController.enabled = true;
+            gameStateManager.enabled = true;
 
-        CDebug.Log(CDebug.applicationLoading, "Application Loader Finished Start");
+            CDebug.Log(CDebug.applicationLoading, "Application Loader Finished Start");
+        }
     }
 }

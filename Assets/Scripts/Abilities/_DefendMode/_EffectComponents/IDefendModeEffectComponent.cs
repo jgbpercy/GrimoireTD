@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using GrimoireTD.DefendingEntities;
 
-public interface IDefendModeEffectComponent
+namespace GrimoireTD.Abilities.DefendMode
 {
-    void ExecuteEffect(DefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets);
+    public interface IDefendModeEffectComponent
+    {
+        void ExecuteEffect(DefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets);
+    }
 }

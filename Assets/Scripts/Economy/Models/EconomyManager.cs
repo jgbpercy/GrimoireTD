@@ -2,56 +2,62 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using GrimoireTD.Technical;
+using GrimoireTD.ChannelDebug;
+using GrimoireTD.Map;
 
-public class EconomyManager : SingletonMonobehaviour<EconomyManager>
+namespace GrimoireTD.Economy
 {
-    [SerializeField]
-    private SoResource[] resources;
-
-    public IReadOnlyCollection<IResource> Resources
+    public class EconomyManager : SingletonMonobehaviour<EconomyManager>
     {
-        get
+        [SerializeField]
+        private SoResource[] resources;
+
+        public IReadOnlyCollection<IResource> Resources
         {
-            return resources;
-        }
-    }
-
-    public IEconomyTransaction ResourcesAsTransaction
-    {
-        get
-        {
-            var resourceTransactions = resources.Select(x => new CResourceTransaction(x, x.AmountOwned));
-
-            return new CEconomyTransaction(resourceTransactions);
-        }
-    }
-
-    private Action<IResource, int, int> OnAnyResourceChangedCallback;
-
-    private void Start()
-    {
-        CDebug.Log(CDebug.applicationLoading, "Econonmy Manager Start");
-
-        foreach (IResource resource in Resources)
-        {
-            resource.RegisterForOnResourceChangedCallback((int byAmount, int newAmount) => OnResourceChanged(resource, byAmount, newAmount));
+            get
+            {
+                return resources;
+            }
         }
 
-        MapGenerator.Instance.Level.StartingResources.DoTransaction();
-    }
+        public IEconomyTransaction ResourcesAsTransaction
+        {
+            get
+            {
+                var resourceTransactions = resources.Select(x => new CResourceTransaction(x, x.AmountOwned));
 
-    private void OnResourceChanged(IResource resource, int byAmount, int newAmount)
-    {
-        OnAnyResourceChangedCallback?.Invoke(resource, byAmount, newAmount);
-    }
+                return new CEconomyTransaction(resourceTransactions);
+            }
+        }
 
-    public void RegisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
-    {
-        OnAnyResourceChangedCallback += callback;
-    }
+        private Action<IResource, int, int> OnAnyResourceChangedCallback;
 
-    public void DeregisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
-    {
-        OnAnyResourceChangedCallback -= callback;
+        private void Start()
+        {
+            CDebug.Log(CDebug.applicationLoading, "Econonmy Manager Start");
+
+            foreach (IResource resource in Resources)
+            {
+                resource.RegisterForOnResourceChangedCallback((int byAmount, int newAmount) => OnResourceChanged(resource, byAmount, newAmount));
+            }
+
+            MapGenerator.Instance.Level.StartingResources.DoTransaction();
+        }
+
+        private void OnResourceChanged(IResource resource, int byAmount, int newAmount)
+        {
+            OnAnyResourceChangedCallback?.Invoke(resource, byAmount, newAmount);
+        }
+
+        public void RegisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
+        {
+            OnAnyResourceChangedCallback += callback;
+        }
+
+        public void DeregisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
+        {
+            OnAnyResourceChangedCallback -= callback;
+        }
     }
 }

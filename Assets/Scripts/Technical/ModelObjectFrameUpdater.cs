@@ -1,34 +1,38 @@
 ﻿using System.Collections.Generic;
+using GrimoireTD.ChannelDebug;
 
-public class ModelObjectFrameUpdater : SingletonMonobehaviour<ModelObjectFrameUpdater> {
-
-    private List<IFrameUpdatee> modelObjectFrameUpdatees;
-
-	private void Awake ()
+namespace GrimoireTD.Technical
+{
+    public class ModelObjectFrameUpdater : SingletonMonobehaviour<ModelObjectFrameUpdater>
     {
-        modelObjectFrameUpdatees = new List<IFrameUpdatee>();
-	}
+        private List<IFrameUpdatee> modelObjectFrameUpdatees;
 
-    private void Start()
-    {
-        CDebug.Log(CDebug.applicationLoading, "Model Object Frame Updater Start");
-    }
-
-    private void Update ()
-    {
-        foreach (IFrameUpdatee modelObjectFrameUpdatee in modelObjectFrameUpdatees)
+        private void Awake()
         {
-            modelObjectFrameUpdatee.ModelObjectFrameUpdate();
+            modelObjectFrameUpdatees = new List<IFrameUpdatee>();
         }
-	}
 
-    public void RegisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
-    {
-        modelObjectFrameUpdatees.Add(modelObjectFrameUpdatee);
-    }
+        private void Start()
+        {
+            CDebug.Log(CDebug.applicationLoading, "Model Object Frame Updater Start");
+        }
 
-    public void DeregisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
-    {
-        modelObjectFrameUpdatees.RemoveAll(x => x == modelObjectFrameUpdatee);
+        private void Update()
+        {
+            foreach (IFrameUpdatee modelObjectFrameUpdatee in modelObjectFrameUpdatees)
+            {
+                modelObjectFrameUpdatee.ModelObjectFrameUpdate();
+            }
+        }
+
+        public void RegisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
+        {
+            modelObjectFrameUpdatees.Add(modelObjectFrameUpdatee);
+        }
+
+        public void DeregisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
+        {
+            modelObjectFrameUpdatees.RemoveAll(x => x == modelObjectFrameUpdatee);
+        }
     }
 }

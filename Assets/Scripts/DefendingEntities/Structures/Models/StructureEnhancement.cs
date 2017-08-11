@@ -1,41 +1,44 @@
 ﻿using UnityEngine;
 using System;
+using GrimoireTD.Economy;
 
-//TODO: Make SO/I?
-[Serializable]
-public class StructureEnhancement {
-
-    [SerializeField]
-    private SoDefendingEntityImprovement enhancementBonus;
-
-    [SerializeField]
-    private string descriptionText;
-
-    [SerializeField]
-    private SEconomyTransaction cost;
-
-    public IDefendingEntityImprovement EnhancementBonus
+namespace GrimoireTD.DefendingEntities.Structures
+{
+    //TODO: Make SO/I?
+    [Serializable]
+    public class StructureEnhancement
     {
-        get
+        [SerializeField]
+        private SoDefendingEntityImprovement enhancementBonus;
+
+        [SerializeField]
+        private string descriptionText;
+
+        [SerializeField]
+        private SEconomyTransaction cost;
+
+        public IDefendingEntityImprovement EnhancementBonus
         {
-            return enhancementBonus;
+            get
+            {
+                return enhancementBonus;
+            }
         }
-    }
 
-    public string DescriptionText
-    {
-        get
+        public string DescriptionText
         {
-            return descriptionText;
+            get
+            {
+                return descriptionText;
+            }
         }
-    }
 
-    public IEconomyTransaction Cost
-    {
-        get
+        public IEconomyTransaction Cost
         {
-            return cost;
+            get
+            {
+                return cost;
+            }
         }
     }
 }
-

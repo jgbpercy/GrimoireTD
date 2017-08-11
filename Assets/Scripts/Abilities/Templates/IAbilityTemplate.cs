@@ -1,6 +1,11 @@
-﻿public interface IAbilityTemplate {
+﻿using GrimoireTD.DefendingEntities;
 
-    string NameInGame { get; }
+namespace GrimoireTD.Abilities
+{
+    public interface IAbilityTemplate
+    {
+        string NameInGame { get; }
 
-    Ability GenerateAbility(DefendingEntity attachedToDefendingEntity);
+        Ability GenerateAbility(DefendingEntity attachedToDefendingEntity);
+    }
 }

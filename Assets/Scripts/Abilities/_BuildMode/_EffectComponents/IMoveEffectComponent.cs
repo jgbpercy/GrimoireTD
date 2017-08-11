@@ -1,3 +1,7 @@
-﻿public interface IMoveEffectComponent : IBuildModeEffectComponent {
+﻿namespace GrimoireTD.Abilities.BuildMode
+{
+    public interface IMoveEffectComponent : IBuildModeEffectComponent
+    {
 
+    }
 }

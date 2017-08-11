@@ -1,49 +1,51 @@
 ﻿using UnityEngine;
 using System;
 
-[CreateAssetMenu(fileName = "NewWave", menuName = "Levels/Wave")]
-public class SoWaveTemplate : ScriptableObject,  IWaveTemplate {
-
-    [Serializable]
-    public class Spawn
+namespace GrimoireTD.Creeps
+{
+    [CreateAssetMenu(fileName = "NewWave", menuName = "Levels/Wave")]
+    public class SoWaveTemplate : ScriptableObject, IWaveTemplate
     {
-        [SerializeField]
-        private float timing;
-        [SerializeField]
-        private SoCreepTemplate creep;
-
-        public float Timing
+        [Serializable]
+        public class Spawn
         {
-            get
+            [SerializeField]
+            private float timing;
+            [SerializeField]
+            private SoCreepTemplate creep;
+
+            public float Timing
             {
-                return timing;
+                get
+                {
+                    return timing;
+                }
+            }
+
+            public ICreepTemplate Creep
+            {
+                get
+                {
+                    return creep;
+                }
             }
         }
 
-        public ICreepTemplate Creep
+        [SerializeField]
+        private Spawn[] spawns;
+
+        public Wave GenerateWave()
         {
-            get
+            float[] timings = new float[spawns.Length];
+            ICreepTemplate[] creeps = new ICreepTemplate[spawns.Length];
+
+            for (int i = 0; i < spawns.Length; i++)
             {
-                return creep;
+                timings[i] = i == 0 ? spawns[i].Timing : spawns[i].Timing + timings[i - 1];
+                creeps[i] = spawns[i].Creep;
             }
+
+            return new Wave(timings, creeps);
         }
     }
-
-    [SerializeField]
-    private Spawn[] spawns;
-
-    public Wave GenerateWave()
-    {
-        float[] timings = new float[spawns.Length];
-        ICreepTemplate[] creeps = new ICreepTemplate[spawns.Length];
-
-        for (int i = 0; i < spawns.Length; i++)
-        {
-            timings[i] = i == 0 ? spawns[i].Timing : spawns[i].Timing + timings[i - 1];
-            creeps[i] = spawns[i].Creep;
-        }
-
-        return new Wave(timings, creeps);
-    }
-
 }

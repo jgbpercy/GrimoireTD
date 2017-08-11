@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
+using GrimoireTD.Economy;
 
-public interface IUnitImprovement : IDefendingEntityImprovement {
+namespace GrimoireTD.DefendingEntities.Units
+{
+    public interface IUnitImprovement : IDefendingEntityImprovement
+    {
+        IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses { get; }
 
-    IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses { get; }
-
-    IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
+        IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
+    }
 }

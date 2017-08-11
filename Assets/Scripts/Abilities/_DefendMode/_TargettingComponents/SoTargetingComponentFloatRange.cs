@@ -1,20 +1,25 @@
 ﻿using UnityEngine;
+using GrimoireTD.DefendingEntities;
+using GrimoireTD.Attributes;
 
-public class SoTargetingComponentFloatRange : SoDefendModeTargetingComponent, ITargetingComponentFloatRange {
-
-    [SerializeField]
-    private float baseRange;
-
-    public float BaseRange
+namespace GrimoireTD.Abilities.DefendMode
+{
+    public class SoTargetingComponentFloatRange : SoDefendModeTargetingComponent, ITargetingComponentFloatRange
     {
-        get
+        [SerializeField]
+        private float baseRange;
+
+        public float BaseRange
         {
-            return baseRange;
+            get
+            {
+                return baseRange;
+            }
         }
-    }
 
-    public float GetActualRange(DefendingEntity attachedToDefendingEntity)
-    {
-        return baseRange * (1 + attachedToDefendingEntity.GetAttribute(AttributeName.rangeBonus));
+        public float GetActualRange(DefendingEntity attachedToDefendingEntity)
+        {
+            return baseRange * (1 + attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.rangeBonus));
+        }
     }
 }

@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "NewSpecificDamageEffectType",
-    menuName = "Attack Effects/Damage Types/Specific Damage"
-)]
-public class SpecificDamageEffectType : DamageEffectType
+namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    [SerializeField]
-    private BasicMetaDamageEffectType basicMetaDamageEffectType;
-
-    public BasicMetaDamageEffectType BasicMetaDamageEffectType
+    [CreateAssetMenu(
+        fileName = "NewSpecificDamageEffectType",
+        menuName = "Attack Effects/Damage Types/Specific Damage"
+    )]
+    public class SpecificDamageEffectType : DamageEffectType
     {
-        get
+        [SerializeField]
+        private BasicMetaDamageEffectType basicMetaDamageEffectType;
+
+        public BasicMetaDamageEffectType BasicMetaDamageEffectType
         {
-            return basicMetaDamageEffectType;
+            get
+            {
+                return basicMetaDamageEffectType;
+            }
         }
     }
 }

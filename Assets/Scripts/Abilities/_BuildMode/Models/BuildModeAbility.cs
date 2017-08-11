@@ -1,33 +1,38 @@
 ﻿using System.Collections.Generic;
+using GrimoireTD.DefendingEntities;
+using GrimoireTD.Map;
 
-public class BuildModeAbility : Ability {
-
-    private IBuildModeAbilityTemplate buildModeAbilityTemplate;
-
-    public IBuildModeAbilityTemplate BuildModeAbilityTemplate
+namespace GrimoireTD.Abilities.BuildMode
+{
+    public class BuildModeAbility : Ability
     {
-        get
+        private IBuildModeAbilityTemplate buildModeAbilityTemplate;
+
+        public IBuildModeAbilityTemplate BuildModeAbilityTemplate
         {
-            return buildModeAbilityTemplate;
+            get
+            {
+                return buildModeAbilityTemplate;
+            }
         }
-    }
 
-    public BuildModeAbility(IBuildModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
-    {
-        buildModeAbilityTemplate = template;
-    }
+        public BuildModeAbility(IBuildModeAbilityTemplate template, DefendingEntity attachedToDefendingEntity) : base(template, attachedToDefendingEntity)
+        {
+            buildModeAbilityTemplate = template;
+        }
 
-    public void ExecuteAbility(DefendingEntity executingEntity, Coord executionPosition)
-    {
-        IReadOnlyList<IBuildModeTargetable> targetList = buildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
+        public void ExecuteAbility(DefendingEntity executingEntity, Coord executionPosition)
+        {
+            IReadOnlyList<IBuildModeTargetable> targetList = buildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
 
-        buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
+            buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
 
-        buildModeAbilityTemplate.Cost.DoTransaction();
-    }
+            buildModeAbilityTemplate.Cost.DoTransaction();
+        }
 
-    public override string UIText()
-    {
-        return buildModeAbilityTemplate.NameInGame;
+        public override string UIText()
+        {
+            return buildModeAbilityTemplate.NameInGame;
+        }
     }
 }

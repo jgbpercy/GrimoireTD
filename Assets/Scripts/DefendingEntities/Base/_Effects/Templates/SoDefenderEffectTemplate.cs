@@ -1,37 +1,40 @@
 ﻿using UnityEngine;
 
-public class SoDefenderEffectTemplate : ScriptableObject, IDefenderEffectTemplate
+namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    [SerializeField]
-    private DefenderEffectAffectsType affects;
-
-    [SerializeField]
-    private string nameInGame;
-
-    [SerializeField]
-    private SoDefendingEntityImprovement improvement;
-
-    public DefenderEffectAffectsType Affects
+    public class SoDefenderEffectTemplate : ScriptableObject, IDefenderEffectTemplate
     {
-        get
+        [SerializeField]
+        private DefenderEffectAffectsType affects;
+
+        [SerializeField]
+        private string nameInGame;
+
+        [SerializeField]
+        private SoDefendingEntityImprovement improvement;
+
+        public DefenderEffectAffectsType Affects
         {
-            return affects;
+            get
+            {
+                return affects;
+            }
         }
-    }
 
-    public string NameInGame
-    {
-        get
+        public string NameInGame
         {
-            return nameInGame;
+            get
+            {
+                return nameInGame;
+            }
         }
-    }
 
-    public IDefendingEntityImprovement Improvement
-    {
-        get
+        public IDefendingEntityImprovement Improvement
         {
-            return improvement;
+            get
+            {
+                return improvement;
+            }
         }
     }
 }

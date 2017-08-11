@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 
-public class AttackEffectType : ScriptableObject {
-
-    [SerializeField]
-    private string effectName;
-
-    public virtual string EffectName()
+namespace GrimoireTD.Abilities.DefendMode.AttackEffects
+{
+    public class AttackEffectType : ScriptableObject
     {
-        return effectName;
+        [SerializeField]
+        private string effectName;
+
+        public virtual string EffectName()
+        {
+            return effectName;
+        }
     }
 }

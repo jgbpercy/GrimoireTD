@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 
-public class MetaDamageEffectType : DamageEffectType
+namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    public IReadOnlyList<SpecificDamageEffectType> SpecificDamageTypes
+    public class MetaDamageEffectType : DamageEffectType
     {
-        get
+        public IReadOnlyList<SpecificDamageEffectType> SpecificDamageTypes
         {
-            return AttackEffectTypeManager.Instance.GetSpecificDamageTypes(this);
+            get
+            {
+                return AttackEffectTypeManager.Instance.GetSpecificDamageTypes(this);
+            }
         }
     }
 }

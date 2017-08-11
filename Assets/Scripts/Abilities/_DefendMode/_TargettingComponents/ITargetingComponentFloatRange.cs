@@ -1,6 +1,11 @@
-﻿public interface ITargetingComponentFloatRange {
+﻿using GrimoireTD.DefendingEntities;
 
-    float BaseRange { get; }
+namespace GrimoireTD.Abilities.DefendMode
+{
+    public interface ITargetingComponentFloatRange
+    {
+        float BaseRange { get; }
 
-    float GetActualRange(DefendingEntity attachedToDefendingEntity);
+        float GetActualRange(DefendingEntity attachedToDefendingEntity);
+    }
 }

@@ -1,13 +1,16 @@
-﻿public interface IHexType {
+﻿namespace GrimoireTD.Map
+{
+    public interface IHexType
+    {
+        string NameInGame { get; }
 
-    string NameInGame { get; }
+        int TextureOffsetX { get; }
+        int TextureOffsetY { get; }
 
-    int TextureOffsetX { get; }
-    int TextureOffsetY { get; }
+        bool IsBuildable { get; }
 
-    bool IsBuildable { get; }
+        bool TypeIsPathableByCreeps { get; }
 
-    bool TypeIsPathableByCreeps { get; }
-
-    bool UnitCanOccupy { get; }
+        bool UnitCanOccupy { get; }
+    }
 }

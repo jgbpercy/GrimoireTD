@@ -1,57 +1,61 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using GrimoireTD.UI;
 
-public class UnitTalentUIComponent : MonoBehaviour {
-
-    private Unit selectedUnit;
-
-    private IUnitTalent unitTalent;
-
-    private bool intialised = false;
-
-    [SerializeField]
-    private Slider ownSlider;
-    [SerializeField]
-    private Text ownText;
-
-    public void SetUp(Unit selectedUnit, IUnitTalent unitTalent)
+namespace GrimoireTD.DefendingEntities.Units
+{
+    public class UnitTalentUIComponent : MonoBehaviour
     {
-        if (intialised)
+        private Unit selectedUnit;
+
+        private IUnitTalent unitTalent;
+
+        private bool intialised = false;
+
+        [SerializeField]
+        private Slider ownSlider;
+        [SerializeField]
+        private Text ownText;
+
+        public void SetUp(Unit selectedUnit, IUnitTalent unitTalent)
         {
-            return;
+            if (intialised)
+            {
+                return;
+            }
+
+            this.selectedUnit = selectedUnit;
+            this.unitTalent = unitTalent;
+
+            SetValues();
+
+            selectedUnit.RegisterForExperienceFatigueChangedCallback(SetValues);
         }
 
-        this.selectedUnit = selectedUnit;
-        this.unitTalent = unitTalent;
-
-        SetValues();
-
-        selectedUnit.RegisterForExperienceFatigueChangedCallback(SetValues);
-    }
-
-    private void SetValues()
-    {
-        ownText.text = TalentText(unitTalent);
-
-        ownSlider.maxValue = unitTalent.UnitImprovements.Count;
-        ownSlider.value = selectedUnit.LevelledTalents[unitTalent];
-    }
-
-    private string TalentText(IUnitTalent talent)
-    {
-        return selectedUnit.LevelledTalents[talent] + " / " + talent.UnitImprovements.Count + "\n" + talent.DescriptionText;
-    }
-
-    public void UIComponentClicked()
-    {
-        InterfaceController.Instance.ClickUnitTalent(selectedUnit, unitTalent);
-    }
-
-    private void OnDestroy()
-    {
-        if ( selectedUnit != null )
+        private void SetValues()
         {
-            selectedUnit.DeregisterForExperienceFatigueChangedCallback(SetValues);
+            ownText.text = TalentText(unitTalent);
+
+            ownSlider.maxValue = unitTalent.UnitImprovements.Count;
+            ownSlider.value = selectedUnit.LevelledTalents[unitTalent];
+        }
+
+        private string TalentText(IUnitTalent talent)
+        {
+            return selectedUnit.LevelledTalents[talent] + " / " + talent.UnitImprovements.Count + "\n" + talent.DescriptionText;
+        }
+
+        public void UIComponentClicked()
+        {
+            InterfaceController.Instance.ClickUnitTalent(selectedUnit, unitTalent);
+        }
+
+        private void OnDestroy()
+        {
+            if (selectedUnit != null)
+            {
+                selectedUnit.DeregisterForExperienceFatigueChangedCallback(SetValues);
+            }
         }
     }
 }

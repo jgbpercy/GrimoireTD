@@ -1,28 +1,31 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewUnitTalent", menuName = "Structures and Units/Unit Talent")]
-public class SoUnitTalent : ScriptableObject, IUnitTalent {
-
-    [SerializeField]
-    private SoUnitImprovement[] unitImprovements;
-
-    [SerializeField]
-    private string descriptionText;
-
-    public IReadOnlyList<IUnitImprovement> UnitImprovements
+namespace GrimoireTD.DefendingEntities.Units
+{
+    [CreateAssetMenu(fileName = "NewUnitTalent", menuName = "Structures and Units/Unit Talent")]
+    public class SoUnitTalent : ScriptableObject, IUnitTalent
     {
-        get
+        [SerializeField]
+        private SoUnitImprovement[] unitImprovements;
+
+        [SerializeField]
+        private string descriptionText;
+
+        public IReadOnlyList<IUnitImprovement> UnitImprovements
         {
-            return unitImprovements;
+            get
+            {
+                return unitImprovements;
+            }
         }
-    }
 
-    public string DescriptionText
-    {
-        get
+        public string DescriptionText
         {
-            return descriptionText;
+            get
+            {
+                return descriptionText;
+            }
         }
     }
 }

@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "NewSlowEffectType",
-    menuName = "Attack Effects/Instant/Armor Corrosion"
-)]
-public class ArmorCorrosionEffectType : InstantEffectType
+namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    public override string EffectName()
+    [CreateAssetMenu(
+        fileName = "NewSlowEffectType",
+        menuName = "Attack Effects/Instant/Armor Corrosion"
+    )]
+    public class ArmorCorrosionEffectType : InstantEffectType
     {
-        if (base.EffectName() == "")
+        public override string EffectName()
         {
-            return "Armor Corrosion";
-        }
+            if (base.EffectName() == "")
+            {
+                return "Armor Corrosion";
+            }
 
-        return base.EffectName() + " Armor Corrosion";
+            return base.EffectName() + " Armor Corrosion";
+        }
     }
 }

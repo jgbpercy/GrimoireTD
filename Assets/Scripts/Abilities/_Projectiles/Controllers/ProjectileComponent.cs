@@ -1,47 +1,51 @@
 ﻿using UnityEngine;
+using GrimoireTD.Creeps;
 
-public class ProjectileComponent : MonoBehaviour {
-
-    private Projectile projectileModel;
-
-    [SerializeField]
-    private ParticleSystem hitExplosion;
-    [SerializeField]
-    private MeshRenderer ownRenderer;
-
-    protected SphereCollider ownCollider;
-
-    public virtual void SetUp(Projectile projectileModel)
+namespace GrimoireTD.Abilities.DefendMode.Projectiles
+{
+    public class ProjectileComponent : MonoBehaviour
     {
-        this.projectileModel = projectileModel;
+        private Projectile projectileModel;
 
-        projectileModel.RegisterForOnDestroyCallback((waitSeconds) => { Destroy(gameObject, waitSeconds); });
-    }
+        [SerializeField]
+        private ParticleSystem hitExplosion;
+        [SerializeField]
+        private MeshRenderer ownRenderer;
 
-    private void Start()
-    {
-        ownCollider = gameObject.GetComponent<SphereCollider>();
-    }
+        protected SphereCollider ownCollider;
 
-    protected virtual void OnTriggerEnter(Collider other)
-    {
-        if ( other.CompareTag("Creep") )
+        public virtual void SetUp(Projectile projectileModel)
         {
-            Creep hitCreep = other.GetComponent<CreepComponent>().CreepModel;
-            hitExplosion.Play();
-            ownRenderer.enabled = false;
-            ownCollider.enabled = false;
-            projectileModel.HitCreep(hitCreep, hitExplosion.main.duration - 0.01f);
+            this.projectileModel = projectileModel;
+
+            projectileModel.RegisterForOnDestroyCallback((waitSeconds) => { Destroy(gameObject, waitSeconds); });
         }
-    }
 
-    protected virtual void Update ()
-    {
-        transform.position = projectileModel.Position;
-	}
+        private void Start()
+        {
+            ownCollider = gameObject.GetComponent<SphereCollider>();
+        }
 
-    private void OnDestroy()
-    {
-        projectileModel.GameObjectDestroyed();
+        protected virtual void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Creep"))
+            {
+                Creep hitCreep = other.GetComponent<CreepComponent>().CreepModel;
+                hitExplosion.Play();
+                ownRenderer.enabled = false;
+                ownCollider.enabled = false;
+                projectileModel.HitCreep(hitCreep, hitExplosion.main.duration - 0.01f);
+            }
+        }
+
+        protected virtual void Update()
+        {
+            transform.position = projectileModel.Position;
+        }
+
+        private void OnDestroy()
+        {
+            projectileModel.GameObjectDestroyed();
+        }
     }
 }

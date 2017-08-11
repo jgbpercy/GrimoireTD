@@ -1,18 +1,21 @@
 ﻿using System;
 using UnityEngine;
+using GrimoireTD.Map;
 
-[Serializable]
-public class HexOccupationBonus : OccupationBonus {
-
-    [SerializeField]
-    private SoHexType hexType;
-
-    public IHexType HexType
+namespace GrimoireTD.Economy
+{
+    [Serializable]
+    public class HexOccupationBonus : OccupationBonus
     {
-        get
+        [SerializeField]
+        private SoHexType hexType;
+
+        public IHexType HexType
         {
-            return hexType;
+            get
+            {
+                return hexType;
+            }
         }
     }
-
 }

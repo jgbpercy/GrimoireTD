@@ -1,3 +1,7 @@
-﻿public interface ITargetEnemyClosestToFinishInRange {
+﻿namespace GrimoireTD.Abilities.DefendMode
+{
+    public interface ITargetEnemyClosestToFinishInRange
+    {
 
+    }
 }

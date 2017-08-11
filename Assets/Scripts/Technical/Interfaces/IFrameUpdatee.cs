@@ -1,6 +1,9 @@
-﻿public interface IFrameUpdatee {
+﻿namespace GrimoireTD.Technical
+{
+    public interface IFrameUpdatee
+    {
+        void ModelObjectFrameUpdate();
 
-    void ModelObjectFrameUpdate();
-
-    void GameObjectDestroyed();
+        void GameObjectDestroyed();
+    }
 }

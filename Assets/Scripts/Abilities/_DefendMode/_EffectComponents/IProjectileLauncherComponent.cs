@@ -1,4 +1,9 @@
-﻿public interface IProjectileLauncherComponent {
+﻿using GrimoireTD.Abilities.DefendMode.Projectiles;
 
-    IProjectileTemplate ProjectileToFireTemplate { get; }
+namespace GrimoireTD.Abilities.DefendMode
+{
+    public interface IProjectileLauncherComponent
+    {
+        IProjectileTemplate ProjectileToFireTemplate { get; }
+    }
 }

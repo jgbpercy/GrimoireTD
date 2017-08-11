@@ -1,10 +1,13 @@
-﻿public interface IResourceTransaction {
+﻿namespace GrimoireTD.Economy
+{
+    public interface IResourceTransaction
+    {
+        IResource Resource { get; }
 
-    IResource Resource { get; }
+        int Amount { get; }
 
-    int Amount { get; }
+        bool CanDoTransaction();
 
-    bool CanDoTransaction();
-
-    void DoTransaction();
+        void DoTransaction();
+    }
 }

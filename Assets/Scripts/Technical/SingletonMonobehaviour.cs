@@ -3,34 +3,37 @@
 
 using UnityEngine;
 
-public class SingletonMonobehaviour<T> : MonoBehaviour where T : MonoBehaviour
+namespace GrimoireTD.Technical
 {
-    protected static T instance;
-
-    public static T Instance
+    public class SingletonMonobehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {
-        get
-        {
-            if (instance == null)
-            {
-                instance = (T)FindObjectOfType(typeof(T));
+        protected static T instance;
 
+        public static T Instance
+        {
+            get
+            {
                 if (instance == null)
                 {
-                    Debug.LogError("An instance of " + typeof(T) +
-                       " is needed in the scene, but there is none.");
+                    instance = (T)FindObjectOfType(typeof(T));
+
+                    if (instance == null)
+                    {
+                        Debug.LogError("An instance of " + typeof(T) +
+                           " is needed in the scene, but there is none.");
+                    }
                 }
+
+                return instance;
             }
-
-            return instance;
         }
-    }
 
-    public static T InstanceNullAccepted
-    {
-        get
+        public static T InstanceNullAccepted
         {
-            return (T)FindObjectOfType(typeof(T));
+            get
+            {
+                return (T)FindObjectOfType(typeof(T));
+            }
         }
     }
 }

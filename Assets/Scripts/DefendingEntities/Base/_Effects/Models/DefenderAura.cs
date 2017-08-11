@@ -1,60 +1,63 @@
 ﻿using System;
 
-public class DefenderAura : DefenderEffect
+namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    private IDefenderAuraTemplate defenderAuraTemplate;
-
-    private DefendingEntity sourceDefendingEntity;
-
-    private Action<DefenderAura> OnClearAuraCallback;
-
-    public IDefenderAuraTemplate DefenderAuraTemplate
+    public class DefenderAura : DefenderEffect
     {
-        get
+        private IDefenderAuraTemplate defenderAuraTemplate;
+
+        private DefendingEntity sourceDefendingEntity;
+
+        private Action<DefenderAura> OnClearAuraCallback;
+
+        public IDefenderAuraTemplate DefenderAuraTemplate
         {
-            return defenderAuraTemplate;
+            get
+            {
+                return defenderAuraTemplate;
+            }
         }
-    }
 
-    public DefendingEntity SourceDefendingEntity
-    {
-        get
+        public DefendingEntity SourceDefendingEntity
         {
-            return sourceDefendingEntity;
+            get
+            {
+                return sourceDefendingEntity;
+            }
         }
-    }
 
-    public int Range
-    {
-        get
+        public int Range
         {
-            return defenderAuraTemplate.BaseRange;
+            get
+            {
+                return defenderAuraTemplate.BaseRange;
+            }
         }
-    }
 
-    public DefenderAura(IDefenderAuraTemplate defenderAuraTemplate, DefendingEntity sourceDefendingEntity) : base(defenderAuraTemplate)
-    {
-        this.defenderAuraTemplate = defenderAuraTemplate;
-        this.sourceDefendingEntity = sourceDefendingEntity;
-    }
+        public DefenderAura(IDefenderAuraTemplate defenderAuraTemplate, DefendingEntity sourceDefendingEntity) : base(defenderAuraTemplate)
+        {
+            this.defenderAuraTemplate = defenderAuraTemplate;
+            this.sourceDefendingEntity = sourceDefendingEntity;
+        }
 
-    public void ClearAura()
-    {
-        OnClearAuraCallback(this);
-    }
+        public void ClearAura()
+        {
+            OnClearAuraCallback(this);
+        }
 
-    public void RegisterForOnClearAuraCallback(Action<DefenderAura> callback)
-    {
-        OnClearAuraCallback += callback;
-    }
+        public void RegisterForOnClearAuraCallback(Action<DefenderAura> callback)
+        {
+            OnClearAuraCallback += callback;
+        }
 
-    public void DeregisterForOnClearAuraCallback(Action<DefenderAura> callback)
-    {
-        OnClearAuraCallback -= callback;
-    }
+        public void DeregisterForOnClearAuraCallback(Action<DefenderAura> callback)
+        {
+            OnClearAuraCallback -= callback;
+        }
 
-    public override string UIText()
-    {
-        return defenderAuraTemplate.NameInGame;
+        public override string UIText()
+        {
+            return defenderAuraTemplate.NameInGame;
+        }
     }
 }

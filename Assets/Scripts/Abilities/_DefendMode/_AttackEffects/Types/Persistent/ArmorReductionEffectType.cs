@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "NewSlowEffectType",
-    menuName = "Attack Effects/Persistent/Armor Reduction"
-)]
-public class ArmorReductionEffectType : PersistentEffectType
+namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    public override string EffectName()
+    [CreateAssetMenu(
+        fileName = "NewSlowEffectType",
+        menuName = "Attack Effects/Persistent/Armor Reduction"
+    )]
+    public class ArmorReductionEffectType : PersistentEffectType
     {
-        if (base.EffectName() == "")
+        public override string EffectName()
         {
-            return "Armor Reduction";
-        }
+            if (base.EffectName() == "")
+            {
+                return "Armor Reduction";
+            }
 
-        return base.EffectName() + " Armor Reduction";
+            return base.EffectName() + " Armor Reduction";
+        }
     }
 }

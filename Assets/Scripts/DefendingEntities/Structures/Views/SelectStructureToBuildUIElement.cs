@@ -1,33 +1,37 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using GrimoireTD.UI;
 
-public class SelectStructureToBuildUIElement : MonoBehaviour {
-
-    private IStructureTemplate structureTemplate;
-
-    private bool initialised = false;
-
-    [SerializeField]
-    private Text structureNameText;
-    [SerializeField]
-    private Text structureDescriptionText;
-
-    public void SetUp(IStructureTemplate structureTemplate)
+namespace GrimoireTD.DefendingEntities.Structures
+{
+    public class SelectStructureToBuildUIElement : MonoBehaviour
     {
-        if (initialised)
+        private IStructureTemplate structureTemplate;
+
+        private bool initialised = false;
+
+        [SerializeField]
+        private Text structureNameText;
+        [SerializeField]
+        private Text structureDescriptionText;
+
+        public void SetUp(IStructureTemplate structureTemplate)
         {
-            return;
+            if (initialised)
+            {
+                return;
+            }
+            initialised = true;
+
+            this.structureTemplate = structureTemplate;
+
+            structureNameText.text = structureTemplate.StartingNameInGame;
+            structureDescriptionText.text = structureTemplate.UIText();
         }
-        initialised = true;
 
-        this.structureTemplate = structureTemplate;
-
-        structureNameText.text = structureTemplate.StartingNameInGame;
-        structureDescriptionText.text = structureTemplate.UIText();
-    }
-
-    public void SendClickToInterfaceController()
-    {
-        InterfaceController.Instance.SelectStructureToBuild(structureTemplate);
+        public void SendClickToInterfaceController()
+        {
+            InterfaceController.Instance.SelectStructureToBuild(structureTemplate);
+        }
     }
 }

@@ -1,39 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class TempSettings : SingletonMonobehaviour<TempSettings> {
-
-    [SerializeField]
-    private float trackIdleTimeAfterSpawns;
-
-    [SerializeField]
-    private float unitFatigueFactorInfelctionPoint;
-    [SerializeField]
-    private float unitFatigueFactorShallownessMultiplier;
-
-    public float TrackIdleTimeAfterSpawns
+namespace GrimoireTD.Technical
+{
+    public class TempSettings : SingletonMonobehaviour<TempSettings>
     {
-        get
+        [SerializeField]
+        private float trackIdleTimeAfterSpawns;
+
+        [SerializeField]
+        private float unitFatigueFactorInfelctionPoint;
+        [SerializeField]
+        private float unitFatigueFactorShallownessMultiplier;
+
+        public float TrackIdleTimeAfterSpawns
         {
-            return trackIdleTimeAfterSpawns;
+            get
+            {
+                return trackIdleTimeAfterSpawns;
+            }
+        }
+
+        public float UnitFatigueFactorInfelctionPoint
+        {
+            get
+            {
+                return unitFatigueFactorInfelctionPoint;
+            }
+        }
+
+        public float UnitFatigueFactorShallownessMultiplier
+        {
+            get
+            {
+                return unitFatigueFactorShallownessMultiplier;
+            }
         }
     }
-
-    public float UnitFatigueFactorInfelctionPoint
-    {
-        get
-        {
-            return unitFatigueFactorInfelctionPoint;
-        }
-    }
-
-    public float UnitFatigueFactorShallownessMultiplier
-    {
-        get
-        {
-            return unitFatigueFactorShallownessMultiplier;
-        }
-    }
-
 }

@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
+using GrimoireTD.Technical;
 
-public class ProjectileView : SingletonMonobehaviour<ProjectileView> {
-
-    [SerializeField]
-    private Transform projectileFolder;
-
-    public void CreateProjectile(Projectile projectileModel)
+namespace GrimoireTD.Abilities.DefendMode.Projectiles
+{
+    public class ProjectileView : SingletonMonobehaviour<ProjectileView>
     {
-        ProjectileComponent projectileController = Instantiate(projectileModel.ProjectileClassTemplate.ProjectilePrefab, projectileModel.Position, Quaternion.identity, projectileFolder).GetComponent<ProjectileComponent>();
+        [SerializeField]
+        private Transform projectileFolder;
 
-        projectileController.SetUp(projectileModel);
+        public void CreateProjectile(Projectile projectileModel)
+        {
+            ProjectileComponent projectileController = Instantiate(projectileModel.ProjectileClassTemplate.ProjectilePrefab, projectileModel.Position, Quaternion.identity, projectileFolder).GetComponent<ProjectileComponent>();
+
+            projectileController.SetUp(projectileModel);
+        }
     }
 }

@@ -1,27 +1,32 @@
 ﻿using System;
 using UnityEngine;
+using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Map;
 
-[Serializable]
-public class StartingUnit
+namespace GrimoireTD.Levels
 {
-    [SerializeField]
-    private SoUnitTemplate unitTemplate;
-    [SerializeField]
-    private Coord startingPosition;
-
-    public IUnitTemplate UnitTemplate
+    [Serializable]
+    public class StartingUnit
     {
-        get
+        [SerializeField]
+        private SoUnitTemplate unitTemplate;
+        [SerializeField]
+        private Coord startingPosition;
+
+        public IUnitTemplate UnitTemplate
         {
-            return unitTemplate;
+            get
+            {
+                return unitTemplate;
+            }
         }
-    }
 
-    public Coord StartingPosition
-    {
-        get
+        public Coord StartingPosition
         {
-            return startingPosition;
+            get
+            {
+                return startingPosition;
+            }
         }
     }
 }

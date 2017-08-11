@@ -1,62 +1,67 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Economy;
+using GrimoireTD.Map;
 
-[CreateAssetMenu(fileName = "NewStructure", menuName = "Structures and Units/Structure")]
-public class SoStructureTemplate : SoDefendingEntityTemplate, IStructureTemplate {
-
-    [SerializeField]
-    private string startingNameInGame;
-
-    [SerializeField]
-    private string startingDescription;
-
-    [SerializeField]
-    private SEconomyTransaction cost;
-
-    [SerializeField]
-    private SoStructureUpgrade[] structureUpgrades;
-
-    public string StartingNameInGame
+namespace GrimoireTD.DefendingEntities.Structures
+{
+    [CreateAssetMenu(fileName = "NewStructure", menuName = "Structures and Units/Structure")]
+    public class SoStructureTemplate : SoDefendingEntityTemplate, IStructureTemplate
     {
-        get
+        [SerializeField]
+        private string startingNameInGame;
+
+        [SerializeField]
+        private string startingDescription;
+
+        [SerializeField]
+        private SEconomyTransaction cost;
+
+        [SerializeField]
+        private SoStructureUpgrade[] structureUpgrades;
+
+        public string StartingNameInGame
         {
-            return startingNameInGame;
+            get
+            {
+                return startingNameInGame;
+            }
         }
-    }
 
-    public string StartingDescription
-    {
-        get
+        public string StartingDescription
         {
-            return startingDescription;
+            get
+            {
+                return startingDescription;
+            }
         }
-    }
 
-    public IEconomyTransaction Cost
-    {
-        get
+        public IEconomyTransaction Cost
         {
-            return cost;
+            get
+            {
+                return cost;
+            }
         }
-    }
 
-    public IEnumerable<IStructureUpgrade> StructureUpgrades
-    {
-        get
+        public IEnumerable<IStructureUpgrade> StructureUpgrades
         {
-            return structureUpgrades;
+            get
+            {
+                return structureUpgrades;
+            }
         }
-    }
 
-    public string UIText()
-    {
-        string uiText = Cost.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, true) + "\n";
+        public string UIText()
+        {
+            string uiText = Cost.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, true) + "\n";
 
-        return uiText;
-    }
+            return uiText;
+        }
 
-    public virtual Structure GenerateStructure(Coord position)
-    {
-        return new Structure(this, position);
+        public virtual Structure GenerateStructure(Coord position)
+        {
+            return new Structure(this, position);
+        }
     }
 }

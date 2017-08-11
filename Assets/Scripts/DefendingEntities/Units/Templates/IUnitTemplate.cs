@@ -1,16 +1,20 @@
 ﻿using System.Collections.Generic;
+using GrimoireTD.Map;
 
-public interface IUnitTemplate: IDefendingEntityTemplate {
+namespace GrimoireTD.DefendingEntities.Units
+{
+    public interface IUnitTemplate : IDefendingEntityTemplate
+    {
+        string NameInGame { get; }
 
-    string NameInGame { get; }
+        string Description { get; }
 
-    string Description { get; }
+        int ExperienceToLevelUp { get; }
 
-    int ExperienceToLevelUp { get; }
+        IEnumerable<IUnitTalent> UnitTalents { get; }
 
-    IEnumerable<IUnitTalent> UnitTalents { get; }
+        IUnitImprovement BaseUnitCharacteristics { get; }
 
-    IUnitImprovement BaseUnitCharacteristics { get; }
-
-    Unit GenerateUnit(Coord position);
+        Unit GenerateUnit(Coord position);
+    }
 }

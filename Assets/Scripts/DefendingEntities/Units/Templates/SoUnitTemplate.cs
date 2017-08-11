@@ -1,68 +1,72 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Map;
 
-[CreateAssetMenu(fileName = "NewUnit", menuName = "Structures and Units/Unit")]
-public class SoUnitTemplate : SoDefendingEntityTemplate, IUnitTemplate {
-
-    [SerializeField]
-    private string nameInGame;
-
-    [SerializeField]
-    private string description;
-
-    [SerializeField]
-    private int experienceToLevelUp = 100;
-
-    [SerializeField]
-    private SoUnitTalent[] unitTalents;
-    
-    public string NameInGame
+namespace GrimoireTD.DefendingEntities.Units
+{
+    [CreateAssetMenu(fileName = "NewUnit", menuName = "Structures and Units/Unit")]
+    public class SoUnitTemplate : SoDefendingEntityTemplate, IUnitTemplate
     {
-        get
-        {
-            return nameInGame;
-        }
-    }
+        [SerializeField]
+        private string nameInGame;
 
-    public string Description
-    {
-        get
-        {
-            return description;
-        }
-    }
+        [SerializeField]
+        private string description;
 
-    public int ExperienceToLevelUp
-    {
-        get
-        {
-            return experienceToLevelUp;
-        }
-    }
+        [SerializeField]
+        private int experienceToLevelUp = 100;
 
-    public IEnumerable<IUnitTalent> UnitTalents
-    {
-        get
-        {
-            return unitTalents;
-        }
-    }
+        [SerializeField]
+        private SoUnitTalent[] unitTalents;
 
-    public IUnitImprovement BaseUnitCharacteristics
-    {
-        get
+        public string NameInGame
         {
-            SoUnitImprovement baseUnitCharacteristics = BaseCharacteristics as SoUnitImprovement;
-            if ( baseUnitCharacteristics != null )
+            get
             {
-                return baseUnitCharacteristics;
+                return nameInGame;
             }
-            throw new System.Exception("SoUnitTemplate BaseCharacteristics is not a SoUnitImprovement");
         }
-    }
 
-    public virtual Unit GenerateUnit(Coord position)
-    {
-        return new Unit(this, position);
+        public string Description
+        {
+            get
+            {
+                return description;
+            }
+        }
+
+        public int ExperienceToLevelUp
+        {
+            get
+            {
+                return experienceToLevelUp;
+            }
+        }
+
+        public IEnumerable<IUnitTalent> UnitTalents
+        {
+            get
+            {
+                return unitTalents;
+            }
+        }
+
+        public IUnitImprovement BaseUnitCharacteristics
+        {
+            get
+            {
+                SoUnitImprovement baseUnitCharacteristics = BaseCharacteristics as SoUnitImprovement;
+                if (baseUnitCharacteristics != null)
+                {
+                    return baseUnitCharacteristics;
+                }
+                throw new System.Exception("SoUnitTemplate BaseCharacteristics is not a SoUnitImprovement");
+            }
+        }
+
+        public virtual Unit GenerateUnit(Coord position)
+        {
+            return new Unit(this, position);
+        }
     }
 }

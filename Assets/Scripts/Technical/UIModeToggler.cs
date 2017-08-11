@@ -1,60 +1,64 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.UI;
 
 //TODO: Make this not crap
-[ExecuteInEditMode]
-public class UIModeToggler : MonoBehaviour
+namespace GrimoireTD.Technical
 {
-    private enum UIMode
+    [ExecuteInEditMode]
+    public class UIModeToggler : MonoBehaviour
     {
-        BUILD,
-        DEFEND,
-        RUN
-    }
-
-    private List<GameObject> enabledInDefendMode = new List<GameObject>();
-    private List<GameObject> enabledInBuildMode = new List<GameObject>();
-
-    [SerializeField]
-    private UIMode uiMode;
-
-    public void SwitchMode()
-    {
-        EnableInMode[] enabledInModeObjects = GameObject.Find("CanvasMainUI").GetComponentsInChildren<EnableInMode>(true);
-
-        foreach( EnableInMode enableInMode in enabledInModeObjects)
+        private enum UIMode
         {
-            if (enableInMode.EnabledInMode == GameMode.BUILD && !enabledInBuildMode.Contains(enableInMode.gameObject))
-            {
-                enabledInBuildMode.Add(enableInMode.gameObject);
-            }
-            else if ( enableInMode.EnabledInMode == GameMode.DEFEND && !enabledInDefendMode.Contains(enableInMode.gameObject))
-            {
-                enabledInDefendMode.Add(enableInMode.gameObject);
-            }
+            BUILD,
+            DEFEND,
+            RUN
         }
 
-        foreach(GameObject enableInBuildMode in enabledInBuildMode )
-        {
-            if ( uiMode == UIMode.RUN || uiMode == UIMode.BUILD )
-            {
-                enableInBuildMode.SetActive(true);
-            }
-            else
-            {
-                enableInBuildMode.SetActive(false);
-            }
-        }
+        private List<GameObject> enabledInDefendMode = new List<GameObject>();
+        private List<GameObject> enabledInBuildMode = new List<GameObject>();
 
-        foreach(GameObject enableInDefendMode in enabledInDefendMode)
+        [SerializeField]
+        private UIMode uiMode;
+
+        public void SwitchMode()
         {
-            if (uiMode == UIMode.RUN || uiMode == UIMode.DEFEND)
+            EnableInMode[] enabledInModeObjects = GameObject.Find("CanvasMainUI").GetComponentsInChildren<EnableInMode>(true);
+
+            foreach (EnableInMode enableInMode in enabledInModeObjects)
             {
-                enableInDefendMode.SetActive(true);
+                if (enableInMode.EnabledInMode == GameMode.BUILD && !enabledInBuildMode.Contains(enableInMode.gameObject))
+                {
+                    enabledInBuildMode.Add(enableInMode.gameObject);
+                }
+                else if (enableInMode.EnabledInMode == GameMode.DEFEND && !enabledInDefendMode.Contains(enableInMode.gameObject))
+                {
+                    enabledInDefendMode.Add(enableInMode.gameObject);
+                }
             }
-            else
+
+            foreach (GameObject enableInBuildMode in enabledInBuildMode)
             {
-                enableInDefendMode.SetActive(false);
+                if (uiMode == UIMode.RUN || uiMode == UIMode.BUILD)
+                {
+                    enableInBuildMode.SetActive(true);
+                }
+                else
+                {
+                    enableInBuildMode.SetActive(false);
+                }
+            }
+
+            foreach (GameObject enableInDefendMode in enabledInDefendMode)
+            {
+                if (uiMode == UIMode.RUN || uiMode == UIMode.DEFEND)
+                {
+                    enableInDefendMode.SetActive(true);
+                }
+                else
+                {
+                    enableInDefendMode.SetActive(false);
+                }
             }
         }
     }

@@ -1,176 +1,179 @@
 ﻿using System;
 using UnityEngine;
+using GrimoireTD.Abilities.BuildMode;
 
-[Serializable]
-public class Coord : object, IBuildModeTargetable
+namespace GrimoireTD.Map
 {
-    [SerializeField]
-    private int x;
-    [SerializeField]
-    private int y;
-
-    public virtual int X
+    [Serializable]
+    public class Coord : object, IBuildModeTargetable
     {
-        get
+        [SerializeField]
+        private int x;
+        [SerializeField]
+        private int y;
+
+        public virtual int X
         {
-            return x;
-        }
-    }
-
-    public virtual int Y
-    {
-        get
-        {
-            return y;
-        }
-    }
-
-    public Coord(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (obj == null)
-        {
-            return false;
-        }
-
-        Coord z = obj as Coord;
-        if ((object)z == null)
-        {
-            return false;
-        }
-
-        return (x == z.x) && (y == z.y);
-    }
-
-    public bool Equals(Coord z)
-    { 
-        if ((object)z == null)
-        {
-            return false;
-        }
-
-        return (x == z.x) && (y == z.y);
-    }
-
-    public override int GetHashCode()
-    {
-        return x ^ y;
-    }
-
-    public Vector3 ToPositionVector()
-    {
-        if (y % 2 == 0)
-        {
-            return new Vector3(x * 2f * MapRenderer.HEX_OFFSET * MapRenderer.tileScale, y * 0.75f * MapRenderer.tileScale, 0f);
-        }
-        else
-        {
-            return new Vector3(x * 2f * MapRenderer.HEX_OFFSET * MapRenderer.tileScale + MapRenderer.HEX_OFFSET, y * 0.75f * MapRenderer.tileScale, 0f);
-        }
-    }
-
-    public Vector3 ToFirePointVector()
-    {
-        return new Vector3(ToPositionVector().x, ToPositionVector().y, -0.5f);
-    }
-
-    public override string ToString()
-    {
-        return "(" + x + ", " + y + ")";
-    }
-
-    public static Coord PositionVectorToCoord(Vector3 positionVector)
-    {
-        int mainYSection = Mathf.FloorToInt((positionVector.y + 0.5f) / 1.5f);
-        float ySubSection = (positionVector.y + 0.5f) % 1.5f;
-
-        int mainXSection;
-        float normalisedY;
-
-        int x = 0;
-        int y = 0;
-
-        if ( 0.25f <= ySubSection && ySubSection < 0.75f )
-        {
-            y = mainYSection * 2;
-            x = Mathf.FloorToInt((positionVector.x + MapRenderer.HEX_OFFSET) / (MapRenderer.HEX_OFFSET * 2));
-        }
-        else if ( 1f <= ySubSection && ySubSection < 1.5f )
-        {
-            y = mainYSection * 2 + 1;
-            x = Mathf.FloorToInt(positionVector.x / (MapRenderer.HEX_OFFSET * 2));
-        }
-        else if ( 0f <= ySubSection && ySubSection < 0.25f )
-        {
-            mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
-            normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
-
-            if (mainXSection % 2 == 0)
+            get
             {
-                if (normalisedY + ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET) > MapRenderer.HEX_OFFSET )
-                {
-                    y = mainYSection * 2;
-                    x = mainXSection / 2;
-                }
-                else
-                {
-                    y = mainYSection * 2 - 1;
-                    x = mainXSection / 2 - 1;
-                }
+                return x;
+            }
+        }
+
+        public virtual int Y
+        {
+            get
+            {
+                return y;
+            }
+        }
+
+        public Coord(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            Coord z = obj as Coord;
+            if ((object)z == null)
+            {
+                return false;
+            }
+
+            return (x == z.x) && (y == z.y);
+        }
+
+        public bool Equals(Coord z)
+        {
+            if ((object)z == null)
+            {
+                return false;
+            }
+
+            return (x == z.x) && (y == z.y);
+        }
+
+        public override int GetHashCode()
+        {
+            return x ^ y;
+        }
+
+        public Vector3 ToPositionVector()
+        {
+            if (y % 2 == 0)
+            {
+                return new Vector3(x * 2f * MapRenderer.HEX_OFFSET * MapRenderer.tileScale, y * 0.75f * MapRenderer.tileScale, 0f);
             }
             else
             {
-                if (normalisedY > ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET) )
-                {
-                    y = mainYSection * 2;
-                    x = mainXSection / 2;
-                }
-                else
-                {
-                    y = mainYSection * 2 - 1;
-                    x = mainXSection / 2;
-                }
+                return new Vector3(x * 2f * MapRenderer.HEX_OFFSET * MapRenderer.tileScale + MapRenderer.HEX_OFFSET, y * 0.75f * MapRenderer.tileScale, 0f);
             }
         }
-        else if ( 0.75f <= ySubSection && ySubSection < 1f)
+
+        public Vector3 ToFirePointVector()
         {
-            mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
-            normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
-
-            if (mainXSection % 2 == 0)
-            {
-                if (normalisedY > ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET))
-                {
-                    y = mainYSection * 2 + 1;
-                    x = mainXSection / 2 - 1;
-                }
-                else
-                {
-                    y = mainYSection * 2;
-                    x = mainXSection / 2;
-                }
-            }
-            else
-            {
-                if (normalisedY + ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET) > MapRenderer.HEX_OFFSET)
-                {
-                    y = mainYSection * 2 + 1;
-                    x = mainXSection / 2;
-                }
-                else
-                {
-                    y = mainYSection * 2;
-                    x = mainXSection / 2;
-                }
-            }
+            return new Vector3(ToPositionVector().x, ToPositionVector().y, -0.5f);
         }
 
-        return new Coord(x, y);
+        public override string ToString()
+        {
+            return "(" + x + ", " + y + ")";
+        }
+
+        public static Coord PositionVectorToCoord(Vector3 positionVector)
+        {
+            int mainYSection = Mathf.FloorToInt((positionVector.y + 0.5f) / 1.5f);
+            float ySubSection = (positionVector.y + 0.5f) % 1.5f;
+
+            int mainXSection;
+            float normalisedY;
+
+            int x = 0;
+            int y = 0;
+
+            if (0.25f <= ySubSection && ySubSection < 0.75f)
+            {
+                y = mainYSection * 2;
+                x = Mathf.FloorToInt((positionVector.x + MapRenderer.HEX_OFFSET) / (MapRenderer.HEX_OFFSET * 2));
+            }
+            else if (1f <= ySubSection && ySubSection < 1.5f)
+            {
+                y = mainYSection * 2 + 1;
+                x = Mathf.FloorToInt(positionVector.x / (MapRenderer.HEX_OFFSET * 2));
+            }
+            else if (0f <= ySubSection && ySubSection < 0.25f)
+            {
+                mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
+                normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
+
+                if (mainXSection % 2 == 0)
+                {
+                    if (normalisedY + ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET) > MapRenderer.HEX_OFFSET)
+                    {
+                        y = mainYSection * 2;
+                        x = mainXSection / 2;
+                    }
+                    else
+                    {
+                        y = mainYSection * 2 - 1;
+                        x = mainXSection / 2 - 1;
+                    }
+                }
+                else
+                {
+                    if (normalisedY > ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET))
+                    {
+                        y = mainYSection * 2;
+                        x = mainXSection / 2;
+                    }
+                    else
+                    {
+                        y = mainYSection * 2 - 1;
+                        x = mainXSection / 2;
+                    }
+                }
+            }
+            else if (0.75f <= ySubSection && ySubSection < 1f)
+            {
+                mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
+                normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
+
+                if (mainXSection % 2 == 0)
+                {
+                    if (normalisedY > ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET))
+                    {
+                        y = mainYSection * 2 + 1;
+                        x = mainXSection / 2 - 1;
+                    }
+                    else
+                    {
+                        y = mainYSection * 2;
+                        x = mainXSection / 2;
+                    }
+                }
+                else
+                {
+                    if (normalisedY + ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET) > MapRenderer.HEX_OFFSET)
+                    {
+                        y = mainYSection * 2 + 1;
+                        x = mainXSection / 2;
+                    }
+                    else
+                    {
+                        y = mainYSection * 2;
+                        x = mainXSection / 2;
+                    }
+                }
+            }
+
+            return new Coord(x, y);
+        }
     }
 }
-

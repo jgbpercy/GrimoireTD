@@ -1,48 +1,51 @@
-﻿public class CResourceTransaction : IResourceTransaction {
-
-    private IResource resource;
-
-    private int amount;
-
-    public IResource Resource
+﻿namespace GrimoireTD.Economy
+{
+    public class CResourceTransaction : IResourceTransaction
     {
-        get
+        private IResource resource;
+
+        private int amount;
+
+        public IResource Resource
         {
-            return resource;
+            get
+            {
+                return resource;
+            }
         }
-    }
 
-    public int Amount
-    {
-        get
+        public int Amount
         {
-            return amount;
+            get
+            {
+                return amount;
+            }
         }
-    }
 
-    public CResourceTransaction(IResource resource, int amount)
-    {
-        this.resource = resource;
-        this.amount = amount;
-    }
+        public CResourceTransaction(IResource resource, int amount)
+        {
+            this.resource = resource;
+            this.amount = amount;
+        }
 
-    public bool CanDoTransaction()
-    {
-        return CanDoTransaction(this);
-    }
+        public bool CanDoTransaction()
+        {
+            return CanDoTransaction(this);
+        }
 
-    public void DoTransaction()
-    {
-        DoTransaction(this);
-    }
+        public void DoTransaction()
+        {
+            DoTransaction(this);
+        }
 
-    public static bool CanDoTransaction(IResourceTransaction transaction)
-    {
-        return transaction.Resource.CanDoTransaction(transaction.Amount);
-    }
+        public static bool CanDoTransaction(IResourceTransaction transaction)
+        {
+            return transaction.Resource.CanDoTransaction(transaction.Amount);
+        }
 
-    public static void DoTransaction(IResourceTransaction transaction)
-    {
-        transaction.Resource.DoTransaction(transaction.Amount);
+        public static void DoTransaction(IResourceTransaction transaction)
+        {
+            transaction.Resource.DoTransaction(transaction.Amount);
+        }
     }
 }

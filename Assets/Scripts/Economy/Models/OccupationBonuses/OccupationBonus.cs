@@ -1,17 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public abstract class OccupationBonus {
-
-    [SerializeField]
-    private SEconomyTransaction resourceGain;
-
-    public IEconomyTransaction ResourceGain
+namespace GrimoireTD.Economy
+{
+    [Serializable]
+    public abstract class OccupationBonus
     {
-        get
+        [SerializeField]
+        private SEconomyTransaction resourceGain;
+
+        public IEconomyTransaction ResourceGain
         {
-            return resourceGain;
+            get
+            {
+                return resourceGain;
+            }
         }
     }
 }

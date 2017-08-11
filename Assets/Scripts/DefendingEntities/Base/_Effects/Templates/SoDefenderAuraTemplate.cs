@@ -1,32 +1,35 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewDefenderAura", menuName = "Structures and Units/Defender Aura")]
-public class SoDefenderAuraTemplate : SoDefenderEffectTemplate, IDefenderAuraTemplate
+namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    [SerializeField]
-    private int baseRange;
-
-    [SerializeField]
-    private bool affectsSelf;
-
-    public int BaseRange
+    [CreateAssetMenu(fileName = "NewDefenderAura", menuName = "Structures and Units/Defender Aura")]
+    public class SoDefenderAuraTemplate : SoDefenderEffectTemplate, IDefenderAuraTemplate
     {
-        get
+        [SerializeField]
+        private int baseRange;
+
+        [SerializeField]
+        private bool affectsSelf;
+
+        public int BaseRange
         {
-            return baseRange;
+            get
+            {
+                return baseRange;
+            }
         }
-    }
 
-    public bool AffectsSelf
-    {
-        get
+        public bool AffectsSelf
         {
-            return affectsSelf;
+            get
+            {
+                return affectsSelf;
+            }
         }
-    }
 
-    public DefenderAura GenerateDefenderAura(DefendingEntity sourceDefendingEntity)
-    {
-        return new DefenderAura(this, sourceDefendingEntity);
+        public DefenderAura GenerateDefenderAura(DefendingEntity sourceDefendingEntity)
+        {
+            return new DefenderAura(this, sourceDefendingEntity);
+        }
     }
 }

@@ -1,108 +1,107 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
-
-public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>, IReadOnlyList<T>
+﻿namespace System.Collections.Generic
 {
-    private List<T> list;
-
-    private Action<T> OnAdd;
-    private Action<T> OnRemove;
-
-    public IEnumerable<T> AsIEnumarable
+    public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>, IReadOnlyList<T>
     {
-        get
+        private List<T> list;
+
+        private Action<T> OnAdd;
+        private Action<T> OnRemove;
+
+        public IEnumerable<T> AsIEnumarable
         {
-            return list;
-        }
-    }
-
-    public int Count
-    {
-        get
-        {
-            return list.Count;
-        }
-    }
-
-    public T this[int index]
-    {
-        get
-        {
-            return list[index];
-        }
-    }
-
-    public CallbackList()
-    {
-        list = new List<T>();
-    }
-
-    public void Add(T item)
-    {
-        list.Add(item);
-
-        OnAdd?.Invoke(item);
-    }
-
-    public bool Contains(T item)
-    {
-        return list.Contains(item);
-    }
-
-    public bool TryRemove(T item)
-    {
-        if ( !list.Contains(item) )
-        {
-            return false;
+            get
+            {
+                return list;
+            }
         }
 
-        list.Remove(item);
-
-        OnRemove?.Invoke(item);
-
-        return true;
-    }
-
-    public void Clear()
-    {
-        while (list.Count > 0)
+        public int Count
         {
-            T item = list[0];
-
-            list.RemoveAt(0);
-
-            OnRemove(item);
+            get
+            {
+                return list.Count;
+            }
         }
-    }
 
-    public void RegisterForAdd(Action<T> callback)
-    {
-        OnAdd += callback;
-    }
+        public T this[int index]
+        {
+            get
+            {
+                return list[index];
+            }
+        }
 
-    public void DeregisterForAdd(Action<T> callback)
-    {
-        OnAdd -= callback;
-    }
+        public CallbackList()
+        {
+            list = new List<T>();
+        }
 
-    public void RegisterForRemove(Action<T> callback)
-    {
-        OnRemove += callback;
-    }
+        public void Add(T item)
+        {
+            list.Add(item);
 
-    public void DeregisterForRemove(Action<T> callback)
-    {
-        OnRemove -= callback;
-    }
+            OnAdd?.Invoke(item);
+        }
 
-    public IEnumerator<T> GetEnumerator()
-    {
-        return list.GetEnumerator();
-    }
+        public bool Contains(T item)
+        {
+            return list.Contains(item);
+        }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return this.GetEnumerator();
+        public bool TryRemove(T item)
+        {
+            if (!list.Contains(item))
+            {
+                return false;
+            }
+
+            list.Remove(item);
+
+            OnRemove?.Invoke(item);
+
+            return true;
+        }
+
+        public void Clear()
+        {
+            while (list.Count > 0)
+            {
+                T item = list[0];
+
+                list.RemoveAt(0);
+
+                OnRemove(item);
+            }
+        }
+
+        public void RegisterForAdd(Action<T> callback)
+        {
+            OnAdd += callback;
+        }
+
+        public void DeregisterForAdd(Action<T> callback)
+        {
+            OnAdd -= callback;
+        }
+
+        public void RegisterForRemove(Action<T> callback)
+        {
+            OnRemove += callback;
+        }
+
+        public void DeregisterForRemove(Action<T> callback)
+        {
+            OnRemove -= callback;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return list.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

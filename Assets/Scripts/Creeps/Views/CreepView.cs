@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
+using GrimoireTD.Technical;
 
-public class CreepView : SingletonMonobehaviour<CreepView> {
-
-    [SerializeField]
-    private Transform creepFolder;
-
-    public void CreateCreep(Creep creepModel)
+namespace GrimoireTD.Creeps
+{
+    public class CreepView : SingletonMonobehaviour<CreepView>
     {
-        CreepComponent creepComponent = Instantiate(creepModel.CreepTemplate.CreepPrefab, creepModel.Position, Quaternion.identity, creepFolder).GetComponent<CreepComponent>();
+        [SerializeField]
+        private Transform creepFolder;
 
-        creepComponent.SetUp(creepModel);
+        public void CreateCreep(Creep creepModel)
+        {
+            CreepComponent creepComponent = Instantiate(creepModel.CreepTemplate.CreepPrefab, creepModel.Position, Quaternion.identity, creepFolder).GetComponent<CreepComponent>();
+
+            creepComponent.SetUp(creepModel);
+        }
     }
 }

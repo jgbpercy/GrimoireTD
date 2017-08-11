@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 
-public interface IStructureUpgrade  {
+namespace GrimoireTD.DefendingEntities.Structures
+{
+    public interface IStructureUpgrade
+    {
+        IEnumerable<StructureEnhancement> OptionalEnhancements { get; }
 
-    IEnumerable<StructureEnhancement> OptionalEnhancements { get; }
+        IDefendingEntityImprovement MainUpgradeBonus { get; }
 
-    IDefendingEntityImprovement MainUpgradeBonus { get; }
+        string NewStructureName { get; }
 
-    string NewStructureName { get; }
+        string NewStructureDescription { get; }
 
-    string NewStructureDescription { get; }
-
-    string BonusDescription { get; }
+        string BonusDescription { get; }
+    }
 }

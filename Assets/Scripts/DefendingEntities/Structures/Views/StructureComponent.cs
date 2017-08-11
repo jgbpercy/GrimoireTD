@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
 
-public class StructureComponent : MonoBehaviour {
-
-    private Structure structureModel;
-
-    public Structure StructureModel
+namespace GrimoireTD.DefendingEntities.Structures
+{
+    public class StructureComponent : MonoBehaviour
     {
-        get
+        private Structure structureModel;
+
+        public Structure StructureModel
         {
-            return structureModel;
+            get
+            {
+                return structureModel;
+            }
         }
-    }
 
-    public void SetUp(Structure structureModel)
-    {
-        this.structureModel = structureModel;
+        public void SetUp(Structure structureModel)
+        {
+            this.structureModel = structureModel;
+        }
     }
 }

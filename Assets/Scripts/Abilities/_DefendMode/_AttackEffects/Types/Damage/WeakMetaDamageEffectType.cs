@@ -1,25 +1,28 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(
-    fileName = "NewWeakMetaDamageEffectType", 
-    menuName = "Attack Effects/Damage Types/Weak Meta Damage"
-)]
-public class WeakMetaDamageEffectType : MetaDamageEffectType
+namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    [SerializeField]
-    private BasicMetaDamageEffectType basicMetaDamageType;
-
-    public BasicMetaDamageEffectType BasicMetaDamageType
+    [CreateAssetMenu(
+        fileName = "NewWeakMetaDamageEffectType",
+        menuName = "Attack Effects/Damage Types/Weak Meta Damage"
+    )]
+    public class WeakMetaDamageEffectType : MetaDamageEffectType
     {
-        get
+        [SerializeField]
+        private BasicMetaDamageEffectType basicMetaDamageType;
+
+        public BasicMetaDamageEffectType BasicMetaDamageType
         {
-            return basicMetaDamageType;
+            get
+            {
+                return basicMetaDamageType;
+            }
         }
-    }
 
-    public override string EffectName()
-    {
-        return "Weak " + base.EffectName();
+        public override string EffectName()
+        {
+            return "Weak " + base.EffectName();
+        }
     }
 }

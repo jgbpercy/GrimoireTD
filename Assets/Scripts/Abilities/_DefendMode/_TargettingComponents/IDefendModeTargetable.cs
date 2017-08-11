@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using System;
 
-public interface IDefendModeTargetable {
+namespace GrimoireTD.Abilities.DefendMode
+{
+    public interface IDefendModeTargetable
+    {
+        string GetId();
 
-    string GetId();
+        string GetName();
 
-    string GetName();
+        Vector3 TargetPosition();
 
-    Vector3 TargetPosition();
-
-    void RegisterForOnDiedCallback(Action callback);
-    void DeregisterForOnDiedCallback(Action callback);
+        void RegisterForOnDiedCallback(Action callback);
+        void DeregisterForOnDiedCallback(Action callback);
+    }
 }

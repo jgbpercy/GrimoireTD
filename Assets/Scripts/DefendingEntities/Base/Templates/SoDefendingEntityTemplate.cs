@@ -1,26 +1,29 @@
 ﻿using UnityEngine;
 
-public class SoDefendingEntityTemplate : ScriptableObject, IDefendingEntityTemplate
+namespace GrimoireTD.DefendingEntities
 {
-    [SerializeField]
-    private SoDefendingEntityImprovement baseCharacteristics;
-
-    [SerializeField]
-    protected GameObject prefab;
-
-    public IDefendingEntityImprovement BaseCharacteristics
+    public class SoDefendingEntityTemplate : ScriptableObject, IDefendingEntityTemplate
     {
-        get
+        [SerializeField]
+        private SoDefendingEntityImprovement baseCharacteristics;
+
+        [SerializeField]
+        protected GameObject prefab;
+
+        public IDefendingEntityImprovement BaseCharacteristics
         {
-            return baseCharacteristics;
+            get
+            {
+                return baseCharacteristics;
+            }
         }
-    }
 
-    public GameObject Prefab
-    {
-        get
+        public GameObject Prefab
         {
-            return prefab;
+            get
+            {
+                return prefab;
+            }
         }
     }
 }

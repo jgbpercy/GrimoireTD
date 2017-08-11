@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
+using GrimoireTD.Economy;
 
-public interface ICreepTemplate {
+namespace GrimoireTD.Creeps
+{
+    public interface ICreepTemplate
+    {
+        string NameInGame { get; }
 
-    string NameInGame { get; }
+        float BaseSpeed { get; }
 
-    float BaseSpeed { get; }
+        int MaxHitpoints { get; }
 
-    int MaxHitpoints { get; }
+        GameObject CreepPrefab { get; }
 
-    GameObject CreepPrefab { get; }
+        IEconomyTransaction Bounty { get; }
 
-    IEconomyTransaction Bounty { get; }
+        IResistances Resistances { get; }
 
-    IResistances Resistances { get; }
-
-    Creep GenerateCreep(Vector3 spawnPosition);
+        Creep GenerateCreep(Vector3 spawnPosition);
+    }
 }

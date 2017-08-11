@@ -1,30 +1,33 @@
-﻿public class TimedDefenderEffect : DefenderEffect
+﻿namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    private ITimedDefenderEffectTemplate timedDefenderEffectTemplate;
-
-    public ITimedDefenderEffectTemplate TimedDefenderEffectTemplate
+    public class TimedDefenderEffect : DefenderEffect
     {
-        get
+        private ITimedDefenderEffectTemplate timedDefenderEffectTemplate;
+
+        public ITimedDefenderEffectTemplate TimedDefenderEffectTemplate
         {
-            return timedDefenderEffectTemplate;
+            get
+            {
+                return timedDefenderEffectTemplate;
+            }
         }
-    }
 
-    public float Duration
-    {
-        get
+        public float Duration
         {
-            return timedDefenderEffectTemplate.BaseDuration;
+            get
+            {
+                return timedDefenderEffectTemplate.BaseDuration;
+            }
         }
-    }
 
-    public TimedDefenderEffect(ITimedDefenderEffectTemplate timedDefenderEffectTemplate) : base(timedDefenderEffectTemplate)
-    {
-        this.timedDefenderEffectTemplate = timedDefenderEffectTemplate;
-    }
+        public TimedDefenderEffect(ITimedDefenderEffectTemplate timedDefenderEffectTemplate) : base(timedDefenderEffectTemplate)
+        {
+            this.timedDefenderEffectTemplate = timedDefenderEffectTemplate;
+        }
 
-    public override string UIText()
-    {
-        return timedDefenderEffectTemplate.NameInGame;
+        public override string UIText()
+        {
+            return timedDefenderEffectTemplate.NameInGame;
+        }
     }
 }

@@ -1,26 +1,30 @@
 ﻿using UnityEngine;
+using GrimoireTD.Map;
 
-public class UnitComponent : MonoBehaviour {
-
-    private Unit unitModel;
-
-    public Unit UnitModel
+namespace GrimoireTD.DefendingEntities.Units
+{
+    public class UnitComponent : MonoBehaviour
     {
-        get
+        private Unit unitModel;
+
+        public Unit UnitModel
         {
-            return unitModel;
+            get
+            {
+                return unitModel;
+            }
         }
-    }
 
-    public void SetUp(Unit unitModel)
-    {
-        this.unitModel = unitModel;
+        public void SetUp(Unit unitModel)
+        {
+            this.unitModel = unitModel;
 
-        unitModel.RegisterForOnMovedCallback(OnMoved);
-    }
+            unitModel.RegisterForOnMovedCallback(OnMoved);
+        }
 
-    private void OnMoved(Coord coord)
-    {
-        transform.position = coord.ToPositionVector();
+        private void OnMoved(Coord coord)
+        {
+            transform.position = coord.ToPositionVector();
+        }
     }
 }

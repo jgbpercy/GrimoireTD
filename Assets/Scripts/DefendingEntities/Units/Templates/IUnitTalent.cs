@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 
-public interface IUnitTalent {
+namespace GrimoireTD.DefendingEntities.Units
+{
+    public interface IUnitTalent
+    {
+        IReadOnlyList<IUnitImprovement> UnitImprovements { get; }
 
-    IReadOnlyList<IUnitImprovement> UnitImprovements { get; }
-
-    string DescriptionText { get; }
+        string DescriptionText { get; }
+    }
 }

@@ -1,25 +1,31 @@
 ﻿using UnityEngine;
+using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Technical;
 
-//TODO: Change these dumb things to hook into some central management callback so the model isn't talking to them
-public class DefendingEntityView : SingletonMonobehaviour<DefendingEntityView>
+namespace GrimoireTD.DefendingEntities
 {
-    [SerializeField]
-    private Transform structureFolder;
-
-    [SerializeField]
-    private Transform unitFolder;
-
-    public void CreateStructure(Structure structureModel, Vector3 position)
+    //TODO: Change these dumb things to hook into some central management callback so the model isn't talking to them
+    public class DefendingEntityView : SingletonMonobehaviour<DefendingEntityView>
     {
-        StructureComponent structureComponent = Instantiate(structureModel.StructureTemplate.Prefab, position, Quaternion.identity, structureFolder).GetComponent<StructureComponent>();
+        [SerializeField]
+        private Transform structureFolder;
 
-        structureComponent.SetUp(structureModel);
-    }
-    
-    public void CreateUnit(Unit unitModel, Vector3 position)
-    {
-        UnitComponent unitComponent = Instantiate(unitModel.UnitTemplate.Prefab, position, Quaternion.identity, unitFolder).GetComponent<UnitComponent>();
+        [SerializeField]
+        private Transform unitFolder;
 
-        unitComponent.SetUp(unitModel);
+        public void CreateStructure(Structure structureModel, Vector3 position)
+        {
+            StructureComponent structureComponent = Instantiate(structureModel.StructureTemplate.Prefab, position, Quaternion.identity, structureFolder).GetComponent<StructureComponent>();
+
+            structureComponent.SetUp(structureModel);
+        }
+
+        public void CreateUnit(Unit unitModel, Vector3 position)
+        {
+            UnitComponent unitComponent = Instantiate(unitModel.UnitTemplate.Prefab, position, Quaternion.identity, unitFolder).GetComponent<UnitComponent>();
+
+            unitComponent.SetUp(unitModel);
+        }
     }
 }

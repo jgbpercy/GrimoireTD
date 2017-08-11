@@ -1,30 +1,33 @@
-﻿public class CreepAura : DefenderEffect
+﻿namespace GrimoireTD.DefendingEntities.DefenderEffects
 {
-    private ICreepAuraTemplate creepAuraTemplate;
-
-    public ICreepAuraTemplate CreepAuraTemplate
+    public class CreepAura : DefenderEffect
     {
-        get
+        private ICreepAuraTemplate creepAuraTemplate;
+
+        public ICreepAuraTemplate CreepAuraTemplate
         {
-            return creepAuraTemplate;
+            get
+            {
+                return creepAuraTemplate;
+            }
         }
-    }
 
-    public float Range
-    {
-        get
+        public float Range
         {
-            return creepAuraTemplate.BaseRange;
+            get
+            {
+                return creepAuraTemplate.BaseRange;
+            }
         }
-    }
 
-    public CreepAura(ICreepAuraTemplate creepAuraTemplate) : base(creepAuraTemplate)
-    {
-        this.creepAuraTemplate = creepAuraTemplate;
-    }
+        public CreepAura(ICreepAuraTemplate creepAuraTemplate) : base(creepAuraTemplate)
+        {
+            this.creepAuraTemplate = creepAuraTemplate;
+        }
 
-    public override string UIText()
-    {
-        return creepAuraTemplate.NameInGame;
+        public override string UIText()
+        {
+            return creepAuraTemplate.NameInGame;
+        }
     }
 }

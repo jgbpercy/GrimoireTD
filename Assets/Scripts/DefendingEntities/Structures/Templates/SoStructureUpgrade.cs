@@ -1,61 +1,64 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewStuctureUpgrade", menuName = "Structures and Units/Structure Upgrade")]
-public class SoStructureUpgrade : ScriptableObject, IStructureUpgrade {
-
-    [SerializeField]
-    private StructureEnhancement[] optionalEnhancements;
-
-    [SerializeField]
-    private SoDefendingEntityImprovement mainUpgradeBonus;
-
-    [SerializeField]
-    private string newStructureName;
-
-    [SerializeField]
-    private string newStructureDescription;
-
-    [SerializeField]
-    private string bonusDescription;
-
-    public IEnumerable<StructureEnhancement> OptionalEnhancements
+namespace GrimoireTD.DefendingEntities.Structures
+{
+    [CreateAssetMenu(fileName = "NewStuctureUpgrade", menuName = "Structures and Units/Structure Upgrade")]
+    public class SoStructureUpgrade : ScriptableObject, IStructureUpgrade
     {
-        get
+        [SerializeField]
+        private StructureEnhancement[] optionalEnhancements;
+
+        [SerializeField]
+        private SoDefendingEntityImprovement mainUpgradeBonus;
+
+        [SerializeField]
+        private string newStructureName;
+
+        [SerializeField]
+        private string newStructureDescription;
+
+        [SerializeField]
+        private string bonusDescription;
+
+        public IEnumerable<StructureEnhancement> OptionalEnhancements
         {
-            return optionalEnhancements;
+            get
+            {
+                return optionalEnhancements;
+            }
         }
-    }
 
-    public IDefendingEntityImprovement MainUpgradeBonus
-    {
-        get
+        public IDefendingEntityImprovement MainUpgradeBonus
         {
-            return mainUpgradeBonus;
+            get
+            {
+                return mainUpgradeBonus;
+            }
         }
-    }
 
-    public string NewStructureName
-    {
-        get
+        public string NewStructureName
         {
-            return newStructureName;
+            get
+            {
+                return newStructureName;
+            }
         }
-    }
 
-    public string NewStructureDescription
-    {
-        get
+        public string NewStructureDescription
         {
-            return newStructureDescription;
+            get
+            {
+                return newStructureDescription;
+            }
         }
-    }
 
-    public string BonusDescription
-    {
-        get
+        public string BonusDescription
         {
-            return bonusDescription;
+            get
+            {
+                return bonusDescription;
+            }
         }
     }
 }
