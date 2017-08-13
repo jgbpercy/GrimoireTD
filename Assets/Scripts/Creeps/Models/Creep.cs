@@ -101,9 +101,6 @@ namespace GrimoireTD.Creeps
 
         private int id;
 
-        private const float physicalResistFromArmor = 0.05f;
-        private const float elementalResistFromArmor = 0.03f;
-
         private Vector3 currentDestinationVector;
         private int currentDestinationPathNode;
 

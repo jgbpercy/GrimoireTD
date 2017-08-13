@@ -182,14 +182,7 @@ namespace GrimoireTD.DefendingEntities
 
             defendingEntityTemplate = template;
 
-            attributes = new Attributes<DefendingEntityAttributeName>(
-                new Dictionary<DefendingEntityAttributeName, GameAttribute>
-                {
-                    { DefendingEntityAttributeName.rangeBonus, new AdditiveAttribute("Range Bonus") },
-                    { DefendingEntityAttributeName.damageBonus, new AdditiveAttribute("Damage Bonus") },
-                    { DefendingEntityAttributeName.cooldownReduction, new DiminishingAttribute("Cooldown Reduction") }
-                }
-            );
+            attributes = new Attributes<DefendingEntityAttributeName>(DefendingEntityAttributes.NewAttributesDictionary());
 
             abilities = new AbilityList(this);
 

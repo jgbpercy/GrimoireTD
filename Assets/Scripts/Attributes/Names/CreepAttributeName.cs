@@ -2,6 +2,8 @@
 {
     public enum CreepAttributeName
     {
-        Armor
+        armor,
+        rawSpeed,
+        speedMultiplier
     }
 }
