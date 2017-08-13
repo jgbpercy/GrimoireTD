@@ -19,6 +19,7 @@ namespace GrimoireTD.DefendingEntities.Units
 
         public void SetUp(Unit selectedUnit, IUnitTalent unitTalent)
         {
+            //TODO: can I remove all of these?
             if (intialised)
             {
                 return;

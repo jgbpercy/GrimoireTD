@@ -18,7 +18,7 @@ namespace GrimoireTD.DefendingEntities
         protected int id;
 
         //Attributes
-        private Attributes<DefendingEntityAttributeName> attributes;
+        protected Attributes<DefendingEntityAttributeName> attributes;
 
         //Economy
         private CallbackList<HexOccupationBonus> flatHexOccupationBonuses;
@@ -142,7 +142,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        public Attributes<DefendingEntityAttributeName> Attributes
+        public IReadOnlyAttributes<DefendingEntityAttributeName> Attributes
         {
             get
             {

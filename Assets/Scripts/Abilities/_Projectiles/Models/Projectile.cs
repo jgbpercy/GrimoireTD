@@ -64,7 +64,10 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
 
-            CDebug.Log(CDebug.combatLog, "Projectile " + Id + " was created, target: " + target.GetId() + " (" + target.GetName() + ")");
+            CDebug.Log(CDebug.combatLog, 
+                "Projectile " + Id + 
+                " was created, target: " + target.Id + 
+                " (" + target.NameInGame + ")");
         }
 
         public virtual void ModelObjectFrameUpdate()
@@ -97,7 +100,10 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         public void HitCreep(Creep creep, float destructionDelay)
         {
-            CDebug.Log(CDebug.combatLog, "Projectile " + Id + " hit " + creep.Id + " (" + creep.GetName() + ")");
+            CDebug.Log(CDebug.combatLog, 
+                "Projectile " + Id + 
+                " hit " + creep.Id + 
+                " (" + creep.NameInGame + ")");
 
             //TODO: apply modifiers from defending entity at the point of projectile creation, rather than at the point of effect application?
             creep.ApplyAttackEffects(projectileTemplate.AttackEffects, sourceDefendingEntity);

@@ -116,9 +116,6 @@ namespace GrimoireTD.Creeps
         }
 
         [SerializeField]
-        private int armor;
-
-        [SerializeField]
         private MetaDamageResistance[] metaDamageResistances;
 
         [SerializeField]
@@ -130,46 +127,36 @@ namespace GrimoireTD.Creeps
         [SerializeField]
         private SpecificDamageBlock[] specificDamageBlocks;
 
-        public int Armor
+        public float GetResistance(DamageEffectType damageEffectType, float currentArmor)
         {
-            get
-            {
-                return armor;
-            }
-        }
-
-        public float GetResistance(DamageEffectType damageEffectType, int currentMinusArmor)
-        {
-            int actualArmor = armor - currentMinusArmor;
-
             SpecificDamageEffectType specificDamageEffectType = damageEffectType as SpecificDamageEffectType;
             if (specificDamageEffectType != null)
             {
-                return GetSpecificResistance(specificDamageEffectType, actualArmor);
+                return GetSpecificResistance(specificDamageEffectType, currentArmor);
             }
 
             BasicMetaDamageEffectType basicDamageEffectType = damageEffectType as BasicMetaDamageEffectType;
             if (basicDamageEffectType != null)
             {
-                return GetBasicResistance(basicDamageEffectType, actualArmor);
+                return GetBasicResistance(basicDamageEffectType, currentArmor);
             }
 
             WeakMetaDamageEffectType weakDamageEffectType = damageEffectType as WeakMetaDamageEffectType;
             if (weakDamageEffectType != null)
             {
-                return GetWeakResistance(weakDamageEffectType, actualArmor);
+                return GetWeakResistance(weakDamageEffectType, currentArmor);
             }
 
             StrongMetaDamageEffectType strongDamageEffectType = damageEffectType as StrongMetaDamageEffectType;
             if (strongDamageEffectType != null)
             {
-                return GetStrongResistance(strongDamageEffectType, actualArmor);
+                return GetStrongResistance(strongDamageEffectType, currentArmor);
             }
 
             throw new Exception("Unhandled damageEffectType");
         }
 
-        private float GetSpecificResistance(SpecificDamageEffectType specificDamageEffectType, int actualArmor)
+        private float GetSpecificResistance(SpecificDamageEffectType specificDamageEffectType, float actualArmor)
         {
             float resistance = 0;
 
@@ -197,21 +184,21 @@ namespace GrimoireTD.Creeps
             return resistance;
         }
 
-        private float GetBasicResistance(BasicMetaDamageEffectType basicDamageEffectType, int actualArmor)
+        private float GetBasicResistance(BasicMetaDamageEffectType basicDamageEffectType, float actualArmor)
         {
             return basicDamageEffectType.SpecificDamageTypes
                 .Select(x => GetSpecificResistance(x, actualArmor))
                 .Average();
         }
 
-        private float GetWeakResistance(WeakMetaDamageEffectType weakDamageEffectType, int actualArmor)
+        private float GetWeakResistance(WeakMetaDamageEffectType weakDamageEffectType, float actualArmor)
         {
             return weakDamageEffectType.SpecificDamageTypes
                 .Select(x => GetSpecificResistance(x, actualArmor))
                 .Max();
         }
 
-        private float GetStrongResistance(StrongMetaDamageEffectType strongDamageEffectType, int actualArmor)
+        private float GetStrongResistance(StrongMetaDamageEffectType strongDamageEffectType, float actualArmor)
         {
             return strongDamageEffectType.SpecificDamageTypes
                 .Select(x => GetSpecificResistance(x, actualArmor))

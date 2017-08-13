@@ -21,14 +21,9 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         private List<WeakMetaDamageEffectType> weakMetaDamageTypes = new List<WeakMetaDamageEffectType>();
         private List<StrongMetaDamageEffectType> strongMetaDamageTypes = new List<StrongMetaDamageEffectType>();
 
-        private List<InstantEffectType> instantEffectTypes = new List<InstantEffectType>();
-
-        private List<ArmorCorrosionEffectType> armorCorrosionTypes = new List<ArmorCorrosionEffectType>();
-
-        private List<PersistentEffectType> persistentEffectTypes = new List<PersistentEffectType>();
-
-        private List<ArmorReductionEffectType> armorReductionTypes = new List<ArmorReductionEffectType>();
-        private List<SlowEffectType> slowTypes = new List<SlowEffectType>();
+        private List<ModifierEffectType> modifierEffectTypes = new List<ModifierEffectType>();
+        private List<AttributeModifierEffectType> attributeEffectTypes = new List<AttributeModifierEffectType>();
+        private List<ResistanceModifierEffectType> resistanceEffectTypes = new List<ResistanceModifierEffectType>();
 
         public IReadOnlyList<SpecificDamageEffectType> SpecificDamageTypes
         {
@@ -66,42 +61,27 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
-        public IReadOnlyList<InstantEffectType> InstantEffectTypes
+        public IReadOnlyList<ModifierEffectType> ModifierEffectTypes
         {
             get
             {
-                return instantEffectTypes;
+                return modifierEffectTypes;
             }
         }
 
-        public IReadOnlyList<ArmorCorrosionEffectType> ArmorCorrosionTypes
+        public IReadOnlyList<AttributeModifierEffectType> AttributeEffectTypes
         {
             get
             {
-                return armorCorrosionTypes;
+                return attributeEffectTypes;
             }
         }
 
-        public IReadOnlyList<PersistentEffectType> PersistentEffectTypes
+        public IReadOnlyList<ResistanceModifierEffectType> ResistanceEffectTypes
         {
             get
             {
-                return persistentEffectTypes;
-            }
-        }
-
-        public IReadOnlyList<ArmorReductionEffectType> ArmorReductionTypes
-        {
-            get
-            {
-                return armorReductionTypes;
-            }
-        }
-        public IReadOnlyList<SlowEffectType> SlowTypes
-        {
-            get
-            {
-                return slowTypes;
+                return resistanceEffectTypes;
             }
         }
 
@@ -116,17 +96,10 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
                     continue;
                 }
 
-                InstantEffectType instantEffectType = attackEffectType as InstantEffectType;
-                if (instantEffectType != null)
+                ModifierEffectType modifierEffectType = attackEffectType as ModifierEffectType;
+                if (modifierEffectType != null)
                 {
-                    AddInstantEffectType(instantEffectType);
-                    continue;
-                }
-
-                PersistentEffectType persistentEffectType = attackEffectType as PersistentEffectType;
-                if (persistentEffectType != null)
-                {
-                    AddPersistentEffectType(persistentEffectType);
+                    AddModifierEffect(modifierEffectType);
                     continue;
                 }
             }
@@ -195,39 +168,25 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             throw new Exception("Unhandled damageEffectType");
         }
 
-        private void AddInstantEffectType(InstantEffectType instantEffectType)
+        private void AddModifierEffect(ModifierEffectType modifierEffectType)
         {
-            instantEffectTypes.Add(instantEffectType);
+            modifierEffectTypes.Add(modifierEffectType);
 
-            ArmorCorrosionEffectType armorCorrosionEffectType = instantEffectType as ArmorCorrosionEffectType;
-            if (armorCorrosionEffectType != null)
+            AttributeModifierEffectType attributeModifierEffectType = modifierEffectType as AttributeModifierEffectType;
+            if (attributeModifierEffectType != null)
             {
-                armorCorrosionTypes.Add(armorCorrosionEffectType);
+                attributeEffectTypes.Add(attributeModifierEffectType);
+                return;
+            }
+
+            ResistanceModifierEffectType resistanceModifierEffectType = modifierEffectType as ResistanceModifierEffectType;
+            if (resistanceModifierEffectType != null)
+            {
+                resistanceEffectTypes.Add(resistanceModifierEffectType);
                 return;
             }
 
             throw new Exception("Unhandled instantEffectType");
-        }
-
-        private void AddPersistentEffectType(PersistentEffectType persistentEffectType)
-        {
-            persistentEffectTypes.Add(persistentEffectType);
-
-            SlowEffectType slowEffectType = persistentEffectType as SlowEffectType;
-            if (slowEffectType != null)
-            {
-                slowTypes.Add(slowEffectType);
-                return;
-            }
-
-            ArmorReductionEffectType armorReductionEffectType = persistentEffectType as ArmorReductionEffectType;
-            if (armorReductionEffectType != null)
-            {
-                armorReductionTypes.Add(armorReductionEffectType);
-                return;
-            }
-
-            throw new Exception("Unhandled persistentEffectType");
         }
 
         public IReadOnlyList<SpecificDamageEffectType> GetSpecificDamageTypes(MetaDamageEffectType metaDamageEffectType)

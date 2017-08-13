@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GrimoireTD.Attributes
 {
-    public class Attributes<T> where T : struct, IConvertible
+    public class Attributes<T> : IReadOnlyAttributes<T> where T : struct, IConvertible
     {
         private Dictionary<T, GameAttribute> attributesDict;
 

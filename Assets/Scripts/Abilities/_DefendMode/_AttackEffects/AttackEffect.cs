@@ -12,7 +12,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         private AttackEffectType attackEffectType;
 
         [SerializeField]
-        private int baseMagnitude;
+        private float baseMagnitude;
 
         [SerializeField]
         private float baseDuration;
@@ -33,7 +33,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
-        public int BaseMagnitude
+        public float BaseMagnitude
         {
             get
             {

@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using GrimoireTD.Economy;
+using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Creeps
 {
@@ -7,7 +9,7 @@ namespace GrimoireTD.Creeps
     {
         string NameInGame { get; }
 
-        float BaseSpeed { get; }
+        IEnumerable<INamedAttributeModifier<CreepAttributeName>> BaseAttributes { get; }
 
         int MaxHitpoints { get; }
 

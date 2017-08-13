@@ -83,7 +83,7 @@ namespace GrimoireTD.ChannelDebug
             buildModeAbilities = new DebugChannel("Build Mode Abilities", false);
             channelList.Add(buildModeAbilities);
 
-            combatLog = new DebugChannel("Combat Log", true);
+            combatLog = new DebugChannel("Combat Log", false);
             channelList.Add(combatLog);
 
             experienceAndFatigue = new DebugChannel("XP and Fatigue", false);

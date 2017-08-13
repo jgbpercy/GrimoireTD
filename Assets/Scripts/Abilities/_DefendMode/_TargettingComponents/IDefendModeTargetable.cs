@@ -5,9 +5,9 @@ namespace GrimoireTD.Abilities.DefendMode
 {
     public interface IDefendModeTargetable
     {
-        string GetId();
+        string Id { get; }
 
-        string GetName();
+        string NameInGame { get; }
 
         Vector3 TargetPosition();
 

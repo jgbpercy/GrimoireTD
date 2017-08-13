@@ -4,9 +4,7 @@ namespace GrimoireTD.Creeps
 {
     public interface IResistances
     {
-        int Armor { get; }
-
-        float GetResistance(DamageEffectType damageEffectType, int currentMinusArmor);
+        float GetResistance(DamageEffectType damageEffectType, float currentArmor);
 
         int GetBlock(DamageEffectType damageEffectType);
     }

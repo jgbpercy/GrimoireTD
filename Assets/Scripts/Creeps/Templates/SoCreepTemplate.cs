@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using GrimoireTD.Economy;
+using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Creeps
 {
@@ -10,7 +12,7 @@ namespace GrimoireTD.Creeps
         private string nameInGame;
 
         [SerializeField]
-        private float baseSpeed;
+        private SNamedCreepAttributeModifier[] baseAttributes;
 
         [SerializeField]
         private int maxHitpoints;
@@ -32,11 +34,11 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        public float BaseSpeed
+        public IEnumerable<INamedAttributeModifier<CreepAttributeName>> BaseAttributes
         {
             get
             {
-                return baseSpeed;
+                return baseAttributes;
             }
         }
 

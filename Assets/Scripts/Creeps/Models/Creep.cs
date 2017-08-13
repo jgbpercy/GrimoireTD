@@ -1,126 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Assertions;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
 using GrimoireTD.Map;
 using GrimoireTD.ChannelDebug;
+using GrimoireTD.Attributes;
+using GrimoireTD.TemporaryEffects;
 
 namespace GrimoireTD.Creeps
 {
     public class Creep : IDefendModeTargetable, IFrameUpdatee
     {
-        public class PersistentEffect
-        {
-            private int magnitude;
-
-            private float duration;
-            private float elapsed;
-
-            private AttackEffectType attackEffectType;
-
-            private string effectName;
-
-            public int Magnitude
-            {
-                get
-                {
-                    return magnitude;
-                }
-            }
-
-            public float Duration
-            {
-                get
-                {
-                    return duration;
-                }
-            }
-
-            public float Elapsed
-            {
-                get
-                {
-                    return elapsed;
-                }
-            }
-
-            public AttackEffectType AttackEffectType
-            {
-                get
-                {
-                    return attackEffectType;
-                }
-            }
-
-            public string EffectName
-            {
-                get
-                {
-                    return effectName;
-                }
-            }
-
-            public PersistentEffect(AttackEffect attackEffect, int actualMagnitude, float actualDuration)
-            {
-                magnitude = actualMagnitude;
-                duration = actualDuration;
-                attackEffectType = attackEffect.AttackEffectType;
-                effectName = attackEffect.EffectName;
-                elapsed = 0f;
-            }
-
-            public void ApplyNewEffect(AttackEffect attackEffect, int actualMagnitude, float actualDuration)
-            {
-                Assert.IsTrue(attackEffect.AttackEffectType == AttackEffectType);
-
-                magnitude = actualMagnitude;
-                duration = actualDuration;
-                elapsed = 0f;
-            }
-
-            public bool HasElapsed()
-            {
-                return elapsed >= duration;
-            }
-
-            public void IncreaseElapsed()
-            {
-                elapsed += Time.deltaTime;
-            }
-
-            public float TimeRemaining()
-            {
-                return duration - elapsed;
-            }
-        }
-
         private int id;
+        
+        //Template
+        private ICreepTemplate creepTemplate;
 
+        //TemporaryEffects
+        private TemporaryEffectsManager temporaryEffects;
+
+        //Pathing/Position
         private Vector3 currentDestinationVector;
         private int currentDestinationPathNode;
-
-        private float currentSpeed;
-        private int currentHitpoints;
-        private int currentPermanentMinusArmor;
 
         private Vector3 position;
         private float distanceFromEnd;
 
-        private ICreepTemplate creepTemplate;
+        //Attributes
+        private Attributes<CreepAttributeName> attributes;
 
-        private List<PersistentEffect> persistentEffects;
+        //Health
+        private int currentHitpoints;
 
         private Action OnHealthChangedCallback;
         private Action OnDiedCallback;
 
-        private Action<PersistentEffect> OnNewPersistentEffectCallback;
-        private Action<int> OnPersistentEffectExpiredCallback;
-
+        //Properties
+        //Name/Id
         public string Id
         {
             get
@@ -128,46 +47,39 @@ namespace GrimoireTD.Creeps
                 return "C-" + id;
             }
         }
-
-        public string GetId()
-        {
-            return Id;
-        }
-
-        public string GetName()
-        {
-            return creepTemplate.NameInGame;
-        }
-
-        public float CurrentSpeed
+        
+        public string NameInGame
         {
             get
             {
-                return currentSpeed;
+                return creepTemplate.NameInGame;
             }
         }
 
-        public int CurrentHitpoints
-        {
-            get
-            {
-                return currentHitpoints;
-            }
-        }
-
-        public Vector3 Position
-        {
-            get
-            {
-                return position;
-            }
-        }
-
+        //Template
         public ICreepTemplate CreepTemplate
         {
             get
             {
                 return creepTemplate;
+            }
+        }
+
+        //Temporary Effects
+        public IReadOnlyTemporaryEffectsManager TemporaryEffects
+        {
+            get
+            {
+                return temporaryEffects;
+            }
+        }
+
+        //Pathing/Position
+        public Vector3 Position
+        {
+            get
+            {
+                return position;
             }
         }
 
@@ -179,21 +91,38 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        public IReadOnlyList<PersistentEffect> PersistentEffects
+        //Attributes
+        public float CurrentSpeed
         {
             get
             {
-                return persistentEffects;
+                return attributes.GetAttribute(CreepAttributeName.rawSpeed) * (1 + attributes.GetAttribute(CreepAttributeName.speedMultiplier));
             }
         }
 
+        public float CurrentArmor
+        {
+            get
+            {
+                return attributes.GetAttribute(CreepAttributeName.rawArmor) * (1 + attributes.GetAttribute(CreepAttributeName.armorMultiplier));
+            }
+        }
+
+        //Health
+        public int CurrentHitpoints
+        {
+            get
+            {
+                return currentHitpoints;
+            }
+        }
+
+        //Constructor
         public Creep(ICreepTemplate template, Vector3 spawnPosition)
         {
             id = IdGen.GetNextId();
 
-            currentSpeed = template.BaseSpeed;
             currentHitpoints = template.MaxHitpoints;
-            currentPermanentMinusArmor = 0;
 
             position = spawnPosition;
 
@@ -202,7 +131,14 @@ namespace GrimoireTD.Creeps
 
             creepTemplate = template;
 
-            persistentEffects = new List<PersistentEffect>();
+            attributes = new Attributes<CreepAttributeName>(CreepAttributes.NewAttributesDictionary());
+
+            foreach (INamedAttributeModifier<CreepAttributeName> attributeModifier in creepTemplate.BaseAttributes)
+            {
+                attributes.AddModifier(attributeModifier);
+            }
+
+            temporaryEffects = new TemporaryEffectsManager();
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
 
@@ -221,40 +157,13 @@ namespace GrimoireTD.Creeps
 
             distanceFromEnd = currentDestinationPathNode * MapRenderer.HEX_OFFSET + distanceFromCurrentDestination;
 
-            if (distanceFromCurrentDestination < currentSpeed * Time.deltaTime)
+            if (distanceFromCurrentDestination < CurrentSpeed * Time.deltaTime)
             {
                 currentDestinationPathNode = currentDestinationPathNode - 1 < 0 ? 0 : currentDestinationPathNode - 1;
                 currentDestinationVector = MapGenerator.Instance.Map.CreepPath[currentDestinationPathNode].ToPositionVector();
             }
 
-            position = Vector3.MoveTowards(position, currentDestinationVector, currentSpeed * Time.deltaTime);
-
-            bool speedChanged = false;
-
-            //TODO: make persistent effects a callback list?
-            for (int i = 0; i < persistentEffects.Count; i++)
-            {
-                persistentEffects[i].IncreaseElapsed();
-
-                if (persistentEffects[i].HasElapsed())
-                {
-                    CDebug.Log(CDebug.combatLog, Id + " persistent effect ended: " + persistentEffects[i].EffectName);
-
-                    OnPersistentEffectExpiredCallback?.Invoke(i);
-
-                    if (persistentEffects[i].AttackEffectType is SlowEffectType)
-                    {
-                        speedChanged = true;
-                    }
-                }
-            }
-
-            persistentEffects.RemoveAll(x => x.HasElapsed());
-
-            if (speedChanged)
-            {
-                OnSpeedChange();
-            }
+            position = Vector3.MoveTowards(position, currentDestinationVector, CurrentSpeed * Time.deltaTime);
         }
 
         public void ApplyAttackEffects(IEnumerable<AttackEffect> attackEffects, DefendingEntity sourceDefendingEntity)
@@ -268,7 +177,7 @@ namespace GrimoireTD.Creeps
                     ", base duration: " + attackEffect.BaseDuration +
                     ", actual magnitude: " + attackEffect.GetActualMagnitude(sourceDefendingEntity) +
                     ", actual duration: " + attackEffect.GetActualDuration(sourceDefendingEntity)
-                    );
+                );
 
                 DamageEffectType damageEffectType = attackEffect.AttackEffectType as DamageEffectType;
                 if (damageEffectType != null)
@@ -277,17 +186,17 @@ namespace GrimoireTD.Creeps
                     continue;
                 }
 
-                PersistentEffectType persistentEffectType = attackEffect.AttackEffectType as PersistentEffectType;
-                if (persistentEffectType != null)
+                ModifierEffectType modifierEffectType = attackEffect.AttackEffectType as ModifierEffectType;
+                if (modifierEffectType != null)
                 {
-                    ApplyPersistentEffect(attackEffect, sourceDefendingEntity, persistentEffectType);
-                    continue;
-                }
-
-                InstantEffectType instantEffectType = attackEffect.AttackEffectType as InstantEffectType;
-                if (instantEffectType != null)
-                {
-                    ApplyInstantEffect(attackEffect, sourceDefendingEntity);
+                    if (modifierEffectType.Temporary)
+                    {
+                        ApplyTemporaryEffect(attackEffect, sourceDefendingEntity, modifierEffectType);
+                    }
+                    else
+                    {
+                        ApplyPermanentEffect(attackEffect, sourceDefendingEntity, modifierEffectType);
+                    }
                     continue;
                 }
 
@@ -299,7 +208,7 @@ namespace GrimoireTD.Creeps
         {
             float magnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
             int block = creepTemplate.Resistances.GetBlock(damageEffectType);
-            float resistance = creepTemplate.Resistances.GetResistance(damageEffectType, GetCurrentMinusArmor());
+            float resistance = creepTemplate.Resistances.GetResistance(damageEffectType, CurrentArmor);
 
             CDebug.Log(CDebug.combatLog, "Bl: " + block + ", Res: " + resistance);
 
@@ -310,101 +219,66 @@ namespace GrimoireTD.Creeps
             );
         }
 
-        private int GetCurrentEffectMagnitude(AttackEffectType effectType)
+        private void ApplyTemporaryEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, ModifierEffectType modifierEffectType)
         {
-            PersistentEffect currentEffect = persistentEffects.Find(x => x.AttackEffectType == effectType);
-
-            if (currentEffect != null)
-            {
-                return currentEffect.Magnitude;
-            }
-
-            return 0;
-        }
-
-        private void ApplyPersistentEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, PersistentEffectType persistentEffectType)
-        {
-            PersistentEffect currentEffect = persistentEffects.Find(x => x.AttackEffectType == attackEffect.AttackEffectType);
-
-            int newEffectMagnitude = Mathf.RoundToInt(attackEffect.GetActualMagnitude(sourceDefendingEntity));
+            float newEffectMagnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
             float newEffectDuration = attackEffect.GetActualDuration(sourceDefendingEntity);
 
-            bool isSpeedChange = persistentEffectType is SlowEffectType;
-
-            if (currentEffect == null)
+            AttributeModifierEffectType attributeModifierEffectType = modifierEffectType as AttributeModifierEffectType;
+            if (attributeModifierEffectType != null)
             {
-                CDebug.Log(CDebug.combatLog, "No current effect, applying effect");
+                SNamedCreepAttributeModifier attributeModifier = new SNamedCreepAttributeModifier(
+                    newEffectMagnitude,
+                    attributeModifierEffectType.CreepAttributeName
+                );
 
-                PersistentEffect newPersistentEffect = new PersistentEffect(attackEffect, newEffectMagnitude, newEffectDuration);
-
-                persistentEffects.Add(newPersistentEffect);
-
-                OnNewPersistentEffectCallback?.Invoke(newPersistentEffect);
-
-                if (isSpeedChange) { OnSpeedChange(); }
+                temporaryEffects.ApplyEffect(
+                    attackEffect.AttackEffectType,
+                    newEffectMagnitude,
+                    newEffectDuration,
+                    attackEffect.AttackEffectType.EffectName(),
+                    () => { attributes.AddModifier(attributeModifier); },
+                    () => { attributes.TryRemoveModifier(attributeModifier); }
+                );
 
                 return;
             }
 
-            if (currentEffect.Magnitude < newEffectMagnitude)
+            ResistanceModifierEffectType resistanceModifierEffectType = modifierEffectType as ResistanceModifierEffectType;
+            if (resistanceModifierEffectType != null)
             {
-                currentEffect.ApplyNewEffect(attackEffect, newEffectMagnitude, newEffectDuration);
-
-                CDebug.Log(CDebug.combatLog, "Current effect with lower magnitude, applying effect");
-
-                if (isSpeedChange) { OnSpeedChange(); }
+                throw new NotImplementedException("HELLO!");
 
                 return;
             }
-            else if (currentEffect.Magnitude == newEffectMagnitude)
-            {
-                if (currentEffect.TimeRemaining() < newEffectDuration)
-                {
-                    currentEffect.ApplyNewEffect(attackEffect, newEffectMagnitude, newEffectDuration);
 
-                    CDebug.Log(CDebug.combatLog, "Current effect with same magnitude and lower remaining duration, applying effect");
-
-                    if (isSpeedChange) { OnSpeedChange(); }
-
-                    return;
-                }
-            }
-
-            CDebug.Log(CDebug.combatLog, "Current effect already better than new effect");
+            throw new Exception("Unhandled ModifierEffectType");
         }
 
-        private void ApplyInstantEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity)
+        private void ApplyPermanentEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, ModifierEffectType modifierEffectType)
         {
-            ArmorCorrosionEffectType armorCorrosionEffect = attackEffect.AttackEffectType as ArmorCorrosionEffectType;
-            if (armorCorrosionEffect != null)
+            AttributeModifierEffectType attributeModifierEffectType = modifierEffectType as AttributeModifierEffectType;
+            if (attributeModifierEffectType != null)
             {
-                currentPermanentMinusArmor += Mathf.RoundToInt(attackEffect.GetActualMagnitude(sourceDefendingEntity));
-                CDebug.Log(CDebug.combatLog, Id + " permanent minus armor is now " + currentPermanentMinusArmor);
+                SNamedCreepAttributeModifier attributeModifier = new SNamedCreepAttributeModifier(
+                    attackEffect.GetActualMagnitude(sourceDefendingEntity),
+                    attributeModifierEffectType.CreepAttributeName
+                );
+
+                attributes.AddModifier(attributeModifier);
+
                 return;
             }
 
-            throw new Exception("Unhandled InstantEffectType");
-        }
-
-        private int GetCurrentMinusArmor()
-        {
-            int minusArmor = 0;
-
-            IReadOnlyList<ArmorReductionEffectType> armorReductionTypes = AttackEffectTypeManager.Instance.ArmorReductionTypes;
-
-            foreach (PersistentEffect persistentEffect in persistentEffects)
+            ResistanceModifierEffectType resistanceModifierEffectType = modifierEffectType as ResistanceModifierEffectType;
+            if (resistanceModifierEffectType != null)
             {
-                if (armorReductionTypes.Contains(persistentEffect.AttackEffectType))
-                {
-                    minusArmor += persistentEffect.Magnitude;
-                }
+                throw new NotImplementedException("HELLO!");
+
+                return;
             }
 
-            minusArmor += currentPermanentMinusArmor;
-
-            CDebug.Log(CDebug.combatLog, Id + " current minus armor is " + minusArmor);
-
-            return minusArmor;
+            throw new Exception("Unhandled ModifierEffectType");
         }
 
         private void TakeDamage(int damage)
@@ -428,28 +302,13 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        private void OnSpeedChange()
-        {
-            float speedFactor = 1;
-
-            foreach (SlowEffectType slowEffectType in AttackEffectTypeManager.Instance.SlowTypes)
-            {
-                float speedFactorForType = (1 - GetCurrentEffectMagnitude(slowEffectType) / 100f);
-                speedFactor *= speedFactorForType;
-                CDebug.Log(CDebug.combatLog, "Speed change: " + slowEffectType.EffectName() + " applying speed factor of " + speedFactorForType + ". Overall factor now " + speedFactor);
-            }
-
-            currentSpeed = creepTemplate.BaseSpeed * speedFactor;
-
-            CDebug.Log(CDebug.combatLog, Id + " current speed is " + currentSpeed + " = " + creepTemplate.BaseSpeed + " * " + speedFactor);
-        }
-
         //TODO: make callback? Or change? Seems bad
         public void GameObjectDestroyed()
         {
             ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
         }
 
+        //Callbacks
         public void RegisterForOnHealthChangedCallback(Action callback)
         {
             OnHealthChangedCallback += callback;
@@ -468,26 +327,6 @@ namespace GrimoireTD.Creeps
         public void DeregisterForOnDiedCallback(Action callback)
         {
             OnDiedCallback -= callback;
-        }
-
-        public void RegisterForOnNewPersistentEffectCallback(Action<PersistentEffect> callback)
-        {
-            OnNewPersistentEffectCallback += callback;
-        }
-
-        public void DeregisterForOnNewPersistentEffectCallback(Action<PersistentEffect> callback)
-        {
-            OnNewPersistentEffectCallback -= callback;
-        }
-
-        public void RegisterForOnPersistentEffectExpiredCallback(Action<int> callback)
-        {
-            OnPersistentEffectExpiredCallback += callback;
-        }
-
-        public void DeregisterForOnPersistentEffectExpiredCallback(Action<int> callback)
-        {
-            OnPersistentEffectExpiredCallback -= callback;
         }
     }
 }

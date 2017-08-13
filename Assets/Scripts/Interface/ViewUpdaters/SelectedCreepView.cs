@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using GrimoireTD.Creeps;
 using GrimoireTD.ChannelDebug;
+using GrimoireTD.TemporaryEffects;
 
 namespace GrimoireTD.UI
 {
@@ -22,8 +23,7 @@ namespace GrimoireTD.UI
         [SerializeField]
         private GameObject effectSliderPrefab;
 
-        private List<Slider> effectSliders;
-        private List<Text> effectSliderTexts;
+        private List<GameObject> effectSliders;
 
         private Creep selectedCreep = null;
 
@@ -34,28 +34,14 @@ namespace GrimoireTD.UI
             InterfaceController.Instance.RegisterForOnCreepSelectedCallback(OnNewSelection);
             InterfaceController.Instance.RegisterForOnCreepDeselectedCallback(OnDeselection);
 
-            effectSliders = new List<Slider>();
-            effectSliderTexts = new List<Text>();
+            effectSliders = new List<GameObject>();
 
             selectedCreepPanel.SetActive(false);
         }
 
-        private void Update()
-        {
-            if (selectedCreep != null)
-            {
-                for (int i = 0; i < effectSliders.Count; i++)
-                {
-                    effectSliders[i].maxValue = selectedCreep.PersistentEffects[i].Duration;
-                    effectSliders[i].value = Mathf.Max(selectedCreep.PersistentEffects[i].TimeRemaining(), 0f);
-                    effectSliderTexts[i].text = selectedCreep.PersistentEffects[i].EffectName + " - " + selectedCreep.PersistentEffects[i].Magnitude + " - " + selectedCreep.PersistentEffects[i].TimeRemaining().ToString("0.0");
-                }
-            }
-        }
-
         private void OnNewSelection(Creep creep)
         {
-            ClearEffectLists();
+            ClearEffectList();
             DeregisterCallbacksWithSelectedCreep();
 
             selectedCreep = creep;
@@ -70,29 +56,24 @@ namespace GrimoireTD.UI
 
             creep.RegisterForOnHealthChangedCallback(OnHealthChange);
             creep.RegisterForOnDiedCallback(OnDied);
-            creep.RegisterForOnNewPersistentEffectCallback(AddSliderForNewEffect);
-            creep.RegisterForOnPersistentEffectExpiredCallback(OnEffectExpired);
+            creep.TemporaryEffects.RegisterForOnNewTemporaryEffectCallback(AddSliderForNewEffect);
 
-            foreach (Creep.PersistentEffect persistentEffect in creep.PersistentEffects)
+            foreach (TemporaryEffect temporaryEffect in creep.TemporaryEffects.EffectList)
             {
-                AddSliderForNewEffect(persistentEffect);
+                AddSliderForNewEffect(temporaryEffect);
             }
         }
 
-        private void AddSliderForNewEffect(Creep.PersistentEffect persistentEffect)
+        private void AddSliderForNewEffect(IReadOnlyTemporaryEffect temporaryEffect)
         {
             GameObject newSliderGo = Instantiate(effectSliderPrefab) as GameObject;
             newSliderGo.transform.SetParent(effectVerticalLayout);
 
-            Slider newSlider = newSliderGo.GetComponent<Slider>();
-            effectSliders.Add(newSlider);
+            effectSliders.Add(newSliderGo);
 
-            Text newText = newSliderGo.GetComponentInChildren<Text>();
-            effectSliderTexts.Add(newText);
-
-            newText.text = persistentEffect.EffectName + " - " + persistentEffect.Magnitude + " - " + persistentEffect.TimeRemaining().ToString("0.0");
-            newSlider.maxValue = persistentEffect.Duration;
-            newSlider.value = persistentEffect.Duration - persistentEffect.Elapsed;
+            newSliderGo.GetComponent<CreepTemporaryEffectUiComponent>()
+                .SetUp(temporaryEffect)
+                .RegiterForOnDestroyCallback(() => effectSliders.Remove(newSliderGo));
         }
 
         private void DeregisterCallbacksWithSelectedCreep()
@@ -101,14 +82,13 @@ namespace GrimoireTD.UI
             {
                 selectedCreep.DeregisterForOnHealthChangedCallback(OnHealthChange);
                 selectedCreep.DeregisterForOnDiedCallback(OnDied);
-                selectedCreep.DeregisterForOnNewPersistentEffectCallback(AddSliderForNewEffect);
-                selectedCreep.DeregisterForOnPersistentEffectExpiredCallback(OnEffectExpired);
+                selectedCreep.TemporaryEffects.DeregisterForOnNewTemporaryEffectCallback(AddSliderForNewEffect);
             }
         }
 
         private void OnDeselection()
         {
-            ClearEffectLists();
+            ClearEffectList();
 
             DeregisterCallbacksWithSelectedCreep();
 
@@ -123,13 +103,6 @@ namespace GrimoireTD.UI
             selectedCreepHealthText.text = selectedCreep.CurrentHitpoints + " / " + selectedCreep.CreepTemplate.MaxHitpoints;
         }
 
-        private void OnEffectExpired(int index)
-        {
-            Destroy(effectSliders[index].gameObject);
-            effectSliders.RemoveAt(index);
-            effectSliderTexts.RemoveAt(index);
-        }
-
         private void OnDied()
         {
             selectedCreep.DeregisterForOnHealthChangedCallback(OnHealthChange);
@@ -139,15 +112,14 @@ namespace GrimoireTD.UI
 
             selectedCreepName.text = selectedCreepName.text + " (dead)";
 
-            ClearEffectLists();
+            ClearEffectList();
         }
 
-        private void ClearEffectLists()
+        private void ClearEffectList()
         {
             effectSliders.ForEach(x => Destroy(x.gameObject));
 
-            effectSliders = new List<Slider>();
-            effectSliderTexts = new List<Text>();
+            effectSliders = new List<GameObject>();
         }
     }
 }
