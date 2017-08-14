@@ -32,6 +32,9 @@ namespace GrimoireTD.Creeps
         //Attributes
         private Attributes<CreepAttributeName> attributes;
 
+        //Resistances
+        private Resistances resistances;
+
         //Health
         private int currentHitpoints;
 
@@ -91,6 +94,15 @@ namespace GrimoireTD.Creeps
             }
         }
 
+        //Resistances
+        public IReadOnlyResistances Resistances
+        {
+            get
+            {
+                return resistances;
+            }
+        }
+
         //Attributes
         public float CurrentSpeed
         {
@@ -121,25 +133,35 @@ namespace GrimoireTD.Creeps
         public Creep(ICreepTemplate template, Vector3 spawnPosition)
         {
             id = IdGen.GetNextId();
+            
+            //Template
+            creepTemplate = template;
 
-            currentHitpoints = template.MaxHitpoints;
+            //Temporary Effects
+            temporaryEffects = new TemporaryEffectsManager();
 
+            //Pathing/Position
             position = spawnPosition;
 
             currentDestinationPathNode = MapGenerator.Instance.Map.CreepPath.Count - 2;
             currentDestinationVector = MapGenerator.Instance.Map.CreepPath[currentDestinationPathNode].ToPositionVector();
+            
+            //Resistances
+            resistances = new Resistances(creepTemplate.BaseResistances);
 
-            creepTemplate = template;
-
+            //Attributes
             attributes = new Attributes<CreepAttributeName>(CreepAttributes.NewAttributesDictionary());
 
+            //  TODO: put this inside the attributes ctor like resistances
             foreach (INamedAttributeModifier<CreepAttributeName> attributeModifier in creepTemplate.BaseAttributes)
             {
                 attributes.AddModifier(attributeModifier);
             }
 
-            temporaryEffects = new TemporaryEffectsManager();
+            //Health
+            currentHitpoints = template.MaxHitpoints;
 
+            //Bullshit
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
 
             CreepView.Instance.CreateCreep(this);
@@ -207,8 +229,8 @@ namespace GrimoireTD.Creeps
         private void ApplyDamageEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, DamageEffectType damageEffectType)
         {
             float magnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
-            int block = creepTemplate.Resistances.GetBlock(damageEffectType);
-            float resistance = creepTemplate.Resistances.GetResistance(damageEffectType, CurrentArmor);
+            int block = resistances.GetBlock(damageEffectType);
+            float resistance = resistances.GetResistance(damageEffectType, CurrentArmor);
 
             CDebug.Log(CDebug.combatLog, "Bl: " + block + ", Res: " + resistance);
 
@@ -247,21 +269,53 @@ namespace GrimoireTD.Creeps
             ResistanceModifierEffectType resistanceModifierEffectType = modifierEffectType as ResistanceModifierEffectType;
             if (resistanceModifierEffectType != null)
             {
-                throw new NotImplementedException("HELLO!");
+                SResistanceModifier resistanceModifier = new SResistanceModifier(
+                    newEffectMagnitude, 
+                    resistanceModifierEffectType.ResistanceToModify
+                );
+
+                temporaryEffects.ApplyEffect(
+                    attackEffect.AttackEffectType,
+                    newEffectMagnitude,
+                    newEffectDuration,
+                    attackEffect.AttackEffectType.EffectName(),
+                    () => { resistances.AddResistanceModifier(resistanceModifier); },
+                    () => { resistances.RemoveResistanceModifer(resistanceModifier); }
+                );
 
                 return;
             }
 
-            throw new Exception("Unhandled ModifierEffectType");
+            BlockModifierEffectType blockModifierEffectType = modifierEffectType as BlockModifierEffectType;
+            if (blockModifierEffectType != null)
+            {
+                SBlockModifier blockModifier = new SBlockModifier(
+                    Mathf.RoundToInt(newEffectMagnitude),
+                    blockModifierEffectType.BlockTypeToModify
+                );
+
+                temporaryEffects.ApplyEffect(
+                    attackEffect.AttackEffectType,
+                    newEffectMagnitude,
+                    newEffectDuration,
+                    attackEffect.AttackEffectType.EffectName(),
+                    () => { resistances.AddBlockModifier(blockModifier); },
+                    () => { resistances.RemoveBlockModifier(blockModifier); }
+                );
+            }
+
+                throw new Exception("Unhandled ModifierEffectType");
         }
 
         private void ApplyPermanentEffect(AttackEffect attackEffect, DefendingEntity sourceDefendingEntity, ModifierEffectType modifierEffectType)
         {
+            float actualMagnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
+
             AttributeModifierEffectType attributeModifierEffectType = modifierEffectType as AttributeModifierEffectType;
             if (attributeModifierEffectType != null)
             {
                 SNamedCreepAttributeModifier attributeModifier = new SNamedCreepAttributeModifier(
-                    attackEffect.GetActualMagnitude(sourceDefendingEntity),
+                    actualMagnitude,
                     attributeModifierEffectType.CreepAttributeName
                 );
 
@@ -273,7 +327,25 @@ namespace GrimoireTD.Creeps
             ResistanceModifierEffectType resistanceModifierEffectType = modifierEffectType as ResistanceModifierEffectType;
             if (resistanceModifierEffectType != null)
             {
-                throw new NotImplementedException("HELLO!");
+                SResistanceModifier resistanceModifier = new SResistanceModifier(
+                    actualMagnitude,
+                    resistanceModifierEffectType.ResistanceToModify
+                );
+
+                resistances.AddResistanceModifier(resistanceModifier);
+
+                return;
+            }
+
+            BlockModifierEffectType blockModifierEffectType = modifierEffectType as BlockModifierEffectType;
+            if (blockModifierEffectType != null)
+            {
+                SBlockModifier blockModifier = new SBlockModifier(
+                    Mathf.RoundToInt(actualMagnitude),
+                    resistanceModifierEffectType.ResistanceToModify
+                );
+
+                resistances.AddBlockModifier(blockModifier);
 
                 return;
             }

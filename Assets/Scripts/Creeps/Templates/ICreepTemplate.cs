@@ -17,7 +17,7 @@ namespace GrimoireTD.Creeps
 
         IEconomyTransaction Bounty { get; }
 
-        IResistances Resistances { get; }
+        BaseResistances BaseResistances { get; }
 
         Creep GenerateCreep(Vector3 spawnPosition);
     }

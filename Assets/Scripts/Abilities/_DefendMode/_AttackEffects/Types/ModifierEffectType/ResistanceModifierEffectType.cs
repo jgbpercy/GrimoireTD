@@ -3,7 +3,7 @@
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
     [CreateAssetMenu(
-        fileName = "NewAttributeChangeEffectType",
+        fileName = "NewResistanceModifierEffectType",
         menuName = "Attack Effects/Resistance Modifier"
     )]
     public class ResistanceModifierEffectType : ModifierEffectType
