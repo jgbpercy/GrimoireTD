@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using GrimoireTD.Technical;
 using GrimoireTD.ChannelDebug;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.Technical
 {
     public class ModeTextView : SingletonMonobehaviour<ModeTextView>
     {

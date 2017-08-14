@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using GrimoireTD.Creeps;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.TemporaryEffects;
+using GrimoireTD.UI;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.Creeps
 {
     public class SelectedCreepView : MonoBehaviour
     {

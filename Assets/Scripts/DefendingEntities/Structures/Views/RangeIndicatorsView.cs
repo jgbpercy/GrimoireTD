@@ -5,8 +5,9 @@ using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.Technical;
 using GrimoireTD.Map;
+using GrimoireTD.UI;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.DefendingEntities
 {
     public class RangeIndicatorsView : SingletonMonobehaviour<RangeIndicatorsView>
     {

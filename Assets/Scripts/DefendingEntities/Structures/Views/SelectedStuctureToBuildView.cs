@@ -2,12 +2,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using GrimoireTD.Abilities;
-using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Economy;
 using GrimoireTD.Technical;
+using GrimoireTD.UI;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.DefendingEntities.Structures
 {
     public class SelectedStuctureToBuildView : SingletonMonobehaviour<SelectedStuctureToBuildView>
     {

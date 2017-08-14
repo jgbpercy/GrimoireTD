@@ -2,9 +2,9 @@
 using UnityEngine.UI;
 using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Technical;
-using GrimoireTD.Map;
+using GrimoireTD.UI;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.Map
 {
     //TODO: make this and MouseOverMapView work on callbacks rather than polling each frame?
     public class MouseOverHexTextView : SingletonMonobehaviour<MouseOverHexTextView>

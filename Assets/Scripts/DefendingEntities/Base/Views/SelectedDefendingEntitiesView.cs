@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using GrimoireTD.Abilities;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Abilities.DefendMode;
-using GrimoireTD.DefendingEntities;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.DefenderEffects;
@@ -14,8 +13,9 @@ using GrimoireTD.Technical;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.Map;
 using GrimoireTD.Attributes;
+using GrimoireTD.UI;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.DefendingEntities
 {
     //TODO: oh god split up this class oh god
     public class SelectedDefendingEntitiesView : SingletonMonobehaviour<SelectedDefendingEntitiesView>

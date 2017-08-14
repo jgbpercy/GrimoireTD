@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.Technical;
 using GrimoireTD.ChannelDebug;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.DefendingEntities.Structures
 {
     public class SelectStructureToBuildView : SingletonMonobehaviour<SelectStructureToBuildView>
     {

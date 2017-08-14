@@ -2,9 +2,9 @@
 using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.Technical;
 using GrimoireTD.ChannelDebug;
-using GrimoireTD.Map;
+using GrimoireTD.UI;
 
-namespace GrimoireTD.UI
+namespace GrimoireTD.Map
 {
     public class MouseOverMapView : SingletonMonobehaviour<MouseOverMapView>
     {
