@@ -12,8 +12,8 @@ namespace GrimoireTD.Attributes
 
         void DeregisterForOnAttributeChangedCallback(Action<float> callback, T attribute);
 
-        void RegisterForOnAttributeChangedCallback(Action<T, float> callback);
+        void RegisterForOnAnyAttributeChangedCallback(Action<T, float> callback);
 
-        void DeregisterForOnAttributeChangedCallback(Action<T, float> callback);
+        void DeregisterForOnAnyAttributeChangedCallback(Action<T, float> callback);
     }
 }

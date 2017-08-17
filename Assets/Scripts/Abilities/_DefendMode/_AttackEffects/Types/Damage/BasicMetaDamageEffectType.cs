@@ -19,6 +19,22 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
+        public WeakMetaDamageEffectType WeakMetaDamageType
+        {
+            get
+            {
+                return AttackEffectTypeManager.Instance.GetWeakMetaDamageType(this);
+            }
+        }
+
+        public StrongMetaDamageEffectType StrongMetaDamageType
+        {
+            get
+            {
+                return AttackEffectTypeManager.Instance.GetStrongMetaDamageType(this);
+            }
+        }
+
         public override string EffectName()
         {
             return "Basic " + base.EffectName();

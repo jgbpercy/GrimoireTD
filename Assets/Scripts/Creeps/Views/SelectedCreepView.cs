@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.UI;
+using GrimoireTD.Technical;
 
 namespace GrimoireTD.Creeps
 {
-    public class SelectedCreepView : MonoBehaviour
+    public class SelectedCreepView : SingletonMonobehaviour<SelectedCreepView>
     {
         [SerializeField]
         private GameObject selectedCreepPanel;
+
         [SerializeField]
         private Text selectedCreepName;
         [SerializeField]
@@ -22,6 +24,9 @@ namespace GrimoireTD.Creeps
 
         [SerializeField]
         private GameObject effectSliderPrefab;
+
+        [SerializeField]
+        private GameObject creepDetailsPanel;
 
         private List<GameObject> effectSliders;
 
@@ -120,6 +125,11 @@ namespace GrimoireTD.Creeps
             effectSliders.ForEach(x => Destroy(x.gameObject));
 
             effectSliders = new List<GameObject>();
+        }
+
+        public void ToggleCreepDetailsPanel()
+        {
+            creepDetailsPanel.SetActive(!creepDetailsPanel.activeSelf);
         }
     }
 }

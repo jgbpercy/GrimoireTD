@@ -79,12 +79,12 @@ namespace GrimoireTD.Attributes
             OnAttributeChangedCallbackDictionary[attribute] -= callback;
         }
 
-        public void RegisterForOnAttributeChangedCallback(Action<T, float> callback)
+        public void RegisterForOnAnyAttributeChangedCallback(Action<T, float> callback)
         {
             OnAnyAttributeChangedCallback += callback;
         }
 
-        public void DeregisterForOnAttributeChangedCallback(Action<T, float> callback)
+        public void DeregisterForOnAnyAttributeChangedCallback(Action<T, float> callback)
         {
             OnAnyAttributeChangedCallback -= callback;
         }

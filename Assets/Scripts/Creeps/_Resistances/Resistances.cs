@@ -14,11 +14,20 @@ namespace GrimoireTD.Creeps
 
         private Dictionary<SpecificDamageEffectType, RecalculatorList<IBlockModifier, int>> blockModifiers;
 
+        private Dictionary<SpecificDamageEffectType, Action<float>> OnResistanceChangedCallbackDictionary;
+        private Action<SpecificDamageEffectType, float> OnAnyResistanceChangedCallback;
+
+        private Dictionary<SpecificDamageEffectType, Action<int>> OnBlockChangedCallbackDictionary;
+        private Action<SpecificDamageEffectType, int> OnAnyBlockChangedCallback;
+
         public Resistances(BaseResistances baseResistances)
         {
             positiveResistanceModifiers = new Dictionary<SpecificDamageEffectType, RecalculatorList<IResistanceModifier, float>>();
             negativeResistanceModifiers = new Dictionary<SpecificDamageEffectType, RecalculatorList<IResistanceModifier, float>>();
             blockModifiers = new Dictionary<SpecificDamageEffectType, RecalculatorList<IBlockModifier, int>>();
+
+            OnResistanceChangedCallbackDictionary = new Dictionary<SpecificDamageEffectType, Action<float>>();
+            OnBlockChangedCallbackDictionary = new Dictionary<SpecificDamageEffectType, Action<int>>();
 
             foreach (SpecificDamageEffectType specificDamageType in AttackEffectTypeManager.Instance.SpecificDamageTypes)
             {
@@ -232,6 +241,46 @@ namespace GrimoireTD.Creeps
             return strongDamageEffectType.SpecificDamageTypes
                 .Select(x => GetSpecificBlock(x))
                 .Min();
+        }
+
+        public void RegisterForOnResistanceChangedCallback(Action<float> callback, SpecificDamageEffectType specificDamageEffectType)
+        {
+            OnResistanceChangedCallbackDictionary[specificDamageEffectType] += callback;
+        }
+
+        public void DeregisterForOnResistanceChangedCallback(Action<float> callback, SpecificDamageEffectType specificDamageEffectType)
+        {
+            OnResistanceChangedCallbackDictionary[specificDamageEffectType] -= callback;
+        }
+
+        public void RegisterForOnAnyResistanceChangedCallback(Action<SpecificDamageEffectType, float> callback)
+        {
+            OnAnyResistanceChangedCallback += callback;
+        }
+
+        public void DeregisterForOnAnyResistanceChangedCallback(Action<SpecificDamageEffectType, float> callback)
+        {
+            OnAnyResistanceChangedCallback -= callback;
+        }
+
+        public void RegisterForOnBlockChanged(Action<int> callback, SpecificDamageEffectType specificDamageEffectType)
+        {
+            OnBlockChangedCallbackDictionary[specificDamageEffectType] += callback;
+        }
+
+        public void DeregisterForOnBlockChanged(Action<int> callback, SpecificDamageEffectType specificDamageEffectType)
+        {
+            OnBlockChangedCallbackDictionary[specificDamageEffectType] -= callback;
+        }
+
+        public void RegisterForOnAnyBlockChangedCallback(Action<SpecificDamageEffectType, int> callback)
+        {
+            OnAnyBlockChangedCallback += callback;
+        }
+
+        public void DeregisterForOnAnyBlockChangeCallback(Action<SpecificDamageEffectType, int> callback)
+        {
+            OnAnyBlockChangedCallback -= callback;
         }
     }
 }

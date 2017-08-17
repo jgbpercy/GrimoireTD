@@ -15,6 +15,9 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         private Dictionary<SpecificDamageEffectType, WeakMetaDamageEffectType> specificToWeakDictionary = new Dictionary<SpecificDamageEffectType, WeakMetaDamageEffectType>();
         private Dictionary<SpecificDamageEffectType, StrongMetaDamageEffectType> specificToStrongDictionary = new Dictionary<SpecificDamageEffectType, StrongMetaDamageEffectType>();
 
+        private Dictionary<BasicMetaDamageEffectType, WeakMetaDamageEffectType> basicToWeakDictionary = new Dictionary<BasicMetaDamageEffectType, WeakMetaDamageEffectType>();
+        private Dictionary<BasicMetaDamageEffectType, StrongMetaDamageEffectType> basicToStrongDictionary = new Dictionary<BasicMetaDamageEffectType, StrongMetaDamageEffectType>();
+
         private List<SpecificDamageEffectType> specificDamageTypes = new List<SpecificDamageEffectType>();
         private List<MetaDamageEffectType> metaDamageTypes = new List<MetaDamageEffectType>();
         private List<BasicMetaDamageEffectType> basicMetaDamageTypes = new List<BasicMetaDamageEffectType>();
@@ -118,6 +121,8 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             {
                 metaToSpecificDictionary.Add(weakMetaDamageType, metaToSpecificDictionary[weakMetaDamageType.BasicMetaDamageType]);
 
+                basicToWeakDictionary.Add(weakMetaDamageType.BasicMetaDamageType, weakMetaDamageType);
+
                 foreach (SpecificDamageEffectType specificDamageType in metaToSpecificDictionary[weakMetaDamageType])
                 {
                     specificToWeakDictionary.Add(specificDamageType, weakMetaDamageType);
@@ -127,6 +132,8 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             foreach (StrongMetaDamageEffectType strongMetaDamageType in strongMetaDamageTypes)
             {
                 metaToSpecificDictionary.Add(strongMetaDamageType, metaToSpecificDictionary[strongMetaDamageType.BasicMetaDamageType]);
+
+                basicToStrongDictionary.Add(strongMetaDamageType.BasicMetaDamageType, strongMetaDamageType);
 
                 foreach (SpecificDamageEffectType specificDamageType in metaToSpecificDictionary[strongMetaDamageType])
                 {
@@ -204,9 +211,19 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             return specificToWeakDictionary[specificDamageType];
         }
 
+        public WeakMetaDamageEffectType GetWeakMetaDamageType(BasicMetaDamageEffectType basicDamageType)
+        {
+            return basicToWeakDictionary[basicDamageType];
+        }
+
         public StrongMetaDamageEffectType GetStrongMetaDamageType(SpecificDamageEffectType specificDamageType)
         {
             return specificToStrongDictionary[specificDamageType];
+        }
+
+        public StrongMetaDamageEffectType GetStrongMetaDamageType(BasicMetaDamageEffectType basicDamageType)
+        {
+            return basicToStrongDictionary[basicDamageType];
         }
     }
 }

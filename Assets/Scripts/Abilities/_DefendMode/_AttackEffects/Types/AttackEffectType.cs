@@ -7,6 +7,14 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         [SerializeField]
         private string effectName;
 
+        public string ShortName
+        {
+            get
+            {
+                return effectName;
+            }
+        }
+
         public virtual string EffectName()
         {
             return effectName;

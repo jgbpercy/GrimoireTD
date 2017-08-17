@@ -211,7 +211,7 @@ namespace GrimoireTD.DefendingEntities
             selectedStructure.RegisterForOnAffectedByDefenderAuraAddedCallback(OnStructureAuraChange);
             selectedStructure.RegisterForOnAffectedByDefenderAuraRemovedCallback(OnStructureAuraChange);
 
-            selectedStructure.Attributes.RegisterForOnAttributeChangedCallback(OnStructureAttributesChange);
+            selectedStructure.Attributes.RegisterForOnAnyAttributeChangedCallback(OnStructureAttributesChange);
 
             selectedStructure.RegisterForOnFlatHexOccupationBonusAddedCallback(OnStructureEconomyChange);
             selectedStructure.RegisterForOnFlatHexOccupationBonusRemovedCallback(OnStructureEconomyChange);
@@ -255,7 +255,7 @@ namespace GrimoireTD.DefendingEntities
             selectedUnit.RegisterForOnAffectedByDefenderAuraAddedCallback(OnUnitAuraChange);
             selectedUnit.RegisterForOnAffectedByDefenderAuraRemovedCallback(OnUnitAuraChange);
 
-            selectedUnit.Attributes.RegisterForOnAttributeChangedCallback(OnUnitAttributesChange);
+            selectedUnit.Attributes.RegisterForOnAnyAttributeChangedCallback(OnUnitAttributesChange);
 
             selectedUnit.RegisterForOnFlatHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
             selectedUnit.RegisterForOnFlatHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
@@ -413,7 +413,7 @@ namespace GrimoireTD.DefendingEntities
                 selectedStructure.DeregisterForOnAffectedByDefenderAuraAddedCallback(OnStructureAuraChange);
                 selectedStructure.DeregisterForOnAffectedByDefenderAuraRemovedCallback(OnStructureAuraChange);
 
-                selectedStructure.Attributes.DeregisterForOnAttributeChangedCallback(OnStructureAttributesChange);
+                selectedStructure.Attributes.DeregisterForOnAnyAttributeChangedCallback(OnStructureAttributesChange);
 
                 selectedStructure.DeregisterForOnFlatHexOccupationBonusAddedCallback(OnStructureEconomyChange);
                 selectedStructure.DeregisterForOnFlatHexOccupationBonusRemovedCallback(OnStructureEconomyChange);
@@ -448,7 +448,7 @@ namespace GrimoireTD.DefendingEntities
                 selectedUnit.DeregisterForOnAffectedByDefenderAuraAddedCallback(OnUnitAuraChange);
                 selectedUnit.DeregisterForOnAffectedByDefenderAuraRemovedCallback(OnUnitAuraChange);
 
-                selectedUnit.Attributes.DeregisterForOnAttributeChangedCallback(OnUnitAttributesChange);
+                selectedUnit.Attributes.DeregisterForOnAnyAttributeChangedCallback(OnUnitAttributesChange);
 
                 selectedUnit.DeregisterForOnFlatHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
                 selectedUnit.DeregisterForOnFlatHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
@@ -617,10 +617,12 @@ namespace GrimoireTD.DefendingEntities
         {
             string attributesText = "Attributes:\n";
 
-            //TODO: temp hack until refactor
-            foreach (DefendingEntityAttributeName attribute in Enum.GetValues(typeof(DefendingEntityAttributeName)))
+            foreach (KeyValuePair<DefendingEntityAttributeName,string> attributeName in DefendingEntityAttributes.DisplayNames)
             {
-                attributesText += defendingEntity.Attributes.TempDebugGetAttributeDisplayName(attribute) + ": " + defendingEntity.Attributes.GetAttribute(attribute) + "\n";
+                attributesText += 
+                    attributeName.Value + ": " + 
+                    defendingEntity.Attributes.GetAttribute(attributeName.Key) + 
+                    "\n";
             }
 
             return attributesText;
@@ -632,7 +634,7 @@ namespace GrimoireTD.DefendingEntities
 
             economyText += "Structures:\n";
 
-            //This will duplicate but it's fine for now
+            //TODO: This will duplicate but it's fine for now
             foreach (StructureOccupationBonus structureOccupationBonus in unit.ConditionalStructureOccupationBonuses)
             {
                 economyText += structureOccupationBonus.StructureUpgradeLevel == null ? structureOccupationBonus.StructureTemplate.StartingNameInGame : structureOccupationBonus.StructureUpgradeLevel.NewStructureName + "\n";
@@ -670,26 +672,12 @@ namespace GrimoireTD.DefendingEntities
 
         public void ToggleStructureDetailsPanel()
         {
-            if (structureDetailsPanel.activeSelf)
-            {
-                structureDetailsPanel.SetActive(false);
-            }
-            else
-            {
-                structureDetailsPanel.SetActive(true);
-            }
+            structureDetailsPanel.SetActive(!structureDetailsPanel.activeSelf);
         }
 
         public void ToggleUnitDetailsPanel()
         {
-            if (unitDetailsPanel.activeSelf)
-            {
-                unitDetailsPanel.SetActive(false);
-            }
-            else
-            {
-                unitDetailsPanel.SetActive(true);
-            }
+            unitDetailsPanel.SetActive(!unitDetailsPanel.activeSelf);
         }
 
         private void OnStructureAuraChange(DefenderAura aura)

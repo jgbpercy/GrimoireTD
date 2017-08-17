@@ -94,6 +94,15 @@ namespace GrimoireTD.Creeps
             }
         }
 
+        //Attributes
+        public IReadOnlyAttributes<CreepAttributeName> Attributes
+        {
+            get
+            {
+                return attributes;
+            }
+        }
+
         //Resistances
         public IReadOnlyResistances Resistances
         {
