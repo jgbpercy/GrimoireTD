@@ -31,7 +31,7 @@ namespace GrimoireTD.Map
         [SerializeField]
         private MeshFilter offMapGraphicsFilter;
 
-        private MapData map;
+        private IMapData map;
 
         [SerializeField]
         private int offMapHexThickness;

@@ -59,9 +59,9 @@ namespace GrimoireTD.DefendingEntities.Structures
             return uiText;
         }
 
-        public virtual Structure GenerateStructure(Coord position)
+        public virtual IStructure GenerateStructure(Coord position)
         {
-            return new Structure(this, position);
+            return new CStructure(this, position);
         }
     }
 }

@@ -70,7 +70,7 @@ namespace GrimoireTD.UI
             cameraRigTargetPosition = cameraRotator.position;
 
             //camera clamps
-            MapData map = MapGenerator.Instance.Map;
+            IMapData map = MapGenerator.Instance.Map;
             cameraRightClamp = map.Width * MapRenderer.HEX_OFFSET * 2;
             cameraTopClamp = map.Height * 0.75f;
         }

@@ -15,6 +15,6 @@ namespace GrimoireTD.DefendingEntities.Units
 
         IUnitImprovement BaseUnitCharacteristics { get; }
 
-        Unit GenerateUnit(Coord position);
+        IUnit GenerateUnit(Coord position);
     }
 }

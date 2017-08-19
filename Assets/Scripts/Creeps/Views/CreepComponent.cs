@@ -7,9 +7,9 @@ namespace GrimoireTD.Creeps
     {
         private Slider healthBar;
 
-        private Creep creepModel;
+        private ICreep creepModel;
 
-        public Creep CreepModel
+        public ICreep CreepModel
         {
             get
             {
@@ -17,7 +17,7 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        public void SetUp(Creep creepModel)
+        public void SetUp(ICreep creepModel)
         {
             this.creepModel = creepModel;
 

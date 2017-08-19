@@ -35,32 +35,32 @@ namespace GrimoireTD.UI
 
         private IStructureTemplate selectedStructureTemplate;
 
-        private Structure selectedStructureInstance = null;
-        private Unit selectedUnitInstance = null;
+        private IStructure selectedStructureInstance = null;
+        private IUnit selectedUnitInstance = null;
 
         private IPlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
-        private BuildModeAbility selectedBuildModeAbility = null;
+        private IBuildModeAbility selectedBuildModeAbility = null;
 
         private Ray cameraToMouseRay;
         private RaycastHit mouseHit;
 
         private Coord mouseOverCoord;
-        private HexData mouseOverHex;
+        private IHexData mouseOverHex;
 
-        private Creep mouseOverCreep;
+        private ICreep mouseOverCreep;
 
         private Camera mainCamera;
 
-        private MapData map;
+        private IMapData map;
         private GameStateManager gameStateManager;
 
-        private Action<Structure, Unit> OnDefendingEntitySelectedCallback;
+        private Action<IStructure, IUnit> OnDefendingEntitySelectedCallback;
         private Action OnDefendingEntityDeselectedCallback;
 
         private Action<IStructureTemplate> OnStructureToBuildSelectedCallback;
         private Action OnStructureToBuildDeselectedCallback;
 
-        private Action<Creep> OnCreepSelectedCallback;
+        private Action<ICreep> OnCreepSelectedCallback;
         private Action OnCreepDeselectedCallback;
 
         public bool MouseRaycastHitMap
@@ -79,7 +79,7 @@ namespace GrimoireTD.UI
             }
         }
 
-        public HexData MouseOverHex
+        public IHexData MouseOverHex
         {
             get
             {
@@ -103,7 +103,7 @@ namespace GrimoireTD.UI
             }
         }
 
-        public Unit SelectedUnitInstance
+        public IUnit SelectedUnitInstance
         {
             get
             {
@@ -119,7 +119,7 @@ namespace GrimoireTD.UI
             }
         }
 
-        public Structure SelectedStructureInstance
+        public IStructure SelectedStructureInstance
         {
             get
             {
@@ -279,7 +279,7 @@ namespace GrimoireTD.UI
             OnStructureToBuildSelectedCallback(selectedStructureTemplate);
         }
 
-        private void SelectHexContents(HexData hex)
+        private void SelectHexContents(IHexData hex)
         {
             selectedStructureInstance = hex.StructureHere;
             selectedUnitInstance = hex.UnitHere;
@@ -298,7 +298,7 @@ namespace GrimoireTD.UI
             OnStructureToBuildDeselectedCallback?.Invoke();
         }
 
-        private void SelectCreep(Creep creep)
+        private void SelectCreep(ICreep creep)
         {
             OnCreepSelectedCallback?.Invoke(creep);
         }
@@ -320,7 +320,7 @@ namespace GrimoireTD.UI
             cursorMode = InterfaceCursorMode.SELECT;
         }
 
-        public void ActivateBuildModeAbility(BuildModeAbility abilityToActivate)
+        public void ActivateBuildModeAbility(IBuildModeAbility abilityToActivate)
         {
             if (!abilityToActivate.BuildModeAbilityTemplate.Cost.CanDoTransaction())
             {
@@ -353,22 +353,22 @@ namespace GrimoireTD.UI
             SetCursorModeSelect();
         }
 
-        public void ClickUnitTalent(Unit unit, IUnitTalent unitTalent)
+        public void ClickUnitTalent(IUnit unit, IUnitTalent unitTalent)
         {
             unit.TryLevelUp(unitTalent);
         }
 
-        public void ClickStructureEnhancement(Structure structure, IStructureUpgrade upgrade, StructureEnhancement enhancement)
+        public void ClickStructureEnhancement(IStructure structure, IStructureUpgrade upgrade, IStructureEnhancement enhancement)
         {
             structure.TryUpgrade(upgrade, enhancement, false);
         }
 
-        public void RegisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
+        public void RegisterForOnDefendingEntitySelectedCallback(Action<IStructure, IUnit> callback)
         {
             OnDefendingEntitySelectedCallback += callback;
         }
 
-        public void DeregisterForOnDefendingEntitySelectedCallback(Action<Structure, Unit> callback)
+        public void DeregisterForOnDefendingEntitySelectedCallback(Action<IStructure, IUnit> callback)
         {
             OnDefendingEntitySelectedCallback -= callback;
         }
@@ -403,12 +403,12 @@ namespace GrimoireTD.UI
             OnStructureToBuildDeselectedCallback -= callback;
         }
 
-        public void RegisterForOnCreepSelectedCallback(Action<Creep> callback)
+        public void RegisterForOnCreepSelectedCallback(Action<ICreep> callback)
         {
             OnCreepSelectedCallback += callback;
         }
 
-        public void DeregisterForOnCreepSelectedCallback(Action<Creep> callback)
+        public void DeregisterForOnCreepSelectedCallback(Action<ICreep> callback)
         {
             OnCreepSelectedCallback -= callback;
         }

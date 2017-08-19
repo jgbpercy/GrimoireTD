@@ -7,7 +7,7 @@ namespace GrimoireTD.Abilities.DefendMode
 {
     public class SoDefendModeEffectComponent : ScriptableObject, IDefendModeEffectComponent
     {
-        public virtual void ExecuteEffect(DefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
+        public virtual void ExecuteEffect(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
         {
             throw new NotImplementedException("Base DMEffectComponent cannot execute effect and should not be used");
         }

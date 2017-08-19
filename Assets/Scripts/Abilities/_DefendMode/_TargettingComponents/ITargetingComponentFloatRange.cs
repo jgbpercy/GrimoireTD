@@ -6,6 +6,6 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         float BaseRange { get; }
 
-        float GetActualRange(DefendingEntity attachedToDefendingEntity);
+        float GetActualRange(IDefendingEntity attachedToDefendingEntity);
     }
 }

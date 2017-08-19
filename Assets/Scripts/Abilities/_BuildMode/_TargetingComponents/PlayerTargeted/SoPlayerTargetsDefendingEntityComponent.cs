@@ -10,9 +10,9 @@ namespace GrimoireTD.Abilities.BuildMode
         [SerializeField]
         private BuildModeAbilityDefendingEntityTargetingRuleService.RuleName targetingRule;
 
-        public override bool IsValidTarget(DefendingEntity sourceDefendingEntity, IBuildModeTargetable potentialTarget)
+        public override bool IsValidTarget(IDefendingEntity sourceDefendingEntity, IBuildModeTargetable potentialTarget)
         {
-            DefendingEntity potentialTargetDefendingEntity = potentialTarget as DefendingEntity;
+            IDefendingEntity potentialTargetDefendingEntity = potentialTarget as IDefendingEntity;
 
             Assert.IsTrue(potentialTargetDefendingEntity != null);
 

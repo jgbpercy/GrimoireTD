@@ -9,7 +9,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
     public class SoProjectileTemplate : ScriptableObject, IProjectileTemplate
     {
         [SerializeField]
-        protected AttackEffect[] attackEffects;
+        protected SAttackEffect[] attackEffects;
 
         [SerializeField]
         protected float speed;
@@ -17,7 +17,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         [SerializeField]
         protected GameObject projectilePrefab;
 
-        public IEnumerable<AttackEffect> AttackEffects
+        public IEnumerable<IAttackEffect> AttackEffects
         {
             get
             {
@@ -41,9 +41,9 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public virtual Projectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, DefendingEntity sourceDefendingEntity)
+        public virtual IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefendingEntity sourceDefendingEntity)
         {
-            return new Projectile(startPosition, target, this, sourceDefendingEntity);
+            return new CProjectile(startPosition, target, this, sourceDefendingEntity);
         }
     }
 }

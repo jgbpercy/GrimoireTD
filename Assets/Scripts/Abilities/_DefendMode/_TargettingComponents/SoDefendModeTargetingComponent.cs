@@ -7,7 +7,7 @@ namespace GrimoireTD.Abilities.DefendMode
 {
     public class SoDefendModeTargetingComponent : ScriptableObject, IDefendModeTargetingComponent
     {
-        public virtual IReadOnlyList<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity)
+        public virtual IReadOnlyList<IDefendModeTargetable> FindTargets(IDefendingEntity attachedToDefendingEntity)
         {
             throw new NotImplementedException("Base DMTargetingComponent cannot find targets and should not be used.");
         }

@@ -5,9 +5,9 @@ namespace GrimoireTD.DefendingEntities.Units
 {
     public class UnitComponent : MonoBehaviour
     {
-        private Unit unitModel;
+        private IUnit unitModel;
 
-        public Unit UnitModel
+        public IUnit UnitModel
         {
             get
             {
@@ -15,7 +15,7 @@ namespace GrimoireTD.DefendingEntities.Units
             }
         }
 
-        public void SetUp(Unit unitModel)
+        public void SetUp(IUnit unitModel)
         {
             this.unitModel = unitModel;
 

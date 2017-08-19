@@ -1,4 +1,6 @@
-﻿namespace System.Collections.Generic
+﻿using System.Linq;
+
+namespace System.Collections.Generic
 {
     public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>, IReadOnlyList<T>
     {
@@ -53,11 +55,27 @@
             if (!list.Contains(item))
             {
                 return false;
-            }
+            }          
 
             list.Remove(item);
 
             OnRemove?.Invoke(item);
+
+            return true;
+        }
+
+        public bool TryRemove(T item, IEqualityComparer<T> comparer)
+        {
+            var matchingItem = list.FirstOrDefault(x => comparer.Equals(x, item));
+
+            if (matchingItem == null)
+            {
+                return false;
+            }
+
+            list.Remove(matchingItem);
+
+            OnRemove?.Invoke(matchingItem);
 
             return true;
         }

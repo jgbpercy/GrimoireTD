@@ -6,14 +6,14 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public class BuildModeAbilityUIComponent : MonoBehaviour
     {
-        private BuildModeAbility buildModeAbility;
+        private IBuildModeAbility buildModeAbility;
 
         private bool initialised = false;
 
         [SerializeField]
         private Text ownText;
 
-        public BuildModeAbility BuildModeAbility
+        public IBuildModeAbility BuildModeAbility
         {
             get
             {
@@ -21,7 +21,7 @@ namespace GrimoireTD.Abilities.BuildMode
             }
         }
 
-        public void SetUp(BuildModeAbility buildModeAbility)
+        public void SetUp(IBuildModeAbility buildModeAbility)
         {
             if (initialised)
             {

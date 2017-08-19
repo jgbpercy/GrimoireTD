@@ -19,7 +19,7 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public override void ExecuteEffect(DefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
+        public override void ExecuteEffect(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
         {
             foreach (IDefendModeTargetable target in targets)
             {

@@ -4,9 +4,9 @@ namespace GrimoireTD.DefendingEntities.Structures
 {
     public class StructureComponent : MonoBehaviour
     {
-        private Structure structureModel;
+        private IStructure structureModel;
 
-        public Structure StructureModel
+        public IStructure StructureModel
         {
             get
             {
@@ -14,7 +14,7 @@ namespace GrimoireTD.DefendingEntities.Structures
             }
         }
 
-        public void SetUp(Structure structureModel)
+        public void SetUp(IStructure structureModel)
         {
             this.structureModel = structureModel;
         }

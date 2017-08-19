@@ -8,13 +8,13 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
     {
         private bool isExploding = false;
 
-        private AoeProjectile aoeProjectileModel;
+        private IAoeProjectile aoeProjectileModel;
 
-        public override void SetUp(Projectile projectileModel)
+        public override void SetUp(IProjectile projectileModel)
         {
             base.SetUp(projectileModel);
 
-            aoeProjectileModel = projectileModel as AoeProjectile;
+            aoeProjectileModel = projectileModel as IAoeProjectile;
             Assert.IsNotNull(aoeProjectileModel);
 
             aoeProjectileModel.RegisterForOnExplosionCallback(() => { isExploding = true; });
@@ -33,7 +33,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             {
                 if (other.CompareTag("Creep"))
                 {
-                    Creep hitCreep = other.GetComponent<CreepComponent>().CreepModel;
+                    ICreep hitCreep = other.GetComponent<CreepComponent>().CreepModel;
                     aoeProjectileModel.HitCreepInAoe(hitCreep);
                 }
             }

@@ -8,7 +8,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         [SerializeField]
         private Transform projectileFolder;
 
-        public void CreateProjectile(Projectile projectileModel)
+        public void CreateProjectile(IProjectile projectileModel)
         {
             ProjectileComponent projectileController = Instantiate(projectileModel.ProjectileClassTemplate.ProjectilePrefab, projectileModel.Position, Quaternion.identity, projectileFolder).GetComponent<ProjectileComponent>();
 

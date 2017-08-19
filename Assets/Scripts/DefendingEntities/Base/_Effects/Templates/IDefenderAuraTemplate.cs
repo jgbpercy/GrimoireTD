@@ -6,6 +6,6 @@
 
         bool AffectsSelf { get; }
 
-        DefenderAura GenerateDefenderAura(DefendingEntity sourceDefendingEntity);
+        IDefenderAura GenerateDefenderAura(IDefendingEntity sourceDefendingEntity);
     }
 }

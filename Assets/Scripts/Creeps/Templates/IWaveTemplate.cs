@@ -2,6 +2,6 @@
 {
     public interface IWaveTemplate
     {
-        Wave GenerateWave();
+        IWave GenerateWave();
     }
 }

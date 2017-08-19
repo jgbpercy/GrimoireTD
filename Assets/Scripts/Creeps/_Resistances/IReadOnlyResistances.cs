@@ -5,20 +5,20 @@ namespace GrimoireTD.Creeps
 {
     public interface IReadOnlyResistances
     {
-        float GetResistance(DamageEffectType damageEffectType, float currentArmor);
+        float GetResistance(IDamageEffectType damageEffectType, float currentArmor);
 
-        int GetBlock(DamageEffectType damageEffectType);
+        int GetBlock(IDamageEffectType damageEffectType);
 
-        void RegisterForOnResistanceChangedCallback(Action<float> callback, SpecificDamageEffectType specificDamageEffectType);
-        void DeregisterForOnResistanceChangedCallback(Action<float> callback, SpecificDamageEffectType specificDamageEffectType);
+        void RegisterForOnResistanceChangedCallback(Action<float> callback, ISpecificDamageEffectType specificDamageEffectType);
+        void DeregisterForOnResistanceChangedCallback(Action<float> callback, ISpecificDamageEffectType specificDamageEffectType);
 
-        void RegisterForOnAnyResistanceChangedCallback(Action<SpecificDamageEffectType, float> callback);
-        void DeregisterForOnAnyResistanceChangedCallback(Action<SpecificDamageEffectType, float> callback);
+        void RegisterForOnAnyResistanceChangedCallback(Action<ISpecificDamageEffectType, float> callback);
+        void DeregisterForOnAnyResistanceChangedCallback(Action<ISpecificDamageEffectType, float> callback);
 
-        void RegisterForOnBlockChanged(Action<int> callback, SpecificDamageEffectType specificDamageEffectType);
-        void DeregisterForOnBlockChanged(Action<int> callback, SpecificDamageEffectType specificDamageEffectType);
+        void RegisterForOnBlockChanged(Action<int> callback, ISpecificDamageEffectType specificDamageEffectType);
+        void DeregisterForOnBlockChanged(Action<int> callback, ISpecificDamageEffectType specificDamageEffectType);
 
-        void RegisterForOnAnyBlockChangedCallback(Action<SpecificDamageEffectType, int> callback);
-        void DeregisterForOnAnyBlockChangeCallback(Action<SpecificDamageEffectType, int> callback);
+        void RegisterForOnAnyBlockChangedCallback(Action<ISpecificDamageEffectType, int> callback);
+        void DeregisterForOnAnyBlockChangeCallback(Action<ISpecificDamageEffectType, int> callback);
     }
 }

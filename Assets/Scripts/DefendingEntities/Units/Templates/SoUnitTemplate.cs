@@ -64,9 +64,9 @@ namespace GrimoireTD.DefendingEntities.Units
             }
         }
 
-        public virtual Unit GenerateUnit(Coord position)
+        public virtual IUnit GenerateUnit(Coord position)
         {
-            return new Unit(this, position);
+            return new CUnit(this, position);
         }
     }
 }

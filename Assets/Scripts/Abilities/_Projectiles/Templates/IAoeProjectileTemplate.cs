@@ -5,7 +5,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
     public interface IAoeProjectileTemplate : IProjectileTemplate
     {
-        IEnumerable<AttackEffect> AoeAttackEffects { get; }
+        IEnumerable<IAttackEffect> AoeAttackEffects { get; }
 
         float AoeRadius { get; }
 

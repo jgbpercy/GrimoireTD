@@ -11,9 +11,9 @@ namespace GrimoireTD.Levels
 
         IEconomyTransaction StartingResources { get; }
 
-        IEnumerable<StartingUnit> StartingUnits { get; }
+        IEnumerable<IStartingUnit> StartingUnits { get; }
 
-        IEnumerable<StartingStructure> StartingStructures { get; }
+        IEnumerable<IStartingStructure> StartingStructures { get; }
 
         IEnumerable<IWaveTemplate> Waves { get; }
     }

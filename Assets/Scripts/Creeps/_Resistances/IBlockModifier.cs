@@ -6,6 +6,6 @@ namespace GrimoireTD.Creeps
     {
         int Magnitude { get; }
 
-        SpecificDamageEffectType DamageType { get; }
+        ISpecificDamageEffectType DamageType { get; }
     }
 }

@@ -8,11 +8,11 @@ namespace GrimoireTD.DefendingEntities.Units
 {
     public class CUnitImprovement : CDefendingEntityImprovement, IUnitImprovement
     {
-        private HexOccupationBonus[] conditionalHexOccupationBonuses;
+        private IHexOccupationBonus[] conditionalHexOccupationBonuses;
 
-        private StructureOccupationBonus[] conditionalStructureOccupationBonuses;
+        private IStructureOccupationBonus[] conditionalStructureOccupationBonuses;
 
-        public IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses
+        public IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses
         {
             get
             {
@@ -20,7 +20,7 @@ namespace GrimoireTD.DefendingEntities.Units
             }
         }
 
-        public IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses
+        public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses
         {
             get
             {
@@ -30,16 +30,16 @@ namespace GrimoireTD.DefendingEntities.Units
 
         public CUnitImprovement(
             ICollection<INamedAttributeModifier<DefendingEntityAttributeName>> attributeModifiers,
-            ICollection<HexOccupationBonus> flatHexOccupationBonuses,
+            ICollection<IHexOccupationBonus> flatHexOccupationBonuses,
             ICollection<IAbilityTemplate> abilities,
             ICollection<IDefenderAuraTemplate> auras,
-            ICollection<HexOccupationBonus> conditionalHexOccupationBonuses,
-            ICollection<StructureOccupationBonus> conditionalStructureOccupationBonuses
+            ICollection<IHexOccupationBonus> conditionalHexOccupationBonuses,
+            ICollection<IStructureOccupationBonus> conditionalStructureOccupationBonuses
             )
             : base(attributeModifiers, flatHexOccupationBonuses, abilities, auras)
         {
-            this.conditionalHexOccupationBonuses = new HexOccupationBonus[conditionalHexOccupationBonuses.Count];
-            this.conditionalStructureOccupationBonuses = new StructureOccupationBonus[conditionalStructureOccupationBonuses.Count];
+            this.conditionalHexOccupationBonuses = new IHexOccupationBonus[conditionalHexOccupationBonuses.Count];
+            this.conditionalStructureOccupationBonuses = new IStructureOccupationBonus[conditionalStructureOccupationBonuses.Count];
 
             conditionalHexOccupationBonuses.CopyTo(this.conditionalHexOccupationBonuses, 0);
             conditionalStructureOccupationBonuses.CopyTo(this.conditionalStructureOccupationBonuses, 0);

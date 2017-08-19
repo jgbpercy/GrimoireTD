@@ -9,7 +9,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
     public class SoAoeProjectileTemplate : SoProjectileTemplate, IAoeProjectileTemplate
     {
         [SerializeField]
-        protected AttackEffect[] aoeAttackEffects;
+        protected SAttackEffect[] aoeAttackEffects;
 
         [SerializeField]
         protected float aoeRadius;
@@ -17,7 +17,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         [SerializeField]
         protected float aoeExpansionLerpFactor = 0.15f;
 
-        public IEnumerable<AttackEffect> AoeAttackEffects
+        public IEnumerable<IAttackEffect> AoeAttackEffects
         {
             get
             {
@@ -41,9 +41,9 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public override Projectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, DefendingEntity sourceDefendingEntity)
+        public override IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefendingEntity sourceDefendingEntity)
         {
-            return new AoeProjectile(startPosition, target, this, sourceDefendingEntity);
+            return new CAoeProjectile(startPosition, target, this, sourceDefendingEntity);
         }
     }
 }

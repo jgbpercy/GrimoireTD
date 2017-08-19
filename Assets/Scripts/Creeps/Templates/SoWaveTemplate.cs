@@ -34,7 +34,7 @@ namespace GrimoireTD.Creeps
         [SerializeField]
         private Spawn[] spawns;
 
-        public Wave GenerateWave()
+        public IWave GenerateWave()
         {
             float[] timings = new float[spawns.Length];
             ICreepTemplate[] creeps = new ICreepTemplate[spawns.Length];
@@ -45,7 +45,7 @@ namespace GrimoireTD.Creeps
                 creeps[i] = spawns[i].Creep;
             }
 
-            return new Wave(timings, creeps);
+            return new CWave(timings, creeps);
         }
     }
 }

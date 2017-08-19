@@ -7,7 +7,7 @@ namespace GrimoireTD.Economy
     public class SResourceTransaction : IResourceTransaction
     {
         [SerializeField]
-        private SoResource resource;
+        private SoResourceTemplate resource;
 
         [SerializeField]
         private int amount;
@@ -16,7 +16,7 @@ namespace GrimoireTD.Economy
         {
             get
             {
-                return resource;
+                return EconomyManager.Instance.GetResourceFromTemplate(resource);
             }
         }
 

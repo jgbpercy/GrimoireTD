@@ -8,12 +8,12 @@ namespace GrimoireTD.DefendingEntities.Units
     public class SoUnitImprovement : SoDefendingEntityImprovement, IUnitImprovement
     {
         [SerializeField]
-        private HexOccupationBonus[] conditionalHexOccupationBonuses;
+        private SHexOccupationBonus[] conditionalHexOccupationBonuses;
 
         [SerializeField]
-        private StructureOccupationBonus[] conditionalStructureOccupationBonuses;
+        private SStructureOccupationBonus[] conditionalStructureOccupationBonuses;
 
-        public IEnumerable<HexOccupationBonus> ConditionalHexOccupationBonuses
+        public IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses
         {
             get
             {
@@ -21,7 +21,7 @@ namespace GrimoireTD.DefendingEntities.Units
             }
         }
 
-        public IEnumerable<StructureOccupationBonus> ConditionalStructureOccupationBonuses
+        public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses
         {
             get
             {

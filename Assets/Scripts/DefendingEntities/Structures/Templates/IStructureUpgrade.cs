@@ -4,7 +4,7 @@ namespace GrimoireTD.DefendingEntities.Structures
 {
     public interface IStructureUpgrade
     {
-        IEnumerable<StructureEnhancement> OptionalEnhancements { get; }
+        IEnumerable<IStructureEnhancement> OptionalEnhancements { get; }
 
         IDefendingEntityImprovement MainUpgradeBonus { get; }
 

@@ -8,55 +8,55 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
     public class AttackEffectTypeManager : SingletonMonobehaviour<AttackEffectTypeManager>
     {
         [SerializeField]
-        private AttackEffectType[] attackEffectTypes;
+        private SoAttackEffectType[] attackEffectTypes;
 
-        private Dictionary<MetaDamageEffectType, List<SpecificDamageEffectType>> metaToSpecificDictionary = new Dictionary<MetaDamageEffectType, List<SpecificDamageEffectType>>();
+        private Dictionary<IMetaDamageEffectType, List<ISpecificDamageEffectType>> metaToSpecificDictionary = new Dictionary<IMetaDamageEffectType, List<ISpecificDamageEffectType>>();
 
-        private Dictionary<SpecificDamageEffectType, WeakMetaDamageEffectType> specificToWeakDictionary = new Dictionary<SpecificDamageEffectType, WeakMetaDamageEffectType>();
-        private Dictionary<SpecificDamageEffectType, StrongMetaDamageEffectType> specificToStrongDictionary = new Dictionary<SpecificDamageEffectType, StrongMetaDamageEffectType>();
+        private Dictionary<ISpecificDamageEffectType, IWeakMetaDamageEffectType> specificToWeakDictionary = new Dictionary<ISpecificDamageEffectType, IWeakMetaDamageEffectType>();
+        private Dictionary<ISpecificDamageEffectType, IStrongMetaDamageEffectType> specificToStrongDictionary = new Dictionary<ISpecificDamageEffectType, IStrongMetaDamageEffectType>();
 
-        private Dictionary<BasicMetaDamageEffectType, WeakMetaDamageEffectType> basicToWeakDictionary = new Dictionary<BasicMetaDamageEffectType, WeakMetaDamageEffectType>();
-        private Dictionary<BasicMetaDamageEffectType, StrongMetaDamageEffectType> basicToStrongDictionary = new Dictionary<BasicMetaDamageEffectType, StrongMetaDamageEffectType>();
+        private Dictionary<IBasicMetaDamageEffectType, IWeakMetaDamageEffectType> basicToWeakDictionary = new Dictionary<IBasicMetaDamageEffectType, IWeakMetaDamageEffectType>();
+        private Dictionary<IBasicMetaDamageEffectType, IStrongMetaDamageEffectType> basicToStrongDictionary = new Dictionary<IBasicMetaDamageEffectType, IStrongMetaDamageEffectType>();
 
-        private List<SpecificDamageEffectType> specificDamageTypes = new List<SpecificDamageEffectType>();
-        private List<MetaDamageEffectType> metaDamageTypes = new List<MetaDamageEffectType>();
-        private List<BasicMetaDamageEffectType> basicMetaDamageTypes = new List<BasicMetaDamageEffectType>();
-        private List<WeakMetaDamageEffectType> weakMetaDamageTypes = new List<WeakMetaDamageEffectType>();
-        private List<StrongMetaDamageEffectType> strongMetaDamageTypes = new List<StrongMetaDamageEffectType>();
+        private List<ISpecificDamageEffectType> specificDamageTypes = new List<ISpecificDamageEffectType>();
+        private List<IMetaDamageEffectType> metaDamageTypes = new List<IMetaDamageEffectType>();
+        private List<IBasicMetaDamageEffectType> basicMetaDamageTypes = new List<IBasicMetaDamageEffectType>();
+        private List<IWeakMetaDamageEffectType> weakMetaDamageTypes = new List<IWeakMetaDamageEffectType>();
+        private List<IStrongMetaDamageEffectType> strongMetaDamageTypes = new List<IStrongMetaDamageEffectType>();
 
-        private List<ModifierEffectType> modifierEffectTypes = new List<ModifierEffectType>();
-        private List<AttributeModifierEffectType> attributeEffectTypes = new List<AttributeModifierEffectType>();
-        private List<ResistanceModifierEffectType> resistanceEffectTypes = new List<ResistanceModifierEffectType>();
+        private List<IModifierEffectType> modifierEffectTypes = new List<IModifierEffectType>();
+        private List<IAttributeModifierEffectType> attributeEffectTypes = new List<IAttributeModifierEffectType>();
+        private List<IResistanceModifierEffectType> resistanceEffectTypes = new List<IResistanceModifierEffectType>();
 
-        public IReadOnlyList<SpecificDamageEffectType> SpecificDamageTypes
+        public IReadOnlyList<ISpecificDamageEffectType> SpecificDamageTypes
         {
             get
             {
                 return specificDamageTypes;
             }
         }
-        public IReadOnlyList<MetaDamageEffectType> MetaDamageTypes
+        public IReadOnlyList<IMetaDamageEffectType> MetaDamageTypes
         {
             get
             {
                 return metaDamageTypes;
             }
         }
-        public IReadOnlyList<BasicMetaDamageEffectType> BasicMetaDamageTypes
+        public IReadOnlyList<IBasicMetaDamageEffectType> BasicMetaDamageTypes
         {
             get
             {
                 return basicMetaDamageTypes;
             }
         }
-        public IReadOnlyList<WeakMetaDamageEffectType> WeakMetaDamageTypes
+        public IReadOnlyList<IWeakMetaDamageEffectType> WeakMetaDamageTypes
         {
             get
             {
                 return weakMetaDamageTypes;
             }
         }
-        public IReadOnlyList<StrongMetaDamageEffectType> StrongMetaDamageTypes
+        public IReadOnlyList<IStrongMetaDamageEffectType> StrongMetaDamageTypes
         {
             get
             {
@@ -64,7 +64,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
-        public IReadOnlyList<ModifierEffectType> ModifierEffectTypes
+        public IReadOnlyList<IModifierEffectType> ModifierEffectTypes
         {
             get
             {
@@ -72,7 +72,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
-        public IReadOnlyList<AttributeModifierEffectType> AttributeEffectTypes
+        public IReadOnlyList<IAttributeModifierEffectType> AttributeEffectTypes
         {
             get
             {
@@ -80,7 +80,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
-        public IReadOnlyList<ResistanceModifierEffectType> ResistanceEffectTypes
+        public IReadOnlyList<IResistanceModifierEffectType> ResistanceEffectTypes
         {
             get
             {
@@ -90,16 +90,16 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 
         private void Awake()
         {
-            foreach (AttackEffectType attackEffectType in attackEffectTypes)
+            foreach (IAttackEffectType attackEffectType in attackEffectTypes)
             {
-                DamageEffectType damageEffectType = attackEffectType as DamageEffectType;
+                IDamageEffectType damageEffectType = attackEffectType as IDamageEffectType;
                 if (damageEffectType != null)
                 {
                     AddDamageEffectType(damageEffectType);
                     continue;
                 }
 
-                ModifierEffectType modifierEffectType = attackEffectType as ModifierEffectType;
+                IModifierEffectType modifierEffectType = attackEffectType as IModifierEffectType;
                 if (modifierEffectType != null)
                 {
                     AddModifierEffect(modifierEffectType);
@@ -107,65 +107,65 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
                 }
             }
 
-            foreach (BasicMetaDamageEffectType basicMetaDamageType in basicMetaDamageTypes)
+            foreach (IBasicMetaDamageEffectType basicMetaDamageType in basicMetaDamageTypes)
             {
-                metaToSpecificDictionary.Add(basicMetaDamageType, new List<SpecificDamageEffectType>());
+                metaToSpecificDictionary.Add(basicMetaDamageType, new List<ISpecificDamageEffectType>());
             }
 
-            foreach (SpecificDamageEffectType specificDamageType in specificDamageTypes)
+            foreach (ISpecificDamageEffectType specificDamageType in specificDamageTypes)
             {
                 metaToSpecificDictionary[specificDamageType.BasicMetaDamageEffectType].Add(specificDamageType);
             }
 
-            foreach (WeakMetaDamageEffectType weakMetaDamageType in weakMetaDamageTypes)
+            foreach (IWeakMetaDamageEffectType weakMetaDamageType in weakMetaDamageTypes)
             {
                 metaToSpecificDictionary.Add(weakMetaDamageType, metaToSpecificDictionary[weakMetaDamageType.BasicMetaDamageType]);
 
                 basicToWeakDictionary.Add(weakMetaDamageType.BasicMetaDamageType, weakMetaDamageType);
 
-                foreach (SpecificDamageEffectType specificDamageType in metaToSpecificDictionary[weakMetaDamageType])
+                foreach (ISpecificDamageEffectType specificDamageType in metaToSpecificDictionary[weakMetaDamageType])
                 {
                     specificToWeakDictionary.Add(specificDamageType, weakMetaDamageType);
                 }
             }
 
-            foreach (StrongMetaDamageEffectType strongMetaDamageType in strongMetaDamageTypes)
+            foreach (IStrongMetaDamageEffectType strongMetaDamageType in strongMetaDamageTypes)
             {
                 metaToSpecificDictionary.Add(strongMetaDamageType, metaToSpecificDictionary[strongMetaDamageType.BasicMetaDamageType]);
 
                 basicToStrongDictionary.Add(strongMetaDamageType.BasicMetaDamageType, strongMetaDamageType);
 
-                foreach (SpecificDamageEffectType specificDamageType in metaToSpecificDictionary[strongMetaDamageType])
+                foreach (ISpecificDamageEffectType specificDamageType in metaToSpecificDictionary[strongMetaDamageType])
                 {
                     specificToStrongDictionary.Add(specificDamageType, strongMetaDamageType);
                 }
             }
         }
 
-        private void AddDamageEffectType(DamageEffectType damageEffectType)
+        private void AddDamageEffectType(IDamageEffectType damageEffectType)
         {
-            SpecificDamageEffectType specificDamageEffectType = damageEffectType as SpecificDamageEffectType;
+            ISpecificDamageEffectType specificDamageEffectType = damageEffectType as ISpecificDamageEffectType;
             if (specificDamageEffectType != null)
             {
                 specificDamageTypes.Add(specificDamageEffectType);
                 return;
             }
 
-            BasicMetaDamageEffectType basicMetaDamageEffectType = damageEffectType as BasicMetaDamageEffectType;
+            IBasicMetaDamageEffectType basicMetaDamageEffectType = damageEffectType as IBasicMetaDamageEffectType;
             if (basicMetaDamageEffectType != null)
             {
                 basicMetaDamageTypes.Add(basicMetaDamageEffectType);
                 return;
             }
 
-            WeakMetaDamageEffectType weakMetaDamageEffectType = damageEffectType as WeakMetaDamageEffectType;
+            IWeakMetaDamageEffectType weakMetaDamageEffectType = damageEffectType as IWeakMetaDamageEffectType;
             if (weakMetaDamageEffectType != null)
             {
                 weakMetaDamageTypes.Add(weakMetaDamageEffectType);
                 return;
             }
 
-            StrongMetaDamageEffectType strongMetaDamageEffectType = damageEffectType as StrongMetaDamageEffectType;
+            IStrongMetaDamageEffectType strongMetaDamageEffectType = damageEffectType as IStrongMetaDamageEffectType;
             if (strongMetaDamageEffectType != null)
             {
                 strongMetaDamageTypes.Add(strongMetaDamageEffectType);
@@ -175,18 +175,18 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             throw new Exception("Unhandled damageEffectType");
         }
 
-        private void AddModifierEffect(ModifierEffectType modifierEffectType)
+        private void AddModifierEffect(IModifierEffectType modifierEffectType)
         {
             modifierEffectTypes.Add(modifierEffectType);
 
-            AttributeModifierEffectType attributeModifierEffectType = modifierEffectType as AttributeModifierEffectType;
+            IAttributeModifierEffectType attributeModifierEffectType = modifierEffectType as IAttributeModifierEffectType;
             if (attributeModifierEffectType != null)
             {
                 attributeEffectTypes.Add(attributeModifierEffectType);
                 return;
             }
 
-            ResistanceModifierEffectType resistanceModifierEffectType = modifierEffectType as ResistanceModifierEffectType;
+            IResistanceModifierEffectType resistanceModifierEffectType = modifierEffectType as IResistanceModifierEffectType;
             if (resistanceModifierEffectType != null)
             {
                 resistanceEffectTypes.Add(resistanceModifierEffectType);
@@ -196,32 +196,32 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             throw new Exception("Unhandled instantEffectType");
         }
 
-        public IReadOnlyList<SpecificDamageEffectType> GetSpecificDamageTypes(MetaDamageEffectType metaDamageEffectType)
+        public IReadOnlyList<ISpecificDamageEffectType> GetSpecificDamageTypes(IMetaDamageEffectType metaDamageEffectType)
         {
             return metaToSpecificDictionary[metaDamageEffectType];
         }
 
-        public BasicMetaDamageEffectType GetBasicMetaDamageType(SpecificDamageEffectType specificDamageType)
+        public IBasicMetaDamageEffectType GetBasicMetaDamageType(ISpecificDamageEffectType specificDamageType)
         {
             return specificDamageType.BasicMetaDamageEffectType;
         }
 
-        public WeakMetaDamageEffectType GetWeakMetaDamageType(SpecificDamageEffectType specificDamageType)
+        public IWeakMetaDamageEffectType GetWeakMetaDamageType(ISpecificDamageEffectType specificDamageType)
         {
             return specificToWeakDictionary[specificDamageType];
         }
 
-        public WeakMetaDamageEffectType GetWeakMetaDamageType(BasicMetaDamageEffectType basicDamageType)
+        public IWeakMetaDamageEffectType GetWeakMetaDamageType(IBasicMetaDamageEffectType basicDamageType)
         {
             return basicToWeakDictionary[basicDamageType];
         }
 
-        public StrongMetaDamageEffectType GetStrongMetaDamageType(SpecificDamageEffectType specificDamageType)
+        public IStrongMetaDamageEffectType GetStrongMetaDamageType(ISpecificDamageEffectType specificDamageType)
         {
             return specificToStrongDictionary[specificDamageType];
         }
 
-        public StrongMetaDamageEffectType GetStrongMetaDamageType(BasicMetaDamageEffectType basicDamageType)
+        public IStrongMetaDamageEffectType GetStrongMetaDamageType(IBasicMetaDamageEffectType basicDamageType)
         {
             return basicToStrongDictionary[basicDamageType];
         }

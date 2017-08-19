@@ -40,9 +40,9 @@ namespace GrimoireTD.Abilities.BuildMode
             }
         }
 
-        public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
+        public override IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity)
         {
-            return new BuildModeAbility(this, attachedToDefendingEntity);
+            return new CBuildModeAbility(this);
         }
     }
 }

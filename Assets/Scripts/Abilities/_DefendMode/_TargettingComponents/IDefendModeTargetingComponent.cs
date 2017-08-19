@@ -5,6 +5,6 @@ namespace GrimoireTD.Abilities.DefendMode
 {
     public interface IDefendModeTargetingComponent
     {
-        IReadOnlyList<IDefendModeTargetable> FindTargets(DefendingEntity attachedToDefendingEntity);
+        IReadOnlyList<IDefendModeTargetable> FindTargets(IDefendingEntity attachedToDefendingEntity);
     }
 }

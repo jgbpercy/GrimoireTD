@@ -5,7 +5,7 @@ namespace GrimoireTD.Abilities.DefendMode
 {
     public class DefendModeAbilityUIComponent : MonoBehaviour
     {
-        private DefendModeAbility defendModeAbility;
+        private IDefendModeAbility defendModeAbility;
 
         private bool initialised = false;
 
@@ -14,7 +14,7 @@ namespace GrimoireTD.Abilities.DefendMode
         [SerializeField]
         private Slider ownSlider;
 
-        public DefendModeAbility DefendModeAbility
+        public IDefendModeAbility DefendModeAbility
         {
             get
             {
@@ -22,7 +22,7 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public void SetUp(DefendModeAbility defendModeAbility)
+        public void SetUp(IDefendModeAbility defendModeAbility)
         {
             if (initialised)
             {

@@ -7,12 +7,12 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
     public interface IProjectileTemplate
     {
-        IEnumerable<AttackEffect> AttackEffects { get; }
+        IEnumerable<IAttackEffect> AttackEffects { get; }
 
         float Speed { get; }
 
         GameObject ProjectilePrefab { get; }
 
-        Projectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, DefendingEntity sourceDefendingEntity);
+        IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefendingEntity sourceDefendingEntity);
     }
 }

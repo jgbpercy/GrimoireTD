@@ -39,9 +39,9 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public override Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
+        public override IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity)
         {
-            return new DefendModeAbility(this, attachedToDefendingEntity);
+            return new CDefendModeAbility(this, attachedToDefendingEntity);
         }
     }
 }

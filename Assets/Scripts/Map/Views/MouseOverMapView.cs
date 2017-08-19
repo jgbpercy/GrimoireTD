@@ -63,7 +63,7 @@ namespace GrimoireTD.Map
             }
 
             InterfaceCursorMode cursorMode = interfaceController.CurrentCursorMode;
-            HexData mouseOverHex = interfaceController.MouseOverHex;
+            IHexData mouseOverHex = interfaceController.MouseOverHex;
             Coord mouseOverCoord = interfaceController.MouseOverCoord;
 
             if (cursorMode == InterfaceCursorMode.BUILD)

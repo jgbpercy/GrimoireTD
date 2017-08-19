@@ -6,6 +6,6 @@ namespace GrimoireTD.Abilities
     {
         string NameInGame { get; }
 
-        Ability GenerateAbility(DefendingEntity attachedToDefendingEntity);
+        IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity);
     }
 }

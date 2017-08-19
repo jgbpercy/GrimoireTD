@@ -12,14 +12,14 @@ namespace GrimoireTD.Attributes
             { CreepAttributeName.speedMultiplier, "Speed Multiplier" }
         };
 
-        public static Dictionary<CreepAttributeName, GameAttribute> NewAttributesDictionary()
+        public static Dictionary<CreepAttributeName, IAttribute> NewAttributesDictionary()
         {
-            return new Dictionary<CreepAttributeName, GameAttribute>
+            return new Dictionary<CreepAttributeName, IAttribute>
             {
-                { CreepAttributeName.rawArmor, new AdditiveAttribute(DisplayNames[CreepAttributeName.rawArmor]) },
-                { CreepAttributeName.armorMultiplier, new AdditiveAttribute(DisplayNames[CreepAttributeName.armorMultiplier]) },
-                { CreepAttributeName.rawSpeed, new AdditiveAttribute(DisplayNames[CreepAttributeName.rawSpeed]) },
-                { CreepAttributeName.speedMultiplier, new AdditiveAttribute(DisplayNames[CreepAttributeName.speedMultiplier]) }
+                { CreepAttributeName.rawArmor, new CAdditiveAttribute(DisplayNames[CreepAttributeName.rawArmor]) },
+                { CreepAttributeName.armorMultiplier, new CAdditiveAttribute(DisplayNames[CreepAttributeName.armorMultiplier]) },
+                { CreepAttributeName.rawSpeed, new CAdditiveAttribute(DisplayNames[CreepAttributeName.rawSpeed]) },
+                { CreepAttributeName.speedMultiplier, new CAdditiveAttribute(DisplayNames[CreepAttributeName.speedMultiplier]) }
             };
         }
     }

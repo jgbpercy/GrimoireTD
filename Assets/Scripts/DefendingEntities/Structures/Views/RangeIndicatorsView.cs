@@ -48,7 +48,7 @@ namespace GrimoireTD.DefendingEntities
             }
 
             InterfaceCursorMode cursorMode = interfaceController.CurrentCursorMode;
-            HexData mouseOverHex = interfaceController.MouseOverHex;
+            IHexData mouseOverHex = interfaceController.MouseOverHex;
             Coord mouseOverCoord = interfaceController.MouseOverCoord;
 
             /*Optimisation: 
@@ -62,7 +62,7 @@ namespace GrimoireTD.DefendingEntities
 
                 if (mouseOverHex.StructureHere != null)
                 {
-                    foreach (DefendModeAbility defendModeAbility in mouseOverHex.StructureHere.DefendModeAbilities())
+                    foreach (IDefendModeAbility defendModeAbility in mouseOverHex.StructureHere.DefendModeAbilities())
                     {
                         ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
                         if (targetingComponentFloatRange != null)
@@ -74,7 +74,7 @@ namespace GrimoireTD.DefendingEntities
 
                 if (mouseOverHex.UnitHere != null)
                 {
-                    foreach (DefendModeAbility defendModeAbility in mouseOverHex.UnitHere.DefendModeAbilities())
+                    foreach (IDefendModeAbility defendModeAbility in mouseOverHex.UnitHere.DefendModeAbilities())
                     {
                         ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
                         if (targetingComponentFloatRange != null)

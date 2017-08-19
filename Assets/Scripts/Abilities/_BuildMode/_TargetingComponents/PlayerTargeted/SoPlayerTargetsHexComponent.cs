@@ -15,7 +15,7 @@ namespace GrimoireTD.Abilities.BuildMode
         [SerializeField]
         private BuildModeAbilityAutoTargetedRuleService.RuleName aoeRule;
 
-        public override bool IsValidTarget(DefendingEntity sourceDefendingEntity, IBuildModeTargetable potentialTarget)
+        public override bool IsValidTarget(IDefendingEntity sourceDefendingEntity, IBuildModeTargetable potentialTarget)
         {
             Coord potentialTargetCoord = potentialTarget as Coord;
 

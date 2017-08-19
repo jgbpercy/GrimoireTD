@@ -40,7 +40,7 @@ namespace GrimoireTD.Map
 
             mouseOverHexPanel.SetActive(true);
 
-            HexData mouseOverHex = interfaceController.MouseOverHex;
+            IHexData mouseOverHex = interfaceController.MouseOverHex;
 
             hexTypeText.text = mouseOverHex.HexType.NameInGame;
 
@@ -65,7 +65,7 @@ namespace GrimoireTD.Map
             if (mouseOverHex.DefenderAurasHere.Count > 0)
             {
                 aurasText.text = "";
-                foreach (DefenderAura aura in mouseOverHex.DefenderAurasHere)
+                foreach (IDefenderAura aura in mouseOverHex.DefenderAurasHere)
                 {
                     aurasText.text += aura.DefenderAuraTemplate.NameInGame + "\n";
                 }

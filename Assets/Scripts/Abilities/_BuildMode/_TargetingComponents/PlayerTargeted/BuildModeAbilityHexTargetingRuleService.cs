@@ -8,7 +8,7 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public static class BuildModeAbilityHexTargetingRuleService
     {
-        private static MapData map = MapGenerator.Instance.Map;
+        private static IMapData map = MapGenerator.Instance.Map;
 
         //Rule names
         public enum RuleName
@@ -18,7 +18,7 @@ namespace GrimoireTD.Abilities.BuildMode
         }
 
         //Wrapper function
-        public static bool RunRule(RuleName ruleName, DefendingEntity sourceDefendingEntity, Coord targetCoord, int range)
+        public static bool RunRule(RuleName ruleName, IDefendingEntity sourceDefendingEntity, Coord targetCoord, int range)
         {
             switch (ruleName)
             {
@@ -32,9 +32,9 @@ namespace GrimoireTD.Abilities.BuildMode
         }
 
         //Rules
-        private static bool ValidMove(DefendingEntity sourceDefendingEntity, Coord targetCoord, int range)
+        private static bool ValidMove(IDefendingEntity sourceDefendingEntity, Coord targetCoord, int range)
         {
-            Unit sourceUnit = sourceDefendingEntity as Unit;
+            IUnit sourceUnit = sourceDefendingEntity as IUnit;
             Assert.IsTrue(sourceUnit != null);
 
             if (!HexIsInRange(sourceDefendingEntity, targetCoord, range))
@@ -60,9 +60,9 @@ namespace GrimoireTD.Abilities.BuildMode
             return map.GetHexAt(targetCoord).StructureHere != null;
         }
 
-        private static bool HexIsInRange(DefendingEntity sourceDefendingEntity, Coord targetCoord, int range)
+        private static bool HexIsInRange(IDefendingEntity sourceDefendingEntity, Coord targetCoord, int range)
         {
-            return MapData.HexIsInRange(range, sourceDefendingEntity.CoordPosition, targetCoord);
+            return CMapData.HexIsInRange(range, sourceDefendingEntity.CoordPosition, targetCoord);
         }
     }
 }

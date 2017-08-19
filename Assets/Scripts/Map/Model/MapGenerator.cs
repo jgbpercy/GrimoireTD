@@ -35,7 +35,7 @@ namespace GrimoireTD.Map
 
     public class MapGenerator : SingletonMonobehaviour<MapGenerator>
     {
-        private MapData map;
+        private IMapData map;
 
         [SerializeField]
         private SoHexType[] hexTypes;
@@ -50,7 +50,7 @@ namespace GrimoireTD.Map
         private ColorToType[] colorsToTypes;
         private Dictionary<Color32, IHexType> colorsToTypesDictionary;
 
-        public MapData Map
+        public IMapData Map
         {
             get
             {
@@ -83,7 +83,7 @@ namespace GrimoireTD.Map
         {
             CDebug.Log(CDebug.applicationLoading, "Map Generator Start");
 
-            map = new MapData(level.LevelImage, colorsToTypesDictionary);
+            map = new CMapData(level.LevelImage, colorsToTypesDictionary);
 
             PlaceStartingStructures();
             PlaceStartingUnits();
@@ -101,7 +101,7 @@ namespace GrimoireTD.Map
 
         private void PlaceStartingStructures()
         {
-            foreach (StartingStructure startingStructure in level.StartingStructures)
+            foreach (IStartingStructure startingStructure in level.StartingStructures)
             {
                 if (!map.CanBuildStructureAt(startingStructure.StartingPosition, startingStructure.StructureTemplate, true))
                 {
@@ -116,7 +116,7 @@ namespace GrimoireTD.Map
 
         private void PlaceStartingUnits()
         {
-            foreach (StartingUnit startingUnit in level.StartingUnits)
+            foreach (IStartingUnit startingUnit in level.StartingUnits)
             {
                 if (!map.CanCreateUnitAt(startingUnit.StartingPosition))
                 {

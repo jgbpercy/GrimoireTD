@@ -102,9 +102,9 @@ namespace GrimoireTD.DefendingEntities
         [SerializeField]
         private Text unitEconomyText;
 
-        private Unit selectedUnit = null;
+        private IUnit selectedUnit = null;
 
-        private Structure selectedStructure = null;
+        private IStructure selectedStructure = null;
 
         private List<DefendModeAbilityUIComponent> abilitySliders = new List<DefendModeAbilityUIComponent>();
         private List<BuildModeAbilityUIComponent> abilityButtons = new List<BuildModeAbilityUIComponent>();
@@ -114,10 +114,10 @@ namespace GrimoireTD.DefendingEntities
         private List<GameObject> upgradeDisplays = new List<GameObject>();
         private List<GameObject> enhancementDisplays = new List<GameObject>();
 
-        private Action<Ability> OnStructureAbilityAdded;
-        private Action<Ability> OnStructureAbilityRemoved;
-        private Action<Ability> OnUnitAbilityAdded;
-        private Action<Ability> OnUnitAbilityRemoved;
+        private Action<IAbility> OnStructureAbilityAdded;
+        private Action<IAbility> OnStructureAbilityRemoved;
+        private Action<IAbility> OnUnitAbilityAdded;
+        private Action<IAbility> OnUnitAbilityRemoved;
 
         private void Start()
         {
@@ -156,7 +156,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        private void OnNewSelection(Structure newSelectedStructure, Unit newSelectedUnit)
+        private void OnNewSelection(IStructure newSelectedStructure, IUnit newSelectedUnit)
         {
             ClearAbilityLists();
 
@@ -179,7 +179,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        private void OnStructureSelected(Structure newSelectedStructure)
+        private void OnStructureSelected(IStructure newSelectedStructure)
         {
             OnDefendingEntitySelected(newSelectedStructure, selectedStructurePanel, selectedStructureName, selectedStructureText, structureAbilityVerticalLayout);
 
@@ -192,12 +192,12 @@ namespace GrimoireTD.DefendingEntities
 
             selectedStructure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
 
-            OnStructureAbilityAdded = new Action<Ability>(x =>
+            OnStructureAbilityAdded = new Action<IAbility>(x =>
             {
                 structureAbilitiesText.text = GetAbilityText(selectedStructure);
                 OnNewAbilityAdded(x, structureAbilityVerticalLayout);
             });
-            OnStructureAbilityRemoved = new Action<Ability>(x =>
+            OnStructureAbilityRemoved = new Action<IAbility>(x =>
             {
                 structureAbilitiesText.text = GetAbilityText(selectedStructure);
                 OnAbilityRemoved(x, structureAbilityVerticalLayout);
@@ -222,7 +222,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        private void OnUnitSelected(Unit newSelectedUnit)
+        private void OnUnitSelected(IUnit newSelectedUnit)
         {
             OnDefendingEntitySelected(newSelectedUnit, selectedUnitPanel, selectedUnitName, selectedUnitText, unitAbilityVerticalLayout);
 
@@ -236,12 +236,12 @@ namespace GrimoireTD.DefendingEntities
 
             selectedUnit.RegisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
 
-            OnUnitAbilityAdded = new Action<Ability>(x =>
+            OnUnitAbilityAdded = new Action<IAbility>(x =>
             {
                 unitAbilitiesText.text = GetAbilityText(selectedUnit);
                 OnNewAbilityAdded(x, unitAbilityVerticalLayout);
             });
-            OnUnitAbilityRemoved = new Action<Ability>(x =>
+            OnUnitAbilityRemoved = new Action<IAbility>(x =>
             {
                 unitAbilitiesText.text = GetAbilityText(selectedUnit);
                 OnAbilityRemoved(x, unitAbilityVerticalLayout);
@@ -270,36 +270,36 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        private void OnDefendingEntitySelected(DefendingEntity newSelection, GameObject panel, Text nameText, Text descriptionText, GameObject abilityVerticalLayout)
+        private void OnDefendingEntitySelected(IDefendingEntity newSelection, GameObject panel, Text nameText, Text descriptionText, GameObject abilityVerticalLayout)
         {
             panel.SetActive(true);
 
             SetNameAndDescription(newSelection, nameText, descriptionText);
 
-            IReadOnlyList<DefendModeAbility> entityDefendModeAbilities = newSelection.DefendModeAbilities();
-            IReadOnlyList<BuildModeAbility> entityBuildModeAbilities = newSelection.BuildModeAbilities();
+            IReadOnlyList<IDefendModeAbility> entityDefendModeAbilities = newSelection.DefendModeAbilities();
+            IReadOnlyList<IBuildModeAbility> entityBuildModeAbilities = newSelection.BuildModeAbilities();
 
-            foreach (DefendModeAbility defendModeAbility in entityDefendModeAbilities)
+            foreach (IDefendModeAbility defendModeAbility in entityDefendModeAbilities)
             {
                 AddDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
             }
 
-            foreach (BuildModeAbility buildModeAbility in entityBuildModeAbilities)
+            foreach (IBuildModeAbility buildModeAbility in entityBuildModeAbilities)
             {
                 AddBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
             }
         }
 
-        private void OnNewAbilityAdded(Ability ability, GameObject abilityVerticalLayout)
+        private void OnNewAbilityAdded(IAbility ability, GameObject abilityVerticalLayout)
         {
-            DefendModeAbility defendModeAbility = ability as DefendModeAbility;
+            IDefendModeAbility defendModeAbility = ability as IDefendModeAbility;
             if (defendModeAbility != null)
             {
                 AddDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
                 return;
             }
 
-            BuildModeAbility buildModeAbility = ability as BuildModeAbility;
+            IBuildModeAbility buildModeAbility = ability as IBuildModeAbility;
             if (buildModeAbility != null)
             {
                 AddBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
@@ -309,7 +309,7 @@ namespace GrimoireTD.DefendingEntities
             throw new Exception("Unknown Ability class");
         }
 
-        private void AddDefendModeAbilitySlider(DefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
+        private void AddDefendModeAbilitySlider(IDefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
         {
             DefendModeAbilityUIComponent newSlider = Instantiate(abilitySliderPrefab).GetComponent<DefendModeAbilityUIComponent>();
             newSlider.transform.SetParent(abilityVerticalLayout.transform);
@@ -319,7 +319,7 @@ namespace GrimoireTD.DefendingEntities
             abilitySliders.Add(newSlider);
         }
 
-        private void AddBuildModeAbilityButton(BuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
+        private void AddBuildModeAbilityButton(IBuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
         {
             BuildModeAbilityUIComponent newButton = Instantiate(abilityButtonPrefab).GetComponent<BuildModeAbilityUIComponent>();
             newButton.transform.SetParent(abilityVerticalLayout.transform);
@@ -329,16 +329,16 @@ namespace GrimoireTD.DefendingEntities
             abilityButtons.Add(newButton);
         }
 
-        private void OnAbilityRemoved(Ability ability, GameObject abilityVerticalLayout)
+        private void OnAbilityRemoved(IAbility ability, GameObject abilityVerticalLayout)
         {
-            DefendModeAbility defendModeAbility = ability as DefendModeAbility;
+            IDefendModeAbility defendModeAbility = ability as IDefendModeAbility;
             if (defendModeAbility != null)
             {
                 RemoveDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
                 return;
             }
 
-            BuildModeAbility buildModeAbility = ability as BuildModeAbility;
+            IBuildModeAbility buildModeAbility = ability as IBuildModeAbility;
             if (buildModeAbility != null)
             {
                 RemoveBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
@@ -348,7 +348,7 @@ namespace GrimoireTD.DefendingEntities
             throw new Exception("Unknown Ability class");
         }
 
-        private void RemoveDefendModeAbilitySlider(DefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
+        private void RemoveDefendModeAbilitySlider(IDefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
         {
             DefendModeAbilityUIComponent uiComponentToRemove = abilitySliders.Find(x => x.DefendModeAbility == defendModeAbility);
 
@@ -357,7 +357,7 @@ namespace GrimoireTD.DefendingEntities
             abilitySliders.Remove(uiComponentToRemove);
         }
 
-        private void RemoveBuildModeAbilityButton(BuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
+        private void RemoveBuildModeAbilityButton(IBuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
         {
             BuildModeAbilityUIComponent uiComponentToRemove = abilityButtons.Find(x => x.BuildModeAbility == buildModeAbility);
 
@@ -366,7 +366,7 @@ namespace GrimoireTD.DefendingEntities
             abilityButtons.Remove(uiComponentToRemove);
         }
 
-        private void SetNameAndDescription(DefendingEntity selectedEntity, Text nameText, Text descriptionText)
+        private void SetNameAndDescription(IDefendingEntity selectedEntity, Text nameText, Text descriptionText)
         {
             nameText.text = selectedEntity.CurrentName();
             descriptionText.text = selectedEntity.UIText();
@@ -485,7 +485,7 @@ namespace GrimoireTD.DefendingEntities
 
             newUpgradeDisplay.GetComponentInChildren<Text>().text = "Upgrade to " + upgrade.NewStructureName + "\n" + upgrade.BonusDescription;
 
-            foreach (StructureEnhancement enhancement in upgrade.OptionalEnhancements)
+            foreach (IStructureEnhancement enhancement in upgrade.OptionalEnhancements)
             {
                 GameObject newEnhancementDisplay = Instantiate(structureEnhancementDisplayPrefab) as GameObject;
                 newEnhancementDisplay.transform.SetParent(newUpgradeDisplay.transform);
@@ -582,11 +582,11 @@ namespace GrimoireTD.DefendingEntities
             unitEconomyText.text = GetUnitEconomyText(selectedUnit);
         }
 
-        private string GetAbilityText(DefendingEntity defendingEntity)
+        private string GetAbilityText(IDefendingEntity defendingEntity)
         {
             string abilityText = "Abilities:\n";
 
-            foreach (Ability ability in defendingEntity.Abilities.Values)
+            foreach (IAbility ability in defendingEntity.Abilities.Values)
             {
                 abilityText += ability.UIText() + "\n";
             }
@@ -594,18 +594,18 @@ namespace GrimoireTD.DefendingEntities
             return abilityText;
         }
 
-        private string GetAuraText(DefendingEntity defendingEntity)
+        private string GetAuraText(IDefendingEntity defendingEntity)
         {
             string auraText = "Auras:\n" + "Source Of:\n";
 
-            foreach (DefenderAura aura in defendingEntity.AurasEmitted)
+            foreach (IDefenderAura aura in defendingEntity.AurasEmitted)
             {
                 auraText += aura.UIText() + "\n";
             }
 
             auraText += "Affected By:\n";
 
-            foreach (DefenderAura aura in defendingEntity.AffectedByDefenderAuras)
+            foreach (IDefenderAura aura in defendingEntity.AffectedByDefenderAuras)
             {
                 auraText += aura.UIText() + "\n";
             }
@@ -613,7 +613,7 @@ namespace GrimoireTD.DefendingEntities
             return auraText;
         }
 
-        private string GetAttributesText(DefendingEntity defendingEntity)
+        private string GetAttributesText(IDefendingEntity defendingEntity)
         {
             string attributesText = "Attributes:\n";
 
@@ -628,14 +628,14 @@ namespace GrimoireTD.DefendingEntities
             return attributesText;
         }
 
-        private string GetUnitEconomyText(Unit unit)
+        private string GetUnitEconomyText(IUnit unit)
         {
             string economyText = "Economy:\n";
 
             economyText += "Structures:\n";
 
             //TODO: This will duplicate but it's fine for now
-            foreach (StructureOccupationBonus structureOccupationBonus in unit.ConditionalStructureOccupationBonuses)
+            foreach (IStructureOccupationBonus structureOccupationBonus in unit.ConditionalStructureOccupationBonuses)
             {
                 economyText += structureOccupationBonus.StructureUpgradeLevel == null ? structureOccupationBonus.StructureTemplate.StartingNameInGame : structureOccupationBonus.StructureUpgradeLevel.NewStructureName + "\n";
                 economyText += structureOccupationBonus.ResourceGain.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
@@ -651,14 +651,14 @@ namespace GrimoireTD.DefendingEntities
             return economyText + GetStaticEconomyText(unit);
         }
 
-        private string GetStructureEconomyText(Structure structure)
+        private string GetStructureEconomyText(IStructure structure)
         {
             string economyText = "Economy:\n";
 
             return economyText + GetStaticEconomyText(structure);
         }
 
-        private string GetStaticEconomyText(DefendingEntity defendingEntity)
+        private string GetStaticEconomyText(IDefendingEntity defendingEntity)
         {
             string economyText = "Hexes (flat):\n";
 
@@ -680,7 +680,7 @@ namespace GrimoireTD.DefendingEntities
             unitDetailsPanel.SetActive(!unitDetailsPanel.activeSelf);
         }
 
-        private void OnStructureAuraChange(DefenderAura aura)
+        private void OnStructureAuraChange(IDefenderAura aura)
         {
             structureAurasText.text = GetAuraText(selectedStructure);
         }
@@ -690,12 +690,12 @@ namespace GrimoireTD.DefendingEntities
             structureAttributesText.text = GetAttributesText(selectedStructure);
         }
 
-        private void OnStructureEconomyChange(HexOccupationBonus hexOccupationBonus)
+        private void OnStructureEconomyChange(IHexOccupationBonus hexOccupationBonus)
         {
             structureEconomyText.text = GetStructureEconomyText(selectedStructure);
         }
 
-        private void OnUnitAuraChange(DefenderAura aura)
+        private void OnUnitAuraChange(IDefenderAura aura)
         {
             unitAurasText.text = GetAuraText(selectedUnit);
         }
@@ -705,12 +705,12 @@ namespace GrimoireTD.DefendingEntities
             unitAttributesText.text = GetAttributesText(selectedUnit);
         }
 
-        private void OnUnitHexOccupationBonusChange(HexOccupationBonus hexOccupationBonus)
+        private void OnUnitHexOccupationBonusChange(IHexOccupationBonus hexOccupationBonus)
         {
             OnUnitEconomyChange();
         }
 
-        private void OnUnitStuctureOccupationBonusChange(StructureOccupationBonus structureOccupationBonus)
+        private void OnUnitStuctureOccupationBonusChange(IStructureOccupationBonus structureOccupationBonus)
         {
             OnUnitEconomyChange();
         }

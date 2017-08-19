@@ -5,6 +5,6 @@ namespace GrimoireTD.Abilities.DefendMode
 {
     public interface IDefendModeEffectComponent
     {
-        void ExecuteEffect(DefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets);
+        void ExecuteEffect(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets);
     }
 }

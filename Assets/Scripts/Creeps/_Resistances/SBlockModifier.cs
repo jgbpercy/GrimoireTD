@@ -8,12 +8,12 @@ namespace GrimoireTD.Creeps
     public class SBlockModifier : IBlockModifier
     {
         [SerializeField]
-        private SpecificDamageEffectType damageType;
+        private SoSpecificDamageEffectType damageType;
 
         [SerializeField]
         private int magnitude;
 
-        public SpecificDamageEffectType DamageType
+        public ISpecificDamageEffectType DamageType
         {
             get
             {
@@ -27,12 +27,6 @@ namespace GrimoireTD.Creeps
             {
                 return magnitude;
             }
-        }
-
-        public SBlockModifier(int magnitude, SpecificDamageEffectType damageType)
-        {
-            this.magnitude = magnitude;
-            this.damageType = damageType;
         }
     }
 }

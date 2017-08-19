@@ -5,7 +5,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
     public class ProjectileComponent : MonoBehaviour
     {
-        private Projectile projectileModel;
+        private IProjectile projectileModel;
 
         [SerializeField]
         private ParticleSystem hitExplosion;
@@ -14,7 +14,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         protected SphereCollider ownCollider;
 
-        public virtual void SetUp(Projectile projectileModel)
+        public virtual void SetUp(IProjectile projectileModel)
         {
             this.projectileModel = projectileModel;
 
@@ -30,7 +30,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         {
             if (other.CompareTag("Creep"))
             {
-                Creep hitCreep = other.GetComponent<CreepComponent>().CreepModel;
+                ICreep hitCreep = other.GetComponent<CreepComponent>().CreepModel;
                 hitExplosion.Play();
                 ownRenderer.enabled = false;
                 ownCollider.enabled = false;

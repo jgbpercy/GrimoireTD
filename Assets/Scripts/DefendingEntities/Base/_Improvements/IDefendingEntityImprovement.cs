@@ -10,7 +10,7 @@ namespace GrimoireTD.DefendingEntities
     {
         IEnumerable<INamedAttributeModifier<DefendingEntityAttributeName>> AttributeModifiers { get; }
 
-        IEnumerable<HexOccupationBonus> FlatHexOccupationBonuses { get; }
+        IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses { get; }
 
         IEnumerable<IAbilityTemplate> Abilities { get; }
 

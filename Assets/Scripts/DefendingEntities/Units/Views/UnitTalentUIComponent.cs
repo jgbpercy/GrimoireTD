@@ -6,7 +6,7 @@ namespace GrimoireTD.DefendingEntities.Units
 {
     public class UnitTalentUIComponent : MonoBehaviour
     {
-        private Unit selectedUnit;
+        private IUnit selectedUnit;
 
         private IUnitTalent unitTalent;
 
@@ -17,7 +17,7 @@ namespace GrimoireTD.DefendingEntities.Units
         [SerializeField]
         private Text ownText;
 
-        public void SetUp(Unit selectedUnit, IUnitTalent unitTalent)
+        public void SetUp(IUnit selectedUnit, IUnitTalent unitTalent)
         {
             //TODO: can I remove all of these?
             if (intialised)

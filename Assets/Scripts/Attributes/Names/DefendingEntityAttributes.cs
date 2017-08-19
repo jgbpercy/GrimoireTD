@@ -11,13 +11,13 @@ namespace GrimoireTD.Attributes
             { DefendingEntityAttributeName.cooldownReduction, "Cooldown Reduction" }
         };
 
-        public static Dictionary<DefendingEntityAttributeName, GameAttribute> NewAttributesDictionary()
+        public static Dictionary<DefendingEntityAttributeName, IAttribute> NewAttributesDictionary()
         {
-            return new Dictionary<DefendingEntityAttributeName, GameAttribute>
+            return new Dictionary<DefendingEntityAttributeName, IAttribute>
             {
-                { DefendingEntityAttributeName.rangeBonus, new AdditiveAttribute(DisplayNames[DefendingEntityAttributeName.rangeBonus]) },
-                { DefendingEntityAttributeName.damageBonus, new AdditiveAttribute(DisplayNames[DefendingEntityAttributeName.damageBonus]) },
-                { DefendingEntityAttributeName.cooldownReduction, new DiminishingAttribute(DisplayNames[DefendingEntityAttributeName.cooldownReduction]) }
+                { DefendingEntityAttributeName.rangeBonus, new CAdditiveAttribute(DisplayNames[DefendingEntityAttributeName.rangeBonus]) },
+                { DefendingEntityAttributeName.damageBonus, new CAdditiveAttribute(DisplayNames[DefendingEntityAttributeName.damageBonus]) },
+                { DefendingEntityAttributeName.cooldownReduction, new CDiminishingAttribute(DisplayNames[DefendingEntityAttributeName.cooldownReduction]) }
             };
         }
     }

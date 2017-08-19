@@ -10,7 +10,7 @@ namespace GrimoireTD.DefendingEntities
     {
         private INamedAttributeModifier<DefendingEntityAttributeName>[] attributeModifiers;
 
-        private HexOccupationBonus[] flatHexOccupationBonuses;
+        private IHexOccupationBonus[] flatHexOccupationBonuses;
 
         private IAbilityTemplate[] abilities;
 
@@ -24,7 +24,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        public IEnumerable<HexOccupationBonus> FlatHexOccupationBonuses
+        public IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses
         {
             get
             {
@@ -50,12 +50,12 @@ namespace GrimoireTD.DefendingEntities
 
         public CDefendingEntityImprovement(
             ICollection<INamedAttributeModifier<DefendingEntityAttributeName>> attributeModifiers,
-            ICollection<HexOccupationBonus> flatHexOccupationBonuses,
+            ICollection<IHexOccupationBonus> flatHexOccupationBonuses,
             ICollection<IAbilityTemplate> abilities,
             ICollection<IDefenderAuraTemplate> auras)
         {
             this.attributeModifiers = new INamedAttributeModifier<DefendingEntityAttributeName>[attributeModifiers.Count];
-            this.flatHexOccupationBonuses = new HexOccupationBonus[flatHexOccupationBonuses.Count];
+            this.flatHexOccupationBonuses = new IHexOccupationBonus[flatHexOccupationBonuses.Count];
             this.abilities = new IAbilityTemplate[abilities.Count];
             this.auras = new IDefenderAuraTemplate[auras.Count];
 

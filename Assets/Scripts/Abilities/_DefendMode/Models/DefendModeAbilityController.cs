@@ -17,9 +17,9 @@ namespace GrimoireTD.Abilities.DefendMode
         [SerializeField]
         private Component attachedToDefendingEntityComponent;
 
-        private DefendingEntity attachedToDefendingEntity;
+        private IDefendingEntity attachedToDefendingEntity;
 
-        private IReadOnlyList<DefendModeAbility> defendModeAbilities;
+        private IReadOnlyList<IDefendModeAbility> defendModeAbilities;
 
         private bool trackIdleTime = false;
 
@@ -29,6 +29,7 @@ namespace GrimoireTD.Abilities.DefendMode
         private void Start()
         {
             //TODO: refactor this crap - have a parent DE component (if there isn't one) with a reference the appropriate model
+            //Yes I agree with my past self that this is horrible
             StructureComponent attachedToStructureComponent = attachedToDefendingEntityComponent as StructureComponent;
             UnitComponent attachedToUnitComponent = attachedToDefendingEntityComponent as UnitComponent;
 
@@ -63,11 +64,11 @@ namespace GrimoireTD.Abilities.DefendMode
             {
                 if (defendModeAbilities.Any(x => !x.OffCooldown()))
                 {
-                    ((Unit)attachedToDefendingEntity).TrackTime(false, Time.deltaTime);
+                    ((IUnit)attachedToDefendingEntity).TrackTime(false, Time.deltaTime);
                 }
                 else
                 {
-                    ((Unit)attachedToDefendingEntity).TrackTime(true, Time.deltaTime);
+                    ((IUnit)attachedToDefendingEntity).TrackTime(true, Time.deltaTime);
                 }
             }
 
@@ -98,7 +99,7 @@ namespace GrimoireTD.Abilities.DefendMode
         {
             defendModeAbilities = attachedToDefendingEntity.DefendModeAbilities();
 
-            foreach (DefendModeAbility defendModeAbility in defendModeAbilities)
+            foreach (IDefendModeAbility defendModeAbility in defendModeAbilities)
             {
                 ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(defendModeAbility);
             }

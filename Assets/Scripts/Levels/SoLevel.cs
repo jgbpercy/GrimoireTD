@@ -15,10 +15,10 @@ namespace GrimoireTD.Levels
         private SEconomyTransaction startingResources;
 
         [SerializeField]
-        private StartingUnit[] startingUnits;
+        private SStartingUnit[] startingUnits;
 
         [SerializeField]
-        private StartingStructure[] startingStructures;
+        private SStartingStructure[] startingStructures;
 
         [SerializeField]
         private SoWaveTemplate[] waves;
@@ -39,7 +39,7 @@ namespace GrimoireTD.Levels
             }
         }
 
-        public IEnumerable<StartingUnit> StartingUnits
+        public IEnumerable<IStartingUnit> StartingUnits
         {
             get
             {
@@ -47,7 +47,7 @@ namespace GrimoireTD.Levels
             }
         }
 
-        public IEnumerable<StartingStructure> StartingStructures
+        public IEnumerable<IStartingStructure> StartingStructures
         {
             get
             {

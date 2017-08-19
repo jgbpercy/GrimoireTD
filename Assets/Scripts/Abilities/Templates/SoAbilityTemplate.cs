@@ -17,7 +17,7 @@ namespace GrimoireTD.Abilities
             }
         }
 
-        public virtual Ability GenerateAbility(DefendingEntity attachedToDefendingEntity)
+        public virtual IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity)
         {
             throw new NotImplementedException("Cannot Generate from AbilityTemplate - it is pseudo-abstract");
         }

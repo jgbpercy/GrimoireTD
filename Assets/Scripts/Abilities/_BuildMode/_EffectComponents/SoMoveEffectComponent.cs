@@ -11,11 +11,11 @@ namespace GrimoireTD.Abilities.BuildMode
     [CreateAssetMenu(fileName = "NewMoveEffectComponent", menuName = "Build Mode Abilities/Effect Components/Move")]
     public class SoMoveEffectComponent : SoBuildModeEffectComponent, IMoveEffectComponent
     {
-        public override void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
+        public override void ExecuteEffect(IDefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
         {
             CDebug.Log(CDebug.buildModeAbilities, "Call ExecuteEffect for a MoveEffectComponent");
 
-            Unit executingUnit = executingEntity as Unit;
+            IUnit executingUnit = executingEntity as IUnit;
             Assert.IsTrue(executingUnit != null);
 
             //Assertions regarding what sort of targeting will have been done for a move ability

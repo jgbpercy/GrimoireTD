@@ -7,11 +7,11 @@ namespace GrimoireTD.DefendingEntities.Structures
 {
     public class StructureEnhancementUIComponent : MonoBehaviour
     {
-        private Structure selectedStructure;
+        private IStructure selectedStructure;
 
         private IStructureUpgrade upgrade;
 
-        private StructureEnhancement enhancement;
+        private IStructureEnhancement enhancement;
 
         private bool initialised = false;
 
@@ -24,7 +24,7 @@ namespace GrimoireTD.DefendingEntities.Structures
         [SerializeField]
         private Color notBoughtColor;
 
-        public void SetUp(Structure structure, IStructureUpgrade upgrade, StructureEnhancement enhancement)
+        public void SetUp(IStructure structure, IStructureUpgrade upgrade, IStructureEnhancement enhancement)
         {
             if (initialised)
             {

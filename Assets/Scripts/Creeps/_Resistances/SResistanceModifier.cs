@@ -8,12 +8,12 @@ namespace GrimoireTD.Creeps
     public class SResistanceModifier : IResistanceModifier
     {
         [SerializeField]
-        private SpecificDamageEffectType damageType;
+        private SoSpecificDamageEffectType damageType;
 
         [SerializeField]
         private float magnitude;
 
-        public SpecificDamageEffectType DamageType
+        public ISpecificDamageEffectType DamageType
         {
             get
             {
@@ -27,12 +27,6 @@ namespace GrimoireTD.Creeps
             {
                 return magnitude;
             }
-        }
-
-        public SResistanceModifier(float magnitude, SpecificDamageEffectType damageType)
-        {
-            this.magnitude = magnitude;
-            this.damageType = damageType;
         }
 
         public string AsPercentageString

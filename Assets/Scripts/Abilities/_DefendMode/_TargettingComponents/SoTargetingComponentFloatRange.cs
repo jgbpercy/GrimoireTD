@@ -17,7 +17,7 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public float GetActualRange(DefendingEntity attachedToDefendingEntity)
+        public float GetActualRange(IDefendingEntity attachedToDefendingEntity)
         {
             return baseRange * (1 + attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.rangeBonus));
         }

@@ -82,7 +82,7 @@ namespace GrimoireTD.DefendingEntities.Structures
 
             hexOccupationBonusText.text = "";
 
-            foreach (HexOccupationBonus occupationBonus in structureTemplate.BaseCharacteristics.FlatHexOccupationBonuses)
+            foreach (IHexOccupationBonus occupationBonus in structureTemplate.BaseCharacteristics.FlatHexOccupationBonuses)
             {
                 hexOccupationBonusText.text += occupationBonus.HexType.NameInGame + "\n";
                 hexOccupationBonusText.text += occupationBonus.ResourceGain.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";

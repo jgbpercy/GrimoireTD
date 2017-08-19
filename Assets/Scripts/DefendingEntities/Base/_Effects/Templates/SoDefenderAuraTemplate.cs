@@ -27,9 +27,9 @@ namespace GrimoireTD.DefendingEntities.DefenderEffects
             }
         }
 
-        public DefenderAura GenerateDefenderAura(DefendingEntity sourceDefendingEntity)
+        public IDefenderAura GenerateDefenderAura(IDefendingEntity sourceDefendingEntity)
         {
-            return new DefenderAura(this, sourceDefendingEntity);
+            return new CDefenderAura(this, sourceDefendingEntity);
         }
     }
 }

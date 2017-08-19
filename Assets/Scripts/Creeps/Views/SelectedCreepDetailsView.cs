@@ -19,7 +19,7 @@ namespace GrimoireTD.Creeps
         [SerializeField]
         private Text blocksText;
 
-        private Creep selectedCreep;
+        private ICreep selectedCreep;
 
         private void Start()
         {
@@ -27,7 +27,7 @@ namespace GrimoireTD.Creeps
             InterfaceController.Instance.RegisterForOnCreepDeselectedCallback(OnCreepDeselected);
         }
 
-        private void OnCreepSelected(Creep creep)
+        private void OnCreepSelected(ICreep creep)
         {
             SetSelectedCreepNullCallbackSafe();
 
@@ -74,7 +74,7 @@ namespace GrimoireTD.Creeps
             attributesText.text = GetAttributesText();
         }
 
-        private void OnCreepResistancesChange(SpecificDamageEffectType damageEffectType, float value)
+        private void OnCreepResistancesChange(ISpecificDamageEffectType damageEffectType, float value)
         {
             resistancesText.text = GetResistancesText();
         }
@@ -84,7 +84,7 @@ namespace GrimoireTD.Creeps
             resistancesText.text = GetResistancesText();
         }
 
-        private void OnCreepBlocksChange(SpecificDamageEffectType damageEffectType, int value)
+        private void OnCreepBlocksChange(ISpecificDamageEffectType damageEffectType, int value)
         {
             blocksText.text = GetBlocksText();
         }
@@ -110,7 +110,7 @@ namespace GrimoireTD.Creeps
 
             float currentCreepArmor = selectedCreep.CurrentArmor;
 
-            foreach (BasicMetaDamageEffectType basicMetaDamageType in AttackEffectTypeManager.Instance.BasicMetaDamageTypes)
+            foreach (IBasicMetaDamageEffectType basicMetaDamageType in AttackEffectTypeManager.Instance.BasicMetaDamageTypes)
             {
                 resistancesText += basicMetaDamageType.ShortName + " -" +
                     " W: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType.WeakMetaDamageType, currentCreepArmor).ToString("0.0") +
@@ -118,7 +118,7 @@ namespace GrimoireTD.Creeps
                     " S: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType.StrongMetaDamageType, currentCreepArmor).ToString("0.0") +
                     "\n";
 
-                foreach (SpecificDamageEffectType specificDamageType in basicMetaDamageType.SpecificDamageTypes)
+                foreach (ISpecificDamageEffectType specificDamageType in basicMetaDamageType.SpecificDamageTypes)
                 {
                     float resistanceIncludingArmor = selectedCreep.Resistances.GetResistance(specificDamageType, currentCreepArmor);
                     float resistanceWithoutArmor = selectedCreep.Resistances.GetResistance(specificDamageType, 0);
@@ -138,7 +138,7 @@ namespace GrimoireTD.Creeps
         {
             string blocksText = "Blocks:\n";
 
-            foreach (BasicMetaDamageEffectType basicMetaDamageType in AttackEffectTypeManager.Instance.BasicMetaDamageTypes)
+            foreach (IBasicMetaDamageEffectType basicMetaDamageType in AttackEffectTypeManager.Instance.BasicMetaDamageTypes)
             {
                 blocksText += basicMetaDamageType.ShortName + " -" +
                     " W: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType.WeakMetaDamageType) +
@@ -146,7 +146,7 @@ namespace GrimoireTD.Creeps
                     " S: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType.StrongMetaDamageType) +
                     "\n";
 
-                foreach (SpecificDamageEffectType specificDamageType in basicMetaDamageType.SpecificDamageTypes)
+                foreach (ISpecificDamageEffectType specificDamageType in basicMetaDamageType.SpecificDamageTypes)
                 {
                     blocksText += specificDamageType.ShortName + ": " + selectedCreep.Resistances.GetBlock(specificDamageType);
                 }

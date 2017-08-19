@@ -34,24 +34,24 @@ namespace GrimoireTD.Map
             }
         }
 
-        public static List<Coord> GeneratePath(MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end)
+        public static List<Coord> GeneratePath(IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end)
         {
             return GeneratePath(map, hexes, start, end, new List<Coord>());
         }
 
-        public static List<Coord> GeneratePath(MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end, List<Coord> unpathableCoords)
+        public static List<Coord> GeneratePath(IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end, List<Coord> unpathableCoords)
         {
             return GeneratePath(map, hexes, start, end, unpathableCoords, new List<Coord>());
         }
 
-        public static List<Coord> GeneratePath(MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end, List<Coord> unpathableCoords, List<Coord> newlyPathableCoords)
+        public static List<Coord> GeneratePath(IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end, List<Coord> unpathableCoords, List<Coord> newlyPathableCoords)
         {
             List<GraphEdge> graphEdges = GraphEdges(map, hexes, unpathableCoords, newlyPathableCoords);
 
             return CalculatePath(hexes, start, end, graphEdges);
         }
 
-        public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end)
+        public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end)
         {
             return DisallowedCoords(path, map, hexes, start, end, new List<Coord>());
         }
@@ -66,7 +66,7 @@ namespace GrimoireTD.Map
          * OR!
          * You can probably do something where you start with a non-zero open set?
         */
-        public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, MapData map, Dictionary<Coord, HexData> hexes, Coord start, Coord end, List<Coord> newlyPathableCoords)
+        public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end, List<Coord> newlyPathableCoords)
         {
             List<Coord> disallowedList = new List<Coord>();
 
@@ -84,7 +84,7 @@ namespace GrimoireTD.Map
             return disallowedList;
         }
 
-        private static List<GraphEdge> GraphEdges(MapData map, Dictionary<Coord, HexData> hexes, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
+        private static List<GraphEdge> GraphEdges(IMapData map, Dictionary<Coord, IHexData> hexes, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
         {
             CDebug.Log(CDebug.pathing, "----Generating Graph Edges----");
 
@@ -92,9 +92,9 @@ namespace GrimoireTD.Map
 
             List<Coord> currentNeighbours = new List<Coord>();
             Coord currentCoord;
-            HexData currentHex;
+            IHexData currentHex;
 
-            foreach (KeyValuePair<Coord, HexData> hex in hexes)
+            foreach (KeyValuePair<Coord, IHexData> hex in hexes)
             {
                 currentCoord = hex.Key;
                 currentHex = hex.Value;
@@ -127,7 +127,7 @@ namespace GrimoireTD.Map
             return graphEdges;
         }
 
-        private static bool IsPathable(Coord coord, HexData hex, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
+        private static bool IsPathable(Coord coord, IHexData hex, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
         {
             //bool debugThis = false;
 
@@ -144,7 +144,7 @@ namespace GrimoireTD.Map
             return false;
         }
 
-        private static List<Coord> CalculatePath(Dictionary<Coord, HexData> hexes, Coord fromCoord, Coord toCoord, List<GraphEdge> graphEdges)
+        private static List<Coord> CalculatePath(Dictionary<Coord, IHexData> hexes, Coord fromCoord, Coord toCoord, List<GraphEdge> graphEdges)
         {
             List<Coord> closedSet = new List<Coord>();
             List<Coord> openSet = new List<Coord>();
@@ -155,7 +155,7 @@ namespace GrimoireTD.Map
 
             float tentativeGScore;
 
-            foreach (KeyValuePair<Coord, HexData> hex in hexes)
+            foreach (KeyValuePair<Coord, IHexData> hex in hexes)
             {
                 hex.Value.ResetPathingData();
             }
@@ -237,7 +237,7 @@ namespace GrimoireTD.Map
 
         }
 
-        private static List<Coord> ReconstructPath(Dictionary<Coord, HexData> hexes, Coord fromCoord, Coord toCoord)
+        private static List<Coord> ReconstructPath(Dictionary<Coord, IHexData> hexes, Coord fromCoord, Coord toCoord)
         {
             List<Coord> path = new List<Coord>();
 

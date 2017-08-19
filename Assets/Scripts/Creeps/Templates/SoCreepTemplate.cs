@@ -24,7 +24,7 @@ namespace GrimoireTD.Creeps
         private SEconomyTransaction bounty;
 
         [SerializeField]
-        private BaseResistances resistances;
+        private SBaseResistances resistances;
 
         public string NameInGame
         {
@@ -66,7 +66,7 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        public BaseResistances BaseResistances
+        public IBaseResistances BaseResistances
         {
             get
             {
@@ -74,9 +74,9 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        public virtual Creep GenerateCreep(Vector3 spawnPosition)
+        public virtual ICreep GenerateCreep(Vector3 spawnPosition)
         {
-            return new Creep(this, spawnPosition);
+            return new CCreep(this, spawnPosition);
         }
     }
 }

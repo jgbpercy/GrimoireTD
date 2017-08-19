@@ -7,7 +7,7 @@ namespace GrimoireTD.DefendingEntities.Structures
     public class SoStructureUpgrade : ScriptableObject, IStructureUpgrade
     {
         [SerializeField]
-        private StructureEnhancement[] optionalEnhancements;
+        private SStructureEnhancement[] optionalEnhancements;
 
         [SerializeField]
         private SoDefendingEntityImprovement mainUpgradeBonus;
@@ -21,7 +21,7 @@ namespace GrimoireTD.DefendingEntities.Structures
         [SerializeField]
         private string bonusDescription;
 
-        public IEnumerable<StructureEnhancement> OptionalEnhancements
+        public IEnumerable<IStructureEnhancement> OptionalEnhancements
         {
             get
             {

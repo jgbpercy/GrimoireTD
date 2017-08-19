@@ -14,7 +14,7 @@ namespace GrimoireTD.DefendingEntities
         private SNamedDefendingEntityAttributeModifier[] attributeModifiers;
 
         [SerializeField]
-        private HexOccupationBonus[] flatHexOccupationBonuses;
+        private SHexOccupationBonus[] flatHexOccupationBonuses;
 
         [SerializeField]
         private SoAbilityTemplate[] abilities;
@@ -30,7 +30,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        public IEnumerable<HexOccupationBonus> FlatHexOccupationBonuses
+        public IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses
         {
             get
             {
@@ -60,7 +60,7 @@ namespace GrimoireTD.DefendingEntities
             combinedAttributeModifiers.AddRange(firstImprovement.AttributeModifiers);
             combinedAttributeModifiers.AddRange(secondImprovement.AttributeModifiers);
 
-            List<HexOccupationBonus> combinedFlatHexOccupationBonuses = new List<HexOccupationBonus>();
+            List<IHexOccupationBonus> combinedFlatHexOccupationBonuses = new List<IHexOccupationBonus>();
             combinedFlatHexOccupationBonuses.AddRange(firstImprovement.FlatHexOccupationBonuses);
             combinedFlatHexOccupationBonuses.AddRange(secondImprovement.FlatHexOccupationBonuses);
 

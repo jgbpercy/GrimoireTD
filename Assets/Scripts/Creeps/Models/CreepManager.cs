@@ -10,11 +10,11 @@ namespace GrimoireTD.Creeps
 {
     public class CreepManager : SingletonMonobehaviour<CreepManager>
     {
-        private List<Wave> WaveList;
+        private List<IWave> WaveList;
 
         private int currentWave;
 
-        private List<Creep> creepList;
+        private List<ICreep> creepList;
 
         private bool waveIsActive;
         private bool waveIsSpawning;
@@ -48,9 +48,9 @@ namespace GrimoireTD.Creeps
         {
             CDebug.Log(CDebug.applicationLoading, "Creep Manager Start");
 
-            creepList = new List<Creep>();
+            creepList = new List<ICreep>();
 
-            WaveList = new List<Wave>();
+            WaveList = new List<IWave>();
 
             currentWave = 0;
 
@@ -80,7 +80,7 @@ namespace GrimoireTD.Creeps
         {
             float creepDistanceFromPosition;
 
-            List<Creep> creepList = Instance.creepList;
+            List<ICreep> creepList = Instance.creepList;
 
             for (int i = 0; i < creepList.Count; i++)
             {
@@ -98,7 +98,7 @@ namespace GrimoireTD.Creeps
         {
             CDebug.Log(CDebug.creepSpawning, "SpawnWave coroutine started");
 
-            Wave waveToSpawn = WaveList[currentWave];
+            IWave waveToSpawn = WaveList[currentWave];
             float prevSpawnTime = 0f;
             ICreepTemplate creepToSpawn;
 
@@ -131,7 +131,7 @@ namespace GrimoireTD.Creeps
             CDebug.Log(CDebug.creepSpawning, "SpawnCreep called for " + creepToSpawn.NameInGame);
 
             //TODO unhardcode spawnposition at zero
-            Creep newCreep = creepToSpawn.GenerateCreep(Vector3.zero);
+            ICreep newCreep = creepToSpawn.GenerateCreep(Vector3.zero);
 
             creepList.Add(newCreep);
 

@@ -5,6 +5,6 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public interface IBuildModeEffectComponent
     {
-        void ExecuteEffect(DefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets);
+        void ExecuteEffect(IDefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets);
     }
 }

@@ -11,7 +11,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
         }
 
-        public static bool RunRule(RuleName rule, DefendingEntity sourceDefendingEntity, DefendingEntity targetDefendingEntity)
+        public static bool RunRule(RuleName rule, IDefendingEntity sourceDefendingEntity, IDefendingEntity targetDefendingEntity)
         {
             switch (rule)
             {

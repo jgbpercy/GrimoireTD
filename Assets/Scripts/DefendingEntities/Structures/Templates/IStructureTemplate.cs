@@ -16,6 +16,6 @@ namespace GrimoireTD.DefendingEntities.Structures
 
         string UIText();
 
-        Structure GenerateStructure(Coord position);
+        IStructure GenerateStructure(Coord position);
     }
 }

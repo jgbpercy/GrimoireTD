@@ -30,7 +30,7 @@ namespace GrimoireTD.Creeps
 
         private List<GameObject> effectSliders;
 
-        private Creep selectedCreep = null;
+        private ICreep selectedCreep = null;
 
         private void Start()
         {
@@ -44,7 +44,7 @@ namespace GrimoireTD.Creeps
             selectedCreepPanel.SetActive(false);
         }
 
-        private void OnNewSelection(Creep creep)
+        private void OnNewSelection(ICreep creep)
         {
             ClearEffectList();
             DeregisterCallbacksWithSelectedCreep();
@@ -63,7 +63,7 @@ namespace GrimoireTD.Creeps
             creep.RegisterForOnDiedCallback(OnDied);
             creep.TemporaryEffects.RegisterForOnNewTemporaryEffectCallback(AddSliderForNewEffect);
 
-            foreach (TemporaryEffect temporaryEffect in creep.TemporaryEffects.EffectList)
+            foreach (ITemporaryEffect temporaryEffect in creep.TemporaryEffects.EffectList)
             {
                 AddSliderForNewEffect(temporaryEffect);
             }
