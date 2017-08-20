@@ -11,6 +11,7 @@ using GrimoireTD.Map;
 using GrimoireTD.Technical;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.Attributes;
+using GrimoireTD.Abilities.DefendMode.Projectiles;
 
 namespace GrimoireTD.DefendingEntities
 {
@@ -23,6 +24,8 @@ namespace GrimoireTD.DefendingEntities
 
         //Economy
         private CallbackList<IHexOccupationBonus> flatHexOccupationBonuses;
+
+        private Action<IDefendingEntity, IEconomyTransaction> OnTriggeredFlatHexOccupationBonusCallback;
 
         //Abilities
         //TODO refactor out
@@ -95,6 +98,8 @@ namespace GrimoireTD.DefendingEntities
         private Action<IAbility> OnAbilityAddedCallback;
         private Action<IAbility> OnAbilityRemovedCallback;
 
+        private Action<IBuildModeAbility> OnBuildModeAbilityExecutedCallback;
+
         //Auras (that this is the source of)
         protected CallbackList<IDefenderAura> aurasEmitted;
 
@@ -106,6 +111,9 @@ namespace GrimoireTD.DefendingEntities
 
         //Position
         protected Coord coordPosition;
+
+        //Projectiles
+        private Action<IProjectile> OnProjectileCreatedCallback;
 
         //Properties
         public virtual string Id
@@ -177,7 +185,7 @@ namespace GrimoireTD.DefendingEntities
         {
             get
             {
-                return MapGenerator.Instance.Map.GetHexAt(CoordPosition);
+                return GameModels.Models[0].MapData.GetHexAt(CoordPosition);
             }
         }
 
@@ -200,6 +208,9 @@ namespace GrimoireTD.DefendingEntities
 
             abilities = new AbilityList(this);
 
+            //TODO: unfuck this when refactoring out ability list
+            OnAbilityAddedCallback += OnAbilityAdded;
+
             flatHexOccupationBonuses = new CallbackList<IHexOccupationBonus>();
 
             aurasEmitted = new CallbackList<IDefenderAura>();
@@ -212,7 +223,7 @@ namespace GrimoireTD.DefendingEntities
 
             SetUpAffectedByDefenderAuras();
 
-            GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
+            GameModels.Models[0].GameStateManager.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
         }
 
         //Set Up
@@ -272,7 +283,7 @@ namespace GrimoireTD.DefendingEntities
 
             IEconomyTransaction flatHexOccupationBonus = GetHexOccupationBonus(OnHexType, flatHexOccupationBonuses);
 
-            flatHexOccupationBonus.DoTransaction();
+            OnTriggeredFlatHexOccupationBonusCallback?.Invoke(this, flatHexOccupationBonus);
 
             CDebug.Log(CDebug.hexEconomy, Id + " added flat occupation bonus " + flatHexOccupationBonus);
         }
@@ -351,6 +362,12 @@ namespace GrimoireTD.DefendingEntities
             return GetHexOccupationBonus(hexType, flatHexOccupationBonuses);
         }
 
+        //Projectiles
+        public void CreatedProjectile(IProjectile projectile)
+        {
+            OnProjectileCreatedCallback?.Invoke(projectile);
+        }
+
         //UI Stuff
         public abstract string UIText();
 
@@ -359,11 +376,11 @@ namespace GrimoireTD.DefendingEntities
         //Defender Auras that this is the source of
         protected void OnInitialiseAura(IDefenderAura aura)
         {
-            List<Coord> affectedCoords = CMapData.CoordsInRange(aura.Range, CoordPosition);
+            List<Coord> affectedCoords = GameModels.Models[0].MapData.CoordsInRange(aura.Range, CoordPosition);
 
             foreach (Coord coord in affectedCoords)
             {
-                MapGenerator.Instance.Map.GetHexAt(coord).AddDefenderAura(aura);
+                GameModels.Models[0].MapData.GetHexAt(coord).AddDefenderAura(aura);
             }
         }
 
@@ -398,6 +415,16 @@ namespace GrimoireTD.DefendingEntities
         public void DeregisterForOnFlatHexOccupationBonusRemovedCallback(Action<IHexOccupationBonus> callback)
         {
             flatHexOccupationBonuses.DeregisterForRemove(callback);
+        }
+
+        public void RegisterForOnTriggeredFlatHexOccupationBonusCallback(Action<IDefendingEntity, IEconomyTransaction> callback)
+        {
+            OnTriggeredFlatHexOccupationBonusCallback += callback;
+        }
+
+        public void DregisterForOnTriggeredFlatHexOccupationBonusCallback(Action<IDefendingEntity, IEconomyTransaction> callback)
+        {
+            OnTriggeredFlatHexOccupationBonusCallback -= callback;
         }
 
         //  Abilities
@@ -460,6 +487,42 @@ namespace GrimoireTD.DefendingEntities
         public void DeregisterForOnAffectedByDefenderAuraRemovedCallback(Action<IDefenderAura> callback)
         {
             affectedByDefenderAuras.DeregisterForRemove(callback);
+        }
+
+        //Projectile spawning
+        public void RegisterForOnProjectileCreatedCallback(Action<IProjectile> callback)
+        {
+            OnProjectileCreatedCallback += callback;
+        }
+
+        public void DeregisterForOnProjectileCreatedCallback(Action<IProjectile> callback)
+        {
+            OnProjectileCreatedCallback -= callback;
+        }
+
+        //Ability Execution
+        private void OnAbilityAdded(IAbility ability) 
+        {
+            IBuildModeAbility buildModeAbility = ability as IBuildModeAbility;
+            if (buildModeAbility != null)
+            {
+                buildModeAbility.RegisterForOnExecutedCallback(OnBuildModeAbilityExecuted);
+            }
+        }
+
+        private void OnBuildModeAbilityExecuted(IBuildModeAbility ability)
+        {
+            OnBuildModeAbilityExecutedCallback?.Invoke(ability);
+        }
+
+        public void RegisterForOnBuildModeAbilityExecutedCallback(Action<IBuildModeAbility> callback)
+        {
+            OnBuildModeAbilityExecutedCallback += callback;
+        }
+
+        public void DeregisterForOnBuildModeAbilityExecutedCallback(Action<IBuildModeAbility> callback)
+        {
+            OnBuildModeAbilityExecutedCallback -= callback;
         }
     }
 }

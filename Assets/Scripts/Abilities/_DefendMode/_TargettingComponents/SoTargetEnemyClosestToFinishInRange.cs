@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.Creeps;
 using GrimoireTD.DefendingEntities;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -10,7 +9,8 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         public override IReadOnlyList<IDefendModeTargetable> FindTargets(IDefendingEntity attachedToDefendingEntity)
         {
-            IDefendModeTargetable target = CreepManager.CreepInRangeNearestToEnd(
+            IDefendModeTargetable target = GameModels.Models[0].CreepManager.CreepInRangeNearestToEnd
+            (
                 attachedToDefendingEntity.CoordPosition.ToPositionVector(),
                 GetActualRange(attachedToDefendingEntity)
             );

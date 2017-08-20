@@ -8,7 +8,7 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public static class BuildModeAbilityHexTargetingRuleService
     {
-        private static IMapData map = MapGenerator.Instance.Map;
+        private static IReadOnlyMapData mapData = GameModels.Models[0].MapData;
 
         //Rule names
         public enum RuleName
@@ -42,7 +42,7 @@ namespace GrimoireTD.Abilities.BuildMode
                 return false;
             }
 
-            return map.CanMoveUnitTo(targetCoord, sourceUnit.CachedDisallowedMovementDestinations);
+            return mapData.CanMoveUnitTo(targetCoord, sourceUnit.CachedDisallowedMovementDestinations);
         }
 
         private static bool DefendingEntityAtTarget(Coord targetCoord)
@@ -52,12 +52,12 @@ namespace GrimoireTD.Abilities.BuildMode
 
         private static bool UnitAtTarget(Coord targetCoord)
         {
-            return map.GetHexAt(targetCoord).UnitHere != null;
+            return mapData.GetHexAt(targetCoord).UnitHere != null;
         }
 
         private static bool StructureAtTarget(Coord targetCoord)
         {
-            return map.GetHexAt(targetCoord).StructureHere != null;
+            return mapData.GetHexAt(targetCoord).StructureHere != null;
         }
 
         private static bool HexIsInRange(IDefendingEntity sourceDefendingEntity, Coord targetCoord, int range)

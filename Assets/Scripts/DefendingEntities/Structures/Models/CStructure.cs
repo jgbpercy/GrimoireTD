@@ -19,7 +19,7 @@ namespace GrimoireTD.DefendingEntities.Structures
         private Dictionary<IStructureUpgrade, bool> upgradesBought;
         private Dictionary<IStructureEnhancement, bool> enhancementsChosen;
 
-        private Action OnUpgradedCallback;
+        private Action<IStructureUpgrade, IStructureEnhancement> OnUpgradedCallback;
 
         //Public properties
         public override string Id
@@ -70,8 +70,6 @@ namespace GrimoireTD.DefendingEntities.Structures
             currentName = structureTemplate.StartingNameInGame;
             currentDescription = structureTemplate.StartingDescription;
 
-            DefendingEntityView.Instance.CreateStructure(this, coordPosition.ToPositionVector());
-
             ApplyImprovement(structureTemplate.BaseCharacteristics);
 
             SetUpUpgradesAndEnhancements();
@@ -114,21 +112,16 @@ namespace GrimoireTD.DefendingEntities.Structures
             return currentUpgrade;
         }
 
-        public bool TryUpgrade(IStructureUpgrade upgrade, IStructureEnhancement chosenEnhancement, bool isFree)
+        public bool TryUpgrade(IStructureUpgrade upgrade, IStructureEnhancement chosenEnhancement)
         {
             if (upgradesBought[upgrade])
             {
                 return false;
             }
 
-            if (!isFree && !chosenEnhancement.Cost.CanDoTransaction())
+            if (!chosenEnhancement.Cost.CanDoTransaction())
             {
                 return false;
-            }
-
-            if (!isFree)
-            {
-                chosenEnhancement.Cost.DoTransaction();
             }
 
             IDefendingEntityImprovement combinedImprovement = upgrade.MainUpgradeBonus.Combine(chosenEnhancement.EnhancementBonus);
@@ -141,7 +134,7 @@ namespace GrimoireTD.DefendingEntities.Structures
             currentName = upgrade.NewStructureName;
             currentDescription = upgrade.NewStructureDescription;
 
-            OnUpgradedCallback?.Invoke();
+            OnUpgradedCallback?.Invoke(upgrade, chosenEnhancement);
 
             return true;
         }
@@ -178,12 +171,12 @@ namespace GrimoireTD.DefendingEntities.Structures
         }
 
         //Callbacks
-        public void RegisterForOnUpgradedCallback(Action callback)
+        public void RegisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback)
         {
             OnUpgradedCallback += callback;
         }
 
-        public void DeregisterForOnUpgradedCallback(Action callback)
+        public void DeregisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback)
         {
             OnUpgradedCallback -= callback;
         }

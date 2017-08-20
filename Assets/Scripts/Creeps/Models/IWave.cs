@@ -6,8 +6,10 @@ namespace GrimoireTD.Creeps
     {
         IReadOnlyDictionary<float, ICreepTemplate> Spawns { get; }
 
-        ICreepTemplate SpawnNextCreep();
+        ICreepTemplate DequeueNextCreep();
 
         float NextSpawnTime();
+
+        bool CreepsRemaining();
     }
 }

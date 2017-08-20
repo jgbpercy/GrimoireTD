@@ -11,17 +11,17 @@ namespace GrimoireTD.Economy
         [SerializeField]
         private SResourceTransaction[] resourceTransactions;
 
-        private IDictionary<IResource, IResourceTransaction> _transactionsDictionary = null;
+        private IDictionary<IReadOnlyResource, IResourceTransaction> _transactionsDictionary = null;
 
-        private IDictionary<IResource, IResourceTransaction> transactionsDictionary
+        private IDictionary<IReadOnlyResource, IResourceTransaction> transactionsDictionary
         {
             get
             {
                 if (_transactionsDictionary == null)
                 {
-                    _transactionsDictionary = new Dictionary<IResource, IResourceTransaction>();
+                    _transactionsDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-                    foreach (IResource resource in EconomyManager.Instance.Resources)
+                    foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
                     {
                         int amount = 0;
 
@@ -41,12 +41,12 @@ namespace GrimoireTD.Economy
             }
         }
 
-        public IResourceTransaction GetResourceTransaction(IResource resource)
+        public IResourceTransaction GetResourceTransaction(IReadOnlyResource resource)
         {
             return transactionsDictionary[resource];
         }
 
-        public int GetTransactionAmount(IResource resource)
+        public int GetTransactionAmount(IReadOnlyResource resource)
         {
             return transactionsDictionary[resource].Amount;
         }
@@ -54,14 +54,6 @@ namespace GrimoireTD.Economy
         public bool CanDoTransaction()
         {
             return transactionsDictionary.Values.All(x => x.CanDoTransaction());
-        }
-
-        public void DoTransaction()
-        {
-            foreach (IResourceTransaction resourceTransaction in transactionsDictionary.Values)
-            {
-                resourceTransaction.DoTransaction();
-            }
         }
 
         public override string ToString()

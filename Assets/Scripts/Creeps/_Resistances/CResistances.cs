@@ -29,7 +29,7 @@ namespace GrimoireTD.Creeps
             OnResistanceChangedCallbackDictionary = new Dictionary<ISpecificDamageEffectType, Action<float>>();
             OnBlockChangedCallbackDictionary = new Dictionary<ISpecificDamageEffectType, Action<int>>();
 
-            foreach (ISpecificDamageEffectType specificDamageType in AttackEffectTypeManager.Instance.SpecificDamageTypes)
+            foreach (ISpecificDamageEffectType specificDamageType in GameModels.Models[0].AttackEffectTypeManager.SpecificDamageTypes)
             {
                 positiveResistanceModifiers.Add(specificDamageType, new RecalculatorList<IResistanceModifier, float>(CalculatePositiveResistance));
                 positiveResistanceModifiers[specificDamageType].Add(baseResistances.GetResistanceModifier(specificDamageType));

@@ -70,7 +70,7 @@ namespace GrimoireTD.Map
             {
                 tileHighlighterRenderer.enabled = false;
 
-                if (MapGenerator.Instance.Map.CanBuildGenericStructureAt(mouseOverCoord))
+                if (GameModels.Models[0].MapData.CanBuildStructureAt(mouseOverCoord))
                 {
                     structureGhostRenderer.enabled = true;
 
@@ -123,14 +123,14 @@ namespace GrimoireTD.Map
         private void OnSelectedStructureChange(IStructureTemplate selectedStructureTemplate)
         {
             //TODO: get and cache these at start (and also generally do better)
-            MeshFilter selectedStructureMeshFilter = selectedStructureTemplate.Prefab.GetComponentInChildren<MeshFilter>();
+            MeshFilter selectedStructureMeshFilter = MapEntitiesView.Instance.DefendingEntityPrefabs[selectedStructureTemplate].GetComponentInChildren<MeshFilter>();
             Transform selectedStructureGraphics = selectedStructureMeshFilter.transform;
 
             structureGhost.localScale = selectedStructureGraphics.localScale;
             structureGhostPositionOffset = selectedStructureGraphics.localPosition;
 
             structureGhostFilter.mesh = selectedStructureMeshFilter.sharedMesh;
-            structureGhostRenderer.material = selectedStructureTemplate.Prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+            structureGhostRenderer.material = MapEntitiesView.Instance.DefendingEntityPrefabs[selectedStructureTemplate].GetComponentInChildren<MeshRenderer>().sharedMaterial;
             structureGhostRenderer.material.color = new Color(structureGhostRenderer.material.color.r, structureGhostRenderer.material.color.g, structureGhostRenderer.material.color.b, 0.45f);
         }
     }

@@ -7,18 +7,16 @@ namespace GrimoireTD.Economy
 {
     public class EconomyView : SingletonMonobehaviour<EconomyView>
     {
-        private EconomyManager economyManager;
+        private IReadOnlyEconomyManager economyManager;
 
         [SerializeField]
         private Text resourceUIText;
 
-        //TODO: stop this enabling the Economy Manager
         void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Economy Manager Start");
+            CDebug.Log(CDebug.applicationLoading, "Economy View Start");
 
-            economyManager = EconomyManager.Instance;
-            economyManager.enabled = true;
+            economyManager = GameModels.Models[0].EconomyManager;
 
             economyManager.RegisterForOnAnyResourceChangedCallback(OnResourceValueChange);
         }

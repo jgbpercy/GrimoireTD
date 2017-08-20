@@ -7,6 +7,7 @@ using GrimoireTD.Attributes;
 using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Economy;
 using GrimoireTD.Map;
+using GrimoireTD.Abilities.DefendMode.Projectiles;
 
 namespace GrimoireTD.DefendingEntities
 {
@@ -37,6 +38,8 @@ namespace GrimoireTD.DefendingEntities
 
         string UIText();
 
+        void CreatedProjectile(IProjectile projectile);
+
         void RegisterForOnAbilityAddedCallback(Action<IAbility> callback);
         void DeregisterForOnAbilityAddedCallback(Action<IAbility> callback);
 
@@ -60,5 +63,14 @@ namespace GrimoireTD.DefendingEntities
 
         void RegisterForOnFlatHexOccupationBonusRemovedCallback(Action<IHexOccupationBonus> callback);
         void DeregisterForOnFlatHexOccupationBonusRemovedCallback(Action<IHexOccupationBonus> callback);
+
+        void RegisterForOnProjectileCreatedCallback(Action<IProjectile> callback);
+        void DeregisterForOnProjectileCreatedCallback(Action<IProjectile> callback);
+
+        void RegisterForOnBuildModeAbilityExecutedCallback(Action<IBuildModeAbility> callback);
+        void DeregisterForOnBuildModeAbilityExecutedCallback(Action<IBuildModeAbility> callback);
+
+        void RegisterForOnTriggeredFlatHexOccupationBonusCallback(Action<IDefendingEntity, IEconomyTransaction> callback);
+        void DregisterForOnTriggeredFlatHexOccupationBonusCallback(Action<IDefendingEntity, IEconomyTransaction> callback);
     }
 }

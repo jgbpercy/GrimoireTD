@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using GrimoireTD.DefendingEntities;
-
-public interface IDefendingEntityTemplate
+﻿namespace GrimoireTD.DefendingEntities
 {
-    IDefendingEntityImprovement BaseCharacteristics { get; }
-
-    GameObject Prefab { get; }
+    public interface IDefendingEntityTemplate
+    {
+        IDefendingEntityImprovement BaseCharacteristics { get; }
+    }
 }

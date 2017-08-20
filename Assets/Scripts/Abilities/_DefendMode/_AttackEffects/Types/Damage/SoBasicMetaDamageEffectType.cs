@@ -23,7 +23,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         {
             get
             {
-                return AttackEffectTypeManager.Instance.GetWeakMetaDamageType(this);
+                return GameModels.Models[0].AttackEffectTypeManager.GetWeakMetaDamageType(this);
             }
         }
 
@@ -31,7 +31,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         {
             get
             {
-                return AttackEffectTypeManager.Instance.GetStrongMetaDamageType(this);
+                return GameModels.Models[0].AttackEffectTypeManager.GetStrongMetaDamageType(this);
             }
         }
 

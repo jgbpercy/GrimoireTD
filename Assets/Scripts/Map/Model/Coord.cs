@@ -69,11 +69,11 @@ namespace GrimoireTD.Map
         {
             if (y % 2 == 0)
             {
-                return new Vector3(x * 2f * MapRenderer.HEX_OFFSET * MapRenderer.tileScale, y * 0.75f * MapRenderer.tileScale, 0f);
+                return new Vector3(x * 2f * MapRenderer.HEX_OFFSET, y * 0.75f, 0f);
             }
             else
             {
-                return new Vector3(x * 2f * MapRenderer.HEX_OFFSET * MapRenderer.tileScale + MapRenderer.HEX_OFFSET, y * 0.75f * MapRenderer.tileScale, 0f);
+                return new Vector3(x * 2f * MapRenderer.HEX_OFFSET + MapRenderer.HEX_OFFSET, y * 0.75f, 0f);
             }
         }
 

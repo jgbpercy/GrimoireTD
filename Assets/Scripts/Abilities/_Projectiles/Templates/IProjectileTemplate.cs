@@ -11,8 +11,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         float Speed { get; }
 
-        GameObject ProjectilePrefab { get; }
-
         IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefendingEntity sourceDefendingEntity);
     }
 }

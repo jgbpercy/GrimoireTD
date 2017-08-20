@@ -152,8 +152,8 @@ namespace GrimoireTD.Creeps
             //Pathing/Position
             position = spawnPosition;
 
-            currentDestinationPathNode = MapGenerator.Instance.Map.CreepPath.Count - 2;
-            currentDestinationVector = MapGenerator.Instance.Map.CreepPath[currentDestinationPathNode].ToPositionVector();
+            currentDestinationPathNode = GameModels.Models[0].MapData.CreepPath.Count - 2;
+            currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             
             //Resistances
             resistances = new CResistances(creepTemplate.BaseResistances);
@@ -172,8 +172,6 @@ namespace GrimoireTD.Creeps
 
             //Bullshit
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
-
-            CreepView.Instance.CreateCreep(this);
         }
 
         public Vector3 TargetPosition()
@@ -191,7 +189,7 @@ namespace GrimoireTD.Creeps
             if (distanceFromCurrentDestination < CurrentSpeed * Time.deltaTime)
             {
                 currentDestinationPathNode = currentDestinationPathNode - 1 < 0 ? 0 : currentDestinationPathNode - 1;
-                currentDestinationVector = MapGenerator.Instance.Map.CreepPath[currentDestinationPathNode].ToPositionVector();
+                currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             }
 
             position = Vector3.MoveTowards(position, currentDestinationVector, CurrentSpeed * Time.deltaTime);
@@ -378,8 +376,8 @@ namespace GrimoireTD.Creeps
             if (currentHitpoints == 0)
             {
                 CDebug.Log(CDebug.combatLog, Id + " died");
-                OnDiedCallback();
-                CreepTemplate.Bounty.DoTransaction();
+
+                OnDiedCallback?.Invoke();
             }
         }
 

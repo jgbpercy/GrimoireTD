@@ -18,9 +18,6 @@ namespace GrimoireTD.Creeps
         private int maxHitpoints;
 
         [SerializeField]
-        private GameObject creepPrefab;
-
-        [SerializeField]
         private SEconomyTransaction bounty;
 
         [SerializeField]
@@ -47,14 +44,6 @@ namespace GrimoireTD.Creeps
             get
             {
                 return maxHitpoints;
-            }
-        }
-
-        public GameObject CreepPrefab
-        {
-            get
-            {
-                return creepPrefab;
             }
         }
 

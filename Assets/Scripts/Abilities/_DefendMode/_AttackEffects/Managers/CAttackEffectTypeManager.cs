@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.Technical;
 
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    public class AttackEffectTypeManager : SingletonMonobehaviour<AttackEffectTypeManager>
+    public class CAttackEffectTypeManager : IAttackEffectTypeManager
     {
         [SerializeField]
         private SoAttackEffectType[] attackEffectTypes;
@@ -35,6 +34,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
                 return specificDamageTypes;
             }
         }
+
         public IReadOnlyList<IMetaDamageEffectType> MetaDamageTypes
         {
             get
@@ -42,6 +42,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
                 return metaDamageTypes;
             }
         }
+
         public IReadOnlyList<IBasicMetaDamageEffectType> BasicMetaDamageTypes
         {
             get
@@ -56,6 +57,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
                 return weakMetaDamageTypes;
             }
         }
+
         public IReadOnlyList<IStrongMetaDamageEffectType> StrongMetaDamageTypes
         {
             get
@@ -88,7 +90,9 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
-        private void Awake()
+        public CAttackEffectTypeManager() { }
+
+        public void SetUp(IEnumerable<IAttackEffectType> attackEffectTypes)
         {
             foreach (IAttackEffectType attackEffectType in attackEffectTypes)
             {

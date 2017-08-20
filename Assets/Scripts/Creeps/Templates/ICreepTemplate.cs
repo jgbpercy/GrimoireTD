@@ -13,8 +13,6 @@ namespace GrimoireTD.Creeps
 
         int MaxHitpoints { get; }
 
-        GameObject CreepPrefab { get; }
-
         IEconomyTransaction Bounty { get; }
 
         IBaseResistances BaseResistances { get; }

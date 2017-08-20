@@ -131,7 +131,7 @@ namespace GrimoireTD.DefendingEntities
             InterfaceController.Instance.RegisterForOnDefendingEntitySelectedCallback(OnNewSelection);
             InterfaceController.Instance.RegisterForOnDefendingEntityDeselectedCallback(OnDefendingEntitiesDeselected);
 
-            GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
+            GameModels.Models[0].GameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
         }
 
         private void Update()
@@ -142,7 +142,7 @@ namespace GrimoireTD.DefendingEntities
                 selectedUnit.TempDebugAddExperience();
             }
 
-            if (GameStateManager.Instance.CurrentGameMode == GameMode.BUILD)
+            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }
@@ -496,7 +496,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        private void OnStructureUpgraded()
+        private void OnStructureUpgraded(IStructureUpgrade upgradeBought, IStructureEnhancement enahncementChosen)
         {
             SetNameAndDescription(selectedStructure, selectedStructureName, selectedStructureText);
 
@@ -643,7 +643,7 @@ namespace GrimoireTD.DefendingEntities
 
             economyText += "Hexes (conditional):\n";
 
-            foreach (IHexType hexType in MapGenerator.Instance.HexTypes)
+            foreach (IHexType hexType in GameModels.Models[0].MapData.HexTypes)
             {
                 economyText += unit.GetConditionalHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
             }
@@ -662,7 +662,7 @@ namespace GrimoireTD.DefendingEntities
         {
             string economyText = "Hexes (flat):\n";
 
-            foreach (IHexType hexType in MapGenerator.Instance.HexTypes)
+            foreach (IHexType hexType in GameModels.Models[0].MapData.HexTypes)
             {
                 economyText += defendingEntity.GetFlatHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
             }

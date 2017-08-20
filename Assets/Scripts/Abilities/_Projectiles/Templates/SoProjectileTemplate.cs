@@ -14,9 +14,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         [SerializeField]
         protected float speed;
 
-        [SerializeField]
-        protected GameObject projectilePrefab;
-
         public IEnumerable<IAttackEffect> AttackEffects
         {
             get
@@ -30,14 +27,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             get
             {
                 return speed;
-            }
-        }
-
-        public GameObject ProjectilePrefab
-        {
-            get
-            {
-                return projectilePrefab;
             }
         }
 

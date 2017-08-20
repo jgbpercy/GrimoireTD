@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Map;
 
@@ -7,6 +8,8 @@ namespace GrimoireTD.Abilities.BuildMode
     public class CBuildModeAbility : CAbility, IBuildModeAbility
     {
         private IBuildModeAbilityTemplate buildModeAbilityTemplate;
+
+        private Action<IBuildModeAbility> OnExecutedCallback;
 
         public IBuildModeAbilityTemplate BuildModeAbilityTemplate
         {
@@ -27,12 +30,22 @@ namespace GrimoireTD.Abilities.BuildMode
 
             buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
 
-            buildModeAbilityTemplate.Cost.DoTransaction();
+            OnExecutedCallback?.Invoke(this);
         }
 
         public override string UIText()
         {
             return buildModeAbilityTemplate.NameInGame;
+        }
+
+        public void RegisterForOnExecutedCallback(Action<IBuildModeAbility> callback)
+        {
+            OnExecutedCallback += callback;
+        }
+
+        public void DeregisterForOnExecutedCallback(Action<IBuildModeAbility> callback)
+        {
+            OnExecutedCallback -= callback;
         }
     }
 }

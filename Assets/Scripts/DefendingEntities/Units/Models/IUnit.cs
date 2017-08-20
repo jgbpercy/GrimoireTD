@@ -54,5 +54,8 @@ namespace GrimoireTD.DefendingEntities.Units
 
         void RegisterForOnMovedCallback(Action<Coord> callback);
         void DeregisterForOnMovedCallback(Action<Coord> callback);
+
+        void RegisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback);
+        void DeregisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback);
     }
 }

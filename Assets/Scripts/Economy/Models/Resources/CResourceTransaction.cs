@@ -2,11 +2,11 @@
 {
     public class CResourceTransaction : IResourceTransaction
     {
-        private IResource resource;
+        private IReadOnlyResource resource;
 
         private int amount;
 
-        public IResource Resource
+        public IReadOnlyResource Resource
         {
             get
             {
@@ -22,7 +22,7 @@
             }
         }
 
-        public CResourceTransaction(IResource resource, int amount)
+        public CResourceTransaction(IReadOnlyResource resource, int amount)
         {
             this.resource = resource;
             this.amount = amount;
@@ -33,19 +33,9 @@
             return CanDoTransaction(this);
         }
 
-        public void DoTransaction()
-        {
-            DoTransaction(this);
-        }
-
         public static bool CanDoTransaction(IResourceTransaction transaction)
         {
             return transaction.Resource.CanDoTransaction(transaction.Amount);
-        }
-
-        public static void DoTransaction(IResourceTransaction transaction)
-        {
-            transaction.Resource.DoTransaction(transaction.Amount);
         }
     }
 }

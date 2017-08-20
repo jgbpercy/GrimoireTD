@@ -9,8 +9,6 @@ namespace GrimoireTD.Map
         [SerializeField]
         private bool debugOn;
 
-        public static float tileScale = 1f;
-
         [SerializeField]
         private float textureRes = 512f;
 
@@ -31,7 +29,7 @@ namespace GrimoireTD.Map
         [SerializeField]
         private MeshFilter offMapGraphicsFilter;
 
-        private IMapData map;
+        private IReadOnlyMapData mapData;
 
         [SerializeField]
         private int offMapHexThickness;
@@ -42,30 +40,28 @@ namespace GrimoireTD.Map
 
             tileImages = (Texture2D)mapGraphicsRenderer.material.mainTexture;
 
-            map = MapGenerator.Instance.Map;
+            mapData = GameModels.Models[0].MapData;
 
-            //TODO subscribe to map change events
+            mapData.RegisterForOnMapCreatedCallback(InitialiseMap);
 
-            InitialiseMap();
-
-            InitialiseOffMap();
+            //TODO subscribe to map change events (TODO have map change events!)            
         }
 
         private void InitialiseMap()
         {
             Mesh mapMesh = new Mesh();
 
-            Vector3[] vertices = new Vector3[map.Width * map.Height * 7];
+            Vector3[] vertices = new Vector3[mapData.Width * mapData.Height * 7];
             Vector3[] currentVertices = new Vector3[7];
 
-            int[] polys = new int[((map.Width * map.Height * 6) + 2 * (3 * map.Width * map.Height - 2 * map.Width - 2 * map.Height + 1)) * 3];
+            int[] polys = new int[((mapData.Width * mapData.Height * 6) + 2 * (3 * mapData.Width * mapData.Height - 2 * mapData.Width - 2 * mapData.Height + 1)) * 3];
             int[] currentPolys = new int[18];
             int neighboursCenterIndex;
             int[] joinPolys = new int[6];
 
-            Vector3[] normals = new Vector3[map.Width * map.Height * 7];
+            Vector3[] normals = new Vector3[mapData.Width * mapData.Height * 7];
 
-            Vector2[] uvs = new Vector2[map.Width * map.Height * 7];
+            Vector2[] uvs = new Vector2[mapData.Width * mapData.Height * 7];
             Vector2[] currentUvs = new Vector2[7];
             float textureOffsetX = 0f;
             float textureOffsetY = 0f;
@@ -78,15 +74,15 @@ namespace GrimoireTD.Map
             int currentVertexIndex = 0;
             int currentPolyIndex = 0;
 
-            for (int x = 0; x < map.Width; x++)
+            for (int x = 0; x < mapData.Width; x++)
             {
-                for (int y = 0; y < map.Height; y++)
+                for (int y = 0; y < mapData.Height; y++)
                 {
                     currentCoord = new Coord(x, y);
                     centerOfCurrent = currentCoord.ToPositionVector();
 
                     //vertices (& normals)
-                    currentVertices = hexVertices(centerOfCurrent);
+                    currentVertices = HexVertices(centerOfCurrent);
 
                     for (int i = 0; i < 7; i++)
                     {
@@ -95,7 +91,7 @@ namespace GrimoireTD.Map
                     }
 
                     //main polys
-                    currentPolys = hexPolys(currentCoord);
+                    currentPolys = HexPolys(currentCoord);
 
                     for (int i = 0; i < 18; i++)
                     {
@@ -108,10 +104,10 @@ namespace GrimoireTD.Map
                     if (y % 2 == 0)
                     {
                         //down right
-                        if (map.TryGetHexAt(new Coord(currentCoord.X, currentCoord.Y - 1)) != null)
+                        if (mapData.TryGetHexAt(new Coord(currentCoord.X, currentCoord.Y - 1)) != null)
                         {
                             neighboursCenterIndex = currentVertexIndex - 7;
-                            joinPolys = getJoinPolys(currentVertexIndex + 3, neighboursCenterIndex + 1, neighboursCenterIndex + 6, currentVertexIndex + 4);
+                            joinPolys = GetJoinPolys(currentVertexIndex + 3, neighboursCenterIndex + 1, neighboursCenterIndex + 6, currentVertexIndex + 4);
                             for (int i = 0; i < 6; i++)
                             {
                                 polys[currentPolyIndex + i] = joinPolys[i];
@@ -120,10 +116,10 @@ namespace GrimoireTD.Map
                         }
 
                         //down left
-                        if (map.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y - 1)) != null)
+                        if (mapData.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y - 1)) != null)
                         {
-                            neighboursCenterIndex = currentVertexIndex - 7 - map.Height * 7;
-                            joinPolys = getJoinPolys(currentVertexIndex + 4, neighboursCenterIndex + 2, neighboursCenterIndex + 1, currentVertexIndex + 5);
+                            neighboursCenterIndex = currentVertexIndex - 7 - mapData.Height * 7;
+                            joinPolys = GetJoinPolys(currentVertexIndex + 4, neighboursCenterIndex + 2, neighboursCenterIndex + 1, currentVertexIndex + 5);
                             for (int i = 0; i < 6; i++)
                             {
                                 polys[currentPolyIndex + i] = joinPolys[i];
@@ -133,10 +129,10 @@ namespace GrimoireTD.Map
                         }
 
                         //left
-                        if (map.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y)) != null)
+                        if (mapData.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y)) != null)
                         {
-                            neighboursCenterIndex = currentVertexIndex - map.Height * 7;
-                            joinPolys = getJoinPolys(currentVertexIndex + 5, neighboursCenterIndex + 3, neighboursCenterIndex + 2, currentVertexIndex + 6);
+                            neighboursCenterIndex = currentVertexIndex - mapData.Height * 7;
+                            joinPolys = GetJoinPolys(currentVertexIndex + 5, neighboursCenterIndex + 3, neighboursCenterIndex + 2, currentVertexIndex + 6);
                             for (int i = 0; i < 6; i++)
                             {
                                 polys[currentPolyIndex + i] = joinPolys[i];
@@ -145,10 +141,10 @@ namespace GrimoireTD.Map
                         }
 
                         //up left
-                        if (map.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y + 1)) != null)
+                        if (mapData.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y + 1)) != null)
                         {
-                            neighboursCenterIndex = currentVertexIndex + 7 - map.Height * 7;
-                            joinPolys = getJoinPolys(currentVertexIndex + 6, neighboursCenterIndex + 4, neighboursCenterIndex + 3, currentVertexIndex + 1);
+                            neighboursCenterIndex = currentVertexIndex + 7 - mapData.Height * 7;
+                            joinPolys = GetJoinPolys(currentVertexIndex + 6, neighboursCenterIndex + 4, neighboursCenterIndex + 3, currentVertexIndex + 1);
                             for (int i = 0; i < 6; i++)
                             {
                                 polys[currentPolyIndex + i] = joinPolys[i];
@@ -160,10 +156,10 @@ namespace GrimoireTD.Map
                     else
                     {
                         //down left
-                        if (map.TryGetHexAt(new Coord(currentCoord.X, currentCoord.Y - 1)) != null)
+                        if (mapData.TryGetHexAt(new Coord(currentCoord.X, currentCoord.Y - 1)) != null)
                         {
                             neighboursCenterIndex = currentVertexIndex - 7;
-                            joinPolys = getJoinPolys(currentVertexIndex + 4, neighboursCenterIndex + 2, neighboursCenterIndex + 1, currentVertexIndex + 5);
+                            joinPolys = GetJoinPolys(currentVertexIndex + 4, neighboursCenterIndex + 2, neighboursCenterIndex + 1, currentVertexIndex + 5);
                             for (int i = 0; i < 6; i++)
                             {
                                 polys[currentPolyIndex + i] = joinPolys[i];
@@ -172,10 +168,10 @@ namespace GrimoireTD.Map
                         }
 
                         //left
-                        if (map.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y)) != null)
+                        if (mapData.TryGetHexAt(new Coord(currentCoord.X - 1, currentCoord.Y)) != null)
                         {
-                            neighboursCenterIndex = currentVertexIndex - 7 * map.Height;
-                            joinPolys = getJoinPolys(currentVertexIndex + 5, neighboursCenterIndex + 3, neighboursCenterIndex + 2, currentVertexIndex + 6);
+                            neighboursCenterIndex = currentVertexIndex - 7 * mapData.Height;
+                            joinPolys = GetJoinPolys(currentVertexIndex + 5, neighboursCenterIndex + 3, neighboursCenterIndex + 2, currentVertexIndex + 6);
                             for (int i = 0; i < 6; i++)
                             {
                                 polys[currentPolyIndex + i] = joinPolys[i];
@@ -184,10 +180,10 @@ namespace GrimoireTD.Map
                         }
                     }
 
-                    textureOffsetX = map.GetHexAt(new Coord(x, y)).HexType.TextureOffsetX;
-                    textureOffsetY = map.GetHexAt(new Coord(x, y)).HexType.TextureOffsetY;
+                    textureOffsetX = mapData.GetHexAt(new Coord(x, y)).HexType.TextureOffsetX;
+                    textureOffsetY = mapData.GetHexAt(new Coord(x, y)).HexType.TextureOffsetY;
 
-                    currentUvs = hexUvs(textureOffsetX, textureScaleMultiplierX, textureOffsetY, textureScaleMultiplierY);
+                    currentUvs = HexUvs(textureOffsetX, textureScaleMultiplierX, textureOffsetY, textureScaleMultiplierY);
 
                     for (int i = 0; i < 7; i++)
                     {
@@ -205,13 +201,16 @@ namespace GrimoireTD.Map
 
             mapGraphicsFilter.mesh = mapMesh;
             mapGraphicsCollider.sharedMesh = mapGraphicsFilter.sharedMesh;
+
+            //TODO: make this one function
+            InitialiseOffMap();
         }
 
         private void InitialiseOffMap()
         {
             Mesh offMapMesh = new Mesh();
 
-            int numberOfOffMapHexes = ((map.Width + 2 * offMapHexThickness) * (map.Height + 2 * offMapHexThickness)) - (map.Width * map.Height);
+            int numberOfOffMapHexes = ((mapData.Width + 2 * offMapHexThickness) * (mapData.Height + 2 * offMapHexThickness)) - (mapData.Width * mapData.Height);
 
             Vector3[] vertices = new Vector3[numberOfOffMapHexes * 7];
             Vector3[] currentVertices = new Vector3[7];
@@ -234,19 +233,19 @@ namespace GrimoireTD.Map
             int currentVertexIndex = 0;
             int currentPolyIndex = 0;
 
-            for (int x = 0; x < map.Width + 2 * offMapHexThickness; x++)
+            for (int x = 0; x < mapData.Width + 2 * offMapHexThickness; x++)
             {
-                for (int y = 0; y < map.Height + 2 * offMapHexThickness; y++)
+                for (int y = 0; y < mapData.Height + 2 * offMapHexThickness; y++)
                 {
 
-                    if (x < offMapHexThickness || y < offMapHexThickness || x >= map.Width + offMapHexThickness || y >= map.Height + offMapHexThickness)
+                    if (x < offMapHexThickness || y < offMapHexThickness || x >= mapData.Width + offMapHexThickness || y >= mapData.Height + offMapHexThickness)
                     {
 
                         currentCoord = new Coord(x, y);
                         centerOfCurrent = currentCoord.ToPositionVector();
 
                         //vertices (& normals)
-                        currentVertices = hexVertices(centerOfCurrent);
+                        currentVertices = HexVertices(centerOfCurrent);
 
                         for (int i = 0; i < 7; i++)
                         {
@@ -255,7 +254,7 @@ namespace GrimoireTD.Map
                         }
 
                         //main polys
-                        currentPolys = hexPolys(currentVertexIndex);
+                        currentPolys = HexPolys(currentVertexIndex);
 
                         for (int i = 0; i < 18; i++)
                         {
@@ -264,7 +263,7 @@ namespace GrimoireTD.Map
 
                         currentPolyIndex += 18;
 
-                        currentUvs = hexUvs(textureOffsetX, textureScaleMultiplierX, textureOffsetY, textureScaleMultiplierY);
+                        currentUvs = HexUvs(textureOffsetX, textureScaleMultiplierX, textureOffsetY, textureScaleMultiplierY);
 
                         for (int i = 0; i < 7; i++)
                         {
@@ -287,9 +286,7 @@ namespace GrimoireTD.Map
             offMapGraphicsFilter.transform.position = new Vector3(-2 * MapRenderer.HEX_OFFSET * offMapHexThickness, -0.75f * offMapHexThickness, 0f);
         }
 
-
-
-        private Vector3[] hexVertices(Vector3 center)
+        private Vector3[] HexVertices(Vector3 center)
         {
             Vector3[] vertices = new Vector3[7];
 
@@ -303,11 +300,11 @@ namespace GrimoireTD.Map
             return vertices;
         }
 
-        private int[] hexPolys(Coord currentCoord)
+        private int[] HexPolys(Coord currentCoord)
         {
             int[] polys = new int[18];
 
-            int startOffset = (currentCoord.Y + currentCoord.X * map.Height) * 7;
+            int startOffset = (currentCoord.Y + currentCoord.X * mapData.Height) * 7;
 
             for (int i = 0; i < 6; i++)
             {
@@ -319,7 +316,7 @@ namespace GrimoireTD.Map
             return polys;
         }
 
-        private int[] hexPolys(int currentVertexIndex)
+        private int[] HexPolys(int currentVertexIndex)
         {
             int[] polys = new int[18];
 
@@ -335,7 +332,7 @@ namespace GrimoireTD.Map
             return polys;
         }
 
-        private int[] getJoinPolys(int vertex1, int vertex2, int vertex3, int vertex4)
+        private int[] GetJoinPolys(int vertex1, int vertex2, int vertex3, int vertex4)
         {
             int[] polys = new int[6];
 
@@ -349,7 +346,7 @@ namespace GrimoireTD.Map
             return polys;
         }
 
-        private Vector3[] hexNormals()
+        private Vector3[] HexNormals()
         {
             Vector3[] normals = new Vector3[7];
 
@@ -361,7 +358,7 @@ namespace GrimoireTD.Map
             return normals;
         }
 
-        private Vector2[] hexUvs(float textureOffsetX, float textureScaleMultiplierX, float textureOffsetY, float textureScaleMultiplierY)
+        private Vector2[] HexUvs(float textureOffsetX, float textureScaleMultiplierX, float textureOffsetY, float textureScaleMultiplierY)
         {
             Vector2[] uvs = new Vector2[7];
 

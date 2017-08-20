@@ -38,7 +38,7 @@ namespace GrimoireTD.Abilities.DefendMode
 
         private void Update()
         {
-            if (GameStateManager.Instance.CurrentGameMode == GameMode.BUILD)
+            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }

@@ -8,7 +8,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         {
             get
             {
-                return AttackEffectTypeManager.Instance.GetSpecificDamageTypes(this);
+                return GameModels.Models[0].AttackEffectTypeManager.GetSpecificDamageTypes(this);
             }
         }
     }

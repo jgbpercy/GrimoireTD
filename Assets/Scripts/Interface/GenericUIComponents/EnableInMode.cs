@@ -17,11 +17,13 @@ namespace GrimoireTD.UI
 
         private void Start()
         {
+            var gameStateManager = GameModels.Models[0].GameStateManager;
+
             if (enabledInMode == GameMode.DEFEND)
             {
-                GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(SetSelfInactive);
-                GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(SetSelfActive);
-                if (GameStateManager.Instance.CurrentGameMode == GameMode.DEFEND)
+                gameStateManager.RegisterForOnEnterBuildModeCallback(SetSelfInactive);
+                gameStateManager.RegisterForOnEnterDefendModeCallback(SetSelfActive);
+                if (gameStateManager.CurrentGameMode == GameMode.DEFEND)
                 {
                     gameObject.SetActive(true);
                 }
@@ -32,9 +34,9 @@ namespace GrimoireTD.UI
             }
             else
             {
-                GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(SetSelfActive);
-                GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(SetSelfInactive);
-                if (GameStateManager.Instance.CurrentGameMode == GameMode.BUILD)
+                gameStateManager.RegisterForOnEnterBuildModeCallback(SetSelfActive);
+                gameStateManager.RegisterForOnEnterDefendModeCallback(SetSelfInactive);
+                if (gameStateManager.CurrentGameMode == GameMode.BUILD)
                 {
                     gameObject.SetActive(true);
                 }
@@ -58,17 +60,18 @@ namespace GrimoireTD.UI
 
         private void OnDestroy()
         {
-            if (GameStateManager.InstanceNullAccepted != null)
+            if (GameModels.Models.Count > 0)
             {
+                var gameStateManager = GameModels.Models[0].GameStateManager;
                 if (enabledInMode == GameMode.DEFEND)
                 {
-                    GameStateManager.Instance.DeregisterForOnEnterBuildModeCallback(SetSelfInactive);
-                    GameStateManager.Instance.DeregisterForOnEnterDefendModeCallback(SetSelfActive);
+                    gameStateManager.DeregisterForOnEnterBuildModeCallback(SetSelfInactive);
+                    gameStateManager.DeregisterForOnEnterDefendModeCallback(SetSelfActive);
                 }
                 else
                 {
-                    GameStateManager.Instance.DeregisterForOnEnterBuildModeCallback(SetSelfActive);
-                    GameStateManager.Instance.DeregisterForOnEnterDefendModeCallback(SetSelfInactive);
+                    gameStateManager.DeregisterForOnEnterBuildModeCallback(SetSelfActive);
+                    gameStateManager.DeregisterForOnEnterDefendModeCallback(SetSelfInactive);
                 }
             }
         }

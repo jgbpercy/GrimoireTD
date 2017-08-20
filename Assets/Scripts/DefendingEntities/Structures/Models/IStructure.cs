@@ -15,9 +15,9 @@ namespace GrimoireTD.DefendingEntities.Structures
 
         IStructureUpgrade CurrentUpgradeLevel();
 
-        bool TryUpgrade(IStructureUpgrade upgrade, IStructureEnhancement chosenEnhancement, bool isFree);
+        bool TryUpgrade(IStructureUpgrade upgrade, IStructureEnhancement chosenEnhancement);
 
-        void RegisterForOnUpgradedCallback(Action callback);
-        void DeregisterForOnUpgradedCallback(Action callback);
+        void RegisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback);
+        void DeregisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback);
     }
 }

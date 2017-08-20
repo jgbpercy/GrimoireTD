@@ -13,8 +13,8 @@ namespace GrimoireTD.Technical
         {
             CDebug.Log(CDebug.applicationLoading, "Mode Text View Start");
 
-            GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(() => { modeText.text = "Mode: Build"; });
-            GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(() => { modeText.text = "Mode: Defend"; });
+            GameModels.Models[0].GameStateManager.RegisterForOnEnterBuildModeCallback(() => { modeText.text = "Mode: Build"; });
+            GameModels.Models[0].GameStateManager.RegisterForOnEnterDefendModeCallback(() => { modeText.text = "Mode: Defend"; });
         }
     }
 }

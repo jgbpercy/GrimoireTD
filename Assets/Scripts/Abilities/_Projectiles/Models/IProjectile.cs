@@ -8,7 +8,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
     {
         string Id { get; }
 
-        IProjectileTemplate ProjectileClassTemplate { get; }
+        IProjectileTemplate ProjectileTemplate { get; }
 
         Vector3 Position { get; }
 

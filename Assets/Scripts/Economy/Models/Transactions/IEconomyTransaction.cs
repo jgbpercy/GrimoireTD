@@ -2,13 +2,11 @@
 {
     public interface IEconomyTransaction
     {
-        IResourceTransaction GetResourceTransaction(IResource resource);
+        IResourceTransaction GetResourceTransaction(IReadOnlyResource resource);
 
-        int GetTransactionAmount(IResource resource);
+        int GetTransactionAmount(IReadOnlyResource resource);
 
         bool CanDoTransaction();
-
-        void DoTransaction();
 
         string ToString();
 

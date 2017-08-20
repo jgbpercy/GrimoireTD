@@ -23,7 +23,7 @@ namespace GrimoireTD.UI
     public class InterfaceController : SingletonMonobehaviour<InterfaceController>
     {
         [SerializeField]
-        private float debugTimeScale = 1f;
+        private float tempDebugTimeScale = 1f;
 
         [SerializeField]
         private LayerMask mainRayHitLayer;
@@ -51,8 +51,8 @@ namespace GrimoireTD.UI
 
         private Camera mainCamera;
 
-        private IMapData map;
-        private GameStateManager gameStateManager;
+        private IReadOnlyMapData mapData;
+        private IReadOnlyGameStateManager gameStateManager;
 
         private Action<IStructure, IUnit> OnDefendingEntitySelectedCallback;
         private Action OnDefendingEntityDeselectedCallback;
@@ -62,6 +62,11 @@ namespace GrimoireTD.UI
 
         private Action<ICreep> OnCreepSelectedCallback;
         private Action OnCreepDeselectedCallback;
+
+        private Action OnEnterDefendModeUserAction;
+
+        private Action<Coord, IUnitTemplate> OnCreateUnitUserAction;
+        private Action<Coord, IStructureTemplate> OnBuildStructureUserAction;
 
         public bool MouseRaycastHitMap
         {
@@ -115,7 +120,7 @@ namespace GrimoireTD.UI
         {
             get
             {
-                return map.WhereAmI(selectedUnitInstance);
+                return mapData.WhereAmI(selectedUnitInstance);
             }
         }
 
@@ -127,17 +132,17 @@ namespace GrimoireTD.UI
             }
         }
 
-        private void Start()
+        private void Awake()
         {
             CDebug.Log(CDebug.applicationLoading, "Interface Controller Start");
 
-            Time.timeScale = debugTimeScale;
+            Time.timeScale = tempDebugTimeScale;
 
             //map
-            map = MapGenerator.Instance.Map;
+            mapData = GameModels.Models[0].MapData;
 
             //gamestate
-            gameStateManager = GameStateManager.Instance;
+            gameStateManager = GameModels.Models[0].GameStateManager;
 
             //camera
             mainCamera = Camera.main;
@@ -147,7 +152,6 @@ namespace GrimoireTD.UI
 
             gameStateManager.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
             gameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
-
         }
 
         private void Update()
@@ -189,7 +193,7 @@ namespace GrimoireTD.UI
             if (mouseHit.transform.CompareTag("TileMap"))
             {
                 mouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHit.point.x, mouseHit.point.y, 0f));
-                mouseOverHex = map.GetHexAt(mouseOverCoord);
+                mouseOverHex = mapData.GetHexAt(mouseOverCoord);
                 return;
             }
 
@@ -232,9 +236,9 @@ namespace GrimoireTD.UI
                 DeselectCreep();
             }
 
-            if (cursorMode == InterfaceCursorMode.BUILD)
+            if (cursorMode == InterfaceCursorMode.BUILD && mapData.CanBuildStructureAt(mouseOverCoord))
             {
-                map.TryBuildStructureAt(mouseOverCoord, selectedStructureTemplate, false);
+                OnBuildStructureUserAction?.Invoke(mouseOverCoord, selectedStructureTemplate);
             }
 
             if (
@@ -257,7 +261,7 @@ namespace GrimoireTD.UI
         {
             CDebug.Log(CDebug.gameState, "Interface Controller registered defend button click");
 
-            gameStateManager.CurrentGameMode = GameMode.DEFEND;
+            OnEnterDefendModeUserAction?.Invoke();
         }
 
         private void OnEnterBuildMode()
@@ -272,11 +276,16 @@ namespace GrimoireTD.UI
 
         public void SelectStructureToBuild(IStructureTemplate selectedStructureTemplate)
         {
+            if (!selectedStructureTemplate.Cost.CanDoTransaction())
+            {
+                return;
+            }
+
             SetCursorModeBuild();
 
             this.selectedStructureTemplate = selectedStructureTemplate;
 
-            OnStructureToBuildSelectedCallback(selectedStructureTemplate);
+            OnStructureToBuildSelectedCallback?.Invoke(selectedStructureTemplate);
         }
 
         private void SelectHexContents(IHexData hex)
@@ -360,7 +369,7 @@ namespace GrimoireTD.UI
 
         public void ClickStructureEnhancement(IStructure structure, IStructureUpgrade upgrade, IStructureEnhancement enhancement)
         {
-            structure.TryUpgrade(upgrade, enhancement, false);
+            structure.TryUpgrade(upgrade, enhancement);
         }
 
         public void RegisterForOnDefendingEntitySelectedCallback(Action<IStructure, IUnit> callback)
@@ -421,6 +430,36 @@ namespace GrimoireTD.UI
         public void DeregisterForOnCreepDeselectedCallback(Action callback)
         {
             OnCreepDeselectedCallback -= callback;
+        }
+
+        public void RegisterForOnEnterDefendModeUserAction(Action callback)
+        {
+            OnEnterDefendModeUserAction += callback;
+        }
+
+        public void DeregisterForOnEnterDefendModeUserAction(Action callback)
+        {
+            OnEnterDefendModeUserAction -= callback;
+        }
+
+        public void RegisterForOnCreateUnitUserAction(Action<Coord, IUnitTemplate>  callback)
+        {
+            OnCreateUnitUserAction += callback;
+        }
+
+        public void DeregisterForOnCreateUnitUserAction(Action<Coord, IUnitTemplate> callback)
+        {
+            OnCreateUnitUserAction -= callback;
+        }
+
+        public void RegisterForOnBuildStructureUserAction(Action<Coord, IStructureTemplate> callback)
+        {
+            OnBuildStructureUserAction += callback;
+        }
+
+        public void DeregisterForOnBuildStructureUserAction(Action<Coord, IStructureTemplate> callback)
+        {
+            OnBuildStructureUserAction -= callback;
         }
     }
 }

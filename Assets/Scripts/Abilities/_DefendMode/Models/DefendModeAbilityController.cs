@@ -47,20 +47,20 @@ namespace GrimoireTD.Abilities.DefendMode
 
             defendModeAbilities = attachedToDefendingEntity.DefendModeAbilities();
 
-            GameStateManager.Instance.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
+            GameModels.Models[0].GameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
             //GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
         }
 
         private void Update()
         {
-            if (GameStateManager.Instance.CurrentGameMode != GameMode.DEFEND)
+            if (GameModels.Models[0].GameStateManager.CurrentGameMode != GameMode.DEFEND)
             {
                 return;
             }
 
             ExecuteHighestPriorityAbilityOffCooldown();
 
-            if (trackIdleTime && CreepManager.Instance.TrackIdleTime)
+            if (trackIdleTime)
             {
                 if (defendModeAbilities.Any(x => !x.OffCooldown()))
                 {

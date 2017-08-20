@@ -38,7 +38,7 @@ namespace GrimoireTD.DefendingEntities.Structures
 
             SetDisplay();
 
-            selectedStructure.RegisterForOnUpgradedCallback(SetDisplay);
+            selectedStructure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
         }
 
         private void SetDisplay()
@@ -56,6 +56,11 @@ namespace GrimoireTD.DefendingEntities.Structures
             }
         }
 
+        private void OnStructureUpgraded(IStructureUpgrade upgrade, IStructureEnhancement enahncement)
+        {
+            SetDisplay();
+        }
+
         public void UIComponentClicked()
         {
             InterfaceController.Instance.ClickStructureEnhancement(selectedStructure, upgrade, enhancement);
@@ -65,7 +70,7 @@ namespace GrimoireTD.DefendingEntities.Structures
         {
             if (selectedStructure != null)
             {
-                selectedStructure.DeregisterForOnUpgradedCallback(SetDisplay);
+                selectedStructure.DeregisterForOnUpgradedCallback(OnStructureUpgraded);
             }
         }
     }

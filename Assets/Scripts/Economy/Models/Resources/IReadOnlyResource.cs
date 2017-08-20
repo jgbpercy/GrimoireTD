@@ -10,6 +10,8 @@ namespace GrimoireTD.Economy
 
         int AmountOwned { get; }
 
+        bool CanDoTransaction(int amount);
+
         void RegisterForOnResourceChangedCallback(Action<int, int> callback);
 
         void DeregisterForOnResourceChangedCallback(Action<int, int> callback);

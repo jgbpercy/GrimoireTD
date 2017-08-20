@@ -35,10 +35,15 @@ namespace GrimoireTD.DefendingEntities.Units
 
         private Action OnExperienceFatigueLevelChangedCallback;
 
+        float inflectionPoint;
+        float shallownessMultiplier;
+
         //Economy
         private CallbackList<IHexOccupationBonus> conditionalHexOccupationBonuses;
 
         private CallbackList<IStructureOccupationBonus> conditionalStructureOccupationBonuses;
+
+        private Action<IUnit, IEconomyTransaction, IEconomyTransaction> OnTriggeredConditionalOccupationBonusesCallback;
 
         // Public Properties
         //Id
@@ -149,8 +154,6 @@ namespace GrimoireTD.DefendingEntities.Units
 
             this.unitTemplate = unitTemplate;
 
-            DefendingEntityView.Instance.CreateUnit(this, coordPosition.ToPositionVector());
-
             SetUpTalentsAchieved();
 
             conditionalHexOccupationBonuses = new CallbackList<IHexOccupationBonus>();
@@ -164,6 +167,9 @@ namespace GrimoireTD.DefendingEntities.Units
             fatigue = 0;
             levelUpsPending = 0;
             level = 0;
+
+            inflectionPoint = GameModels.Models[0].UnitFatigueFactorInfelctionPoint;
+            shallownessMultiplier = GameModels.Models[0].UnitFatigueFactorShallownessMultiplier;
         }
 
         //Set Up
@@ -262,15 +268,13 @@ namespace GrimoireTD.DefendingEntities.Units
             IEconomyTransaction netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(activeProportion);
             CDebug.Log(CDebug.hexEconomy, "Net Hex Oc Bonus: " + netConditionalHexOccupationBonus);
 
-            netConditionalHexOccupationBonus.DoTransaction();
-
             IEconomyTransaction grossConditionalStructureOccupationBonus = GetStructureOccupationBonus(OnHex.StructureHere, conditionalStructureOccupationBonuses);
             CDebug.Log(CDebug.hexEconomy, "Gross Structure Oc Bonus: " + grossConditionalStructureOccupationBonus);
 
             IEconomyTransaction netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(activeProportion);
             CDebug.Log(CDebug.hexEconomy, "Net Structure Oc Bonus: " + netConditionalStructureOccupationBonus);
 
-            netConditionalStructureOccupationBonus.DoTransaction();
+            OnTriggeredConditionalOccupationBonusesCallback?.Invoke(this, netConditionalHexOccupationBonus, netConditionalStructureOccupationBonus);
         }
 
         private IEconomyTransaction GetStructureOccupationBonus(IStructure structure, CallbackList<IStructureOccupationBonus> structureOccupationBonuses)
@@ -327,9 +331,6 @@ namespace GrimoireTD.DefendingEntities.Units
 
         private float FatigueFactor()
         {
-            float inflectionPoint = TempSettings.Instance.UnitFatigueFactorInfelctionPoint;
-            float shallownessMultiplier = TempSettings.Instance.UnitFatigueFactorShallownessMultiplier;
-
             CDebug.Log(CDebug.experienceAndFatigue, "Inflection Point: " + inflectionPoint);
             CDebug.Log(CDebug.experienceAndFatigue, "Shallowness Multiplier: " + shallownessMultiplier);
 
@@ -439,11 +440,6 @@ namespace GrimoireTD.DefendingEntities.Units
         //Movement
         public void Move(Coord targetCoord)
         {
-            if (!MapGenerator.Instance.Map.TryMoveUnitTo(coordPosition, targetCoord, this, cachedDisallowedMovementDestinations))
-            {
-                throw new Exception("Invalid unit movement attempted");
-            }
-
             OnHex.DeregisterForOnDefenderAuraAddedCallback(OnNewDefenderAuraInCurrentHex);
             OnHex.DeregisterForOnDefenderAuraRemovedCallback(OnClearDefenderAuraInCurrentHex);
 
@@ -468,7 +464,7 @@ namespace GrimoireTD.DefendingEntities.Units
 
         public void RegenerateCachedDisallowedMovementDestinations()
         {
-            cachedDisallowedMovementDestinations = MapGenerator.Instance.Map.GetDisallowedCoordsAfterUnitMove(CoordPosition);
+            cachedDisallowedMovementDestinations = GameModels.Models[0].MapData.GetDisallowedCoordsAfterUnitMove(CoordPosition);
         }
 
         //Callbacks
@@ -492,6 +488,18 @@ namespace GrimoireTD.DefendingEntities.Units
         public void DeregisterForExperienceFatigueChangedCallback(Action callback)
         {
             OnExperienceFatigueLevelChangedCallback -= callback;
+        }
+
+        //  Occupation Bonuses
+
+        public void RegisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback)
+        {
+            OnTriggeredConditionalOccupationBonusesCallback += callback;
+        }
+
+        public void DeregisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback)
+        {
+            OnTriggeredConditionalOccupationBonusesCallback -= callback;
         }
 
         //  Hex Occupation Bonus

@@ -12,11 +12,11 @@ namespace GrimoireTD.Economy
         [SerializeField]
         private int amount;
 
-        public IResource Resource
+        public IReadOnlyResource Resource
         {
             get
             {
-                return EconomyManager.Instance.GetResourceFromTemplate(resource);
+                return GameModels.Models[0].EconomyManager.GetResourceFromTemplate(resource);
             }
         }
 
@@ -31,11 +31,6 @@ namespace GrimoireTD.Economy
         public bool CanDoTransaction()
         {
             return CResourceTransaction.CanDoTransaction(this);
-        }
-
-        public void DoTransaction()
-        {
-            CResourceTransaction.DoTransaction(this);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public IProjectileTemplate ProjectileClassTemplate
+        public IProjectileTemplate ProjectileTemplate
         {
             get
             {
@@ -59,8 +59,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             this.sourceDefendingEntity = sourceDefendingEntity;
 
             projectileTemplate = template;
-
-            ProjectileView.Instance.CreateProjectile(this);
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
 

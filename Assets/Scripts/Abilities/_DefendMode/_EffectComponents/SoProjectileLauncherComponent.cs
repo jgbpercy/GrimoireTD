@@ -23,7 +23,14 @@ namespace GrimoireTD.Abilities.DefendMode
         {
             foreach (IDefendModeTargetable target in targets)
             {
-                projectileToFireTemplate.GenerateProjectile(attachedToDefendingEntity.CoordPosition.ToFirePointVector(), target, attachedToDefendingEntity);
+                IProjectile projectile = projectileToFireTemplate.GenerateProjectile
+                (
+                    attachedToDefendingEntity.CoordPosition.ToFirePointVector(), 
+                    target, 
+                    attachedToDefendingEntity
+                );
+
+                attachedToDefendingEntity.CreatedProjectile(projectile);
             }
         }
     }
