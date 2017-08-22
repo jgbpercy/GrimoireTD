@@ -7,9 +7,14 @@ namespace GrimoireTD.Technical
     {
         private List<IFrameUpdatee> modelObjectFrameUpdatees;
 
+        private List<IFrameUpdatee> frameUpdateesToAdd;
+        private List<IFrameUpdatee> frameUpdateesToRemove;
+
         private void Awake()
         {
             modelObjectFrameUpdatees = new List<IFrameUpdatee>();
+            frameUpdateesToAdd = new List<IFrameUpdatee>();
+            frameUpdateesToRemove = new List<IFrameUpdatee>();
         }
 
         private void Start()
@@ -19,20 +24,34 @@ namespace GrimoireTD.Technical
 
         private void Update()
         {
-            foreach (IFrameUpdatee modelObjectFrameUpdatee in modelObjectFrameUpdatees)
+            foreach (var modelObjectFrameUpdatee in modelObjectFrameUpdatees)
             {
                 modelObjectFrameUpdatee.ModelObjectFrameUpdate();
             }
+
+            foreach (var updateeToAdd in frameUpdateesToAdd)
+            {
+                modelObjectFrameUpdatees.Add(updateeToAdd);
+            }
+
+            frameUpdateesToAdd.Clear();
+
+            foreach (var updateeToRemove in frameUpdateesToRemove)
+            {
+                modelObjectFrameUpdatees.RemoveAll(x => x == updateeToRemove);
+            }
+
+            frameUpdateesToRemove.Clear();
         }
 
         public void RegisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
         {
-            modelObjectFrameUpdatees.Add(modelObjectFrameUpdatee);
+            frameUpdateesToAdd.Add(modelObjectFrameUpdatee);
         }
 
         public void DeregisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
         {
-            modelObjectFrameUpdatees.RemoveAll(x => x == modelObjectFrameUpdatee);
+            frameUpdateesToRemove.Add(modelObjectFrameUpdatee);
         }
     }
 }

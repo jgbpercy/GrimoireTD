@@ -7,6 +7,8 @@ namespace GrimoireTD.UI
         [SerializeField]
         private GameMode enabledInMode;
 
+        private IReadOnlyGameStateManager gameStateManager;
+
         public GameMode EnabledInMode
         {
             get
@@ -17,34 +19,33 @@ namespace GrimoireTD.UI
 
         private void Start()
         {
-            var gameStateManager = GameModels.Models[0].GameStateManager;
+            gameStateManager = GameModels.Models[0].GameStateManager;
 
-            if (enabledInMode == GameMode.DEFEND)
+            if (GameModels.Models[0].IsSetUp)
             {
-                gameStateManager.RegisterForOnEnterBuildModeCallback(SetSelfInactive);
-                gameStateManager.RegisterForOnEnterDefendModeCallback(SetSelfActive);
-                if (gameStateManager.CurrentGameMode == GameMode.DEFEND)
-                {
-                    gameObject.SetActive(true);
-                }
-                else
-                {
-                    gameObject.SetActive(false);
-                }
+                OnGameModelSetUp();
             }
             else
             {
+                GameModels.Models[0].RegisterForOnSetUpCallback(OnGameModelSetUp);
+            }
+        }
+
+        private void OnGameModelSetUp()
+        {
+            if (enabledInMode == GameMode.DEFEND)
+            {
+                if (gameStateManager.CurrentGameMode == GameMode.BUILD) SetSelfInactive();
+
+                gameStateManager.RegisterForOnEnterBuildModeCallback(SetSelfInactive);
+                gameStateManager.RegisterForOnEnterDefendModeCallback(SetSelfActive);
+            }
+            else
+            {
+                if (gameStateManager.CurrentGameMode == GameMode.DEFEND) SetSelfInactive();
+
                 gameStateManager.RegisterForOnEnterBuildModeCallback(SetSelfActive);
                 gameStateManager.RegisterForOnEnterDefendModeCallback(SetSelfInactive);
-                if (gameStateManager.CurrentGameMode == GameMode.BUILD)
-                {
-                    gameObject.SetActive(true);
-                }
-                else
-                {
-                    gameObject.SetActive(false);
-                }
-
             }
         }
 
@@ -60,9 +61,13 @@ namespace GrimoireTD.UI
 
         private void OnDestroy()
         {
+            if (gameStateManager == null)
+            {
+                gameStateManager = GameModels.Models[0].GameStateManager;
+            }
+
             if (GameModels.Models.Count > 0)
             {
-                var gameStateManager = GameModels.Models[0].GameStateManager;
                 if (enabledInMode == GameMode.DEFEND)
                 {
                     gameStateManager.DeregisterForOnEnterBuildModeCallback(SetSelfInactive);

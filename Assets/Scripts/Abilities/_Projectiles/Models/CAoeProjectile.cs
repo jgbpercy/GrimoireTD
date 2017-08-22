@@ -47,14 +47,14 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                 if (!isExploding)
                 {
                     isExploding = true;
-                    OnExplosionCallback();
+                    OnExplosionCallback?.Invoke();
                 }
 
                 currentAoeRadius = Mathf.Lerp(currentAoeRadius, aoeProjectileTemplate.AoeRadius, aoeProjectileTemplate.AoeExpansionLerpFactor);
 
                 if (aoeProjectileTemplate.AoeRadius - currentAoeRadius < 0.01f)
                 {
-                    OnExplosionFinishedCallback();
+                    OnExplosionFinishedCallback?.Invoke();
                 }
             }
         }

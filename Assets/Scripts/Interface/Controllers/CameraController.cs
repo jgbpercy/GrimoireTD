@@ -69,6 +69,11 @@ namespace GrimoireTD.UI
             cameraRotator = cameraTilter.parent.transform;
             cameraRigTargetPosition = cameraRotator.position;
 
+            GameModels.Models[0].RegisterForOnSetUpCallback(OnGameModelSetUp);
+        }
+
+        private void OnGameModelSetUp()
+        {
             //camera clamps
             IReadOnlyMapData mapData = GameModels.Models[0].MapData;
             cameraRightClamp = mapData.Width * MapRenderer.HEX_OFFSET * 2;

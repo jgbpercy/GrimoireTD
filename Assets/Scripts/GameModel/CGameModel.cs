@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Creeps;
 using GrimoireTD.Economy;
 using GrimoireTD.Levels;
 using GrimoireTD.Map;
+using GrimoireTD.DefendingEntities.Structures;
 
 namespace GrimoireTD
 {
@@ -20,8 +22,14 @@ namespace GrimoireTD
 
         private readonly IAttackEffectTypeManager attackEffectTypeManager;
 
+        public IEnumerable<IStructureTemplate> BuildableStructureTemplates { get; private set; }
+
         public float UnitFatigueFactorInfelctionPoint { get; private set; }
         public float UnitFatigueFactorShallownessMultiplier { get; private set; }
+
+        public bool IsSetUp { get; private set; }
+
+        private Action OnSetUpCallback;
 
         public IReadOnlyGameStateManager GameStateManager
         {
@@ -80,6 +88,7 @@ namespace GrimoireTD
             IEnumerable<IHexType> hexTypes,
             IEnumerable<IAttackEffectType> attackEffectTypes,
             IDictionary<Color32, IHexType> colorToHexTypeDictionary,
+            IEnumerable<IStructureTemplate> buildableStructureTemplates,
             float trackIdleTimeAfterSpawns,
             float unitFatigueFactorInfelctionPoint,
             float unitFatigueFactorShallownessMultiplier
@@ -91,8 +100,18 @@ namespace GrimoireTD
             economyManager.SetUp(resourceTemplates, level.StartingResources);
             attackEffectTypeManager.SetUp(attackEffectTypes);
 
+            BuildableStructureTemplates = buildableStructureTemplates;
+
             UnitFatigueFactorInfelctionPoint = unitFatigueFactorInfelctionPoint;
-            UnitFatigueFactorShallownessMultiplier = UnitFatigueFactorShallownessMultiplier;
+            UnitFatigueFactorShallownessMultiplier = unitFatigueFactorShallownessMultiplier;
+
+            IsSetUp = true;
+            OnSetUpCallback?.Invoke();
+        }
+
+        public void RegisterForOnSetUpCallback(Action callback)
+        {
+            OnSetUpCallback += callback;
         }
     }
 }

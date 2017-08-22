@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.ChannelDebug;
+using GrimoireTD.Technical;
 
 namespace GrimoireTD.Creeps
 {
@@ -51,6 +52,8 @@ namespace GrimoireTD.Creeps
             }
 
             this.idleTimeToTrackAfterSpawnEnd = idleTimeToTrackAfterSpawnEnd;
+
+            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
         }
 
         public void ModelObjectFrameUpdate()
@@ -62,7 +65,7 @@ namespace GrimoireTD.Creeps
 
             waveTimeElapsed += Time.deltaTime;
 
-            if (waveTimeElapsed >= waveList[currentWaveIndex].NextSpawnTime())
+            if (waveTimeElapsed >= waveList[currentWaveIndex].NextSpawnTime() && waveIsSpawning)
             {
                 SpawnCreep(waveList[currentWaveIndex].DequeueNextCreep());
             }

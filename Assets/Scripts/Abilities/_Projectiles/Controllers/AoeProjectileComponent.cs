@@ -18,7 +18,17 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             Assert.IsNotNull(aoeProjectileModel);
 
             aoeProjectileModel.RegisterForOnExplosionCallback(() => { isExploding = true; });
-            aoeProjectileModel.RegisterForOnExplosionFinishedCallback(() => { ownCollider.enabled = false; isExploding = false; });
+            aoeProjectileModel.RegisterForOnExplosionFinishedCallback(OnExplosionFinished);
+        }
+
+        private void OnExplosionFinished()
+        {
+            if (ownCollider != null)
+            {
+                ownCollider.enabled = false;
+            }
+
+            isExploding = false;
         }
 
         //TODO handle this in the model where it should be?
@@ -41,7 +51,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         protected override void Update()
         {
-
             base.Update();
 
             if (isExploding)

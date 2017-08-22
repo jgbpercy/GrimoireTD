@@ -125,6 +125,8 @@ namespace GrimoireTD.Map
                 }
             }
 
+            OnMapCreatedCallback?.Invoke();
+
             TempRegeneratePath();
 
             foreach (IStartingStructure startingStructure in startingStructures)

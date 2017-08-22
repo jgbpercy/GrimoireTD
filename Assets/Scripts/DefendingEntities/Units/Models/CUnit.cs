@@ -168,6 +168,18 @@ namespace GrimoireTD.DefendingEntities.Units
             levelUpsPending = 0;
             level = 0;
 
+            if (GameModels.Models[0].IsSetUp)
+            {
+                SetUpFatigueVars();
+            }
+            else
+            {
+                GameModels.Models[0].RegisterForOnSetUpCallback(SetUpFatigueVars);
+            }
+        }
+
+        private void SetUpFatigueVars()
+        {
             inflectionPoint = GameModels.Models[0].UnitFatigueFactorInfelctionPoint;
             shallownessMultiplier = GameModels.Models[0].UnitFatigueFactorShallownessMultiplier;
         }
@@ -281,8 +293,8 @@ namespace GrimoireTD.DefendingEntities.Units
         {
             IEconomyTransaction occupationBonusTransaction = new CEconomyTransaction();
 
-            IStructureTemplate template = structure != null ? structure.StructureTemplate : null;
-            IStructureUpgrade upgrade = structure != null ? structure.CurrentUpgradeLevel() : null;
+            IStructureTemplate template = structure?.StructureTemplate;
+            IStructureUpgrade upgrade = structure?.CurrentUpgradeLevel();
 
             foreach (IStructureOccupationBonus structureOccupationBonus in structureOccupationBonuses)
             {

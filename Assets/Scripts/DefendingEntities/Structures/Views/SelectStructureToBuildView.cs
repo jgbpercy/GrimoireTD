@@ -4,6 +4,7 @@ using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.DefendingEntities.Structures
 {
+    //TODO: the available 
     public class SelectStructureToBuildView : SingletonMonobehaviour<SelectStructureToBuildView>
     {
         [SerializeField]
@@ -11,19 +12,16 @@ namespace GrimoireTD.DefendingEntities.Structures
         [SerializeField]
         private GameObject structureSelectPanel;
 
-        [SerializeField]
-        private SoStructureTemplate[] buildableStructureTemplates;
-
         private void Start()
         {
             CDebug.Log(CDebug.applicationLoading, "Structure Select View Start");
 
-            SetUpStructurePanel();
+            GameModels.Models[0].RegisterForOnSetUpCallback(SetUpStructurePanel);
         }
 
         private void SetUpStructurePanel()
         {
-            foreach (IStructureTemplate structureTemplate in buildableStructureTemplates)
+            foreach (IStructureTemplate structureTemplate in GameModels.Models[0].BuildableStructureTemplates)
             {
                 GameObject structurePanel = Instantiate(structurePanelPrefab) as GameObject;
                 structurePanel.transform.SetParent(structureSelectPanel.transform, false);

@@ -132,7 +132,7 @@ namespace GrimoireTD.UI
             }
         }
 
-        private void Awake()
+        private void Start()
         {
             CDebug.Log(CDebug.applicationLoading, "Interface Controller Start");
 
