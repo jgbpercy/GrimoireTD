@@ -40,10 +40,35 @@ namespace GrimoireTD.Economy
 
         private Action<IResource, int, int> OnAnyResourceChangedCallback;
 
-        public CEconomyManager()
+        public CEconomyManager(IReadOnlyMapData mapData, IReadOnlyCreepManager creepManager)
         {
             resources = new List<IResource>();
             resourceTemplateToResourceDict = new Dictionary<IResourceTemplate, IResource>();
+
+            //Callbacks
+            InterfaceController.Instance.RegisterForOnBuildStructureUserAction(OnStructureBuilt);
+
+            creepManager.RegisterForCreepSpawnedCallback(creep =>
+            {
+                creep.RegisterForOnDiedCallback(() =>
+                {
+                    OnCreepDied(creep);
+                });
+            });
+
+            mapData.RegisterForOnStructureCreatedCallback((structure, coord) =>
+            {
+                structure.RegisterForOnBuildModeAbilityExecutedCallback(OnBuildModeAbilityExecuted);
+                structure.RegisterForOnTriggeredFlatHexOccupationBonusCallback(OnFlatHexOccupationBonusTriggered);
+                structure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
+            });
+
+            mapData.RegisterForOnUnitCreatedCallback((unit, coord) =>
+            {
+                unit.RegisterForOnBuildModeAbilityExecutedCallback(OnBuildModeAbilityExecuted);
+                unit.RegisterForOnTriggeredFlatHexOccupationBonusCallback(OnFlatHexOccupationBonusTriggered);
+                unit.RegisterForOnTriggeredConditionalOccupationBonusesCallback(OnConditionalOccupationBonusesTriggered);
+            });
         }
 
         public void SetUp(IEnumerable<IResourceTemplate> resourceTemplates, IEconomyTransaction startingResources)
@@ -59,31 +84,6 @@ namespace GrimoireTD.Economy
             }
 
             DoTransaction(startingResources);
-
-            //Callbacks
-            InterfaceController.Instance.RegisterForOnBuildStructureUserAction(OnStructureBuilt);
-
-            GameModels.Models[0].CreepManager.RegisterForCreepSpawnedCallback(creep =>
-            {
-                creep.RegisterForOnDiedCallback(() =>
-                {
-                    OnCreepDied(creep);
-                });
-            });
-
-            GameModels.Models[0].MapData.RegisterForOnStructureCreatedCallback((structure, coord) =>
-            {
-                structure.RegisterForOnBuildModeAbilityExecutedCallback(OnBuildModeAbilityExecuted);
-                structure.RegisterForOnTriggeredFlatHexOccupationBonusCallback(OnFlatHexOccupationBonusTriggered);
-                structure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
-            });
-
-            GameModels.Models[0].MapData.RegisterForOnUnitCreatedCallback((unit, coord) =>
-            {
-                unit.RegisterForOnBuildModeAbilityExecutedCallback(OnBuildModeAbilityExecuted);
-                unit.RegisterForOnTriggeredFlatHexOccupationBonusCallback(OnFlatHexOccupationBonusTriggered);
-                unit.RegisterForOnTriggeredConditionalOccupationBonusesCallback(OnConditionalOccupationBonusesTriggered);
-            });
         }
 
         public IResource GetResourceFromTemplate(IResourceTemplate resourceTemplate)

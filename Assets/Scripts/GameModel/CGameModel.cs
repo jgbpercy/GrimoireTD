@@ -76,8 +76,8 @@ namespace GrimoireTD
             gameStateManager = new CGameStateManager();
             mapData = new CMapData();
             creepManager = new CCreepManager();
-            economyManager = new CEconomyManager();
             attackEffectTypeManager = new CAttackEffectTypeManager();
+            economyManager = new CEconomyManager(mapData, creepManager);
 
             GameModels.Models.Add(this);
         }
