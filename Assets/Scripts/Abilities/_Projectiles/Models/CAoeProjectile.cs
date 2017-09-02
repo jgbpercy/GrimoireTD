@@ -7,35 +7,20 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
     public class CAoeProjectile : CProjectile, IAoeProjectile
     {
-        private IAoeProjectileTemplate aoeProjectileTemplate;
+        public IAoeProjectileTemplate AoeProjectileTemplate { get; }
 
-        private float currentAoeRadius;
+        public float CurrentAoeRadius { get; private set; }
 
-        private bool isExploding = false;
+        private bool isExploding;
 
-        protected Action OnExplosionCallback;
-        protected Action OnExplosionFinishedCallback;
-
-        public IAoeProjectileTemplate AoeProjectileClassTemplate
-        {
-            get
-            {
-                return aoeProjectileTemplate;
-            }
-        }
-
-        public float CurrentAoeRadius
-        {
-            get
-            {
-                return currentAoeRadius;
-            }
-        }
+        public event EventHandler<EAOnExplosionStarted> OnExplosionStarted;
+        public event EventHandler<EAOnExplosionFinished> OnExplosionFinished;
 
         public CAoeProjectile(Vector3 startPosition, IDefendModeTargetable target, IAoeProjectileTemplate template, IDefendingEntity sourceDefendingEntity) : base(startPosition, target, template, sourceDefendingEntity)
         {
-            aoeProjectileTemplate = template;
-            currentAoeRadius = 0.001f;
+            AoeProjectileTemplate = template;
+            CurrentAoeRadius = 0.001f;
+            isExploding = false;
         }
 
         public override void ModelObjectFrameUpdate()
@@ -47,41 +32,21 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                 if (!isExploding)
                 {
                     isExploding = true;
-                    OnExplosionCallback?.Invoke();
+                    OnExplosionStarted?.Invoke(this, new EAOnExplosionStarted());
                 }
 
-                currentAoeRadius = Mathf.Lerp(currentAoeRadius, aoeProjectileTemplate.AoeRadius, aoeProjectileTemplate.AoeExpansionLerpFactor);
+                CurrentAoeRadius = Mathf.Lerp(CurrentAoeRadius, AoeProjectileTemplate.AoeRadius, AoeProjectileTemplate.AoeExpansionLerpFactor);
 
-                if (aoeProjectileTemplate.AoeRadius - currentAoeRadius < 0.01f)
+                if (AoeProjectileTemplate.AoeRadius - CurrentAoeRadius < 0.01f)
                 {
-                    OnExplosionFinishedCallback?.Invoke();
+                    OnExplosionFinished?.Invoke(this, new EAOnExplosionFinished());
                 }
             }
         }
 
         public virtual void HitCreepInAoe(ICreep creep)
         {
-            creep.ApplyAttackEffects(aoeProjectileTemplate.AoeAttackEffects, sourceDefendingEntity);
-        }
-
-        public void RegisterForOnExplosionCallback(Action callback)
-        {
-            OnExplosionCallback += callback;
-        }
-
-        public void DeregisterForOnExplosionCallback(Action callback)
-        {
-            OnExplosionCallback -= callback;
-        }
-
-        public void RegisterForOnExplosionFinishedCallback(Action callback)
-        {
-            OnExplosionFinishedCallback += callback;
-        }
-
-        public void DeregisterForOnExplosionFinishedCallback(Action callback)
-        {
-            OnExplosionFinishedCallback -= callback;
+            creep.ApplyAttackEffects(AoeProjectileTemplate.AoeAttackEffects, sourceDefendingEntity);
         }
     }
 }

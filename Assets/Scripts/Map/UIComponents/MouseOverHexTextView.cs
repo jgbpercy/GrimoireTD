@@ -46,7 +46,7 @@ namespace GrimoireTD.Map
 
             if (mouseOverHex.UnitHere != null)
             {
-                unitText.text = mouseOverHex.UnitHere.CurrentName();
+                unitText.text = mouseOverHex.UnitHere.CurrentName;
             }
             else
             {
@@ -55,7 +55,7 @@ namespace GrimoireTD.Map
 
             if (mouseOverHex.StructureHere != null)
             {
-                structureText.text = mouseOverHex.StructureHere.CurrentName();
+                structureText.text = mouseOverHex.StructureHere.CurrentName;
             }
             else
             {

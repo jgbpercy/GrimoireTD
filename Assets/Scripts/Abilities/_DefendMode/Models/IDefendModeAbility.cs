@@ -16,12 +16,11 @@ namespace GrimoireTD.Abilities.DefendMode
         float TimeSinceExecuted { get; }
         float TimeSinceExecutedClamped { get; }
 
+        //TODO: makereadonly?
         bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity);
 
         void WasExecuted();
 
         bool OffCooldown();
-
-        void GameObjectDestroyed();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.UI;
+using GrimoireTD.Creeps;
 
 namespace GrimoireTD
 {
@@ -14,8 +15,8 @@ namespace GrimoireTD
     {
         private GameMode _gameMode;
 
-        private Action OnEnterDefendModeCallback;
-        private Action OnEnterBuildModeCallback;
+        public event EventHandler<EAOnEnterBuildMode> OnEnterBuildMode;
+        public event EventHandler<EAOnEnterDefendMode> OnEnterDefendMode;
 
         public GameMode CurrentGameMode
         {
@@ -27,19 +28,19 @@ namespace GrimoireTD
             {
                 if (value == GameMode.DEFEND)
                 {
-                    CDebug.Log(CDebug.gameState, "Game State Manager Entered Defend Mode, callback member count: " + OnEnterDefendModeCallback?.GetInvocationList().Length);
+                    CDebug.Log(CDebug.gameState, "Game State Manager Entered Defend Mode, callback member count: " + OnEnterDefendMode?.GetInvocationList().Length);
 
                     _gameMode = GameMode.DEFEND;
 
-                    OnEnterDefendModeCallback?.Invoke();
+                    OnEnterDefendMode?.Invoke(this, new EAOnEnterDefendMode());
                 }
                 else
                 {
-                    CDebug.Log(CDebug.gameState, "Game State Manager Entered Build Mode, callback member count: " + OnEnterBuildModeCallback?.GetInvocationList().Length);
+                    CDebug.Log(CDebug.gameState, "Game State Manager Entered Build Mode, callback member count: " + OnEnterBuildMode?.GetInvocationList().Length);
 
                     _gameMode = GameMode.BUILD;
 
-                    OnEnterBuildModeCallback?.Invoke();
+                    OnEnterBuildMode?.Invoke(this, new EAOnEnterBuildMode());
                 }
             }
         }
@@ -48,37 +49,17 @@ namespace GrimoireTD
         {
             CurrentGameMode = GameMode.BUILD;
 
-            InterfaceController.Instance.RegisterForOnEnterDefendModeUserAction(SetGameModeDefend);
+            InterfaceController.Instance.OnEnterDefendModePlayerAction += (object sender, EAOnEnterDefendModePlayerAction args) => SetGameModeDefend();
         }
 
         public void SetUp()
         {
-            GameModels.Models[0].CreepManager.RegisterForOnWaveIsOverCallback(() => CurrentGameMode = GameMode.BUILD);
+            GameModels.Models[0].CreepManager.OnWaveOver += (object sender, EAOnWaveOver args) => CurrentGameMode = GameMode.BUILD;
         }
 
         private void SetGameModeDefend()
         {
             CurrentGameMode = GameMode.DEFEND;
-        }
-
-        public void RegisterForOnEnterDefendModeCallback(Action callback)
-        {
-            OnEnterDefendModeCallback += callback;
-        }
-
-        public void DeregisterForOnEnterDefendModeCallback(Action callback)
-        {
-            OnEnterDefendModeCallback -= callback;
-        }
-
-        public void RegisterForOnEnterBuildModeCallback(Action callback)
-        {
-            OnEnterBuildModeCallback += callback;
-        }
-
-        public void DeregisterForOnEnterBuildModeCallback(Action callback)
-        {
-            OnEnterBuildModeCallback -= callback;
         }
     }
 }

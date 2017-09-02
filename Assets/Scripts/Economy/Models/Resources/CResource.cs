@@ -6,7 +6,7 @@ namespace GrimoireTD.Economy
     {
         private IResourceTemplate resourceTemplate;
 
-        private Action<int, int> OnResourceChangedCallback = null;
+        public event EventHandler<EAOnResourceChanged> OnResourceChanged;
 
         public int AmountOwned { get; private set; }
 
@@ -48,17 +48,7 @@ namespace GrimoireTD.Economy
         {
             AmountOwned += amount;
 
-            OnResourceChangedCallback?.Invoke(amount, AmountOwned);
-        }
-
-        public void RegisterForOnResourceChangedCallback(Action<int, int> callback)
-        {
-            OnResourceChangedCallback += callback;
-        }
-
-        public void DeregisterForOnResourceChangedCallback(Action<int, int> callback)
-        {
-            OnResourceChangedCallback -= callback;
+            OnResourceChanged?.Invoke(this, new EAOnResourceChanged(amount, AmountOwned));
         }
     }
 }

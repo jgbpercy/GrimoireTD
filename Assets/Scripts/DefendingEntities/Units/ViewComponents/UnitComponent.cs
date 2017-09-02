@@ -19,12 +19,12 @@ namespace GrimoireTD.DefendingEntities.Units
         {
             this.unitModel = unitModel;
 
-            unitModel.RegisterForOnMovedCallback(OnMoved);
+            unitModel.OnMoved += OnMoved;
         }
 
-        private void OnMoved(Coord coord)
+        private void OnMoved(object sender, EAOnMoved args)
         {
-            transform.position = coord.ToPositionVector();
+            transform.position = args.ToPosition.ToPositionVector();
         }
     }
 }

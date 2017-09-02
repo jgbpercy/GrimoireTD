@@ -9,12 +9,8 @@ namespace GrimoireTD.Economy
 
         IEconomyTransaction ResourcesAsTransaction { get; }
 
+        event EventHandler<EAOnAnyResourceChanged> OnAnyResourceChanged;
+
         IResource GetResourceFromTemplate(IResourceTemplate resourceTemplate);
-
-        void RegisterForOnResourceCreatedCallback(Action<IResource> callback);
-        void DeregisterForOnResourceCreatedCallback(Action<IResource> callback);
-
-        void RegisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback);
-        void DeregisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback);
     }
 }

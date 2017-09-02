@@ -54,30 +54,9 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        public static IDefendingEntityImprovement Combine(IDefendingEntityImprovement firstImprovement, IDefendingEntityImprovement secondImprovement)
-        {
-            List<INamedAttributeModifier<DefendingEntityAttributeName>> combinedAttributeModifiers = new List<INamedAttributeModifier<DefendingEntityAttributeName>>();
-            combinedAttributeModifiers.AddRange(firstImprovement.AttributeModifiers);
-            combinedAttributeModifiers.AddRange(secondImprovement.AttributeModifiers);
-
-            List<IHexOccupationBonus> combinedFlatHexOccupationBonuses = new List<IHexOccupationBonus>();
-            combinedFlatHexOccupationBonuses.AddRange(firstImprovement.FlatHexOccupationBonuses);
-            combinedFlatHexOccupationBonuses.AddRange(secondImprovement.FlatHexOccupationBonuses);
-
-            List<IAbilityTemplate> combinedAbilities = new List<IAbilityTemplate>();
-            combinedAbilities.AddRange(firstImprovement.Abilities);
-            combinedAbilities.AddRange(secondImprovement.Abilities);
-
-            List<IDefenderAuraTemplate> combinedAuras = new List<IDefenderAuraTemplate>();
-            combinedAuras.AddRange(firstImprovement.Auras);
-            combinedAuras.AddRange(secondImprovement.Auras);
-
-            return new CDefendingEntityImprovement(combinedAttributeModifiers, combinedFlatHexOccupationBonuses, combinedAbilities, combinedAuras);
-        }
-
         public IDefendingEntityImprovement Combine(IDefendingEntityImprovement otherImprovement)
         {
-            return Combine(this, otherImprovement);
+            return CDefendingEntityImprovement.Combine(this, otherImprovement);
         }
     }
 }

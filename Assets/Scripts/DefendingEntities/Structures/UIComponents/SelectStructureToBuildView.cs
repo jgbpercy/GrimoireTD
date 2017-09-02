@@ -16,12 +16,12 @@ namespace GrimoireTD.DefendingEntities.Structures
         {
             CDebug.Log(CDebug.applicationLoading, "Structure Select View Start");
 
-            GameModels.Models[0].RegisterForOnSetUpCallback(SetUpStructurePanel);
+            GameModels.Models[0].OnGameModelSetUp += SetUpStructurePanel;
         }
 
-        private void SetUpStructurePanel()
+        private void SetUpStructurePanel(object sender, EAOnGameModelSetUp args)
         {
-            foreach (IStructureTemplate structureTemplate in GameModels.Models[0].BuildableStructureTemplates)
+            foreach (IStructureTemplate structureTemplate in args.GameModel.BuildableStructureTemplates)
             {
                 GameObject structurePanel = Instantiate(structurePanelPrefab) as GameObject;
                 structurePanel.transform.SetParent(structureSelectPanel.transform, false);

@@ -23,9 +23,9 @@ namespace GrimoireTD.Creeps
         private float timeSinceWaveStoppedSpawning;
         private float idleTimeToTrackAfterSpawnEnd;
 
-        private Action OnWaveIsOverCallback;
+        public event EventHandler<EAOnWaveOver> OnWaveOver;
 
-        private Action<ICreep> OnCreepSpawnedCallback;
+        public event EventHandler<EAOnCreepSpawned> OnCreepSpawned;
 
         public CCreepManager()
         {
@@ -44,7 +44,7 @@ namespace GrimoireTD.Creeps
         {
             gameStateManager = GameModels.Models[0].GameStateManager;
 
-            gameStateManager.RegisterForOnEnterDefendModeCallback(StartNextWave);
+            gameStateManager.OnEnterDefendMode += StartNextWave;
 
             foreach (IWaveTemplate waveTemplate in waves)
             {
@@ -76,10 +76,10 @@ namespace GrimoireTD.Creeps
 
                 if(timeSinceWaveStoppedSpawning >= idleTimeToTrackAfterSpawnEnd && creepList.Count == 0)
                 {
-                    OnWaveIsOverCallback?.Invoke();
+                    currentWaveIndex += 1;
+                    OnWaveOver?.Invoke(this, new EAOnWaveOver());
                 }
             } 
-
             else if (!waveList[currentWaveIndex].CreepsRemaining())
             {
                 waveIsSpawning = false;
@@ -113,12 +113,12 @@ namespace GrimoireTD.Creeps
 
             creepList.Add(newCreep);
 
-            newCreep.RegisterForOnDiedCallback(() => creepList.Remove(newCreep));
+            newCreep.OnDied += (object sender, EventArgs args) => creepList.Remove(newCreep);
 
-            OnCreepSpawnedCallback?.Invoke(newCreep);
+            OnCreepSpawned?.Invoke(this, new EAOnCreepSpawned(newCreep));
         }
 
-        private void StartNextWave()
+        private void StartNextWave(object sender, EAOnEnterDefendMode args)
         {
             CDebug.Log(CDebug.creepSpawning, "Start Next Wave called, currentWave = " + currentWaveIndex);
 
@@ -130,26 +130,6 @@ namespace GrimoireTD.Creeps
             }
 
             waveIsSpawning = true;
-        }
-
-        public void RegisterForOnWaveIsOverCallback(Action callback)
-        {
-            OnWaveIsOverCallback += callback;
-        }
-
-        public void DeregisterForOnWaveIsOverCallback(Action callback)
-        {
-            OnWaveIsOverCallback -= callback;
-        }
-
-        public void RegisterForCreepSpawnedCallback(Action<ICreep> callback)
-        {
-            OnCreepSpawnedCallback += callback;
-        }
-
-        public void DeregisterForCreepSpawnedCallback(Action<ICreep> callback)
-        {
-            OnCreepSpawnedCallback -= callback;
         }
     }
 }

@@ -2,19 +2,11 @@
 {
     public abstract class CDefenderEffect : IDefenderEffect
     {
-        private IDefenderEffectTemplate defenderEffectTemplate;
-
-        public IDefenderEffectTemplate DefenderEffectTemplate
-        {
-            get
-            {
-                return defenderEffectTemplate;
-            }
-        }
+        public IDefenderEffectTemplate DefenderEffectTemplate { get; }
 
         public CDefenderEffect(IDefenderEffectTemplate defenderEffectTemplate)
         {
-            this.defenderEffectTemplate = defenderEffectTemplate;
+            DefenderEffectTemplate = defenderEffectTemplate;
         }
 
         public abstract string UIText();

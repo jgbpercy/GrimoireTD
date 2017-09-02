@@ -45,9 +45,9 @@ namespace GrimoireTD.Abilities.DefendMode
                 trackIdleTime = true;
             }
 
-            defendModeAbilities = attachedToDefendingEntity.DefendModeAbilities();
+            defendModeAbilities = attachedToDefendingEntity.Abilities.DefendModeAbilities();
 
-            GameModels.Models[0].GameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
+            GameModels.Models[0].GameStateManager.OnEnterDefendMode += OnEnterDefendMode;
             //GameStateManager.Instance.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
         }
 
@@ -83,21 +83,21 @@ namespace GrimoireTD.Abilities.DefendMode
                     if (defendModeAbilities[i].ExecuteAbility(attachedToDefendingEntity))
                     {
                         defendModeAbilities[i].WasExecuted();
-                        CDebug.Log(CDebug.combatLog, attachedToDefendingEntity.Id + " (" + attachedToDefendingEntity.CurrentName() + ") executed ability " + defendModeAbilities[i].DefendModeAbilityTemplate.NameInGame, this);
+                        CDebug.Log(CDebug.combatLog, attachedToDefendingEntity.Id + " (" + attachedToDefendingEntity.CurrentName + ") executed ability " + defendModeAbilities[i].DefendModeAbilityTemplate.NameInGame, this);
                         return;
                     }
                 }
             }
         }
 
-        private void OnEnterDefendMode()
+        private void OnEnterDefendMode(object sender, EAOnEnterDefendMode args)
         {
-            defendModeAbilities = attachedToDefendingEntity.DefendModeAbilities();
+            defendModeAbilities = attachedToDefendingEntity.Abilities.DefendModeAbilities();
         }
 
         private void OnDestroy()
         {
-            defendModeAbilities = attachedToDefendingEntity.DefendModeAbilities();
+            defendModeAbilities = attachedToDefendingEntity.Abilities.DefendModeAbilities();
 
             foreach (IDefendModeAbility defendModeAbility in defendModeAbilities)
             {

@@ -30,7 +30,12 @@ namespace GrimoireTD.DefendingEntities.Units
 
             SetValues();
 
-            selectedUnit.RegisterForExperienceFatigueChangedCallback(SetValues);
+            selectedUnit.OnExperienceFatigueLevelChanged += OnUnitTalentChange;
+        }
+
+        private void OnUnitTalentChange(object sender, EAOnExperienceFatigueLevelChange args)
+        {
+            SetValues();
         }
 
         private void SetValues()
@@ -55,7 +60,7 @@ namespace GrimoireTD.DefendingEntities.Units
         {
             if (selectedUnit != null)
             {
-                selectedUnit.DeregisterForExperienceFatigueChangedCallback(SetValues);
+                selectedUnit.OnExperienceFatigueLevelChanged -= OnUnitTalentChange;
             }
         }
     }

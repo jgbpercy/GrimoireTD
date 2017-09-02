@@ -2,19 +2,11 @@
 {
     public abstract class CAbility : IAbility
     {
-        protected IAbilityTemplate template;
+        public IAbilityTemplate AbilityTemplate { get; }
 
-        public IAbilityTemplate Template
+        public CAbility(IAbilityTemplate abilityTemplate)
         {
-            get
-            {
-                return template;
-            }
-        }
-
-        public CAbility(IAbilityTemplate template)
-        {
-            this.template = template;
+            AbilityTemplate = abilityTemplate;
         }
 
         public abstract string UIText();

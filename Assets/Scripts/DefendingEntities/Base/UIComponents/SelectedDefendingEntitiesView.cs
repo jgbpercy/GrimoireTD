@@ -114,10 +114,10 @@ namespace GrimoireTD.DefendingEntities
         private List<GameObject> upgradeDisplays = new List<GameObject>();
         private List<GameObject> enhancementDisplays = new List<GameObject>();
 
-        private Action<IAbility> OnStructureAbilityAdded;
-        private Action<IAbility> OnStructureAbilityRemoved;
-        private Action<IAbility> OnUnitAbilityAdded;
-        private Action<IAbility> OnUnitAbilityRemoved;
+        private EventHandler<EAOnAbilityAdded> OnStructureAbilityAdded;
+        private EventHandler<EAOnAbilityRemoved> OnStructureAbilityRemoved;
+        private EventHandler<EAOnAbilityAdded> OnUnitAbilityAdded;
+        private EventHandler<EAOnAbilityRemoved> OnUnitAbilityRemoved;
 
         private void Start()
         {
@@ -128,10 +128,10 @@ namespace GrimoireTD.DefendingEntities
             selectedStructurePanel.SetActive(false);
             selectedUnitPanel.SetActive(false);
 
-            InterfaceController.Instance.RegisterForOnDefendingEntitySelectedCallback(OnNewSelection);
-            InterfaceController.Instance.RegisterForOnDefendingEntityDeselectedCallback(OnDefendingEntitiesDeselected);
+            InterfaceController.Instance.OnDefendingEntitySelected += OnNewSelection;
+            InterfaceController.Instance.OnDefendingEntityDeselected += OnDefendingEntitiesDeselected;
 
-            GameModels.Models[0].GameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
+            GameModels.Models[0].GameStateManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void Update()
@@ -156,22 +156,22 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        private void OnNewSelection(IStructure newSelectedStructure, IUnit newSelectedUnit)
+        private void OnNewSelection(object sender, EAOnDefendingEntitySelected args)
         {
             ClearAbilityLists();
 
-            if (newSelectedStructure != null)
+            if (args.SelectedStructure != null)
             {
-                OnStructureSelected(newSelectedStructure);
+                OnStructureSelected(args.SelectedStructure);
             }
             else
             {
                 OnStructureDeselection();
             }
 
-            if (newSelectedUnit != null)
+            if (args.SelectedUnit != null)
             {
-                OnUnitSelected(newSelectedUnit);
+                OnUnitSelected(args.SelectedUnit);
             }
             else
             {
@@ -190,31 +190,31 @@ namespace GrimoireTD.DefendingEntities
             SetUpUpgradeView();
             SetUpStructureDetailsView();
 
-            selectedStructure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
+            selectedStructure.OnUpgraded += OnStructureUpgraded;
 
-            OnStructureAbilityAdded = new Action<IAbility>(x =>
+            OnStructureAbilityAdded = new EventHandler<EAOnAbilityAdded>((sender, args) =>
             {
                 structureAbilitiesText.text = GetAbilityText(selectedStructure);
-                OnNewAbilityAdded(x, structureAbilityVerticalLayout);
+                OnNewAbilityAdded(args.Ability, structureAbilityVerticalLayout);
             });
-            OnStructureAbilityRemoved = new Action<IAbility>(x =>
+            OnStructureAbilityRemoved = new EventHandler<EAOnAbilityRemoved>((sender, args) =>
             {
                 structureAbilitiesText.text = GetAbilityText(selectedStructure);
-                OnAbilityRemoved(x, structureAbilityVerticalLayout);
+                OnAbilityRemoved(args.Ability, structureAbilityVerticalLayout);
             });
 
-            selectedStructure.RegisterForOnAbilityAddedCallback(OnStructureAbilityAdded);
-            selectedStructure.RegisterForOnAbilityRemovedCallback(OnStructureAbilityRemoved);
+            selectedStructure.Abilities.OnAbilityAdded += OnStructureAbilityAdded;
+            selectedStructure.Abilities.OnAbilityRemoved -= OnStructureAbilityRemoved;
 
-            selectedStructure.RegisterForOnAuraEmittedAddedCallback(OnStructureAuraChange);
-            selectedStructure.RegisterForOnAuraEmittedAddedCallback(OnStructureAuraChange);
-            selectedStructure.RegisterForOnAffectedByDefenderAuraAddedCallback(OnStructureAuraChange);
-            selectedStructure.RegisterForOnAffectedByDefenderAuraRemovedCallback(OnStructureAuraChange);
+            selectedStructure.AurasEmitted.OnAdd += OnStructureAuraEmittedAdded;
+            selectedStructure.AurasEmitted.OnRemove -= OnStructureAuraEmittedRemoved;
+            selectedStructure.AffectedByDefenderAuras.OnAdd += OnStructureAuraAffectedByAdded;
+            selectedStructure.AffectedByDefenderAuras.OnRemove -= OnStructureAuraAffectedByRemoved;
 
-            selectedStructure.Attributes.RegisterForOnAnyAttributeChangedCallback(OnStructureAttributesChange);
+            selectedStructure.Attributes.OnAnyAttributeChanged += OnStructureAttributesChange;
 
-            selectedStructure.RegisterForOnFlatHexOccupationBonusAddedCallback(OnStructureEconomyChange);
-            selectedStructure.RegisterForOnFlatHexOccupationBonusRemovedCallback(OnStructureEconomyChange);
+            selectedStructure.FlatHexOccupationBonuses.OnAdd += OnStructureFlatHexOccupationBonusAdded;
+            selectedStructure.FlatHexOccupationBonuses.OnRemove -= OnStructureFlatHexOccupationBonusRemoved;
 
             if (CDebug.structureUpgrades.Enabled)
             {
@@ -234,35 +234,36 @@ namespace GrimoireTD.DefendingEntities
             SetUpTalentView();
             SetUpUnitDetailsView();
 
-            selectedUnit.RegisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+            selectedUnit.OnExperienceFatigueLevelChanged += OnUnitExperienceChange;
 
-            OnUnitAbilityAdded = new Action<IAbility>(x =>
+            OnUnitAbilityAdded = new EventHandler<EAOnAbilityAdded>((sender, args) =>
             {
                 unitAbilitiesText.text = GetAbilityText(selectedUnit);
-                OnNewAbilityAdded(x, unitAbilityVerticalLayout);
+                OnNewAbilityAdded(args.Ability, unitAbilityVerticalLayout);
             });
-            OnUnitAbilityRemoved = new Action<IAbility>(x =>
+            OnUnitAbilityRemoved = new EventHandler<EAOnAbilityRemoved>((sender, args) =>
             {
                 unitAbilitiesText.text = GetAbilityText(selectedUnit);
-                OnAbilityRemoved(x, unitAbilityVerticalLayout);
+                OnAbilityRemoved(args.Ability, unitAbilityVerticalLayout);
             });
 
-            selectedUnit.RegisterForOnAbilityAddedCallback(OnUnitAbilityAdded);
-            selectedUnit.RegisterForOnAbilityRemovedCallback(OnUnitAbilityRemoved);
+            selectedUnit.Abilities.OnAbilityAdded += OnUnitAbilityAdded;
+            selectedUnit.Abilities.OnAbilityRemoved -= OnUnitAbilityRemoved;
 
-            selectedUnit.RegisterForOnAuraEmittedAddedCallback(OnUnitAuraChange);
-            selectedUnit.RegisterForOnAuraEmittedRemovedCallback(OnUnitAuraChange);
-            selectedUnit.RegisterForOnAffectedByDefenderAuraAddedCallback(OnUnitAuraChange);
-            selectedUnit.RegisterForOnAffectedByDefenderAuraRemovedCallback(OnUnitAuraChange);
+            selectedUnit.AurasEmitted.OnAdd += OnUnitAuraEmittedAdded;
+            selectedUnit.AurasEmitted.OnRemove -= OnUnitAuraEmittedRemoved;
+            selectedUnit.AffectedByDefenderAuras.OnAdd += OnUnitAffectedByAuraAdded;
+            selectedUnit.AffectedByDefenderAuras.OnRemove -= OnUnitAffecteByAuraRemoved;
 
-            selectedUnit.Attributes.RegisterForOnAnyAttributeChangedCallback(OnUnitAttributesChange);
+            selectedUnit.Attributes.OnAnyAttributeChanged += OnUnitAttributesChange;
 
-            selectedUnit.RegisterForOnFlatHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
-            selectedUnit.RegisterForOnFlatHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
-            selectedUnit.RegisterForOnConditionalHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
-            selectedUnit.RegisterForOnConditionalHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
-            selectedUnit.RegisterForOnConditionalStructureOccupationBonusAddedCallback(OnUnitStuctureOccupationBonusChange);
-            selectedUnit.RegisterForOnConditionalStructureOccupationBonusRemovedCallback(OnUnitStuctureOccupationBonusChange);
+            selectedUnit.FlatHexOccupationBonuses.OnAdd += OnUnitFlatHexOccupationBonusAdded;
+            selectedUnit.FlatHexOccupationBonuses.OnRemove -= OnUnitFlatHexOccupationBonusRemoved;
+
+            selectedUnit.ConditionalHexOccupationBonuses.OnAdd += OnUnitConditionalHexOccupationBonusAdded;
+            selectedUnit.ConditionalHexOccupationBonuses.OnRemove -= OnUnitConditionalHexOccupationBonusRemoved;
+            selectedUnit.ConditionalStructureOccupationBonuses.OnAdd += OnUnitConditionalStructureOccupationBonusAdded;
+            selectedUnit.ConditionalStructureOccupationBonuses.OnRemove += OnUnitConditionalStructureOccupationBonusRemoved;
 
             if (CDebug.unitAttributes.Enabled)
             {
@@ -276,8 +277,8 @@ namespace GrimoireTD.DefendingEntities
 
             SetNameAndDescription(newSelection, nameText, descriptionText);
 
-            IReadOnlyList<IDefendModeAbility> entityDefendModeAbilities = newSelection.DefendModeAbilities();
-            IReadOnlyList<IBuildModeAbility> entityBuildModeAbilities = newSelection.BuildModeAbilities();
+            IReadOnlyList<IDefendModeAbility> entityDefendModeAbilities = newSelection.Abilities.DefendModeAbilities();
+            IReadOnlyList<IBuildModeAbility> entityBuildModeAbilities = newSelection.Abilities.BuildModeAbilities();
 
             foreach (IDefendModeAbility defendModeAbility in entityDefendModeAbilities)
             {
@@ -368,11 +369,11 @@ namespace GrimoireTD.DefendingEntities
 
         private void SetNameAndDescription(IDefendingEntity selectedEntity, Text nameText, Text descriptionText)
         {
-            nameText.text = selectedEntity.CurrentName();
-            descriptionText.text = selectedEntity.UIText();
+            nameText.text = selectedEntity.CurrentName;
+            descriptionText.text = selectedEntity.UIText;
         }
 
-        public void OnDefendingEntitiesDeselected()
+        public void OnDefendingEntitiesDeselected(object sender, EAOnDefendingEntityDeselected args)
         {
             OnUnitDeselection();
             OnStructureDeselection();
@@ -403,20 +404,20 @@ namespace GrimoireTD.DefendingEntities
         {
             if (selectedStructure != null)
             {
-                selectedStructure.DeregisterForOnUpgradedCallback(OnStructureUpgraded);
+                selectedStructure.OnUpgraded -= OnStructureUpgraded;
 
-                selectedStructure.DeregisterForOnAbilityAddedCallback(OnStructureAbilityAdded);
-                selectedStructure.DeregisterForOnAbilityRemovedCallback(OnStructureAbilityRemoved);
+                selectedStructure.Abilities.OnAbilityAdded -= OnStructureAbilityAdded;
+                selectedStructure.Abilities.OnAbilityRemoved -= OnStructureAbilityRemoved;
 
-                selectedStructure.DeregisterForOnAuraEmittedAddedCallback(OnStructureAuraChange);
-                selectedStructure.DeregisterForOnAuraEmittedRemovedCallback(OnStructureAuraChange);
-                selectedStructure.DeregisterForOnAffectedByDefenderAuraAddedCallback(OnStructureAuraChange);
-                selectedStructure.DeregisterForOnAffectedByDefenderAuraRemovedCallback(OnStructureAuraChange);
+                selectedStructure.AurasEmitted.OnAdd -= OnStructureAuraEmittedAdded;
+                selectedStructure.AurasEmitted.OnRemove -= OnStructureAuraEmittedRemoved;
+                selectedStructure.AffectedByDefenderAuras.OnAdd -= OnStructureAuraAffectedByAdded;
+                selectedStructure.AffectedByDefenderAuras.OnRemove -= OnStructureAuraAffectedByRemoved;
 
-                selectedStructure.Attributes.DeregisterForOnAnyAttributeChangedCallback(OnStructureAttributesChange);
+                selectedStructure.Attributes.OnAnyAttributeChanged -= OnStructureAttributesChange;
 
-                selectedStructure.DeregisterForOnFlatHexOccupationBonusAddedCallback(OnStructureEconomyChange);
-                selectedStructure.DeregisterForOnFlatHexOccupationBonusRemovedCallback(OnStructureEconomyChange);
+                selectedStructure.FlatHexOccupationBonuses.OnAdd -= OnStructureFlatHexOccupationBonusAdded;
+                selectedStructure.FlatHexOccupationBonuses.OnRemove -= OnStructureFlatHexOccupationBonusRemoved;
             }
 
             selectedStructure = null;
@@ -438,24 +439,25 @@ namespace GrimoireTD.DefendingEntities
         {
             if (selectedUnit != null)
             {
-                selectedUnit.DeregisterForExperienceFatigueChangedCallback(OnUnitExperienceChange);
+                selectedUnit.OnExperienceFatigueLevelChanged -= OnUnitExperienceChange;
 
-                selectedUnit.DeregisterForOnAbilityAddedCallback(OnUnitAbilityAdded);
-                selectedUnit.DeregisterForOnAbilityRemovedCallback(OnUnitAbilityRemoved);
+                selectedUnit.Abilities.OnAbilityAdded -= OnUnitAbilityAdded;
+                selectedUnit.Abilities.OnAbilityRemoved -= OnUnitAbilityRemoved;
 
-                selectedUnit.DeregisterForOnAuraEmittedAddedCallback(OnUnitAuraChange);
-                selectedUnit.DeregisterForOnAuraEmittedRemovedCallback(OnUnitAuraChange);
-                selectedUnit.DeregisterForOnAffectedByDefenderAuraAddedCallback(OnUnitAuraChange);
-                selectedUnit.DeregisterForOnAffectedByDefenderAuraRemovedCallback(OnUnitAuraChange);
+                selectedUnit.AurasEmitted.OnAdd -= OnUnitAuraEmittedAdded;
+                selectedUnit.AurasEmitted.OnRemove -= OnUnitAuraEmittedRemoved;
+                selectedUnit.AffectedByDefenderAuras.OnAdd -= OnUnitAffectedByAuraAdded;
+                selectedUnit.AffectedByDefenderAuras.OnRemove -= OnUnitAffecteByAuraRemoved;
 
-                selectedUnit.Attributes.DeregisterForOnAnyAttributeChangedCallback(OnUnitAttributesChange);
+                selectedUnit.Attributes.OnAnyAttributeChanged -= OnUnitAttributesChange;
 
-                selectedUnit.DeregisterForOnFlatHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
-                selectedUnit.DeregisterForOnFlatHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
-                selectedUnit.DeregisterForOnConditionalHexOccupationBonusAddedCallback(OnUnitHexOccupationBonusChange);
-                selectedUnit.DeregisterForOnConditionalHexOccupationBonusRemovedCallback(OnUnitHexOccupationBonusChange);
-                selectedUnit.DeregisterForOnConditionalStructureOccupationBonusAddedCallback(OnUnitStuctureOccupationBonusChange);
-                selectedUnit.DeregisterForOnConditionalStructureOccupationBonusRemovedCallback(OnUnitStuctureOccupationBonusChange);
+                selectedUnit.FlatHexOccupationBonuses.OnAdd -= OnUnitFlatHexOccupationBonusAdded;
+                selectedUnit.FlatHexOccupationBonuses.OnRemove -= OnUnitFlatHexOccupationBonusRemoved;
+
+                selectedUnit.ConditionalHexOccupationBonuses.OnAdd -= OnUnitConditionalHexOccupationBonusAdded;
+                selectedUnit.ConditionalHexOccupationBonuses.OnRemove -= OnUnitConditionalHexOccupationBonusRemoved;
+                selectedUnit.ConditionalStructureOccupationBonuses.OnAdd -= OnUnitConditionalStructureOccupationBonusAdded;
+                selectedUnit.ConditionalStructureOccupationBonuses.OnRemove -= OnUnitConditionalStructureOccupationBonusRemoved;
             }
 
             selectedUnit = null;
@@ -496,7 +498,7 @@ namespace GrimoireTD.DefendingEntities
             }
         }
 
-        private void OnStructureUpgraded(IStructureUpgrade upgradeBought, IStructureEnhancement enahncementChosen)
+        private void OnStructureUpgraded(object sender, EAOnUpgraded args)
         {
             SetNameAndDescription(selectedStructure, selectedStructureName, selectedStructureText);
 
@@ -505,7 +507,7 @@ namespace GrimoireTD.DefendingEntities
                 if (!selectedStructure.UpgradesBought[upgrade])
                 {
                     AddUpgradeDisplay(upgrade);
-                    return;
+                    break;
                 }
             }
         }
@@ -586,9 +588,9 @@ namespace GrimoireTD.DefendingEntities
         {
             string abilityText = "Abilities:\n";
 
-            foreach (IAbility ability in defendingEntity.Abilities.Values)
+            foreach (var ability in defendingEntity.Abilities.AbilityList)
             {
-                abilityText += ability.UIText() + "\n";
+                abilityText += ability.Value.UIText() + "\n";
             }
 
             return abilityText;
@@ -621,7 +623,7 @@ namespace GrimoireTD.DefendingEntities
             {
                 attributesText += 
                     attributeName.Value + ": " + 
-                    defendingEntity.Attributes.GetAttribute(attributeName.Key) + 
+                    defendingEntity.Attributes.GetAttribute(attributeName.Key).Value() + 
                     "\n";
             }
 
@@ -680,37 +682,92 @@ namespace GrimoireTD.DefendingEntities
             unitDetailsPanel.SetActive(!unitDetailsPanel.activeSelf);
         }
 
-        private void OnStructureAuraChange(IDefenderAura aura)
+        private void OnStructureAuraEmittedAdded(object sender, EAOnCallbackListAdd<IDefenderAura> args)
         {
             structureAurasText.text = GetAuraText(selectedStructure);
         }
 
-        private void OnStructureAttributesChange(DefendingEntityAttributeName attributeName, float newAttributeValue)
+        private void OnStructureAuraEmittedRemoved(object sender, EAOnCallbackListRemove<IDefenderAura> args)
+        {
+            structureAurasText.text = GetAuraText(selectedStructure);
+        }
+
+        private void OnStructureAuraAffectedByAdded(object sender, EAOnCallbackListAdd<IDefenderAura> args)
+        {
+            structureAurasText.text = GetAuraText(selectedStructure);
+        }
+
+        private void OnStructureAuraAffectedByRemoved(object sender, EAOnCallbackListRemove<IDefenderAura> args)
+        {
+            structureAurasText.text = GetAuraText(selectedStructure);
+        }
+
+        private void OnStructureAttributesChange(object sender, EAOnAnyAttributeChanged<DefendingEntityAttributeName> args)
         {
             structureAttributesText.text = GetAttributesText(selectedStructure);
         }
 
-        private void OnStructureEconomyChange(IHexOccupationBonus hexOccupationBonus)
+        private void OnStructureFlatHexOccupationBonusAdded(object sender, EAOnCallbackListAdd<IHexOccupationBonus> args)
         {
             structureEconomyText.text = GetStructureEconomyText(selectedStructure);
         }
 
-        private void OnUnitAuraChange(IDefenderAura aura)
+        private void OnStructureFlatHexOccupationBonusRemoved(object sender, EAOnCallbackListRemove<IHexOccupationBonus> args)
+        {
+            structureEconomyText.text = GetStructureEconomyText(selectedStructure);
+        }
+
+        private void OnUnitAuraEmittedAdded(object sender, EAOnCallbackListAdd<IDefenderAura> args)
         {
             unitAurasText.text = GetAuraText(selectedUnit);
         }
 
-        private void OnUnitAttributesChange(DefendingEntityAttributeName attributeName, float newAttrbuteValue)
+        private void OnUnitAuraEmittedRemoved(object sender, EAOnCallbackListRemove<IDefenderAura> args)
+        {
+            unitAurasText.text = GetAuraText(selectedUnit);
+        }
+
+        private void OnUnitAffectedByAuraAdded(object sender, EAOnCallbackListAdd<IDefenderAura> args)
+        {
+            unitAurasText.text = GetAuraText(selectedUnit);
+        }
+
+        private void OnUnitAffecteByAuraRemoved(object sender, EAOnCallbackListRemove<IDefenderAura> args)
+        {
+            unitAurasText.text = GetAuraText(selectedUnit);
+        }
+
+        private void OnUnitAttributesChange(object sender, EAOnAnyAttributeChanged<DefendingEntityAttributeName> args)
         {
             unitAttributesText.text = GetAttributesText(selectedUnit);
         }
 
-        private void OnUnitHexOccupationBonusChange(IHexOccupationBonus hexOccupationBonus)
+        private void OnUnitFlatHexOccupationBonusAdded(object sender, EAOnCallbackListAdd<IHexOccupationBonus> args)
         {
             OnUnitEconomyChange();
         }
 
-        private void OnUnitStuctureOccupationBonusChange(IStructureOccupationBonus structureOccupationBonus)
+        private void OnUnitFlatHexOccupationBonusRemoved(object sender, EAOnCallbackListRemove<IHexOccupationBonus> args)
+        {
+            OnUnitEconomyChange();
+        }
+
+        private void OnUnitConditionalHexOccupationBonusAdded(object sender, EAOnCallbackListAdd<IHexOccupationBonus> e)
+        {
+            OnUnitEconomyChange();
+        }
+
+        private void OnUnitConditionalHexOccupationBonusRemoved(object sender, EAOnCallbackListRemove<IHexOccupationBonus> e)
+        {
+            OnUnitEconomyChange();
+        }
+
+        private void OnUnitConditionalStructureOccupationBonusAdded(object sender, EAOnCallbackListAdd<IStructureOccupationBonus> e)
+        {
+            OnUnitEconomyChange();
+        }
+
+        private void OnUnitConditionalStructureOccupationBonusRemoved(object sender, EAOnCallbackListRemove<IStructureOccupationBonus> e)
         {
             OnUnitEconomyChange();
         }
@@ -720,13 +777,13 @@ namespace GrimoireTD.DefendingEntities
             unitEconomyText.text = GetUnitEconomyText(selectedUnit);
         }
 
-        private void OnEnterDefendMode()
+        private void OnEnterDefendMode(object sender, EAOnEnterDefendMode args)
         {
             unitTalentPanel.SetActive(false);
             structureUpgradePanel.SetActive(false);
         }
 
-        private void OnUnitExperienceChange()
+        private void OnUnitExperienceChange(object sender, EAOnExperienceFatigueLevelChange args)
         {
             SetExperienceFatigueLevelView();
         }
@@ -751,7 +808,7 @@ namespace GrimoireTD.DefendingEntities
         {
             foreach (DefendingEntityAttributeName attributeName in Enum.GetValues(typeof(DefendingEntityAttributeName)))
             {
-                CDebug.Log(CDebug.unitAttributes, selectedUnit.Attributes.TempDebugGetAttributeDisplayName(attributeName) + ": " + selectedUnit.Attributes.GetAttribute(attributeName));
+                CDebug.Log(CDebug.unitAttributes, selectedUnit.Attributes.GetAttribute(attributeName).DisplayName + ": " + selectedUnit.Attributes.GetAttribute(attributeName).Value());
             }
         }
 
@@ -759,7 +816,7 @@ namespace GrimoireTD.DefendingEntities
         {
             foreach (DefendingEntityAttributeName attributeName in Enum.GetValues(typeof(DefendingEntityAttributeName)))
             {
-                CDebug.Log(CDebug.structureUpgrades, selectedStructure.Attributes.TempDebugGetAttributeDisplayName(attributeName) + ": " + selectedStructure.Attributes.GetAttribute(attributeName));
+                CDebug.Log(CDebug.structureUpgrades, selectedStructure.Attributes.GetAttribute(attributeName).DisplayName + ": " + selectedStructure.Attributes.GetAttribute(attributeName).Value());
             }
         }
     }

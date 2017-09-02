@@ -2,18 +2,10 @@
 
 namespace GrimoireTD.Attributes
 {
-    public interface IReadOnlyAttributes<T>
+    public interface IReadOnlyAttributes<T> where T : struct, IConvertible
     {
-        float GetAttribute(T attributeName);
+        event EventHandler<EAOnAnyAttributeChanged<T>> OnAnyAttributeChanged;
 
-        string TempDebugGetAttributeDisplayName(T attrbuteName);
-
-        void RegisterForOnAttributeChangedCallback(Action<float> callback, T attribute);
-
-        void DeregisterForOnAttributeChangedCallback(Action<float> callback, T attribute);
-
-        void RegisterForOnAnyAttributeChangedCallback(Action<T, float> callback);
-
-        void DeregisterForOnAnyAttributeChangedCallback(Action<T, float> callback);
+        IReadOnlyAttribute GetAttribute(T attributeName);
     }
 }

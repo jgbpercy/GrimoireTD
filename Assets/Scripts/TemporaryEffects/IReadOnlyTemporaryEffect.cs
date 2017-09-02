@@ -13,7 +13,6 @@ namespace GrimoireTD.TemporaryEffects
 
         string EffectName { get; }
 
-        void RegisterForOnEndCallback(Action callback);
-        void DeregisterForOnEndCallback(Action callback);
+        event EventHandler<EAOnTemporaryEffectEnd> OnTemporaryEffectEnd;
     }
 }

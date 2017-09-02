@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace GrimoireTD.UI
 {
@@ -8,6 +9,9 @@ namespace GrimoireTD.UI
         private GameMode enabledInMode;
 
         private IReadOnlyGameStateManager gameStateManager;
+
+        private EventHandler<EAOnEnterBuildMode> OnEnterBuildMode;
+        private EventHandler<EAOnEnterDefendMode> OnEnterDefendMode;
 
         public GameMode EnabledInMode
         {
@@ -27,7 +31,7 @@ namespace GrimoireTD.UI
             }
             else
             {
-                GameModels.Models[0].RegisterForOnSetUpCallback(OnGameModelSetUp);
+                GameModels.Models[0].OnGameModelSetUp += (object sender, EAOnGameModelSetUp args) => OnGameModelSetUp();
             }
         }
 
@@ -37,16 +41,19 @@ namespace GrimoireTD.UI
             {
                 if (gameStateManager.CurrentGameMode == GameMode.BUILD) SetSelfInactive();
 
-                gameStateManager.RegisterForOnEnterBuildModeCallback(SetSelfInactive);
-                gameStateManager.RegisterForOnEnterDefendModeCallback(SetSelfActive);
+                OnEnterBuildMode = (object sender, EAOnEnterBuildMode args) => SetSelfInactive();
+                OnEnterDefendMode = (object sender, EAOnEnterDefendMode args) => SetSelfActive();
             }
             else
             {
                 if (gameStateManager.CurrentGameMode == GameMode.DEFEND) SetSelfInactive();
 
-                gameStateManager.RegisterForOnEnterBuildModeCallback(SetSelfActive);
-                gameStateManager.RegisterForOnEnterDefendModeCallback(SetSelfInactive);
+                OnEnterBuildMode = (object sender, EAOnEnterBuildMode args) => SetSelfActive();
+                OnEnterDefendMode = (object sender, EAOnEnterDefendMode args) => SetSelfInactive(); 
             }
+
+            gameStateManager.OnEnterBuildMode += OnEnterBuildMode;
+            gameStateManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void SetSelfActive()
@@ -68,16 +75,8 @@ namespace GrimoireTD.UI
 
             if (GameModels.Models.Count > 0)
             {
-                if (enabledInMode == GameMode.DEFEND)
-                {
-                    gameStateManager.DeregisterForOnEnterBuildModeCallback(SetSelfInactive);
-                    gameStateManager.DeregisterForOnEnterDefendModeCallback(SetSelfActive);
-                }
-                else
-                {
-                    gameStateManager.DeregisterForOnEnterBuildModeCallback(SetSelfActive);
-                    gameStateManager.DeregisterForOnEnterDefendModeCallback(SetSelfInactive);
-                }
+                gameStateManager.OnEnterBuildMode -= OnEnterBuildMode;
+                gameStateManager.OnEnterDefendMode -= OnEnterDefendMode;
             }
         }
     }

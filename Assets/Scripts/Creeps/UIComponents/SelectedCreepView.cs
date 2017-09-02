@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.UI;
@@ -36,20 +37,20 @@ namespace GrimoireTD.Creeps
         {
             CDebug.Log(CDebug.applicationLoading, "Selected Creep View Start");
 
-            InterfaceController.Instance.RegisterForOnCreepSelectedCallback(OnNewSelection);
-            InterfaceController.Instance.RegisterForOnCreepDeselectedCallback(OnDeselection);
+            InterfaceController.Instance.OnCreepSelected += OnNewSelection;
+            InterfaceController.Instance.OnCreepDeselected += OnDeselection;
 
             effectSliders = new List<GameObject>();
 
             selectedCreepPanel.SetActive(false);
         }
 
-        private void OnNewSelection(ICreep creep)
+        private void OnNewSelection(object sender, EAOnCreepSelected args)
         {
             ClearEffectList();
             DeregisterCallbacksWithSelectedCreep();
 
-            selectedCreep = creep;
+            selectedCreep = args.SelectedCreep;
 
             selectedCreepPanel.SetActive(true);
 
@@ -59,14 +60,19 @@ namespace GrimoireTD.Creeps
 
             selectedCreepHealthText.text = selectedCreep.CurrentHitpoints + " / " + selectedCreep.CreepTemplate.MaxHitpoints;
 
-            creep.RegisterForOnHealthChangedCallback(OnHealthChange);
-            creep.RegisterForOnDiedCallback(OnDied);
-            creep.TemporaryEffects.RegisterForOnNewTemporaryEffectCallback(AddSliderForNewEffect);
+            selectedCreep.OnHealthChanged += OnHealthChange;
+            selectedCreep.OnDied += OnDied;
+            selectedCreep.TemporaryEffects.OnNewTemporaryEffect += OnNewTemporaryEffect;
 
-            foreach (ITemporaryEffect temporaryEffect in creep.TemporaryEffects.EffectList)
+            foreach (ITemporaryEffect temporaryEffect in selectedCreep.TemporaryEffects.EffectList)
             {
                 AddSliderForNewEffect(temporaryEffect);
             }
+        }
+
+        private void OnNewTemporaryEffect(object sender, EAOnNewTemporaryEffect args)
+        {
+            AddSliderForNewEffect(args.NewEffect);
         }
 
         private void AddSliderForNewEffect(IReadOnlyTemporaryEffect temporaryEffect)
@@ -85,13 +91,13 @@ namespace GrimoireTD.Creeps
         {
             if (selectedCreep != null)
             {
-                selectedCreep.DeregisterForOnHealthChangedCallback(OnHealthChange);
-                selectedCreep.DeregisterForOnDiedCallback(OnDied);
-                selectedCreep.TemporaryEffects.DeregisterForOnNewTemporaryEffectCallback(AddSliderForNewEffect);
+                selectedCreep.OnHealthChanged -= OnHealthChange;
+                selectedCreep.OnDied -= OnDied;
+                selectedCreep.TemporaryEffects.OnNewTemporaryEffect -= OnNewTemporaryEffect;
             }
         }
 
-        private void OnDeselection()
+        private void OnDeselection(object sender, EAOnCreepDeselected args)
         {
             ClearEffectList();
 
@@ -102,16 +108,16 @@ namespace GrimoireTD.Creeps
             selectedCreepPanel.SetActive(false);
         }
 
-        private void OnHealthChange()
+        private void OnHealthChange(object sender, EAOnHealthChanged args)
         {
-            selectedCreepHealthBar.value = selectedCreep.CurrentHitpoints;
-            selectedCreepHealthText.text = selectedCreep.CurrentHitpoints + " / " + selectedCreep.CreepTemplate.MaxHitpoints;
+            selectedCreepHealthBar.value = args.NewValue;
+            selectedCreepHealthText.text = args.NewValue + " / " + selectedCreep.CreepTemplate.MaxHitpoints;
         }
 
-        private void OnDied()
+        private void OnDied(object sender, EventArgs args)
         {
-            selectedCreep.DeregisterForOnHealthChangedCallback(OnHealthChange);
-            selectedCreep.DeregisterForOnDiedCallback(OnDied);
+            //TODO: needed?
+            DeregisterCallbacksWithSelectedCreep();
 
             selectedCreep = null;
 

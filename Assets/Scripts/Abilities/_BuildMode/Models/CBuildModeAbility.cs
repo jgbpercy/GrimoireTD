@@ -7,45 +7,27 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public class CBuildModeAbility : CAbility, IBuildModeAbility
     {
-        private IBuildModeAbilityTemplate buildModeAbilityTemplate;
+        public IBuildModeAbilityTemplate BuildModeAbilityTemplate { get; }
 
-        private Action<IBuildModeAbility> OnExecutedCallback;
-
-        public IBuildModeAbilityTemplate BuildModeAbilityTemplate
-        {
-            get
-            {
-                return buildModeAbilityTemplate;
-            }
-        }
+        public event EventHandler<EAOnExecutedBuildModeAbility> OnExecuted;
 
         public CBuildModeAbility(IBuildModeAbilityTemplate template) : base(template)
         {
-            buildModeAbilityTemplate = template;
+            BuildModeAbilityTemplate = template;
         }
 
         public void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition)
         {
-            IReadOnlyList<IBuildModeTargetable> targetList = buildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
+            IReadOnlyList<IBuildModeTargetable> targetList = BuildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition);
 
-            buildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
+            BuildModeAbilityTemplate.EffectComponent.ExecuteEffect(executingEntity, targetList);
 
-            OnExecutedCallback?.Invoke(this);
+            OnExecuted?.Invoke(this, new EAOnExecutedBuildModeAbility(this));
         }
 
         public override string UIText()
         {
-            return buildModeAbilityTemplate.NameInGame;
-        }
-
-        public void RegisterForOnExecutedCallback(Action<IBuildModeAbility> callback)
-        {
-            OnExecutedCallback += callback;
-        }
-
-        public void DeregisterForOnExecutedCallback(Action<IBuildModeAbility> callback)
-        {
-            OnExecutedCallback -= callback;
+            return BuildModeAbilityTemplate.NameInGame;
         }
     }
 }

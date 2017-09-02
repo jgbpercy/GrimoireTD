@@ -18,12 +18,17 @@ namespace GrimoireTD.DefendingEntities.Units
 
         int Experience { get; }
         int Fatigue { get; }
-
         int LevelUpsPending { get; }
         int Level { get; }
 
-        IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses { get; }
-        IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
+        IReadOnlyCallbackList<IHexOccupationBonus> ConditionalHexOccupationBonuses { get; }
+        IReadOnlyCallbackList<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
+
+        event EventHandler<EAOnMoved> OnMoved;
+
+        event EventHandler<EAOnExperienceFatigueLevelChange> OnExperienceFatigueLevelChanged;
+
+        event EventHandler<EAOnTriggeredConditionalOccupationBonus> OnTriggeredConditionalOccupationBonuses;
 
         void Move(Coord targetCoord);
 
@@ -36,26 +41,5 @@ namespace GrimoireTD.DefendingEntities.Units
         void TempDebugAddExperience();
 
         IEconomyTransaction GetConditionalHexOccupationBonus(IHexType hexType);
-
-        void RegisterForExperienceFatigueChangedCallback(Action callback);
-        void DeregisterForExperienceFatigueChangedCallback(Action callback);
-
-        void RegisterForOnConditionalHexOccupationBonusAddedCallback(Action<IHexOccupationBonus> callback);
-        void DeregisterForOnConditionalHexOccupationBonusAddedCallback(Action<IHexOccupationBonus> callback);
-
-        void RegisterForOnConditionalHexOccupationBonusRemovedCallback(Action<IHexOccupationBonus> callback);
-        void DeregisterForOnConditionalHexOccupationBonusRemovedCallback(Action<IHexOccupationBonus> callback);
-
-        void RegisterForOnConditionalStructureOccupationBonusAddedCallback(Action<IStructureOccupationBonus> callback);
-        void DeregisterForOnConditionalStructureOccupationBonusAddedCallback(Action<IStructureOccupationBonus> callback);
-
-        void RegisterForOnConditionalStructureOccupationBonusRemovedCallback(Action<IStructureOccupationBonus> callback);
-        void DeregisterForOnConditionalStructureOccupationBonusRemovedCallback(Action<IStructureOccupationBonus> callback);
-
-        void RegisterForOnMovedCallback(Action<Coord> callback);
-        void DeregisterForOnMovedCallback(Action<Coord> callback);
-
-        void RegisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback);
-        void DeregisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback);
     }
 }

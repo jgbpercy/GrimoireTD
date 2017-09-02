@@ -10,9 +10,8 @@ namespace GrimoireTD.DefendingEntities.DefenderEffects
 
         IDefendingEntity SourceDefendingEntity { get; }
 
-        void ClearAura();
+        event EventHandler<EAOnClearDefenderAura> OnClearDefenderAura;
 
-        void DeregisterForOnClearAuraCallback(Action<IDefenderAura> callback);
-        void RegisterForOnClearAuraCallback(Action<IDefenderAura> callback);
+        void ClearAura();
     }
 }

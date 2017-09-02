@@ -1,13 +1,13 @@
-﻿using GrimoireTD.Abilities.BuildMode;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Creeps;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.Map;
 using GrimoireTD.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GrimoireTD.Economy
 {
@@ -25,7 +25,7 @@ namespace GrimoireTD.Economy
             }
         }
 
-        //TODO: this is bit hacky/slow? remove?
+        //TODO: this is hacky/slow? remove?
         public IEconomyTransaction ResourcesAsTransaction
         {
             get
@@ -36,9 +36,9 @@ namespace GrimoireTD.Economy
             }
         }
 
-        private Action<IResource> OnResourceCreatedCallback;
-
-        private Action<IResource, int, int> OnAnyResourceChangedCallback;
+        //TODO: needed? probably later. Remember to trigger when it is
+        //public event EventHandler<EAOnResourceCreated> OnResourceCreated;
+        public event EventHandler<EAOnAnyResourceChanged> OnAnyResourceChanged;
 
         public CEconomyManager(IReadOnlyMapData mapData, IReadOnlyCreepManager creepManager)
         {
@@ -46,29 +46,46 @@ namespace GrimoireTD.Economy
             resourceTemplateToResourceDict = new Dictionary<IResourceTemplate, IResource>();
 
             //Callbacks
-            InterfaceController.Instance.RegisterForOnBuildStructureUserAction(OnStructureBuilt);
+            InterfaceController.Instance.OnBuildStructurePlayerAction += OnStructureBuilt;
 
-            creepManager.RegisterForCreepSpawnedCallback(creep =>
+            creepManager.OnCreepSpawned += (object spawnSender, EAOnCreepSpawned spawnArgs) =>
             {
-                creep.RegisterForOnDiedCallback(() =>
+                spawnArgs.NewCreep.OnDied += (object diedSender, EventArgs diedArgs) => OnCreepDied(spawnArgs.NewCreep);
+            };
+
+            mapData.OnStructureCreated += (object createdSender, EAOnStructureCreated createdArgs) =>
+            {
+                createdArgs.StructureCreated.Abilities.OnBuildModeAbilityAdded += (object abilitySender, EAOnBuildModeAbilityAdded abilityArgs) =>
                 {
-                    OnCreepDied(creep);
-                });
-            });
+                    abilityArgs.BuildModeAbility.OnExecuted += OnBuildModeAbilityExecuted;
+                };
+                //TODO: needed? This should be pre set up?
+                foreach (var buildModeAbility in createdArgs.StructureCreated.Abilities.BuildModeAbilities())
+                {
+                    buildModeAbility.OnExecuted += OnBuildModeAbilityExecuted;
+                }
 
-            mapData.RegisterForOnStructureCreatedCallback((structure, coord) =>
-            {
-                structure.RegisterForOnBuildModeAbilityExecutedCallback(OnBuildModeAbilityExecuted);
-                structure.RegisterForOnTriggeredFlatHexOccupationBonusCallback(OnFlatHexOccupationBonusTriggered);
-                structure.RegisterForOnUpgradedCallback(OnStructureUpgraded);
-            });
+                createdArgs.StructureCreated.OnTriggeredFlatHexOccupationBonus += OnFlatHexOccupationBonusTriggered;
 
-            mapData.RegisterForOnUnitCreatedCallback((unit, coord) =>
+                createdArgs.StructureCreated.OnUpgraded += OnStructureUpgraded;
+            };
+
+            mapData.OnUnitCreated += (object createdSender, EAOnUnitCreated createdArgs) =>
             {
-                unit.RegisterForOnBuildModeAbilityExecutedCallback(OnBuildModeAbilityExecuted);
-                unit.RegisterForOnTriggeredFlatHexOccupationBonusCallback(OnFlatHexOccupationBonusTriggered);
-                unit.RegisterForOnTriggeredConditionalOccupationBonusesCallback(OnConditionalOccupationBonusesTriggered);
-            });
+                createdArgs.UnitCreated.Abilities.OnBuildModeAbilityAdded += (object abilitySender, EAOnBuildModeAbilityAdded abiliyArgs) =>
+                {
+                    abiliyArgs.BuildModeAbility.OnExecuted += OnBuildModeAbilityExecuted;
+                };
+                //TODO: needed? This should be pre set up?
+                foreach (var buildModeAbility in createdArgs.UnitCreated.Abilities.BuildModeAbilities())
+                {
+                    buildModeAbility.OnExecuted += OnBuildModeAbilityExecuted;
+                }
+
+                createdArgs.UnitCreated.OnTriggeredFlatHexOccupationBonus += OnFlatHexOccupationBonusTriggered;
+
+                createdArgs.UnitCreated.OnTriggeredConditionalOccupationBonuses += OnConditionalOccupationBonusesTriggered;
+            };
         }
 
         public void SetUp(IEnumerable<IResourceTemplate> resourceTemplates, IEconomyTransaction startingResources)
@@ -80,7 +97,7 @@ namespace GrimoireTD.Economy
                 resources.Add(newResource);
                 resourceTemplateToResourceDict.Add(resourceTemplate, newResource);
 
-                newResource.RegisterForOnResourceChangedCallback((int byAmount, int newAmount) => OnResourceChanged(newResource, byAmount, newAmount));
+                newResource.OnResourceChanged += (object sender, EAOnResourceChanged args) => OnResourceChanged(newResource, args.ByAmount, args.ToAmount);
             }
 
             DoTransaction(startingResources);
@@ -104,9 +121,9 @@ namespace GrimoireTD.Economy
             }
         }
 
-        private void OnStructureBuilt(Coord coord, IStructureTemplate structureTemplate)
+        private void OnStructureBuilt(object sender, EAOnBuildStructurePlayerAction args)
         {
-            DoTransaction(structureTemplate.Cost);
+            DoTransaction(args.StructureTemplate.Cost);
         }
 
         private void OnCreepDied(ICreep creep)
@@ -114,50 +131,30 @@ namespace GrimoireTD.Economy
             DoTransaction(creep.CreepTemplate.Bounty);
         }
 
-        private void OnBuildModeAbilityExecuted(IBuildModeAbility buildModeAbility)
+        private void OnBuildModeAbilityExecuted(object sender, EAOnExecutedBuildModeAbility args)
         {
-            DoTransaction(buildModeAbility.BuildModeAbilityTemplate.Cost);
+            DoTransaction(args.ExecutedAbility.BuildModeAbilityTemplate.Cost);
         }
 
-        private void OnFlatHexOccupationBonusTriggered(IDefendingEntity defendingEntity, IEconomyTransaction bonus)
+        private void OnFlatHexOccupationBonusTriggered(object sender, EAOnTriggeredFlatHexOccupationBonus args)
         {
-            DoTransaction(bonus);
+            DoTransaction(args.Transaction);
         }
 
-        private void OnConditionalOccupationBonusesTriggered(IUnit unit, IEconomyTransaction hexBonus, IEconomyTransaction structureBonus)
+        private void OnConditionalOccupationBonusesTriggered(object sender, EAOnTriggeredConditionalOccupationBonus args)
         {
-            DoTransaction(hexBonus);
-            DoTransaction(structureBonus);
+            DoTransaction(args.HexTransaction);
+            DoTransaction(args.StructureTransaction);
         }
 
-        private void OnStructureUpgraded(IStructureUpgrade upgrade, IStructureEnhancement enhancement)
+        private void OnStructureUpgraded(object sender, EAOnUpgraded args)
         {
-            DoTransaction(enhancement.Cost);
+            DoTransaction(args.Enhancement.Cost);
         }
 
         private void OnResourceChanged(IResource resource, int byAmount, int newAmount)
         {
-            OnAnyResourceChangedCallback?.Invoke(resource, byAmount, newAmount);
-        }
-
-        public void RegisterForOnResourceCreatedCallback(Action<IResource> callback)
-        {
-            OnResourceCreatedCallback += callback;
-        }
-
-        public void DeregisterForOnResourceCreatedCallback(Action<IResource> callback)
-        {
-            OnResourceCreatedCallback -= callback;
-        }
-
-        public void RegisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
-        {
-            OnAnyResourceChangedCallback += callback;
-        }
-
-        public void DeregisterForOnAnyResourceChangedCallback(Action<IResource, int, int> callback)
-        {
-            OnAnyResourceChangedCallback -= callback;
+            OnAnyResourceChanged?.Invoke(this, new EAOnAnyResourceChanged(resource, byAmount, newAmount));
         }
     }
 }

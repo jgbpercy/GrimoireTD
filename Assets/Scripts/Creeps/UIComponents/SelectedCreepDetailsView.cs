@@ -23,30 +23,30 @@ namespace GrimoireTD.Creeps
 
         private void Start()
         {
-            InterfaceController.Instance.RegisterForOnCreepSelectedCallback(OnCreepSelected);
-            InterfaceController.Instance.RegisterForOnCreepDeselectedCallback(OnCreepDeselected);
+            InterfaceController.Instance.OnCreepSelected += OnCreepSelected;
+            InterfaceController.Instance.OnCreepDeselected += OnCreepDeselected;
         }
 
-        private void OnCreepSelected(ICreep creep)
+        private void OnCreepSelected(object sender, EAOnCreepSelected args)
         {
             SetSelectedCreepNullCallbackSafe();
 
-            selectedCreep = creep;
+            selectedCreep = args.SelectedCreep;
 
             attributesText.text = GetAttributesText();
             resistancesText.text = GetResistancesText();
             blocksText.text = GetBlocksText();
 
-            creep.Attributes.RegisterForOnAnyAttributeChangedCallback(OnCreepAttibutesChange);
+            selectedCreep.Attributes.OnAnyAttributeChanged += OnCreepAttibutesChange;
 
-            creep.Resistances.RegisterForOnAnyResistanceChangedCallback(OnCreepResistancesChange);
-            creep.Resistances.RegisterForOnAnyBlockChangedCallback(OnCreepBlocksChange);
+            selectedCreep.Resistances.OnAnyResistanceChanged += OnCreepResistancesChange;
+            selectedCreep.Resistances.OnAnyBlockChanged += OnCreepBlocksChange;
 
-            creep.Attributes.RegisterForOnAttributeChangedCallback(OnCreepArmorChange, CreepAttributeName.armorMultiplier);
-            creep.Attributes.RegisterForOnAttributeChangedCallback(OnCreepArmorChange, CreepAttributeName.rawArmor);
+            selectedCreep.Attributes.GetAttribute(CreepAttributeName.armorMultiplier).OnAttributeChanged += OnCreepArmorChange;
+            selectedCreep.Attributes.GetAttribute(CreepAttributeName.rawArmor).OnAttributeChanged += OnCreepArmorChange;
         }
 
-        private void OnCreepDeselected()
+        private void OnCreepDeselected(object sender, EAOnCreepDeselected args)
         {
             creepDetailsPanel.SetActive(false);
 
@@ -57,34 +57,34 @@ namespace GrimoireTD.Creeps
         {
             if (selectedCreep != null)
             {
-                selectedCreep.Attributes.DeregisterForOnAnyAttributeChangedCallback(OnCreepAttibutesChange);
+                selectedCreep.Attributes.OnAnyAttributeChanged -= OnCreepAttibutesChange;
 
-                selectedCreep.Resistances.DeregisterForOnAnyResistanceChangedCallback(OnCreepResistancesChange);
-                selectedCreep.Resistances.DeregisterForOnAnyBlockChangeCallback(OnCreepBlocksChange);
+                selectedCreep.Resistances.OnAnyResistanceChanged -= OnCreepResistancesChange;
+                selectedCreep.Resistances.OnAnyBlockChanged -= OnCreepBlocksChange;
 
-                selectedCreep.Attributes.DeregisterForOnAttributeChangedCallback(OnCreepArmorChange, CreepAttributeName.armorMultiplier);
-                selectedCreep.Attributes.DeregisterForOnAttributeChangedCallback(OnCreepArmorChange, CreepAttributeName.rawArmor);
+                selectedCreep.Attributes.GetAttribute(CreepAttributeName.armorMultiplier).OnAttributeChanged -= OnCreepArmorChange;
+                selectedCreep.Attributes.GetAttribute(CreepAttributeName.rawArmor).OnAttributeChanged -= OnCreepArmorChange;
             }
 
             selectedCreep = null;
         }
 
-        private void OnCreepAttibutesChange(CreepAttributeName creepAttributeName, float value)
+        private void OnCreepAttibutesChange(object sender, EAOnAnyAttributeChanged<CreepAttributeName> args)
         {
             attributesText.text = GetAttributesText();
         }
 
-        private void OnCreepResistancesChange(ISpecificDamageEffectType damageEffectType, float value)
+        private void OnCreepResistancesChange(object sender, EAOnAnyResistanceChanged args)
         {
             resistancesText.text = GetResistancesText();
         }
 
-        private void OnCreepArmorChange(float value)
+        private void OnCreepArmorChange(object sender, EAOnAttributeChanged args)
         {
             resistancesText.text = GetResistancesText();
         }
 
-        private void OnCreepBlocksChange(ISpecificDamageEffectType damageEffectType, int value)
+        private void OnCreepBlocksChange(object sender, EAOnAnyBlockChanged args)
         {
             blocksText.text = GetBlocksText();
         }
@@ -97,7 +97,7 @@ namespace GrimoireTD.Creeps
             {
                 attributesText += 
                     creepAttributeName.Value + ": " + 
-                    selectedCreep.Attributes.GetAttribute(creepAttributeName.Key) +
+                    selectedCreep.Attributes.GetAttribute(creepAttributeName.Key).Value() +
                     "\n";
             }
 
@@ -113,15 +113,15 @@ namespace GrimoireTD.Creeps
             foreach (IBasicMetaDamageEffectType basicMetaDamageType in GameModels.Models[0].AttackEffectTypeManager.BasicMetaDamageTypes)
             {
                 resistancesText += basicMetaDamageType.ShortName + " -" +
-                    " W: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType.WeakMetaDamageType, currentCreepArmor).ToString("0.0") +
-                    " B: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType, currentCreepArmor).ToString("0.0") +
-                    " S: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType.StrongMetaDamageType, currentCreepArmor).ToString("0.0") +
+                    " W: " + selectedCreep.Resistances.GetResistanceAfterArmor(basicMetaDamageType.WeakMetaDamageType, currentCreepArmor).ToString("0.0") +
+                    " B: " + selectedCreep.Resistances.GetResistanceAfterArmor(basicMetaDamageType, currentCreepArmor).ToString("0.0") +
+                    " S: " + selectedCreep.Resistances.GetResistanceAfterArmor(basicMetaDamageType.StrongMetaDamageType, currentCreepArmor).ToString("0.0") +
                     "\n";
 
                 foreach (ISpecificDamageEffectType specificDamageType in basicMetaDamageType.SpecificDamageTypes)
                 {
-                    float resistanceIncludingArmor = selectedCreep.Resistances.GetResistance(specificDamageType, currentCreepArmor);
-                    float resistanceWithoutArmor = selectedCreep.Resistances.GetResistance(specificDamageType, 0);
+                    float resistanceIncludingArmor = selectedCreep.Resistances.GetResistanceAfterArmor(specificDamageType, currentCreepArmor);
+                    float resistanceWithoutArmor = selectedCreep.Resistances.GetBaseResistance(specificDamageType).Value;
 
                     resistancesText += specificDamageType.ShortName + ": " +
                         resistanceIncludingArmor.ToString("0.0") + " (" +
@@ -141,14 +141,14 @@ namespace GrimoireTD.Creeps
             foreach (IBasicMetaDamageEffectType basicMetaDamageType in GameModels.Models[0].AttackEffectTypeManager.BasicMetaDamageTypes)
             {
                 blocksText += basicMetaDamageType.ShortName + " -" +
-                    " W: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType.WeakMetaDamageType) +
-                    " B: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType) +
-                    " S: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType.StrongMetaDamageType) +
+                    " W: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType.WeakMetaDamageType).Value +
+                    " B: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType).Value +
+                    " S: " + selectedCreep.Resistances.GetBlock(basicMetaDamageType.StrongMetaDamageType).Value +
                     "\n";
 
                 foreach (ISpecificDamageEffectType specificDamageType in basicMetaDamageType.SpecificDamageTypes)
                 {
-                    blocksText += specificDamageType.ShortName + ": " + selectedCreep.Resistances.GetBlock(specificDamageType);
+                    blocksText += specificDamageType.ShortName + ": " + selectedCreep.Resistances.GetBlock(specificDamageType).Value + "\n";
                 }
             }
 

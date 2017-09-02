@@ -30,6 +30,7 @@ namespace GrimoireTD.Abilities.DefendMode
                     attachedToDefendingEntity
                 );
 
+                //TODO: is there a way to make this an event?
                 attachedToDefendingEntity.CreatedProjectile(projectile);
             }
         }

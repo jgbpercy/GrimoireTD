@@ -14,9 +14,9 @@ namespace GrimoireTD.Map
 
         IUnit UnitHere { get; }
 
-        IReadOnlyCollection<IDefenderAura> DefenderAurasHere { get; }
+        IReadOnlyCallbackList<IDefenderAura> DefenderAurasHere { get; }
 
-        //TODO remove as in CHexData
+        //TODO remove (as also noted in CHexData)
         float pathingFScore { get; set; }
         float pathingGScore { get; set; }
         Coord pathingCameFrom { get; set; }
@@ -44,11 +44,5 @@ namespace GrimoireTD.Map
         void RemoveUnitHere();
 
         void AddDefenderAura(IDefenderAura aura);
-
-        void RegisterForOnDefenderAuraAddedCallback(Action<IDefenderAura> callback);
-        void DeregisterForOnDefenderAuraAddedCallback(Action<IDefenderAura> callback);
-
-        void RegisterForOnDefenderAuraRemovedCallback(Action<IDefenderAura> callback);
-        void DeregisterForOnDefenderAuraRemovedCallback(Action<IDefenderAura> callback);
     }
 }

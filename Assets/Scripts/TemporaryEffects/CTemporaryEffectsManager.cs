@@ -15,14 +15,14 @@ namespace GrimoireTD.TemporaryEffects
             }
         }
 
-        private Action<IReadOnlyTemporaryEffect> OnNewTemporaryEffectCallback;
+        public event EventHandler<EAOnNewTemporaryEffect> OnNewTemporaryEffect;
 
         public CTemporaryEffectsManager()
         {
             effectsList = new List<ITemporaryEffect>();
         }
 
-        public void ApplyEffect(object key, float magnitude, float duration, string effectName, Action onApplyCallback, Action onEndCallback)
+        public void ApplyEffect(object key, float magnitude, float duration, string effectName, Action onApplyCallback, EventHandler<EAOnTemporaryEffectEnd> onEndEvent)
         {
             ITemporaryEffect currentEffect = effectsList.Find(x => x.Key == key);
 
@@ -38,13 +38,13 @@ namespace GrimoireTD.TemporaryEffects
 
             onApplyCallback?.Invoke();
 
-            ITemporaryEffect newEffect = new CTemporaryEffect(key, magnitude, duration, effectName, onEndCallback);
+            ITemporaryEffect newEffect = new CTemporaryEffect(key, magnitude, duration, effectName, onEndEvent);
 
             effectsList.Add(newEffect);
 
-            OnNewTemporaryEffectCallback?.Invoke(newEffect);
+            OnNewTemporaryEffect?.Invoke(this, new EAOnNewTemporaryEffect(newEffect));
 
-            newEffect.RegisterForOnEndCallback(() => OnEffectEnd(newEffect));
+            newEffect.OnTemporaryEffectEnd += (object sender, EAOnTemporaryEffectEnd args) => OnEffectEnd(newEffect);
         }
 
         private bool ShouldApplyEffect(float newMagnitude, float newDuration, ITemporaryEffect currentEffect)
@@ -70,16 +70,6 @@ namespace GrimoireTD.TemporaryEffects
         private void OnEffectEnd(ITemporaryEffect effect)
         {
             effectsList.Remove(effect);
-        }
-
-        public void RegisterForOnNewTemporaryEffectCallback(Action<IReadOnlyTemporaryEffect> callback)
-        {
-            OnNewTemporaryEffectCallback += callback;
-        }
-
-        public void DeregisterForOnNewTemporaryEffectCallback(Action<IReadOnlyTemporaryEffect> callback)
-        {
-            OnNewTemporaryEffectCallback -= callback;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         {
             this.projectileModel = projectileModel;
 
-            projectileModel.RegisterForOnDestroyCallback((waitSeconds) => { Destroy(gameObject, waitSeconds); });
+            projectileModel.OnDestroyProjectile += OnProjectileDestroyed;
         }
 
         private void Start()
@@ -45,7 +45,13 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         private void OnDestroy()
         {
+            projectileModel.OnDestroyProjectile -= OnProjectileDestroyed;
             projectileModel.GameObjectDestroyed();
+        }
+
+        private void OnProjectileDestroyed(object sender, EAOnDestroyProjectile args)
+        {
+            Destroy(gameObject, args.WaitSeconds);
         }
     }
 }

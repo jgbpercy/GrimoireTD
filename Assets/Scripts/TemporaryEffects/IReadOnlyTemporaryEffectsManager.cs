@@ -7,8 +7,6 @@ namespace GrimoireTD.TemporaryEffects
     {
         IReadOnlyList<IReadOnlyTemporaryEffect> EffectList { get; }
 
-        void RegisterForOnNewTemporaryEffectCallback(Action<IReadOnlyTemporaryEffect> callback);
-
-        void DeregisterForOnNewTemporaryEffectCallback(Action<IReadOnlyTemporaryEffect> callback);
+        event EventHandler<EAOnNewTemporaryEffect> OnNewTemporaryEffect;
     }
 }

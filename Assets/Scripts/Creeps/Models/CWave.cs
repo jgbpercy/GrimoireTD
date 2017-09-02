@@ -6,8 +6,6 @@ namespace GrimoireTD.Creeps
     {
         private SortedList<float, ICreepTemplate> spawns;
 
-        private bool debugOn;
-
         public IReadOnlyDictionary<float, ICreepTemplate> Spawns
         {
             get
@@ -42,7 +40,7 @@ namespace GrimoireTD.Creeps
         /* REMEMBER that timings are in the serialised UI object as offset from previous (e.g. 0.25, 0.25, 0.25 etc)
          * BUT they are in the model data as timings into the wave (e.g. 0.25, 0.5, 0.75)
          * This makes the entry more maintainable (you don't have to update all subsequent entries when changing one near the start)
-         * And make the model data make sense because you want unique timings in a sorted list
+         * And make the model data make sense because you want unique timings in the sorted list
          */
         public float NextSpawnTime()
         {

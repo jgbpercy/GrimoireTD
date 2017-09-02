@@ -1,11 +1,7 @@
 ﻿namespace GrimoireTD.Attributes
 {
-    public interface IAttribute
+    public interface IAttribute : IReadOnlyAttribute
     {
-        string DisplayName { get; }
-
-        float Value();
-
         void AddModifier(IAttributeModifier modifier);
 
         bool TryRemoveModifier(IAttributeModifier modifier);

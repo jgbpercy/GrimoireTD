@@ -15,7 +15,7 @@ namespace GrimoireTD.TemporaryEffects
 
         public string EffectName { get; }
 
-        private Action OnEndCallback;
+        public event EventHandler<EAOnTemporaryEffectEnd> OnTemporaryEffectEnd;
 
         public float TimeRemaining
         {
@@ -25,14 +25,14 @@ namespace GrimoireTD.TemporaryEffects
             }
         }
         
-        public CTemporaryEffect(object key, float magnitude, float duration, string effectName, Action onEndCallback)
+        public CTemporaryEffect(object key, float magnitude, float duration, string effectName, EventHandler<EAOnTemporaryEffectEnd> onEndEvent)
         {
             Key = key;
             Magnitude = magnitude;
             Duration = duration;
             Elapsed = 0f;
             EffectName = effectName;
-            OnEndCallback = onEndCallback;
+            OnTemporaryEffectEnd = onEndEvent;
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
         }
@@ -43,23 +43,13 @@ namespace GrimoireTD.TemporaryEffects
 
             if (Elapsed > Duration)
             {
-                OnEndCallback?.Invoke();
+                OnTemporaryEffectEnd?.Invoke(this, new EAOnTemporaryEffectEnd(this));
             }
         }
         
         public void EndNow()
         {
-            OnEndCallback?.Invoke();
-        }
-
-        public void RegisterForOnEndCallback(Action callback)
-        {
-            OnEndCallback += callback;
-        }
-
-        public void DeregisterForOnEndCallback(Action callback)
-        {
-            OnEndCallback -= callback;
+            OnTemporaryEffectEnd?.Invoke(this, new EAOnTemporaryEffectEnd(this));
         }
     }
 }

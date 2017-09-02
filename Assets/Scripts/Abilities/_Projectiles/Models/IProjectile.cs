@@ -12,14 +12,12 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         Vector3 Position { get; }
 
+        event EventHandler<EAOnDestroyProjectile> OnDestroyProjectile;
+
         void HitCreep(ICreep creep, float destructionDelay);
 
         void ModelObjectFrameUpdate();
 
         void GameObjectDestroyed();
-
-        void RegisterForOnDestroyCallback(Action<float> callback);
-
-        void DeregisterForOnDestroyCallback(Action<float> callback);
     }
 }

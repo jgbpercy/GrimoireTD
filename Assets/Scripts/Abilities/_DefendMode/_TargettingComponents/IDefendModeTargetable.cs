@@ -11,7 +11,6 @@ namespace GrimoireTD.Abilities.DefendMode
 
         Vector3 TargetPosition();
 
-        void RegisterForOnDiedCallback(Action callback);
-        void DeregisterForOnDiedCallback(Action callback);
+        event EventHandler OnDied;
     }
 }

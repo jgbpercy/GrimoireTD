@@ -6,10 +6,11 @@ using GrimoireTD.Attributes;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Abilities.DefendMode;
+using GrimoireTD.Technical;
 
 namespace GrimoireTD.Creeps
 {
-    public interface ICreep : IDefendModeTargetable
+    public interface ICreep : IDefendModeTargetable, IFrameUpdatee
     {
         ICreepTemplate CreepTemplate { get; }
 
@@ -27,13 +28,11 @@ namespace GrimoireTD.Creeps
 
         float CurrentArmor { get; }
         float CurrentSpeed { get; }
+        
+        event EventHandler<EAOnHealthChanged> OnHealthChanged;
 
         void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefendingEntity sourceDefendingEntity);
 
-        void ModelObjectFrameUpdate();
         void GameObjectDestroyed();
-
-        void RegisterForOnHealthChangedCallback(Action callback);
-        void DeregisterForOnHealthChangedCallback(Action callback);
     }
 }

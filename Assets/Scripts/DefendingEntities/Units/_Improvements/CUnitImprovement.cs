@@ -8,25 +8,9 @@ namespace GrimoireTD.DefendingEntities.Units
 {
     public class CUnitImprovement : CDefendingEntityImprovement, IUnitImprovement
     {
-        private IHexOccupationBonus[] conditionalHexOccupationBonuses;
+        public IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses { get; }
 
-        private IStructureOccupationBonus[] conditionalStructureOccupationBonuses;
-
-        public IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses
-        {
-            get
-            {
-                return conditionalHexOccupationBonuses;
-            }
-        }
-
-        public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses
-        {
-            get
-            {
-                return conditionalStructureOccupationBonuses;
-            }
-        }
+        public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
 
         public CUnitImprovement(
             ICollection<INamedAttributeModifier<DefendingEntityAttributeName>> attributeModifiers,
@@ -38,11 +22,14 @@ namespace GrimoireTD.DefendingEntities.Units
             )
             : base(attributeModifiers, flatHexOccupationBonuses, abilities, auras)
         {
-            this.conditionalHexOccupationBonuses = new IHexOccupationBonus[conditionalHexOccupationBonuses.Count];
-            this.conditionalStructureOccupationBonuses = new IStructureOccupationBonus[conditionalStructureOccupationBonuses.Count];
+            var tempConditionalHexOccupationBonuses = new IHexOccupationBonus[conditionalHexOccupationBonuses.Count];
+            var tempConditionalStructureOccupationBonuses = new IStructureOccupationBonus[conditionalStructureOccupationBonuses.Count];
 
-            conditionalHexOccupationBonuses.CopyTo(this.conditionalHexOccupationBonuses, 0);
-            conditionalStructureOccupationBonuses.CopyTo(this.conditionalStructureOccupationBonuses, 0);
+            conditionalHexOccupationBonuses.CopyTo(tempConditionalHexOccupationBonuses, 0);
+            conditionalStructureOccupationBonuses.CopyTo(tempConditionalStructureOccupationBonuses, 0);
+
+            ConditionalHexOccupationBonuses = tempConditionalHexOccupationBonuses;
+            ConditionalStructureOccupationBonuses = tempConditionalStructureOccupationBonuses;
         }
     }
 }

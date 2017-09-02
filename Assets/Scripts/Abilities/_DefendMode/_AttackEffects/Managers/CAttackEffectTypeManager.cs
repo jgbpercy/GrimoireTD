@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
     public class CAttackEffectTypeManager : IAttackEffectTypeManager
     {
-        [SerializeField]
-        private SoAttackEffectType[] attackEffectTypes;
-
         private Dictionary<IMetaDamageEffectType, List<ISpecificDamageEffectType>> metaToSpecificDictionary = new Dictionary<IMetaDamageEffectType, List<ISpecificDamageEffectType>>();
 
         private Dictionary<ISpecificDamageEffectType, IWeakMetaDamageEffectType> specificToWeakDictionary = new Dictionary<ISpecificDamageEffectType, IWeakMetaDamageEffectType>();

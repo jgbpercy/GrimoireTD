@@ -2,32 +2,24 @@
 {
     public class CTimedDefenderEffect : CDefenderEffect, ITimedDefenderEffect
     {
-        private ITimedDefenderEffectTemplate timedDefenderEffectTemplate;
-
-        public ITimedDefenderEffectTemplate TimedDefenderEffectTemplate
-        {
-            get
-            {
-                return timedDefenderEffectTemplate;
-            }
-        }
+        public ITimedDefenderEffectTemplate TimedDefenderEffectTemplate { get; }
 
         public float Duration
         {
             get
             {
-                return timedDefenderEffectTemplate.BaseDuration;
+                return TimedDefenderEffectTemplate.BaseDuration;
             }
         }
 
         public CTimedDefenderEffect(ITimedDefenderEffectTemplate timedDefenderEffectTemplate) : base(timedDefenderEffectTemplate)
         {
-            this.timedDefenderEffectTemplate = timedDefenderEffectTemplate;
+            this.TimedDefenderEffectTemplate = timedDefenderEffectTemplate;
         }
 
         public override string UIText()
         {
-            return timedDefenderEffectTemplate.NameInGame;
+            return TimedDefenderEffectTemplate.NameInGame;
         }
     }
 }

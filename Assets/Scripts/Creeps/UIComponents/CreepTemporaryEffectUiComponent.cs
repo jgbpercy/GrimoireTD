@@ -22,7 +22,7 @@ namespace GrimoireTD.Creeps
 
             ownSlider.maxValue = temporaryEffect.Duration;
 
-            temporaryEffect.RegisterForOnEndCallback(OnEffectEnd);
+            temporaryEffect.OnTemporaryEffectEnd += OnEffectEnd;
 
             return this;
         }
@@ -42,10 +42,10 @@ namespace GrimoireTD.Creeps
         {
             OnDestroyCallback?.Invoke();
 
-            temporaryEffect.DeregisterForOnEndCallback(OnEffectEnd);
+            temporaryEffect.OnTemporaryEffectEnd -= OnEffectEnd;
         }
 
-        private void OnEffectEnd()
+        private void OnEffectEnd(object sender, EAOnTemporaryEffectEnd args)
         {
             Destroy(gameObject);
         }

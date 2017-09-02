@@ -17,11 +17,16 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             aoeProjectileModel = projectileModel as IAoeProjectile;
             Assert.IsNotNull(aoeProjectileModel);
 
-            aoeProjectileModel.RegisterForOnExplosionCallback(() => { isExploding = true; });
-            aoeProjectileModel.RegisterForOnExplosionFinishedCallback(OnExplosionFinished);
+            aoeProjectileModel.OnExplosionStarted += OnExplosionStarted;
+            aoeProjectileModel.OnExplosionFinished += OnExplosionFinished;
         }
 
-        private void OnExplosionFinished()
+        private void OnExplosionStarted(object sender, EAOnExplosionStarted args)
+        {
+            isExploding = true;
+        }
+
+        private void OnExplosionFinished(object sender, EAOnExplosionFinished args)
         {
             if (ownCollider != null)
             {

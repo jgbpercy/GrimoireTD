@@ -18,10 +18,10 @@ namespace GrimoireTD.Economy
 
             economyManager = GameModels.Models[0].EconomyManager;
 
-            economyManager.RegisterForOnAnyResourceChangedCallback(OnResourceValueChange);
+            economyManager.OnAnyResourceChanged += OnResourceValueChange;
         }
 
-        private void OnResourceValueChange(IResource changedResource, int byAmount, int newAmount)
+        private void OnResourceValueChange(object sender, EAOnAnyResourceChanged args)
         {
             resourceUIText.text = economyManager.ResourcesAsTransaction.ToString(EconomyTransactionStringFormat.FullNameLineBreaks, false);
         }

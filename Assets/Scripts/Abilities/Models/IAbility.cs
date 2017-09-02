@@ -2,7 +2,7 @@
 {
     public interface IAbility
     {
-        IAbilityTemplate Template { get; }
+        IAbilityTemplate AbilityTemplate { get; }
 
         string UIText();
     }

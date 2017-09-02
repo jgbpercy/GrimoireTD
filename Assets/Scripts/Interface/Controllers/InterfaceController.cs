@@ -31,21 +31,12 @@ namespace GrimoireTD.UI
         [SerializeField]
         private float maxRayFromCameraDistance = 100f;
 
-        private InterfaceCursorMode cursorMode = InterfaceCursorMode.SELECT;
-
         private IStructureTemplate selectedStructureTemplate;
 
-        private IStructure selectedStructureInstance = null;
-        private IUnit selectedUnitInstance = null;
-
-        private IPlayerTargetedComponent selectedBuildModeAbilityTargetingComponent = null;
         private IBuildModeAbility selectedBuildModeAbility = null;
 
         private Ray cameraToMouseRay;
         private RaycastHit mouseHit;
-
-        private Coord mouseOverCoord;
-        private IHexData mouseOverHex;
 
         private ICreep mouseOverCreep;
 
@@ -54,65 +45,35 @@ namespace GrimoireTD.UI
         private IReadOnlyMapData mapData;
         private IReadOnlyGameStateManager gameStateManager;
 
-        private Action<IStructure, IUnit> OnDefendingEntitySelectedCallback;
-        private Action OnDefendingEntityDeselectedCallback;
+        public InterfaceCursorMode CurrentCursorMode { get; private set; }
 
-        private Action<IStructureTemplate> OnStructureToBuildSelectedCallback;
-        private Action OnStructureToBuildDeselectedCallback;
+        public IHexData MouseOverHex { get; private set; }
+        public Coord MouseOverCoord { get; private set; }
 
-        private Action<ICreep> OnCreepSelectedCallback;
-        private Action OnCreepDeselectedCallback;
+        public IPlayerTargetedComponent SelectedBuildModeAbilityTargetingComponent { get; private set; }
 
-        private Action OnEnterDefendModeUserAction;
+        public IUnit SelectedUnitInstance { get; private set; }
+        public IStructure SelectedStructureInstance { get; private set; }
 
-        private Action<Coord, IUnitTemplate> OnCreateUnitUserAction;
-        private Action<Coord, IStructureTemplate> OnBuildStructureUserAction;
+        public event EventHandler<EAOnDefendingEntitySelected> OnDefendingEntitySelected;
+        public event EventHandler<EAOnDefendingEntityDeselected> OnDefendingEntityDeselected;
+
+        public event EventHandler<EAOnStructureToBuildSelected> OnStructureToBuildSelected;
+        public event EventHandler<EAOnStructureToBuildDeselected> OnStructureToBuildDeselected;
+
+        public event EventHandler<EAOnCreepSelected> OnCreepSelected;
+        public event EventHandler<EAOnCreepDeselected> OnCreepDeselected;
+
+        public event EventHandler<EAOnEnterDefendModePlayerAction> OnEnterDefendModePlayerAction;
+
+        public event EventHandler<EAOnCreateUnitPlayerAction> OnCreateUnitPlayerAction;
+        public event EventHandler<EAOnBuildStructurePlayerAction> OnBuildStructurePlayerAction;
 
         public bool MouseRaycastHitMap
         {
             get
             {
-                return mouseOverCoord != null;
-            }
-        }
-
-        public InterfaceCursorMode CurrentCursorMode
-        {
-            get
-            {
-                return cursorMode;
-            }
-        }
-
-        public IHexData MouseOverHex
-        {
-            get
-            {
-                return mouseOverHex;
-            }
-        }
-
-        public Coord MouseOverCoord
-        {
-            get
-            {
-                return mouseOverCoord;
-            }
-        }
-
-        public IPlayerTargetedComponent SelectedBuildModeAbilityTargetingComponent
-        {
-            get
-            {
-                return selectedBuildModeAbilityTargetingComponent;
-            }
-        }
-
-        public IUnit SelectedUnitInstance
-        {
-            get
-            {
-                return selectedUnitInstance;
+                return MouseOverCoord != null;
             }
         }
 
@@ -120,16 +81,13 @@ namespace GrimoireTD.UI
         {
             get
             {
-                return mapData.WhereAmI(selectedUnitInstance);
+                return mapData.WhereAmI(SelectedUnitInstance);
             }
         }
 
-        public IStructure SelectedStructureInstance
+        private void Awake()
         {
-            get
-            {
-                return selectedStructureInstance;
-            }
+            CurrentCursorMode = InterfaceCursorMode.SELECT;
         }
 
         private void Start()
@@ -150,14 +108,14 @@ namespace GrimoireTD.UI
             //default cursor mode
             SetCursorModeSelect();
 
-            gameStateManager.RegisterForOnEnterBuildModeCallback(OnEnterBuildMode);
-            gameStateManager.RegisterForOnEnterDefendModeCallback(OnEnterDefendMode);
+            gameStateManager.OnEnterBuildMode += OnEnterBuildMode;
+            gameStateManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void Update()
         {
-            mouseOverCoord = null;
-            mouseOverHex = null;
+            MouseOverCoord = null;
+            MouseOverHex = null;
             mouseOverCreep = null;
 
             InterfaceControllerRaycast();
@@ -192,8 +150,8 @@ namespace GrimoireTD.UI
 
             if (mouseHit.transform.CompareTag("TileMap"))
             {
-                mouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHit.point.x, mouseHit.point.y, 0f));
-                mouseOverHex = mapData.GetHexAt(mouseOverCoord);
+                MouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHit.point.x, mouseHit.point.y, 0f));
+                MouseOverHex = mapData.GetHexAt(MouseOverCoord);
                 return;
             }
 
@@ -209,12 +167,12 @@ namespace GrimoireTD.UI
 
         private void HandleMouseClick()
         {
-            if (mouseOverCoord == null && mouseOverCreep == null)
+            if (MouseOverCoord == null && mouseOverCreep == null)
             {
                 return;
             }
 
-            if (cursorMode == InterfaceCursorMode.SELECT && mouseOverCreep != null)
+            if (CurrentCursorMode == InterfaceCursorMode.SELECT && mouseOverCreep != null)
             {
                 SelectCreep(mouseOverCreep);
                 DeselectDefendingEntities();
@@ -222,37 +180,37 @@ namespace GrimoireTD.UI
             }
 
             if (
-                cursorMode == InterfaceCursorMode.SELECT &&
-                (mouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null)
+                CurrentCursorMode == InterfaceCursorMode.SELECT &&
+                (MouseOverHex.StructureHere != null || MouseOverHex.UnitHere != null)
             )
             {
-                SelectHexContents(mouseOverHex);
+                SelectHexContents(MouseOverHex);
                 DeselectCreep();
                 return;
             }
-            else if (cursorMode == InterfaceCursorMode.SELECT)
+            else if (CurrentCursorMode == InterfaceCursorMode.SELECT)
             {
                 DeselectDefendingEntities();
                 DeselectCreep();
             }
 
-            if (cursorMode == InterfaceCursorMode.BUILD && mapData.CanBuildStructureAt(mouseOverCoord))
+            if (CurrentCursorMode == InterfaceCursorMode.BUILD && mapData.CanBuildStructureAt(MouseOverCoord))
             {
-                OnBuildStructureUserAction?.Invoke(mouseOverCoord, selectedStructureTemplate);
+                OnBuildStructurePlayerAction?.Invoke(this, new EAOnBuildStructurePlayerAction(MouseOverCoord, selectedStructureTemplate));
             }
 
             if (
-                cursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY &&
-                selectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, mouseOverCoord)
+                CurrentCursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY &&
+                SelectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, MouseOverCoord)
             )
             {
                 CDebug.Log(CDebug.buildModeAbilities, "InterfaceController detected hex targeted build mode ability click");
 
-                selectedBuildModeAbility.ExecuteAbility(selectedUnitInstance, mouseOverCoord);
+                selectedBuildModeAbility.ExecuteAbility(SelectedUnitInstance, MouseOverCoord);
 
                 SetCursorModeSelect();
 
-                SelectHexContents(mouseOverHex);
+                SelectHexContents(MouseOverHex);
             }
 
         }
@@ -261,15 +219,15 @@ namespace GrimoireTD.UI
         {
             CDebug.Log(CDebug.gameState, "Interface Controller registered defend button click");
 
-            OnEnterDefendModeUserAction?.Invoke();
+            OnEnterDefendModePlayerAction?.Invoke(this, new EAOnEnterDefendModePlayerAction());
         }
 
-        private void OnEnterBuildMode()
+        private void OnEnterBuildMode(object sender, EAOnEnterBuildMode args)
         {
             SetCursorModeSelect();
         }
 
-        private void OnEnterDefendMode()
+        private void OnEnterDefendMode(object sender, EAOnEnterDefendMode args)
         {
             SetCursorModeSelect();
         }
@@ -285,48 +243,48 @@ namespace GrimoireTD.UI
 
             this.selectedStructureTemplate = selectedStructureTemplate;
 
-            OnStructureToBuildSelectedCallback?.Invoke(selectedStructureTemplate);
+            OnStructureToBuildSelected?.Invoke(this, new EAOnStructureToBuildSelected(selectedStructureTemplate));
         }
 
         private void SelectHexContents(IHexData hex)
         {
-            selectedStructureInstance = hex.StructureHere;
-            selectedUnitInstance = hex.UnitHere;
+            SelectedStructureInstance = hex.StructureHere;
+            SelectedUnitInstance = hex.UnitHere;
 
-            OnDefendingEntitySelectedCallback?.Invoke(selectedStructureInstance, selectedUnitInstance);
+            OnDefendingEntitySelected?.Invoke(this, new EAOnDefendingEntitySelected(SelectedStructureInstance, SelectedUnitInstance));
         }
 
         private void DeselectDefendingEntities()
         {
-            selectedStructureInstance = null;
-            selectedUnitInstance = null;
+            SelectedStructureInstance = null;
+            SelectedUnitInstance = null;
             selectedStructureTemplate = null;
 
-            OnDefendingEntityDeselectedCallback?.Invoke();
+            OnDefendingEntityDeselected?.Invoke(this, new EAOnDefendingEntityDeselected());
 
-            OnStructureToBuildDeselectedCallback?.Invoke();
+            OnStructureToBuildDeselected?.Invoke(this, new EAOnStructureToBuildDeselected());
         }
 
         private void SelectCreep(ICreep creep)
         {
-            OnCreepSelectedCallback?.Invoke(creep);
+            OnCreepSelected?.Invoke(this, new EAOnCreepSelected(creep));
         }
 
         private void DeselectCreep()
         {
-            OnCreepDeselectedCallback?.Invoke();
+            OnCreepDeselected?.Invoke(this, new EAOnCreepDeselected());
         }
 
         private void SetCursorModeBuild()
         {
             DeselectDefendingEntities();
 
-            cursorMode = InterfaceCursorMode.BUILD;
+            CurrentCursorMode = InterfaceCursorMode.BUILD;
         }
 
         private void SetCursorModeSelect()
         {
-            cursorMode = InterfaceCursorMode.SELECT;
+            CurrentCursorMode = InterfaceCursorMode.SELECT;
         }
 
         public void ActivateBuildModeAbility(IBuildModeAbility abilityToActivate)
@@ -341,17 +299,17 @@ namespace GrimoireTD.UI
             {
                 CDebug.Log(CDebug.buildModeAbilities, "Player Targeted ability activated");
 
-                cursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
+                CurrentCursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
 
-                selectedBuildModeAbilityTargetingComponent = playerTargetedComponent;
+                SelectedBuildModeAbilityTargetingComponent = playerTargetedComponent;
                 selectedBuildModeAbility = abilityToActivate;
 
-                //TODO: optimisation: only do for a movement ability?
-                selectedUnitInstance.RegenerateCachedDisallowedMovementDestinations();
+                //TODO: optimisation: only do for a movement ability? Also, make an event/callback?
+                SelectedUnitInstance.RegenerateCachedDisallowedMovementDestinations();
             }
             else
             {
-                abilityToActivate.ExecuteAbility(selectedUnitInstance, selectedUnitInstance.CoordPosition);
+                abilityToActivate.ExecuteAbility(SelectedUnitInstance, SelectedUnitInstance.CoordPosition);
 
                 SetCursorModeSelect();
             }
@@ -370,96 +328,6 @@ namespace GrimoireTD.UI
         public void ClickStructureEnhancement(IStructure structure, IStructureUpgrade upgrade, IStructureEnhancement enhancement)
         {
             structure.TryUpgrade(upgrade, enhancement);
-        }
-
-        public void RegisterForOnDefendingEntitySelectedCallback(Action<IStructure, IUnit> callback)
-        {
-            OnDefendingEntitySelectedCallback += callback;
-        }
-
-        public void DeregisterForOnDefendingEntitySelectedCallback(Action<IStructure, IUnit> callback)
-        {
-            OnDefendingEntitySelectedCallback -= callback;
-        }
-
-        public void RegisterForOnDefendingEntityDeselectedCallback(Action callback)
-        {
-            OnDefendingEntityDeselectedCallback += callback;
-        }
-
-        public void DeregisterForOnDefendingEntityDeselectedCallback(Action callback)
-        {
-            OnDefendingEntityDeselectedCallback -= callback;
-        }
-
-        public void RegisterForOnStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
-        {
-            OnStructureToBuildSelectedCallback += callback;
-        }
-
-        public void DeregisterForStructureToBuildSelectedCallback(Action<IStructureTemplate> callback)
-        {
-            OnStructureToBuildSelectedCallback -= callback;
-        }
-
-        public void RegisterForOnStructureToBuildDeselectedCallback(Action callback)
-        {
-            OnStructureToBuildDeselectedCallback += callback;
-        }
-
-        public void DeregisterForOnStructureToBuildDeselectedCallback(Action callback)
-        {
-            OnStructureToBuildDeselectedCallback -= callback;
-        }
-
-        public void RegisterForOnCreepSelectedCallback(Action<ICreep> callback)
-        {
-            OnCreepSelectedCallback += callback;
-        }
-
-        public void DeregisterForOnCreepSelectedCallback(Action<ICreep> callback)
-        {
-            OnCreepSelectedCallback -= callback;
-        }
-
-        public void RegisterForOnCreepDeselectedCallback(Action callback)
-        {
-            OnCreepDeselectedCallback += callback;
-        }
-
-        public void DeregisterForOnCreepDeselectedCallback(Action callback)
-        {
-            OnCreepDeselectedCallback -= callback;
-        }
-
-        public void RegisterForOnEnterDefendModeUserAction(Action callback)
-        {
-            OnEnterDefendModeUserAction += callback;
-        }
-
-        public void DeregisterForOnEnterDefendModeUserAction(Action callback)
-        {
-            OnEnterDefendModeUserAction -= callback;
-        }
-
-        public void RegisterForOnCreateUnitUserAction(Action<Coord, IUnitTemplate>  callback)
-        {
-            OnCreateUnitUserAction += callback;
-        }
-
-        public void DeregisterForOnCreateUnitUserAction(Action<Coord, IUnitTemplate> callback)
-        {
-            OnCreateUnitUserAction -= callback;
-        }
-
-        public void RegisterForOnBuildStructureUserAction(Action<Coord, IStructureTemplate> callback)
-        {
-            OnBuildStructureUserAction += callback;
-        }
-
-        public void DeregisterForOnBuildStructureUserAction(Action<Coord, IStructureTemplate> callback)
-        {
-            OnBuildStructureUserAction -= callback;
         }
     }
 }

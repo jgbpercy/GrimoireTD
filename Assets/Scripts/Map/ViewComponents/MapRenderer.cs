@@ -42,12 +42,12 @@ namespace GrimoireTD.Map
 
             mapData = GameModels.Models[0].MapData;
 
-            mapData.RegisterForOnMapCreatedCallback(InitialiseMap);
+            mapData.OnMapCreated += InitialiseMap;
 
             //TODO subscribe to map change events (TODO have map change events!)            
         }
 
-        private void InitialiseMap()
+        private void InitialiseMap(object sender, EAOnMapCreated args)
         {
             Mesh mapMesh = new Mesh();
 

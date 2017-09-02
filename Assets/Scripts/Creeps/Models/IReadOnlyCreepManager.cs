@@ -8,10 +8,8 @@ namespace GrimoireTD.Creeps
     {
         IDefendModeTargetable CreepInRangeNearestToEnd(Vector3 fromPosition, float range);
 
-        void RegisterForOnWaveIsOverCallback(Action callback);
-        void DeregisterForOnWaveIsOverCallback(Action callback);
+        event EventHandler<EAOnWaveOver> OnWaveOver;
 
-        void RegisterForCreepSpawnedCallback(Action<ICreep> callback);
-        void DeregisterForCreepSpawnedCallback(Action<ICreep> callback);
+        event EventHandler<EAOnCreepSpawned> OnCreepSpawned;
     }
 }

@@ -32,7 +32,7 @@ namespace GrimoireTD.Map
         private DefendingEntityGraphicsMapping[] defendingEntityGraphicsMappings;
 
         [SerializeField]
-        private ProjectileGraphicsMapping[] projectileGraphicsMappings;
+        private SProjectileGraphicsMapping[] projectileGraphicsMappings;
 
         [SerializeField]
         private CreepGraphicsMapping[] creepGraphicsMappings;
@@ -76,7 +76,7 @@ namespace GrimoireTD.Map
             }
 
             projectilePrefabs = new Dictionary<IProjectileTemplate, GameObject>();
-            foreach (ProjectileGraphicsMapping mapping in projectileGraphicsMappings)
+            foreach (SProjectileGraphicsMapping mapping in projectileGraphicsMappings)
             {
                 projectilePrefabs.Add(mapping.ProjectileTemplate, mapping.Prefab);
             }
@@ -95,69 +95,69 @@ namespace GrimoireTD.Map
             mapData = GameModels.Models[0].MapData;
             creepManager = GameModels.Models[0].CreepManager;
 
-            mapData.RegisterForOnStructureCreatedCallback(CreateStructure);
-            mapData.RegisterForOnUnitCreatedCallback(CreateUnit);
+            mapData.OnStructureCreated += OnStructureCreated;
+            mapData.OnUnitCreated += OnUnitCreated;
 
-            creepManager.RegisterForCreepSpawnedCallback(CreateCreep);
+            creepManager.OnCreepSpawned += OnCreepSpawned;
         }
 
-        private void CreateStructure(IStructure structureModel, Coord coord)
+        private void OnStructureCreated(object sender, EAOnStructureCreated args)
         {
             StructureComponent structureComponent = Instantiate
             (
-                defendingEntityPrefabs[structureModel.DefendingEntityTemplate], 
-                coord.ToPositionVector(), 
+                defendingEntityPrefabs[args.StructureCreated.DefendingEntityTemplate], 
+                args.Position.ToPositionVector(), 
                 Quaternion.identity, 
                 structureFolder
             )   
                 .GetComponent<StructureComponent>();
 
-            structureComponent.SetUp(structureModel);
+            structureComponent.SetUp(args.StructureCreated);
 
-            structureModel.RegisterForOnProjectileCreatedCallback(CreateProjectile);
+            args.StructureCreated.OnProjectileCreated += OnProjectileCreated;
         }
 
-        private void CreateUnit(IUnit unitModel, Coord coord)
+        private void OnUnitCreated(object sender, EAOnUnitCreated args)
         {
             UnitComponent unitComponent = Instantiate
             (
-                defendingEntityPrefabs[unitModel.DefendingEntityTemplate], 
-                coord.ToPositionVector(), 
+                defendingEntityPrefabs[args.UnitCreated.DefendingEntityTemplate], 
+                args.Position.ToPositionVector(), 
                 Quaternion.identity, unitFolder
             )
                 .GetComponent<UnitComponent>();
 
-            unitComponent.SetUp(unitModel);
+            unitComponent.SetUp(args.UnitCreated);
 
-            unitModel.RegisterForOnProjectileCreatedCallback(CreateProjectile);
+            args.UnitCreated.OnProjectileCreated += OnProjectileCreated;
         }
 
-        private void CreateCreep(ICreep creepModel)
+        private void OnCreepSpawned(object sender, EAOnCreepSpawned args)
         {
             CreepComponent creepComponent = Instantiate
             (
-                creepPrefabs[creepModel.CreepTemplate], 
-                creepModel.Position, 
+                creepPrefabs[args.NewCreep.CreepTemplate], 
+                args.NewCreep.Position, 
                 Quaternion.identity, 
                 creepFolder
             )
                 .GetComponent<CreepComponent>();
 
-            creepComponent.SetUp(creepModel);
+            creepComponent.SetUp(args.NewCreep);
         }
 
-        public void CreateProjectile(IProjectile projectileModel)
+        public void OnProjectileCreated(object sender, EAOnProjectileCreated args)
         {
             ProjectileComponent projectileController = Instantiate
             (
-                projectilePrefabs[projectileModel.ProjectileTemplate], 
-                projectileModel.Position, 
+                projectilePrefabs[args.Projectile.ProjectileTemplate],
+                args.Projectile.Position, 
                 Quaternion.identity, 
                 projectileFolder
             )
                 .GetComponent<ProjectileComponent>();
 
-            projectileController.SetUp(projectileModel);
+            projectileController.SetUp(args.Projectile);
         }
     }
 }

@@ -11,34 +11,18 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         private int id;
 
-        private float timeSinceExecuted;
-        private float actualCooldown;
+        public IDefendModeAbilityTemplate DefendModeAbilityTemplate { get; }
 
-        private IDefendModeAbilityTemplate defendModeAbilityTemplate;
+        public float TimeSinceExecuted { get; private set; }
+        public float ActualCooldown { get; private set; }
 
         private IDefendingEntity attachedToDefendingEntity;
-
-        public float TimeSinceExecuted
-        {
-            get
-            {
-                return timeSinceExecuted;
-            }
-        }
 
         public float TimeSinceExecutedClamped
         {
             get
             {
-                return Mathf.Clamp(timeSinceExecuted, 0f, actualCooldown);
-            }
-        }
-
-        public float ActualCooldown
-        {
-            get
-            {
-                return actualCooldown;
+                return Mathf.Clamp(TimeSinceExecuted, 0f, ActualCooldown);
             }
         }
 
@@ -46,7 +30,7 @@ namespace GrimoireTD.Abilities.DefendMode
         {
             get
             {
-                return Mathf.Clamp(timeSinceExecuted / actualCooldown, 0f, 1f);
+                return Mathf.Clamp(TimeSinceExecuted / ActualCooldown, 0f, 1f);
             }
         }
 
@@ -58,55 +42,47 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public IDefendModeAbilityTemplate DefendModeAbilityTemplate
-        {
-            get
-            {
-                return defendModeAbilityTemplate;
-            }
-        }
-
         public CDefendModeAbility(IDefendModeAbilityTemplate template, IDefendingEntity attachedToDefendingEntity) : base(template)
         {
             id = IdGen.GetNextId();
 
-            timeSinceExecuted = 0f;
-            defendModeAbilityTemplate = template;
+            TimeSinceExecuted = 0f;
+            DefendModeAbilityTemplate = template;
 
             this.attachedToDefendingEntity = attachedToDefendingEntity;
 
-            actualCooldown = GetActualCooldown();
+            ActualCooldown = GetActualCooldown();
 
-            attachedToDefendingEntity.Attributes.RegisterForOnAttributeChangedCallback(OnAttachedDefendingEntityCooldownReductionChange, DefendingEntityAttributeName.cooldownReduction);
+            attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).OnAttributeChanged += OnAttachedDefendingEntityCooldownReductionChange;
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
         }
 
         public override string UIText()
         {
-            return defendModeAbilityTemplate.NameInGame;
+            return DefendModeAbilityTemplate.NameInGame;
         }
 
         public bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity)
         {
-            IReadOnlyList<IDefendModeTargetable> targetList = defendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity);
+            IReadOnlyList<IDefendModeTargetable> targetList = DefendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity);
 
             if (targetList == null) { return false; }
 
-            defendModeAbilityTemplate.EffectComponent.ExecuteEffect(attachedToDefendingEntity, targetList);
+            DefendModeAbilityTemplate.EffectComponent.ExecuteEffect(attachedToDefendingEntity, targetList);
             return true;
         }
 
         private float GetActualCooldown()
         {
-            float cooldown = GetCooldownAfterReduction(attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction));
+            float cooldown = GetCooldownAfterReduction(attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).Value());
 
             CDebug.Log(CDebug.unitAttributes, 
                 Id + 
-                " (" + defendModeAbilityTemplate.NameInGame + ") " + 
+                " (" + DefendModeAbilityTemplate.NameInGame + ") " + 
                 "cooldown: " + cooldown + 
-                " = " + defendModeAbilityTemplate.BaseCooldown + 
-                " * " + (1 - attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction))
+                " = " + DefendModeAbilityTemplate.BaseCooldown + 
+                " * " + (1 - attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).Value())
             );
 
             return cooldown;
@@ -114,36 +90,31 @@ namespace GrimoireTD.Abilities.DefendMode
 
         private float GetCooldownAfterReduction(float cooldownReduction)
         {
-            return defendModeAbilityTemplate.BaseCooldown * (1 - cooldownReduction);
+            return DefendModeAbilityTemplate.BaseCooldown * (1 - cooldownReduction);
         }
 
-        private void OnAttachedDefendingEntityCooldownReductionChange(float newCooldownReduction)
+        private void OnAttachedDefendingEntityCooldownReductionChange(object sender, EAOnAttributeChanged args)
         {
-            float newCooldown = GetCooldownAfterReduction(newCooldownReduction);
+            float newCooldown = GetCooldownAfterReduction(args.NewValue);
 
-            timeSinceExecuted = newCooldown * PercentOfCooldownPassed;
+            TimeSinceExecuted = newCooldown * PercentOfCooldownPassed;
 
-            actualCooldown = newCooldown;
+            ActualCooldown = newCooldown;
         }
 
         public bool OffCooldown()
         {
-            return timeSinceExecuted > actualCooldown;
+            return TimeSinceExecuted > ActualCooldown;
         }
 
         public void ModelObjectFrameUpdate()
         {
-            timeSinceExecuted += Time.deltaTime;
+            TimeSinceExecuted += Time.deltaTime;
         }
 
         public void WasExecuted()
         {
-            timeSinceExecuted = 0f;
-        }
-
-        public void GameObjectDestroyed()
-        {
-            ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
+            TimeSinceExecuted = 0f;
         }
     }
 }

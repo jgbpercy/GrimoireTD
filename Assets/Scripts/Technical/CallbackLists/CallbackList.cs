@@ -2,12 +2,12 @@
 
 namespace System.Collections.Generic
 {
-    public class CallbackList<T> : IEnumerable<T>, IReadOnlyCollection<T>, IReadOnlyList<T>
+    public class CallbackList<T> : IReadOnlyCallbackList<T>
     {
         private List<T> list;
 
-        private Action<T> OnAdd;
-        private Action<T> OnRemove;
+        public event EventHandler<EAOnCallbackListAdd<T>> OnAdd;
+        public event EventHandler<EAOnCallbackListRemove<T>> OnRemove;
 
         public IEnumerable<T> AsIEnumarable
         {
@@ -42,7 +42,7 @@ namespace System.Collections.Generic
         {
             list.Add(item);
 
-            OnAdd?.Invoke(item);
+            OnAdd?.Invoke(this, new EAOnCallbackListAdd<T>(item));
         }
 
         public bool Contains(T item)
@@ -59,7 +59,7 @@ namespace System.Collections.Generic
 
             list.Remove(item);
 
-            OnRemove?.Invoke(item);
+            OnRemove?.Invoke(this, new EAOnCallbackListRemove<T>(item));
 
             return true;
         }
@@ -75,7 +75,7 @@ namespace System.Collections.Generic
 
             list.Remove(matchingItem);
 
-            OnRemove?.Invoke(matchingItem);
+            OnRemove?.Invoke(this, new EAOnCallbackListRemove<T>(matchingItem));
 
             return true;
         }
@@ -88,28 +88,8 @@ namespace System.Collections.Generic
 
                 list.RemoveAt(0);
 
-                OnRemove(item);
+                OnRemove?.Invoke(this, new EAOnCallbackListRemove<T>(item));
             }
-        }
-
-        public void RegisterForAdd(Action<T> callback)
-        {
-            OnAdd += callback;
-        }
-
-        public void DeregisterForAdd(Action<T> callback)
-        {
-            OnAdd -= callback;
-        }
-
-        public void RegisterForRemove(Action<T> callback)
-        {
-            OnRemove += callback;
-        }
-
-        public void DeregisterForRemove(Action<T> callback)
-        {
-            OnRemove -= callback;
         }
 
         public IEnumerator<T> GetEnumerator()

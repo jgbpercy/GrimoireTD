@@ -2,32 +2,24 @@
 {
     public class CModeDurationDefenderEffect : CDefenderEffect, IModeDurationDefenderEffect
     {
-        private ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate;
-
-        public ModeDurationDefenderEffectTemplate ModeDurationDefenderEffectTemplate
-        {
-            get
-            {
-                return modeDurationDefenderEffectTemplate;
-            }
-        }
+        public ModeDurationDefenderEffectTemplate ModeDurationDefenderEffectTemplate { get; }
 
         public int Duration
         {
             get
             {
-                return modeDurationDefenderEffectTemplate.BaseDuration;
+                return ModeDurationDefenderEffectTemplate.BaseDuration;
             }
         }
 
         public CModeDurationDefenderEffect(ModeDurationDefenderEffectTemplate modeDurationDefenderEffectTemplate) : base(modeDurationDefenderEffectTemplate)
         {
-            this.modeDurationDefenderEffectTemplate = modeDurationDefenderEffectTemplate;
+            ModeDurationDefenderEffectTemplate = modeDurationDefenderEffectTemplate;
         }
 
         public override string UIText()
         {
-            return modeDurationDefenderEffectTemplate.NameInGame;
+            return ModeDurationDefenderEffectTemplate.NameInGame;
         }
     }
 }

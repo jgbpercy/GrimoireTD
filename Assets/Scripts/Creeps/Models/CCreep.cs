@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
@@ -12,12 +11,12 @@ using GrimoireTD.TemporaryEffects;
 
 namespace GrimoireTD.Creeps
 {
-    public class CCreep : ICreep, IFrameUpdatee
+    public class CCreep : ICreep
     {
         private int id;
         
         //Template
-        private ICreepTemplate creepTemplate;
+        public ICreepTemplate CreepTemplate { get; }
 
         //TemporaryEffects
         private ITemporaryEffectsManager temporaryEffects;
@@ -26,8 +25,8 @@ namespace GrimoireTD.Creeps
         private Vector3 currentDestinationVector;
         private int currentDestinationPathNode;
 
-        private Vector3 position;
-        private float distanceFromEnd;
+        public Vector3 Position { get; private set; }
+        public float DistanceFromEnd { get; private set; }
 
         //Attributes
         private IAttributes<CreepAttributeName> attributes;
@@ -36,11 +35,11 @@ namespace GrimoireTD.Creeps
         private IResistances resistances;
 
         //Health
-        private int currentHitpoints;
+        public int CurrentHitpoints { get; private set; }
 
-        private Action OnHealthChangedCallback;
-        private Action OnDiedCallback;
-
+        public event EventHandler OnDied;
+        public event EventHandler<EAOnHealthChanged> OnHealthChanged;
+        
         //Properties
         //Name/Id
         public string Id
@@ -55,16 +54,7 @@ namespace GrimoireTD.Creeps
         {
             get
             {
-                return creepTemplate.NameInGame;
-            }
-        }
-
-        //Template
-        public ICreepTemplate CreepTemplate
-        {
-            get
-            {
-                return creepTemplate;
+                return CreepTemplate.NameInGame;
             }
         }
 
@@ -74,23 +64,6 @@ namespace GrimoireTD.Creeps
             get
             {
                 return temporaryEffects;
-            }
-        }
-
-        //Pathing/Position
-        public Vector3 Position
-        {
-            get
-            {
-                return position;
-            }
-        }
-
-        public float DistanceFromEnd
-        {
-            get
-            {
-                return distanceFromEnd;
             }
         }
 
@@ -113,11 +86,12 @@ namespace GrimoireTD.Creeps
         }
 
         //Attributes
+        //TODO: cache these two and update on change event
         public float CurrentSpeed
         {
             get
             {
-                return attributes.GetAttribute(CreepAttributeName.rawSpeed) * (1 + attributes.GetAttribute(CreepAttributeName.speedMultiplier));
+                return attributes.GetAttribute(CreepAttributeName.rawSpeed).Value() * (1 + attributes.GetAttribute(CreepAttributeName.speedMultiplier).Value());
             }
         }
 
@@ -125,16 +99,7 @@ namespace GrimoireTD.Creeps
         {
             get
             {
-                return attributes.GetAttribute(CreepAttributeName.rawArmor) * (1 + attributes.GetAttribute(CreepAttributeName.armorMultiplier));
-            }
-        }
-
-        //Health
-        public int CurrentHitpoints
-        {
-            get
-            {
-                return currentHitpoints;
+                return attributes.GetAttribute(CreepAttributeName.rawArmor).Value() * (1 + attributes.GetAttribute(CreepAttributeName.armorMultiplier).Value());
             }
         }
 
@@ -144,31 +109,31 @@ namespace GrimoireTD.Creeps
             id = IdGen.GetNextId();
             
             //Template
-            creepTemplate = template;
+            CreepTemplate = template;
 
             //Temporary Effects
             temporaryEffects = new CTemporaryEffectsManager();
 
             //Pathing/Position
-            position = spawnPosition;
+            Position = spawnPosition;
 
             currentDestinationPathNode = GameModels.Models[0].MapData.CreepPath.Count - 2;
             currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             
             //Resistances
-            resistances = new CResistances(creepTemplate.BaseResistances);
+            resistances = new CResistances(CreepTemplate.BaseResistances);
 
             //Attributes
             attributes = new CAttributes<CreepAttributeName>(CreepAttributes.NewAttributesDictionary());
 
             //  TODO: put this inside the attributes ctor like resistances
-            foreach (INamedAttributeModifier<CreepAttributeName> attributeModifier in creepTemplate.BaseAttributes)
+            foreach (INamedAttributeModifier<CreepAttributeName> attributeModifier in CreepTemplate.BaseAttributes)
             {
                 attributes.AddModifier(attributeModifier);
             }
 
             //Health
-            currentHitpoints = template.MaxHitpoints;
+            CurrentHitpoints = template.MaxHitpoints;
 
             //Bullshit
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
@@ -177,14 +142,14 @@ namespace GrimoireTD.Creeps
         public Vector3 TargetPosition()
         {
             //TODO unhardcode this height
-            return new Vector3(position.x, position.y, -0.4f);
+            return new Vector3(Position.x, Position.y, -0.4f);
         }
 
         public void ModelObjectFrameUpdate()
         {
-            float distanceFromCurrentDestination = Vector3.Magnitude(position - currentDestinationVector);
+            float distanceFromCurrentDestination = Vector3.Magnitude(Position - currentDestinationVector);
 
-            distanceFromEnd = currentDestinationPathNode * MapRenderer.HEX_OFFSET + distanceFromCurrentDestination;
+            DistanceFromEnd = currentDestinationPathNode * MapRenderer.HEX_OFFSET + distanceFromCurrentDestination;
 
             if (distanceFromCurrentDestination < CurrentSpeed * Time.deltaTime)
             {
@@ -192,7 +157,7 @@ namespace GrimoireTD.Creeps
                 currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             }
 
-            position = Vector3.MoveTowards(position, currentDestinationVector, CurrentSpeed * Time.deltaTime);
+            Position = Vector3.MoveTowards(Position, currentDestinationVector, CurrentSpeed * Time.deltaTime);
         }
 
         public void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefendingEntity sourceDefendingEntity)
@@ -236,8 +201,8 @@ namespace GrimoireTD.Creeps
         private void ApplyDamageEffect(IAttackEffect attackEffect, IDefendingEntity sourceDefendingEntity, IDamageEffectType damageEffectType)
         {
             float magnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
-            int block = resistances.GetBlock(damageEffectType);
-            float resistance = resistances.GetResistance(damageEffectType, CurrentArmor);
+            int block = resistances.GetBlock(damageEffectType).Value;
+            float resistance = resistances.GetResistanceAfterArmor(damageEffectType, CurrentArmor);
 
             CDebug.Log(CDebug.combatLog, "Bl: " + block + ", Res: " + resistance);
 
@@ -267,7 +232,7 @@ namespace GrimoireTD.Creeps
                     newEffectDuration,
                     attackEffect.AttackEffectType.EffectName(),
                     () => { attributes.AddModifier(attributeModifier); },
-                    () => { attributes.TryRemoveModifier(attributeModifier); }
+                    (object sender, EAOnTemporaryEffectEnd args) => { attributes.TryRemoveModifier(attributeModifier); }
                 );
 
                 return;
@@ -287,7 +252,7 @@ namespace GrimoireTD.Creeps
                     newEffectDuration,
                     attackEffect.AttackEffectType.EffectName(),
                     () => { resistances.AddResistanceModifier(resistanceModifier); },
-                    () => { resistances.RemoveResistanceModifer(resistanceModifier); }
+                    (object sender, EAOnTemporaryEffectEnd args) => { resistances.RemoveResistanceModifer(resistanceModifier); }
                 );
 
                 return;
@@ -307,7 +272,7 @@ namespace GrimoireTD.Creeps
                     newEffectDuration,
                     attackEffect.AttackEffectType.EffectName(),
                     () => { resistances.AddBlockModifier(blockModifier); },
-                    () => { resistances.RemoveBlockModifier(blockModifier); }
+                    (object sender, EAOnTemporaryEffectEnd args) => { resistances.RemoveBlockModifier(blockModifier); }
                 );
             }
 
@@ -362,22 +327,22 @@ namespace GrimoireTD.Creeps
 
         private void TakeDamage(int damage)
         {
-            currentHitpoints -= damage;
+            CurrentHitpoints -= damage;
 
             CDebug.Log(CDebug.combatLog, Id + " takes " + damage + " damage, leaving " + CurrentHitpoints);
 
-            if (currentHitpoints < 1)
+            if (CurrentHitpoints < 1)
             {
-                currentHitpoints = 0;
+                CurrentHitpoints = 0;
             }
 
-            OnHealthChangedCallback();
+            OnHealthChanged?.Invoke(this, new EAOnHealthChanged(CurrentHitpoints));
 
-            if (currentHitpoints == 0)
+            if (CurrentHitpoints == 0)
             {
                 CDebug.Log(CDebug.combatLog, Id + " died");
 
-                OnDiedCallback?.Invoke();
+                OnDied?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -385,27 +350,6 @@ namespace GrimoireTD.Creeps
         public void GameObjectDestroyed()
         {
             ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
-        }
-
-        //Callbacks
-        public void RegisterForOnHealthChangedCallback(Action callback)
-        {
-            OnHealthChangedCallback += callback;
-        }
-
-        public void DeregisterForOnHealthChangedCallback(Action callback)
-        {
-            OnHealthChangedCallback -= callback;
-        }
-
-        public void RegisterForOnDiedCallback(Action callback)
-        {
-            OnDiedCallback += callback;
-        }
-
-        public void DeregisterForOnDiedCallback(Action callback)
-        {
-            OnDiedCallback -= callback;
         }
     }
 }

@@ -18,60 +18,34 @@ namespace GrimoireTD.DefendingEntities.DefenderEffects
             }
         }
 
-        private IDefenderAuraTemplate defenderAuraTemplate;
+        public event EventHandler<EAOnClearDefenderAura> OnClearDefenderAura;
 
-        private IDefendingEntity sourceDefendingEntity;
+        public IDefenderAuraTemplate DefenderAuraTemplate { get; }
 
-        private Action<IDefenderAura> OnClearAuraCallback;
-
-        public IDefenderAuraTemplate DefenderAuraTemplate
-        {
-            get
-            {
-                return defenderAuraTemplate;
-            }
-        }
-
-        public IDefendingEntity SourceDefendingEntity
-        {
-            get
-            {
-                return sourceDefendingEntity;
-            }
-        }
+        public IDefendingEntity SourceDefendingEntity { get; }
 
         public int Range
         {
             get
             {
-                return defenderAuraTemplate.BaseRange;
+                return DefenderAuraTemplate.BaseRange;
             }
         }
 
         public CDefenderAura(IDefenderAuraTemplate defenderAuraTemplate, IDefendingEntity sourceDefendingEntity) : base(defenderAuraTemplate)
         {
-            this.defenderAuraTemplate = defenderAuraTemplate;
-            this.sourceDefendingEntity = sourceDefendingEntity;
+            DefenderAuraTemplate = defenderAuraTemplate;
+            SourceDefendingEntity = sourceDefendingEntity;
         }
 
         public void ClearAura()
         {
-            OnClearAuraCallback(this);
-        }
-
-        public void RegisterForOnClearAuraCallback(Action<IDefenderAura> callback)
-        {
-            OnClearAuraCallback += callback;
-        }
-
-        public void DeregisterForOnClearAuraCallback(Action<IDefenderAura> callback)
-        {
-            OnClearAuraCallback -= callback;
+            OnClearDefenderAura?.Invoke(this, new EAOnClearDefenderAura(this));
         }
 
         public override string UIText()
         {
-            return defenderAuraTemplate.NameInGame;
+            return DefenderAuraTemplate.NameInGame;
         }
     }
 }

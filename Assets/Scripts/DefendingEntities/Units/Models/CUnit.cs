@@ -14,36 +14,37 @@ namespace GrimoireTD.DefendingEntities.Units
 {
     public class CUnit : CDefendingEntity, IUnit
     {
+        
         //Template
-        private IUnitTemplate unitTemplate;
+        public IUnitTemplate UnitTemplate { get; }
 
         //Movement
-        private Action<Coord> OnMovedCallback;
+        public event EventHandler<EAOnMoved> OnMoved;
 
-        private List<Coord> cachedDisallowedMovementDestinations = new List<Coord>();
+        private List<Coord> cachedDisallowedMovementDestinations;
 
         //Talents & levelling
         private Dictionary<IUnitTalent, int> levelledTalents;
 
-        private float timeIdle;
-        private float timeActive;
+        public float TimeIdle { get; private set; }
+        public float TimeActive { get; private set; }
 
-        private int experience;
-        private int fatigue;
-        private int levelUpsPending;
-        private int level;
+        public int Experience { get; private set; }
+        public int Fatigue { get; private set; }
+        public int LevelUpsPending { get; private set; }
+        public int Level { get; private set; }
 
-        private Action OnExperienceFatigueLevelChangedCallback;
+        public event EventHandler<EAOnExperienceFatigueLevelChange> OnExperienceFatigueLevelChanged;
 
-        float inflectionPoint;
-        float shallownessMultiplier;
+        private float inflectionPoint;
+        private float shallownessMultiplier;
 
         //Economy
         private CallbackList<IHexOccupationBonus> conditionalHexOccupationBonuses;
 
         private CallbackList<IStructureOccupationBonus> conditionalStructureOccupationBonuses;
 
-        private Action<IUnit, IEconomyTransaction, IEconomyTransaction> OnTriggeredConditionalOccupationBonusesCallback;
+        public event EventHandler<EAOnTriggeredConditionalOccupationBonus> OnTriggeredConditionalOccupationBonuses;
 
         // Public Properties
         //Id
@@ -52,15 +53,6 @@ namespace GrimoireTD.DefendingEntities.Units
             get
             {
                 return "U-" + id;
-            }
-        }
-        
-        //Template
-        public IUnitTemplate UnitTemplate
-        {
-            get
-            {
-                return unitTemplate;
             }
         }
 
@@ -82,56 +74,8 @@ namespace GrimoireTD.DefendingEntities.Units
             }
         }
 
-        public float TimeIdle
-        {
-            get
-            {
-                return timeIdle;
-            }
-        }
-
-        public float TimeActive
-        {
-            get
-            {
-                return timeActive;
-            }
-        }
-
-        public int Experience
-        {
-            get
-            {
-                return experience;
-            }
-        }
-
-        public int Fatigue
-        {
-            get
-            {
-                return fatigue;
-            }
-        }
-
-        public int LevelUpsPending
-        {
-            get
-            {
-                return levelUpsPending;
-            }
-        }
-
-        public int Level
-        {
-            get
-            {
-                return level;
-            }
-        }
-
         //Economy
-        public IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses
+        public IReadOnlyCallbackList<IHexOccupationBonus> ConditionalHexOccupationBonuses
         {
             get
             {
@@ -139,11 +83,38 @@ namespace GrimoireTD.DefendingEntities.Units
             }
         }
 
-        public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses
+        public IReadOnlyCallbackList<IStructureOccupationBonus> ConditionalStructureOccupationBonuses
         {
             get
             {
                 return conditionalStructureOccupationBonuses;
+            }
+        }
+
+        //UI Name etc
+        public override string CurrentName
+        {
+            get
+            {
+                return UnitTemplate.NameInGame;
+            }
+
+            protected set
+            {
+                return;
+            }
+        }
+
+        public override string UIText
+        {
+            get
+            {
+                return UnitTemplate.Description;
+            }
+
+            protected set
+            {
+                return;
             }
         }
 
@@ -152,7 +123,7 @@ namespace GrimoireTD.DefendingEntities.Units
         {
             Assert.IsTrue(unitTemplate.BaseCharacteristics is IUnitImprovement);
 
-            this.unitTemplate = unitTemplate;
+            UnitTemplate = unitTemplate;
 
             SetUpTalentsAchieved();
 
@@ -161,27 +132,34 @@ namespace GrimoireTD.DefendingEntities.Units
 
             ApplyUnitImprovement(unitTemplate.BaseUnitCharacteristics);
 
-            timeIdle = 0f;
-            timeActive = 0f;
-            experience = 0;
-            fatigue = 0;
-            levelUpsPending = 0;
-            level = 0;
+            TimeIdle = 0f;
+            TimeActive = 0f;
+            Experience = 0;
+            Fatigue = 0;
+            LevelUpsPending = 0;
+            Level = 0;
+
+            cachedDisallowedMovementDestinations = new List<Coord>();
 
             if (GameModels.Models[0].IsSetUp)
             {
-                SetUpFatigueVars();
+                SetUpFatigueVars(GameModels.Models[0].UnitFatigueFactorInfelctionPoint, GameModels.Models[0].UnitFatigueFactorShallownessMultiplier);
             }
             else
             {
-                GameModels.Models[0].RegisterForOnSetUpCallback(SetUpFatigueVars);
+                GameModels.Models[0].OnGameModelSetUp += OnGameModelSetUp;
             }
         }
 
-        private void SetUpFatigueVars()
+        private void OnGameModelSetUp(object sender, EAOnGameModelSetUp args)
         {
-            inflectionPoint = GameModels.Models[0].UnitFatigueFactorInfelctionPoint;
-            shallownessMultiplier = GameModels.Models[0].UnitFatigueFactorShallownessMultiplier;
+            SetUpFatigueVars(args.GameModel.UnitFatigueFactorInfelctionPoint, args.GameModel.UnitFatigueFactorShallownessMultiplier);
+        }
+
+        private void SetUpFatigueVars(float inflectionPoint, float shallownessMultiplier)
+        {
+            this.inflectionPoint = inflectionPoint;
+            this.shallownessMultiplier = shallownessMultiplier;
         }
 
         //Set Up
@@ -189,7 +167,7 @@ namespace GrimoireTD.DefendingEntities.Units
         {
             levelledTalents = new Dictionary<IUnitTalent, int>();
 
-            foreach (IUnitTalent talent in unitTemplate.UnitTalents)
+            foreach (IUnitTalent talent in UnitTemplate.UnitTalents)
             {
                 levelledTalents.Add(talent, 0);
             }
@@ -199,44 +177,33 @@ namespace GrimoireTD.DefendingEntities.Units
         {
             affectedByDefenderAuras = new CallbackList<IDefenderAura>();
 
-            affectedByDefenderAuras.RegisterForAdd(aura =>
+            affectedByDefenderAuras.OnAdd += (object sender, EAOnCallbackListAdd<IDefenderAura> args) =>
             {
-                IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
+                IUnitImprovement unitImprovement = args.AddedItem.DefenderEffectTemplate.Improvement as IUnitImprovement;
                 if (unitImprovement != null)
                 {
                     ApplyUnitImprovement(unitImprovement);
                 }
                 else
                 {
-                    ApplyImprovement(aura.DefenderEffectTemplate.Improvement);
+                    ApplyImprovement(args.AddedItem.DefenderEffectTemplate.Improvement);
                 }
-            });
+            };
 
-            affectedByDefenderAuras.RegisterForRemove(aura =>
+            affectedByDefenderAuras.OnRemove += (object sender, EAOnCallbackListRemove<IDefenderAura> args) =>
             {
-                IUnitImprovement unitImprovement = aura.DefenderEffectTemplate.Improvement as IUnitImprovement;
+                IUnitImprovement unitImprovement = args.RemovedItem.DefenderEffectTemplate.Improvement as IUnitImprovement;
                 if (unitImprovement != null)
                 {
                     RemoveUnitImprovement(unitImprovement);
                 }
                 else
                 {
-                    RemoveImprovement(aura.DefenderEffectTemplate.Improvement);
+                    RemoveImprovement(args.RemovedItem.DefenderEffectTemplate.Improvement);
                 }
-            });
+            };
 
             GetDefenderAurasFromCurrentHex();
-        }
-
-        //UI
-        public override string CurrentName()
-        {
-            return unitTemplate.NameInGame;
-        }
-
-        public override string UIText()
-        {
-            return unitTemplate.Description;
         }
 
         //Time Tracking
@@ -244,34 +211,34 @@ namespace GrimoireTD.DefendingEntities.Units
         {
             if (wasIdle)
             {
-                timeIdle += time;
+                TimeIdle += time;
             }
             else
             {
-                timeActive += time;
+                TimeActive += time;
             }
         }
 
         //Enter Build Mode
-        protected override void OnEnterBuildMode()
+        protected override void OnEnterBuildMode(object sender, EAOnEnterBuildMode args)
         {
-            base.OnEnterBuildMode();
+            base.OnEnterBuildMode(sender, args);
 
             OnEnterBuildModeEconomyChanges();
 
             OnEnterBuildModeExperienceAndFatigueChanges();
 
-            timeIdle = 0f;
-            timeActive = 0f;
+            TimeIdle = 0f;
+            TimeActive = 0f;
         }
 
         //Economy
         private void OnEnterBuildModeEconomyChanges()
         {
-            CDebug.Log(CDebug.hexEconomy, "Time Active: " + timeActive.ToString("0.0"));
-            CDebug.Log(CDebug.hexEconomy, "Time Idle: " + timeIdle.ToString("0.0"));
+            CDebug.Log(CDebug.hexEconomy, "Time Active: " + TimeActive.ToString("0.0"));
+            CDebug.Log(CDebug.hexEconomy, "Time Idle: " + TimeIdle.ToString("0.0"));
 
-            float activeProportion = timeActive / (timeActive + timeIdle);
+            float activeProportion = TimeActive / (TimeActive + TimeIdle);
             CDebug.Log(CDebug.hexEconomy, "Active Proportion: " + activeProportion.ToString("0.000"));
 
             IEconomyTransaction grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
@@ -286,7 +253,7 @@ namespace GrimoireTD.DefendingEntities.Units
             IEconomyTransaction netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(activeProportion);
             CDebug.Log(CDebug.hexEconomy, "Net Structure Oc Bonus: " + netConditionalStructureOccupationBonus);
 
-            OnTriggeredConditionalOccupationBonusesCallback?.Invoke(this, netConditionalHexOccupationBonus, netConditionalStructureOccupationBonus);
+            OnTriggeredConditionalOccupationBonuses?.Invoke(this, new EAOnTriggeredConditionalOccupationBonus(this, netConditionalHexOccupationBonus, netConditionalStructureOccupationBonus));
         }
 
         private IEconomyTransaction GetStructureOccupationBonus(IStructure structure, CallbackList<IStructureOccupationBonus> structureOccupationBonuses)
@@ -315,30 +282,31 @@ namespace GrimoireTD.DefendingEntities.Units
         //Experience, Fatigue and Talents
         private void OnEnterBuildModeExperienceAndFatigueChanges()
         {
-            CDebug.Log(CDebug.experienceAndFatigue, "Time Active: " + timeActive.ToString("0.0"));
-            CDebug.Log(CDebug.experienceAndFatigue, "Time Idle: " + timeIdle.ToString("0.0"));
+            CDebug.Log(CDebug.experienceAndFatigue, "Time Active: " + TimeActive.ToString("0.0"));
+            CDebug.Log(CDebug.experienceAndFatigue, "Time Idle: " + TimeIdle.ToString("0.0"));
 
-            float rawExperienceGain = (timeActive / (timeActive + timeIdle)) * 100;
+            float rawExperienceGain = (TimeActive / (TimeActive + TimeIdle)) * 100;
 
             CDebug.Log(CDebug.experienceAndFatigue, "Raw Experience: " + rawExperienceGain.ToString("0.000"));
 
             float fatigueFactor = FatigueFactor();
 
             int experienceGain = Mathf.RoundToInt(rawExperienceGain * fatigueFactor);
-            experience += experienceGain;
+            Experience += experienceGain;
 
-            CDebug.Log(CDebug.experienceAndFatigue, "Fatigue: " + fatigue + ", Factor: " + fatigueFactor);
-            CDebug.Log(CDebug.experienceAndFatigue, "Experience gain: " + experienceGain + ", new Experience: " + experience);
+            CDebug.Log(CDebug.experienceAndFatigue, "Fatigue: " + Fatigue + ", Factor: " + fatigueFactor);
+            CDebug.Log(CDebug.experienceAndFatigue, "Experience gain: " + experienceGain + ", new Experience: " + Experience);
 
-            fatigue += Mathf.RoundToInt((timeActive / (timeActive + timeIdle)) * 10) - 5;
+            Fatigue += Mathf.RoundToInt((TimeActive / (TimeActive + TimeIdle)) * 10) - 5;
 
-            fatigue = Mathf.Max(fatigue, 0);
+            Fatigue = Mathf.Max(Fatigue, 0);
 
-            CDebug.Log(CDebug.experienceAndFatigue, "New fatigue: " + fatigue);
+            CDebug.Log(CDebug.experienceAndFatigue, "New fatigue: " + Fatigue);
 
-            levelUpsPending = (experience - level * UnitTemplate.ExperienceToLevelUp) / UnitTemplate.ExperienceToLevelUp;
+            LevelUpsPending = (Experience - Level * UnitTemplate.ExperienceToLevelUp) / UnitTemplate.ExperienceToLevelUp;
 
-            OnExperienceFatigueLevelChangedCallback?.Invoke();
+            //TODO: break up this event?
+            OnExperienceFatigueLevelChanged?.Invoke(this, new EAOnExperienceFatigueLevelChange(Experience, Fatigue, Level, LevelUpsPending));
         }
 
         private float FatigueFactor()
@@ -346,7 +314,7 @@ namespace GrimoireTD.DefendingEntities.Units
             CDebug.Log(CDebug.experienceAndFatigue, "Inflection Point: " + inflectionPoint);
             CDebug.Log(CDebug.experienceAndFatigue, "Shallowness Multiplier: " + shallownessMultiplier);
 
-            float rawInverserFactor = CustomMath.SignedOddRoot((fatigue - inflectionPoint) / shallownessMultiplier, 3) + Mathf.Pow(inflectionPoint / shallownessMultiplier, 1f / 3f);
+            float rawInverserFactor = CustomMath.SignedOddRoot((Fatigue - inflectionPoint) / shallownessMultiplier, 3) + Mathf.Pow(inflectionPoint / shallownessMultiplier, 1f / 3f);
 
             CDebug.Log(CDebug.experienceAndFatigue, "Calculated raw inverse factor: " + rawInverserFactor);
 
@@ -355,14 +323,14 @@ namespace GrimoireTD.DefendingEntities.Units
 
         public void TempDebugAddExperience()
         {
-            experience += 30;
-            levelUpsPending = (experience - level * UnitTemplate.ExperienceToLevelUp) / UnitTemplate.ExperienceToLevelUp;
-            OnExperienceFatigueLevelChangedCallback();
+            Experience += 30;
+            LevelUpsPending = (Experience - Level * UnitTemplate.ExperienceToLevelUp) / UnitTemplate.ExperienceToLevelUp;
+            OnExperienceFatigueLevelChanged?.Invoke(this, new EAOnExperienceFatigueLevelChange(Experience, Fatigue, Level, LevelUpsPending));
         }
 
         public bool TryLevelUp(IUnitTalent talentChosen)
         {
-            if (levelUpsPending <= 0)
+            if (LevelUpsPending <= 0)
             {
                 return false;
             }
@@ -386,10 +354,10 @@ namespace GrimoireTD.DefendingEntities.Units
 
             levelledTalents[talentChosen] += 1;
 
-            level += 1;
-            levelUpsPending -= 1;
+            Level += 1;
+            LevelUpsPending -= 1;
 
-            OnExperienceFatigueLevelChangedCallback?.Invoke();
+            OnExperienceFatigueLevelChanged?.Invoke(this, new EAOnExperienceFatigueLevelChange(Experience, Fatigue, Level, LevelUpsPending));
 
             return true;
         }
@@ -430,43 +398,43 @@ namespace GrimoireTD.DefendingEntities.Units
         }
 
         //Defender Auras Affected By
-        protected override void OnNewDefenderAuraInCurrentHex(IDefenderAura aura)
+        protected override void OnNewDefenderAuraInCurrentHex(object sender, EAOnCallbackListAdd<IDefenderAura> args)
         {
-            if (aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
+            if (args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
             {
-                affectedByDefenderAuras.Add(aura);
+                affectedByDefenderAuras.Add(args.AddedItem);
             }
         }
 
-        protected override void OnClearDefenderAuraInCurrentHex(IDefenderAura aura)
+        protected override void OnClearDefenderAuraInCurrentHex(object sender, EAOnCallbackListRemove<IDefenderAura> args)
         {
-            if (aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
+            if (args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
             {
-                bool wasPresent = affectedByDefenderAuras.Contains(aura);
+                bool wasPresent = affectedByDefenderAuras.Contains(args.RemovedItem);
                 Assert.IsTrue(wasPresent);
 
-                affectedByDefenderAuras.TryRemove(aura);
+                affectedByDefenderAuras.TryRemove(args.RemovedItem);
             }
         }
 
         //Movement
         public void Move(Coord targetCoord)
         {
-            OnHex.DeregisterForOnDefenderAuraAddedCallback(OnNewDefenderAuraInCurrentHex);
-            OnHex.DeregisterForOnDefenderAuraRemovedCallback(OnClearDefenderAuraInCurrentHex);
+            OnHex.DefenderAurasHere.OnAdd -= OnNewDefenderAuraInCurrentHex;
+            OnHex.DefenderAurasHere.OnRemove -= OnClearDefenderAuraInCurrentHex;
 
-            coordPosition = targetCoord;
+            CoordPosition = targetCoord;
 
-            OnHex.RegisterForOnDefenderAuraAddedCallback(OnNewDefenderAuraInCurrentHex);
-            OnHex.RegisterForOnDefenderAuraRemovedCallback(OnClearDefenderAuraInCurrentHex);
+            OnHex.DefenderAurasHere.OnAdd += OnNewDefenderAuraInCurrentHex;
+            OnHex.DefenderAurasHere.OnRemove -= OnClearDefenderAuraInCurrentHex;
 
-            OnMovedCallback(targetCoord);
+            OnMoved?.Invoke(this, new EAOnMoved(targetCoord));
 
             foreach (IDefenderAura auraEmitted in aurasEmitted)
             {
                 auraEmitted.ClearAura();
 
-                OnInitialiseAura(auraEmitted);
+                OnInitialiseAura(this, new EAOnCallbackListAdd<IDefenderAura>(auraEmitted));
             }
 
             affectedByDefenderAuras.Clear();
@@ -477,83 +445,6 @@ namespace GrimoireTD.DefendingEntities.Units
         public void RegenerateCachedDisallowedMovementDestinations()
         {
             cachedDisallowedMovementDestinations = GameModels.Models[0].MapData.GetDisallowedCoordsAfterUnitMove(CoordPosition);
-        }
-
-        //Callbacks
-        //  Moves
-        public void RegisterForOnMovedCallback(Action<Coord> callback)
-        {
-            OnMovedCallback += callback;
-        }
-
-        public void DeregisterForOnMovedCallback(Action<Coord> callback)
-        {
-            OnMovedCallback -= callback;
-        }
-
-        //  Experience/Fatigue Change
-        public void RegisterForExperienceFatigueChangedCallback(Action callback)
-        {
-            OnExperienceFatigueLevelChangedCallback += callback;
-        }
-
-        public void DeregisterForExperienceFatigueChangedCallback(Action callback)
-        {
-            OnExperienceFatigueLevelChangedCallback -= callback;
-        }
-
-        //  Occupation Bonuses
-
-        public void RegisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback)
-        {
-            OnTriggeredConditionalOccupationBonusesCallback += callback;
-        }
-
-        public void DeregisterForOnTriggeredConditionalOccupationBonusesCallback(Action<IUnit, IEconomyTransaction, IEconomyTransaction> callback)
-        {
-            OnTriggeredConditionalOccupationBonusesCallback -= callback;
-        }
-
-        //  Hex Occupation Bonus
-        public void RegisterForOnConditionalHexOccupationBonusAddedCallback(Action<IHexOccupationBonus> callback)
-        {
-            conditionalHexOccupationBonuses.RegisterForAdd(callback);
-        }
-
-        public void DeregisterForOnConditionalHexOccupationBonusAddedCallback(Action<IHexOccupationBonus> callback)
-        {
-            conditionalHexOccupationBonuses.DeregisterForAdd(callback);
-        }
-
-        public void RegisterForOnConditionalHexOccupationBonusRemovedCallback(Action<IHexOccupationBonus> callback)
-        {
-            conditionalHexOccupationBonuses.RegisterForRemove(callback);
-        }
-
-        public void DeregisterForOnConditionalHexOccupationBonusRemovedCallback(Action<IHexOccupationBonus> callback)
-        {
-            conditionalHexOccupationBonuses.DeregisterForRemove(callback);
-        }
-
-        //  Structure Occupation Bonus
-        public void RegisterForOnConditionalStructureOccupationBonusAddedCallback(Action<IStructureOccupationBonus> callback)
-        {
-            conditionalStructureOccupationBonuses.RegisterForAdd(callback);
-        }
-
-        public void DeregisterForOnConditionalStructureOccupationBonusAddedCallback(Action<IStructureOccupationBonus> callback)
-        {
-            conditionalStructureOccupationBonuses.DeregisterForAdd(callback);
-        }
-
-        public void RegisterForOnConditionalStructureOccupationBonusRemovedCallback(Action<IStructureOccupationBonus> callback)
-        {
-            conditionalStructureOccupationBonuses.RegisterForRemove(callback);
-        }
-
-        public void DeregisterForOnConditionalStructureOccupationBonusRemovedCallback(Action<IStructureOccupationBonus> callback)
-        {
-            conditionalStructureOccupationBonuses.DeregisterForRemove(callback);
         }
     }
 }

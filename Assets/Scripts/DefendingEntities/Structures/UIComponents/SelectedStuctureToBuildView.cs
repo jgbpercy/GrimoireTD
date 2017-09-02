@@ -41,26 +41,26 @@ namespace GrimoireTD.DefendingEntities.Structures
 
         private void Start()
         {
-            InterfaceController.Instance.RegisterForOnStructureToBuildSelectedCallback(OnStructureToBuildSelected);
-            InterfaceController.Instance.RegisterForOnStructureToBuildDeselectedCallback(OnStructureToBuildDeselected);
+            InterfaceController.Instance.OnStructureToBuildSelected += OnStructureToBuildSelected;
+            InterfaceController.Instance.OnStructureToBuildDeselected += OnStructureToBuildDeselected;
 
             abilityTexts = new List<Text>();
             auraTexts = new List<Text>();
         }
 
-        private void OnStructureToBuildSelected(IStructureTemplate structureTemplate)
+        private void OnStructureToBuildSelected(object sender, EAOnStructureToBuildSelected args)
         {
             ClearLists();
 
             selectedStructureToBuildPanel.SetActive(true);
 
-            selectedStructureToBuildNameHeader.text = structureTemplate.StartingNameInGame;
+            selectedStructureToBuildNameHeader.text = args.SelectedStructureTemplate.StartingNameInGame;
 
-            costText.text = structureTemplate.Cost.ToString(EconomyTransactionStringFormat.FullNameLineBreaks, true);
+            costText.text = args.SelectedStructureTemplate.Cost.ToString(EconomyTransactionStringFormat.FullNameLineBreaks, true);
 
             //TODO when less hungover: I can make a generic version of this as a service probably
             //Involves the added things all having their own UI component, which implements a set up interface
-            foreach (IAbilityTemplate ability in structureTemplate.BaseCharacteristics.Abilities)
+            foreach (var ability in args.SelectedStructureTemplate.BaseCharacteristics.Abilities)
             {
                 Text newAbilityText = Instantiate(abilityTextPrefab).GetComponent<Text>();
                 newAbilityText.transform.SetParent(abilitiesVLayout);
@@ -70,7 +70,7 @@ namespace GrimoireTD.DefendingEntities.Structures
                 abilityTexts.Add(newAbilityText);
             }
 
-            foreach (IDefenderAuraTemplate aura in structureTemplate.BaseCharacteristics.Auras)
+            foreach (var aura in args.SelectedStructureTemplate.BaseCharacteristics.Auras)
             {
                 Text newAuraText = Instantiate(auraTextPrefab).GetComponent<Text>();
                 newAuraText.transform.SetParent(aurasVLayout);
@@ -82,14 +82,14 @@ namespace GrimoireTD.DefendingEntities.Structures
 
             hexOccupationBonusText.text = "";
 
-            foreach (IHexOccupationBonus occupationBonus in structureTemplate.BaseCharacteristics.FlatHexOccupationBonuses)
+            foreach (IHexOccupationBonus occupationBonus in args.SelectedStructureTemplate.BaseCharacteristics.FlatHexOccupationBonuses)
             {
                 hexOccupationBonusText.text += occupationBonus.HexType.NameInGame + "\n";
                 hexOccupationBonusText.text += occupationBonus.ResourceGain.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
             }
         }
 
-        private void OnStructureToBuildDeselected()
+        private void OnStructureToBuildDeselected(object sender, EAOnStructureToBuildDeselected args)
         {
             selectedStructureToBuildPanel.SetActive(false);
         }

@@ -8,45 +8,13 @@ namespace GrimoireTD.DefendingEntities
 {
     public class CDefendingEntityImprovement : IDefendingEntityImprovement
     {
-        private INamedAttributeModifier<DefendingEntityAttributeName>[] attributeModifiers;
+        public IEnumerable<INamedAttributeModifier<DefendingEntityAttributeName>> AttributeModifiers { get; }
 
-        private IHexOccupationBonus[] flatHexOccupationBonuses;
+        public IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses { get; }
 
-        private IAbilityTemplate[] abilities;
+        public IEnumerable<IAbilityTemplate> Abilities { get; }
 
-        private IDefenderAuraTemplate[] auras;
-
-        public IEnumerable<INamedAttributeModifier<DefendingEntityAttributeName>> AttributeModifiers
-        {
-            get
-            {
-                return attributeModifiers;
-            }
-        }
-
-        public IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses
-        {
-            get
-            {
-                return flatHexOccupationBonuses;
-            }
-        }
-
-        public IEnumerable<IAbilityTemplate> Abilities
-        {
-            get
-            {
-                return abilities;
-            }
-        }
-
-        public IEnumerable<IDefenderAuraTemplate> Auras
-        {
-            get
-            {
-                return auras;
-            }
-        }
+        public IEnumerable<IDefenderAuraTemplate> Auras { get; }
 
         public CDefendingEntityImprovement(
             ICollection<INamedAttributeModifier<DefendingEntityAttributeName>> attributeModifiers,
@@ -54,20 +22,46 @@ namespace GrimoireTD.DefendingEntities
             ICollection<IAbilityTemplate> abilities,
             ICollection<IDefenderAuraTemplate> auras)
         {
-            this.attributeModifiers = new INamedAttributeModifier<DefendingEntityAttributeName>[attributeModifiers.Count];
-            this.flatHexOccupationBonuses = new IHexOccupationBonus[flatHexOccupationBonuses.Count];
-            this.abilities = new IAbilityTemplate[abilities.Count];
-            this.auras = new IDefenderAuraTemplate[auras.Count];
+            var tempAttributeModifiers = new INamedAttributeModifier<DefendingEntityAttributeName>[attributeModifiers.Count];
+            var tempFlatHexOccupationBonuses = new IHexOccupationBonus[flatHexOccupationBonuses.Count];
+            var tempAbilities = new IAbilityTemplate[abilities.Count];
+            var tempAuras = new IDefenderAuraTemplate[auras.Count];
 
-            attributeModifiers.CopyTo(this.attributeModifiers, 0);
-            flatHexOccupationBonuses.CopyTo(this.flatHexOccupationBonuses, 0);
-            abilities.CopyTo(this.abilities, 0);
-            auras.CopyTo(this.auras, 0);
+            attributeModifiers.CopyTo(tempAttributeModifiers, 0);
+            flatHexOccupationBonuses.CopyTo(tempFlatHexOccupationBonuses, 0);
+            abilities.CopyTo(tempAbilities, 0);
+            auras.CopyTo(tempAuras, 0);
+
+            AttributeModifiers = tempAttributeModifiers;
+            FlatHexOccupationBonuses = tempFlatHexOccupationBonuses;
+            Abilities = tempAbilities;
+            Auras = tempAuras;
         }
 
         public IDefendingEntityImprovement Combine(IDefendingEntityImprovement otherImprovement)
         {
-            return SoDefendingEntityImprovement.Combine(this, otherImprovement);
+            return Combine(this, otherImprovement);
+        }
+
+        public static IDefendingEntityImprovement Combine(IDefendingEntityImprovement firstImprovement, IDefendingEntityImprovement secondImprovement)
+        {
+            List<INamedAttributeModifier<DefendingEntityAttributeName>> combinedAttributeModifiers = new List<INamedAttributeModifier<DefendingEntityAttributeName>>();
+            combinedAttributeModifiers.AddRange(firstImprovement.AttributeModifiers);
+            combinedAttributeModifiers.AddRange(secondImprovement.AttributeModifiers);
+
+            List<IHexOccupationBonus> combinedFlatHexOccupationBonuses = new List<IHexOccupationBonus>();
+            combinedFlatHexOccupationBonuses.AddRange(firstImprovement.FlatHexOccupationBonuses);
+            combinedFlatHexOccupationBonuses.AddRange(secondImprovement.FlatHexOccupationBonuses);
+
+            List<IAbilityTemplate> combinedAbilities = new List<IAbilityTemplate>();
+            combinedAbilities.AddRange(firstImprovement.Abilities);
+            combinedAbilities.AddRange(secondImprovement.Abilities);
+
+            List<IDefenderAuraTemplate> combinedAuras = new List<IDefenderAuraTemplate>();
+            combinedAuras.AddRange(firstImprovement.Auras);
+            combinedAuras.AddRange(secondImprovement.Auras);
+
+            return new CDefendingEntityImprovement(combinedAttributeModifiers, combinedFlatHexOccupationBonuses, combinedAbilities, combinedAuras);
         }
     }
 }

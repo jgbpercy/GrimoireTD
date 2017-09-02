@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace GrimoireTD.Creeps
@@ -21,14 +22,13 @@ namespace GrimoireTD.Creeps
         {
             this.creepModel = creepModel;
 
-            creepModel.RegisterForOnDiedCallback(() => { Destroy(gameObject); });
+            creepModel.OnDied += (object sender, EventArgs args) => Destroy(gameObject);
 
-            creepModel.RegisterForOnHealthChangedCallback(UpdateHealthBar);
+            creepModel.OnHealthChanged += UpdateHealthBar;
         }
 
         private void Start()
         {
-
             healthBar = GetComponentInChildren<Slider>();
             healthBar.maxValue = creepModel.CreepTemplate.MaxHitpoints;
             healthBar.value = healthBar.maxValue;
@@ -36,13 +36,12 @@ namespace GrimoireTD.Creeps
 
         private void Update()
         {
-
             transform.position = creepModel.Position;
         }
 
-        private void UpdateHealthBar()
+        private void UpdateHealthBar(object sender, EAOnHealthChanged args)
         {
-            healthBar.value = creepModel.CurrentHitpoints;
+            healthBar.value = args.NewValue;
         }
 
         private void OnDestroy()

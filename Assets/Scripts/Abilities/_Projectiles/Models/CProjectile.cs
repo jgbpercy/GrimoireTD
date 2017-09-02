@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 using GrimoireTD.Creeps;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
@@ -11,7 +11,9 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
     {
         protected int id;
 
-        private Vector3 position;
+        public IProjectileTemplate ProjectileTemplate { get; }
+
+        public Vector3 Position { get; private set; }
         private Vector3 currentDirection;
 
         protected IDefendingEntity sourceDefendingEntity;
@@ -21,9 +23,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         protected bool destroyingForHitTarget;
         private bool destroyingForNoTarget;
 
-        private IProjectileTemplate projectileTemplate;
-
-        private Action<float> OnDestroyCallback;
+        public event EventHandler<EAOnDestroyProjectile> OnDestroyProjectile;
 
         public string Id
         {
@@ -33,32 +33,16 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public Vector3 Position
-        {
-            get
-            {
-                return position;
-            }
-        }
-
-        public IProjectileTemplate ProjectileTemplate
-        {
-            get
-            {
-                return projectileTemplate;
-            }
-        }
-
         public CProjectile(Vector3 startPosition, IDefendModeTargetable target, IProjectileTemplate template, IDefendingEntity sourceDefendingEntity)
         {
             id = IdGen.GetNextId();
 
-            position = startPosition;
+            Position = startPosition;
             this.target = target;
-            target.RegisterForOnDiedCallback(() => this.target = null);
+            target.OnDied += OnTargetDied;
             this.sourceDefendingEntity = sourceDefendingEntity;
 
-            projectileTemplate = template;
+            ProjectileTemplate = template;
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
 
@@ -87,12 +71,12 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                 {
                     Destroy();
                 }
-                position = position + currentDirection * projectileTemplate.Speed * Time.deltaTime;
+                Position = Position + currentDirection * ProjectileTemplate.Speed * Time.deltaTime;
             }
             else
             {
-                position = Vector3.MoveTowards(position, target.TargetPosition(), projectileTemplate.Speed * Time.deltaTime);
-                currentDirection = (target.TargetPosition() - position).normalized;
+                Position = Vector3.MoveTowards(Position, target.TargetPosition(), ProjectileTemplate.Speed * Time.deltaTime);
+                currentDirection = (target.TargetPosition() - Position).normalized;
             }
         }
 
@@ -104,34 +88,34 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                 " (" + creep.NameInGame + ")");
 
             //TODO: apply modifiers from defending entity at the point of projectile creation, rather than at the point of effect application?
-            creep.ApplyAttackEffects(projectileTemplate.AttackEffects, sourceDefendingEntity);
+            creep.ApplyAttackEffects(ProjectileTemplate.AttackEffects, sourceDefendingEntity);
             destroyingForHitTarget = true;
             Destroy(destructionDelay);
         }
 
+        private void OnTargetDied(object sender, EventArgs args)
+        {
+            target = null;
+        }
+
         private void Destroy()
         {
-            OnDestroyCallback(0f);
+            OnDestroyProjectile?.Invoke(this, new EAOnDestroyProjectile(0f));
         }
 
         private void Destroy(float waitSeconds)
         {
-            OnDestroyCallback(waitSeconds);
+            OnDestroyProjectile?.Invoke(this, new EAOnDestroyProjectile(waitSeconds));
         }
 
         public void GameObjectDestroyed()
         {
             ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
-        }
 
-        public void RegisterForOnDestroyCallback(Action<float> callback)
-        {
-            OnDestroyCallback += callback;
-        }
-
-        public void DeregisterForOnDestroyCallback(Action<float> callback)
-        {
-            OnDestroyCallback -= callback;
+            if (target != null)
+            {
+                target.OnDied -= OnTargetDied;
+            }
         }
     }
 }

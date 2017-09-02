@@ -6,10 +6,8 @@ namespace GrimoireTD
     {
         GameMode CurrentGameMode { get; }
 
-        void RegisterForOnEnterBuildModeCallback(Action callback);
-        void DeregisterForOnEnterBuildModeCallback(Action callback);
+        event EventHandler<EAOnEnterBuildMode> OnEnterBuildMode;
 
-        void RegisterForOnEnterDefendModeCallback(Action callback);
-        void DeregisterForOnEnterDefendModeCallback(Action callback);
+        event EventHandler<EAOnEnterDefendMode> OnEnterDefendMode;
     }
 }

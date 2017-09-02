@@ -4,7 +4,7 @@ using UnityEngine;
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
     [Serializable]
-    public class ProjectileGraphicsMapping
+    public class SProjectileGraphicsMapping
     {
         [SerializeField]
         private SoProjectileTemplate projectileTemplate;
@@ -12,7 +12,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         [SerializeField]
         private GameObject prefab;
 
-        public ProjectileGraphicsMapping()
+        public SProjectileGraphicsMapping()
         {
         }
 

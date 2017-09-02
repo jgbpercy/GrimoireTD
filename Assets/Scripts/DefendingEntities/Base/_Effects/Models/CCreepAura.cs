@@ -2,32 +2,24 @@
 {
     public class CCreepAura : CDefenderEffect, ICreepAura
     {
-        private ICreepAuraTemplate creepAuraTemplate;
-
-        public ICreepAuraTemplate CreepAuraTemplate
-        {
-            get
-            {
-                return creepAuraTemplate;
-            }
-        }
+        public ICreepAuraTemplate CreepAuraTemplate { get; }
 
         public float Range
         {
             get
             {
-                return creepAuraTemplate.BaseRange;
+                return CreepAuraTemplate.BaseRange;
             }
         }
 
         public CCreepAura(ICreepAuraTemplate creepAuraTemplate) : base(creepAuraTemplate)
         {
-            this.creepAuraTemplate = creepAuraTemplate;
+            CreepAuraTemplate = creepAuraTemplate;
         }
 
         public override string UIText()
         {
-            return creepAuraTemplate.NameInGame;
+            return CreepAuraTemplate.NameInGame;
         }
     }
 }

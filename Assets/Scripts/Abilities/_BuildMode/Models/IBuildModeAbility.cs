@@ -8,9 +8,8 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         IBuildModeAbilityTemplate BuildModeAbilityTemplate { get; }
 
-        void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition);
+        event EventHandler<EAOnExecutedBuildModeAbility> OnExecuted;
 
-        void RegisterForOnExecutedCallback(Action<IBuildModeAbility> callback);
-        void DeregisterForOnExecutedCallback(Action<IBuildModeAbility> callback);
+        void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition);
     }
 }

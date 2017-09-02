@@ -7,20 +7,11 @@ namespace GrimoireTD.Attributes
     {
         private Dictionary<T, IAttribute> attributesDict;
 
-        private Dictionary<T, Action<float>> OnAttributeChangedCallbackDictionary;
-
-        private Action<T, float> OnAnyAttributeChangedCallback;
+        public event EventHandler<EAOnAnyAttributeChanged<T>> OnAnyAttributeChanged;
 
         public CAttributes(IDictionary<T, IAttribute> attributesDict)
         {
             this.attributesDict = new Dictionary<T, IAttribute>(attributesDict);
-
-            OnAttributeChangedCallbackDictionary = new Dictionary<T, Action<float>>();
-
-            foreach (T attributeName in this.attributesDict.Keys)
-            {
-                OnAttributeChangedCallbackDictionary.Add(attributeName, null);
-            }
         }
 
         public void AddModifier(INamedAttributeModifier<T> attributeModifier)
@@ -36,22 +27,18 @@ namespace GrimoireTD.Attributes
 
             attributeToModify.AddModifier(attributeModifier);
 
-            float newAttributeValue = GetAttribute(attributeModifier.AttributeName);
+            float newAttributeValue = GetAttribute(attributeModifier.AttributeName).Value();
 
-            OnAttributeChangedCallbackDictionary[attributeModifier.AttributeName]?.Invoke(newAttributeValue);
-
-            OnAnyAttributeChangedCallback?.Invoke(attributeModifier.AttributeName, newAttributeValue);
+            OnAnyAttributeChanged?.Invoke(this, new EAOnAnyAttributeChanged<T>(attributeModifier.AttributeName, newAttributeValue));
         }
 
         public bool TryRemoveModifier(INamedAttributeModifier<T> attributeModifier)
         {
             if (attributesDict[attributeModifier.AttributeName].TryRemoveModifier(attributeModifier))
             {
-                float newAttributeValue = GetAttribute(attributeModifier.AttributeName);
+                float newAttributeValue = GetAttribute(attributeModifier.AttributeName).Value();
 
-                OnAttributeChangedCallbackDictionary[attributeModifier.AttributeName]?.Invoke(GetAttribute(attributeModifier.AttributeName));
-
-                OnAnyAttributeChangedCallback?.Invoke(attributeModifier.AttributeName, newAttributeValue);
+                OnAnyAttributeChanged?.Invoke(this, new EAOnAnyAttributeChanged<T>(attributeModifier.AttributeName, newAttributeValue));
 
                 return true;
             }
@@ -59,34 +46,9 @@ namespace GrimoireTD.Attributes
             return false;
         }
 
-        public float GetAttribute(T attributeName)
+        public IReadOnlyAttribute GetAttribute(T attributeName)
         {
-            return attributesDict[attributeName].Value();
-        }
-
-        public string TempDebugGetAttributeDisplayName(T attributeName)
-        {
-            return attributesDict[attributeName].DisplayName;
-        }
-
-        public void RegisterForOnAttributeChangedCallback(Action<float> callback, T attribute)
-        {
-            OnAttributeChangedCallbackDictionary[attribute] += callback;
-        }
-
-        public void DeregisterForOnAttributeChangedCallback(Action<float> callback, T attribute)
-        {
-            OnAttributeChangedCallbackDictionary[attribute] -= callback;
-        }
-
-        public void RegisterForOnAnyAttributeChangedCallback(Action<T, float> callback)
-        {
-            OnAnyAttributeChangedCallback += callback;
-        }
-
-        public void DeregisterForOnAnyAttributeChangedCallback(Action<T, float> callback)
-        {
-            OnAnyAttributeChangedCallback -= callback;
+            return attributesDict[attributeName];
         }
     }
 }

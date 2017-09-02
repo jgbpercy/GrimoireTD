@@ -3,22 +3,15 @@ using GrimoireTD.Creeps;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
-    public interface IAoeProjectile
+    public interface IAoeProjectile : IProjectile
     {
-        IAoeProjectileTemplate AoeProjectileClassTemplate { get; }
+        IAoeProjectileTemplate AoeProjectileTemplate { get; }
 
         float CurrentAoeRadius { get; }
 
+        event EventHandler<EAOnExplosionStarted> OnExplosionStarted;
+        event EventHandler<EAOnExplosionFinished> OnExplosionFinished;
+
         void HitCreepInAoe(ICreep creep);
-
-        void ModelObjectFrameUpdate();
-
-        void RegisterForOnExplosionCallback(Action callback);
-
-        void DeregisterForOnExplosionCallback(Action callback);
-
-        void RegisterForOnExplosionFinishedCallback(Action callback);
-
-        void DeregisterForOnExplosionFinishedCallback(Action callback);
     }
 }

@@ -22,16 +22,16 @@ namespace GrimoireTD.Map
         public int Width { get; private set; }
         public int Height { get; private set; }
 
+        //TODO: why have I done this? Fix?
         private List<Coord> _path;
 
         private List<Coord> disallowedCoords;
 
-        private Action OnPathGeneratedOrChangedCallback;
+        public event EventHandler<EAOnMapCreated> OnMapCreated;
+        public event EventHandler<EAOnPathGeneratedOrChanged> OnPathGeneratedOrChanged;
 
-        private Action OnMapCreatedCallback;
-
-        private Action<IUnit, Coord> OnUnitCreatedCallback;
-        private Action<IStructure, Coord> OnStructureCreatedCallback;
+        public event EventHandler<EAOnUnitCreated> OnUnitCreated;
+        public event EventHandler<EAOnStructureCreated> OnStructureCreated;
 
         public IReadOnlyList<IHexType> HexTypes { get; private set; }
 
@@ -51,11 +51,10 @@ namespace GrimoireTD.Map
                 CDebug.Log(CDebug.pathing, "The _path was changed");
                 _path = value;
 
-                OnPathGeneratedOrChangedCallback?.Invoke();
+                OnPathGeneratedOrChanged?.Invoke(this, new EAOnPathGeneratedOrChanged(value));
 
                 CDebug.Log(CDebug.pathing, "The Path property called update disallowed coords");
                 disallowedCoords = PathingService.DisallowedCoords(_path, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
-
             }
         }
 
@@ -75,8 +74,8 @@ namespace GrimoireTD.Map
         )
         {
             //Register callbacks
-            InterfaceController.Instance.RegisterForOnBuildStructureUserAction(BuildStructure);
-            InterfaceController.Instance.RegisterForOnCreateUnitUserAction(CreateUnit);
+            InterfaceController.Instance.OnBuildStructurePlayerAction += OnBuildStructurePlayerAction;
+            InterfaceController.Instance.OnCreateUnitPlayerAction += OnCreateUnitPlayerAction;
 
             //Public Hex List
             HexTypes = colorsToTypesDictionary.Values.ToList();
@@ -125,7 +124,7 @@ namespace GrimoireTD.Map
                 }
             }
 
-            OnMapCreatedCallback?.Invoke();
+            OnMapCreated?.Invoke(this, new EAOnMapCreated(this));
 
             TempRegeneratePath();
 
@@ -262,6 +261,11 @@ namespace GrimoireTD.Map
             return true;
         }
 
+        private void OnBuildStructurePlayerAction(object sender, EAOnBuildStructurePlayerAction args)
+        {
+            BuildStructure(args.Position, args.StructureTemplate);
+        }
+
         private void BuildStructure(Coord coord, IStructureTemplate structureTemplate)
         {
             if (!CanBuildStructureAt(coord))
@@ -285,7 +289,7 @@ namespace GrimoireTD.Map
                 TempRegenerateDisallowedCoords();
             }
 
-            OnStructureCreatedCallback?.Invoke(newStructure, coord);
+            OnStructureCreated?.Invoke(this, new EAOnStructureCreated(coord, newStructure));
         }
 
         //  Unit Creation
@@ -304,6 +308,11 @@ namespace GrimoireTD.Map
             }
 
             return true;
+        }
+
+        private void OnCreateUnitPlayerAction(object sender, EAOnCreateUnitPlayerAction args)
+        {
+            CreateUnit(args.Position, args.UnitTemplate);
         }
 
         private void CreateUnit(Coord targetCoord, IUnitTemplate unitTemplate)
@@ -328,9 +337,9 @@ namespace GrimoireTD.Map
                 TempRegenerateDisallowedCoords();
             }
 
-            newUnit.RegisterForOnMovedCallback(coord => MoveUnitTo(coord, newUnit, newUnit.CachedDisallowedMovementDestinations));
+            newUnit.OnMoved += (object sender, EAOnMoved args) => MoveUnitTo(args.ToPosition, newUnit, newUnit.CachedDisallowedMovementDestinations);
 
-            OnUnitCreatedCallback?.Invoke(newUnit, targetCoord);
+            OnUnitCreated?.Invoke(this,new EAOnUnitCreated(targetCoord, newUnit));
         }
 
         //  Unit Movement
@@ -445,49 +454,6 @@ namespace GrimoireTD.Map
         private List<Coord> GetDisallowedCoords(List<Coord> newlyPathableCoords)
         {
             return PathingService.DisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), newlyPathableCoords);
-        }
-
-        //Callbacks
-
-
-        public void RegisterForOnPathGeneratedOrChangedCallback(Action callback)
-        {
-            OnPathGeneratedOrChangedCallback += callback;
-        }
-
-        public void DeregisterForOnPathGeneratedOrChangedCallback(Action callback)
-        {
-            OnPathGeneratedOrChangedCallback -= callback;
-        }
-
-        public void RegisterForOnMapCreatedCallback(Action callback)
-        {
-            OnMapCreatedCallback += callback;
-        }
-
-        public void DeregisterForOnMapCreatedCallback(Action callback)
-        {
-            OnMapCreatedCallback -= callback;
-        }
-
-        public void RegisterForOnUnitCreatedCallback(Action<IUnit, Coord> callback)
-        {
-            OnUnitCreatedCallback += callback;
-        }
-
-        public void DeregisterForOnUnitCreatedCallback(Action<IUnit, Coord> callback)
-        {
-            OnUnitCreatedCallback -= callback;
-        }
-
-        public void RegisterForOnStructureCreatedCallback(Action<IStructure, Coord> callback)
-        {
-            OnStructureCreatedCallback += callback;
-        }
-
-        public void DeregisterForOnStructureCreatedCallback(Action<IStructure, Coord> callback)
-        {
-            OnStructureCreatedCallback -= callback;
         }
     }
 }

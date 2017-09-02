@@ -2,30 +2,14 @@
 {
     public class CResourceTransaction : IResourceTransaction
     {
-        private IReadOnlyResource resource;
+        public IReadOnlyResource Resource { get; }
 
-        private int amount;
-
-        public IReadOnlyResource Resource
-        {
-            get
-            {
-                return resource;
-            }
-        }
-
-        public int Amount
-        {
-            get
-            {
-                return amount;
-            }
-        }
+        public int Amount { get; }
 
         public CResourceTransaction(IReadOnlyResource resource, int amount)
         {
-            this.resource = resource;
-            this.amount = amount;
+            Resource = resource;
+            Amount = amount;
         }
 
         public bool CanDoTransaction()

@@ -13,11 +13,10 @@ namespace GrimoireTD.DefendingEntities.Structures
 
         IReadOnlyDictionary<IStructureEnhancement, bool> EnhancementsChosen { get; }
 
+        event EventHandler<EAOnUpgraded> OnUpgraded;
+
         IStructureUpgrade CurrentUpgradeLevel();
 
         bool TryUpgrade(IStructureUpgrade upgrade, IStructureEnhancement chosenEnhancement);
-
-        void RegisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback);
-        void DeregisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback);
     }
 }

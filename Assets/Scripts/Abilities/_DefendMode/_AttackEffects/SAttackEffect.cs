@@ -62,7 +62,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 
         private float GetDamage(IDefendingEntity sourceDefendingEntity, IDamageEffectType damageEffectType)
         {
-            return (1 + sourceDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.damageBonus)) * baseMagnitude;
+            return (1 + sourceDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.damageBonus).Value()) * baseMagnitude;
         }
 
         public float GetActualDuration(IDefendingEntity sourceDefendingEntity)

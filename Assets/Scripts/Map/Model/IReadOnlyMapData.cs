@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.DefendingEntities.Structures;
-using GrimoireTD.DefendingEntities.Units;
 
 namespace GrimoireTD.Map
 {
@@ -14,6 +12,12 @@ namespace GrimoireTD.Map
         IReadOnlyList<IHexType> HexTypes { get; }
 
         IReadOnlyList<Coord> CreepPath { get; }
+
+        event EventHandler<EAOnMapCreated> OnMapCreated;
+        event EventHandler<EAOnPathGeneratedOrChanged> OnPathGeneratedOrChanged;
+
+        event EventHandler<EAOnUnitCreated> OnUnitCreated;
+        event EventHandler<EAOnStructureCreated> OnStructureCreated;
 
         IHexData TryGetHexAt(Coord hexCoord);
         IHexData GetHexAt(Coord hexCoord);
@@ -31,17 +35,5 @@ namespace GrimoireTD.Map
         List<Coord> CoordsInRange(int range, Coord startHex);
 
         List<Coord> GetDisallowedCoordsAfterUnitMove(Coord fromCoord);
-
-        void RegisterForOnPathGeneratedOrChangedCallback(Action callback);
-        void DeregisterForOnPathGeneratedOrChangedCallback(Action callback);
-
-        void RegisterForOnMapCreatedCallback(Action callback);
-        void DeregisterForOnMapCreatedCallback(Action callback);
-
-        void RegisterForOnUnitCreatedCallback(Action<IUnit, Coord> callback);
-        void DeregisterForOnUnitCreatedCallback(Action<IUnit, Coord> callback);
-
-        void RegisterForOnStructureCreatedCallback(Action<IStructure, Coord> callback);
-        void DeregisterForOnStructureCreatedCallback(Action<IStructure, Coord> callback);
     }
 }

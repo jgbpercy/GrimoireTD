@@ -34,7 +34,7 @@ namespace GrimoireTD.DefendingEntities
 
             interfaceController = InterfaceController.Instance;
 
-            interfaceController.RegisterForOnStructureToBuildSelectedCallback(OnSelectedStructureChange);
+            interfaceController.OnStructureToBuildSelected += OnSelectedStructureChange;
         }
 
         private void Update()
@@ -62,7 +62,7 @@ namespace GrimoireTD.DefendingEntities
 
                 if (mouseOverHex.StructureHere != null)
                 {
-                    foreach (IDefendModeAbility defendModeAbility in mouseOverHex.StructureHere.DefendModeAbilities())
+                    foreach (IDefendModeAbility defendModeAbility in mouseOverHex.StructureHere.Abilities.DefendModeAbilities())
                     {
                         ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
                         if (targetingComponentFloatRange != null)
@@ -74,7 +74,7 @@ namespace GrimoireTD.DefendingEntities
 
                 if (mouseOverHex.UnitHere != null)
                 {
-                    foreach (IDefendModeAbility defendModeAbility in mouseOverHex.UnitHere.DefendModeAbilities())
+                    foreach (IDefendModeAbility defendModeAbility in mouseOverHex.UnitHere.Abilities.DefendModeAbilities())
                     {
                         ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
                         if (targetingComponentFloatRange != null)
@@ -112,11 +112,11 @@ namespace GrimoireTD.DefendingEntities
             rangeIndicatorPositioner.position = mouseOverCoord.ToPositionVector();
         }
 
-        private void OnSelectedStructureChange(IStructureTemplate selectedStructureTemplate)
+        private void OnSelectedStructureChange(object sender, EAOnStructureToBuildSelected args)
         {
             int i = 0;
 
-            foreach (IAbilityTemplate abilityTemplate in selectedStructureTemplate.BaseCharacteristics.Abilities)
+            foreach (IAbilityTemplate abilityTemplate in args.SelectedStructureTemplate.BaseCharacteristics.Abilities)
             {
                 IDefendModeAbilityTemplate defendModeAbilityTemplate = abilityTemplate as IDefendModeAbilityTemplate;
                 if (defendModeAbilityTemplate != null)

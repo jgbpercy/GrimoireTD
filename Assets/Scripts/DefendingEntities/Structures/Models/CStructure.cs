@@ -1,6 +1,6 @@
-﻿using UnityEngine.Assertions;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using UnityEngine.Assertions;
 using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Map;
 
@@ -8,41 +8,26 @@ namespace GrimoireTD.DefendingEntities.Structures
 {
     public class CStructure : CDefendingEntity, IStructure
     {
-        //Name and Description
-        private string currentName;
-        private string currentDescription;
-
         //Template
-        private IStructureTemplate structureTemplate;
+        public IStructureTemplate StructureTemplate { get; }
+
+        //Name and Description
+        public override string CurrentName { get; protected set; }
+        public string CurrentDescription { get; private set; }
 
         //Upgrades
         private Dictionary<IStructureUpgrade, bool> upgradesBought;
         private Dictionary<IStructureEnhancement, bool> enhancementsChosen;
 
-        private Action<IStructureUpgrade, IStructureEnhancement> OnUpgradedCallback;
+        public event EventHandler<EAOnUpgraded> OnUpgraded;
 
         //Public properties
+        //Id
         public override string Id
         {
             get
             {
                 return "S-" + id;
-            }
-        }
-
-        public string CurrentDescription
-        {
-            get
-            {
-                return currentDescription;
-            }
-        }
-
-        public IStructureTemplate StructureTemplate
-        {
-            get
-            {
-                return structureTemplate;
             }
         }
 
@@ -62,20 +47,31 @@ namespace GrimoireTD.DefendingEntities.Structures
             }
         }
 
+        //UI
+        public override string UIText
+        {
+            get
+            {
+                return CurrentDescription;
+            }
+
+            protected set
+            {
+                CurrentDescription = value;
+            }
+        }
+
         //Constructor
         public CStructure(IStructureTemplate structureTemplate, Coord coordPosition) : base(structureTemplate, coordPosition)
         {
-            this.structureTemplate = structureTemplate;
+            StructureTemplate = structureTemplate;
 
-            currentName = structureTemplate.StartingNameInGame;
-            currentDescription = structureTemplate.StartingDescription;
+            CurrentName = structureTemplate.StartingNameInGame;
+            CurrentDescription = structureTemplate.StartingDescription;
 
             ApplyImprovement(structureTemplate.BaseCharacteristics);
 
             SetUpUpgradesAndEnhancements();
-
-            OnHex.RegisterForOnDefenderAuraAddedCallback(OnNewDefenderAuraInCurrentHex);
-            OnHex.RegisterForOnDefenderAuraRemovedCallback(OnClearDefenderAuraInCurrentHex);
         }
 
         //Upgrades
@@ -84,7 +80,7 @@ namespace GrimoireTD.DefendingEntities.Structures
             upgradesBought = new Dictionary<IStructureUpgrade, bool>();
             enhancementsChosen = new Dictionary<IStructureEnhancement, bool>();
 
-            foreach (IStructureUpgrade upgrade in structureTemplate.StructureUpgrades)
+            foreach (IStructureUpgrade upgrade in StructureTemplate.StructureUpgrades)
             {
                 upgradesBought.Add(upgrade, false);
 
@@ -131,54 +127,32 @@ namespace GrimoireTD.DefendingEntities.Structures
             upgradesBought[upgrade] = true;
             enhancementsChosen[chosenEnhancement] = true;
 
-            currentName = upgrade.NewStructureName;
-            currentDescription = upgrade.NewStructureDescription;
+            CurrentName = upgrade.NewStructureName;
+            CurrentDescription = upgrade.NewStructureDescription;
 
-            OnUpgradedCallback?.Invoke(upgrade, chosenEnhancement);
+            OnUpgraded?.Invoke(this, new EAOnUpgraded(upgrade, chosenEnhancement));
 
             return true;
         }
 
         //Defender Auras Affected By
-        protected override void OnNewDefenderAuraInCurrentHex(IDefenderAura aura)
+        protected override void OnNewDefenderAuraInCurrentHex(object sender, EAOnCallbackListAdd<IDefenderAura> args)
         {
-            if (aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.STRUCTURES)
+            if (args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.STRUCTURES)
             {
-                affectedByDefenderAuras.Add(aura);
+                affectedByDefenderAuras.Add(args.AddedItem);
             }
         }
 
-        protected override void OnClearDefenderAuraInCurrentHex(IDefenderAura aura)
+        protected override void OnClearDefenderAuraInCurrentHex(object sender, EAOnCallbackListRemove<IDefenderAura> args)
         {
-            if (aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || aura.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
+            if (args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
             {
-                bool wasPresent = affectedByDefenderAuras.Contains(aura);
+                bool wasPresent = affectedByDefenderAuras.Contains(args.RemovedItem);
                 Assert.IsTrue(wasPresent);
 
-                RemoveImprovement(aura.DefenderEffectTemplate.Improvement);
+                RemoveImprovement(args.RemovedItem.DefenderEffectTemplate.Improvement);
             }
-        }
-
-        //UI
-        public override string CurrentName()
-        {
-            return currentName;
-        }
-
-        public override string UIText()
-        {
-            return currentDescription;
-        }
-
-        //Callbacks
-        public void RegisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback)
-        {
-            OnUpgradedCallback += callback;
-        }
-
-        public void DeregisterForOnUpgradedCallback(Action<IStructureUpgrade, IStructureEnhancement> callback)
-        {
-            OnUpgradedCallback -= callback;
         }
     }
 }

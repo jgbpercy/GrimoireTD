@@ -29,7 +29,7 @@ namespace GrimoireTD
 
         public bool IsSetUp { get; private set; }
 
-        private Action OnSetUpCallback;
+        public event EventHandler<EAOnGameModelSetUp> OnGameModelSetUp;
 
         public IReadOnlyGameStateManager GameStateManager
         {
@@ -106,12 +106,7 @@ namespace GrimoireTD
             UnitFatigueFactorShallownessMultiplier = unitFatigueFactorShallownessMultiplier;
 
             IsSetUp = true;
-            OnSetUpCallback?.Invoke();
-        }
-
-        public void RegisterForOnSetUpCallback(Action callback)
-        {
-            OnSetUpCallback += callback;
+            OnGameModelSetUp?.Invoke(this, new EAOnGameModelSetUp(this));
         }
     }
 }
