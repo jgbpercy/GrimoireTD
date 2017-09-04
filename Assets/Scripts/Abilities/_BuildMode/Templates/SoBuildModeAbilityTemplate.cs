@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Economy;
+using System.Collections.Generic;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
@@ -14,7 +15,7 @@ namespace GrimoireTD.Abilities.BuildMode
         private SoBuildModeTargetingComponent targetingComponent;
 
         [SerializeField]
-        private SoBuildModeEffectComponent effectComponent;
+        private SoBuildModeEffectComponentTemplate[] effectComponents;
 
         public IEconomyTransaction Cost
         {
@@ -32,11 +33,11 @@ namespace GrimoireTD.Abilities.BuildMode
             }
         }
 
-        public IBuildModeEffectComponent EffectComponent
+        public IEnumerable<IBuildModeEffectComponentTemplate> EffectComponents
         {
             get
             {
-                return effectComponent;
+                return effectComponents;
             }
         }
 

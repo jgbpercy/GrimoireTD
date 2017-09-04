@@ -1,34 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
     public static class BuildModeAbilityAutoTargetedRuleService
     {
-
-        //Rule names
-        public enum RuleName
+        //Wrapper Function
+        public static List<IBuildModeTargetable> RunRule<T>(T args) where T : BuildModeAutoTargetedArgs
         {
-            SingleHex
-        }
-
-        //Wrapper function
-        public static List<IBuildModeTargetable> RunRule(RuleName ruleName, Coord targetCoord)
-        {
-            switch (ruleName)
+            var singleHexArgs = args as SingleHexArgs;
+            if (singleHexArgs != null)
             {
-                case RuleName.SingleHex:
-                    return SingleHex(targetCoord);
-                default:
-                    throw new Exception("BuildModeAbilityAutoTargetedRuleService was passed an AOE rule name to run that does not have a rule configured.");
+                return SingleHex(singleHexArgs);
             }
+
+            throw new ArgumentException("BuildModeAbilityAutoTargetedRuleService was passed a rule args for which there was no rule.");
         }
 
         //Rules
-        private static List<IBuildModeTargetable> SingleHex(Coord targetCoord)
+        private static List<IBuildModeTargetable> SingleHex(SingleHexArgs args)
         {
-            return new List<IBuildModeTargetable> { targetCoord };
+            return new List<IBuildModeTargetable> { args.TargetCoord };
         }
     }
 }

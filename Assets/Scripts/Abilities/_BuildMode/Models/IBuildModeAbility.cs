@@ -10,6 +10,6 @@ namespace GrimoireTD.Abilities.BuildMode
 
         event EventHandler<EAOnExecutedBuildModeAbility> OnExecuted;
 
-        void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition);
+        void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition, IReadOnlyMapData mapData);
     }
 }

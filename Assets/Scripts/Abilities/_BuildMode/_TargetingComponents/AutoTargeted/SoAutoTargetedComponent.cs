@@ -7,11 +7,11 @@ namespace GrimoireTD.Abilities.BuildMode
     public class SoAutoTargetedComponent : SoBuildModeTargetingComponent, IAutoTargetedComponent
     {
         [SerializeField]
-        private BuildModeAbilityAutoTargetedRuleService.RuleName targetingRule;
+        private SoBuildModeAutoTargetedArgsTemplate targetingRule;
 
-        public override IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
+        public override IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position, IReadOnlyMapData mapData)
         {
-            return BuildModeAbilityAutoTargetedRuleService.RunRule(targetingRule, position);
+            return BuildModeAbilityAutoTargetedRuleService.RunRule(targetingRule.GenerateArgs(position, mapData));
         }
     }
 }

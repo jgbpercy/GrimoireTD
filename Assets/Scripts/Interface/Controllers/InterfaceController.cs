@@ -201,12 +201,12 @@ namespace GrimoireTD.UI
 
             if (
                 CurrentCursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY &&
-                SelectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, MouseOverCoord)
+                SelectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, MouseOverCoord, mapData)
             )
             {
                 CDebug.Log(CDebug.buildModeAbilities, "InterfaceController detected hex targeted build mode ability click");
 
-                selectedBuildModeAbility.ExecuteAbility(SelectedUnitInstance, MouseOverCoord);
+                selectedBuildModeAbility.ExecuteAbility(SelectedUnitInstance, MouseOverCoord, mapData);
 
                 SetCursorModeSelect();
 
@@ -309,7 +309,7 @@ namespace GrimoireTD.UI
             }
             else
             {
-                abilityToActivate.ExecuteAbility(SelectedUnitInstance, SelectedUnitInstance.CoordPosition);
+                abilityToActivate.ExecuteAbility(SelectedUnitInstance, SelectedUnitInstance.CoordPosition, mapData);
 
                 SetCursorModeSelect();
             }

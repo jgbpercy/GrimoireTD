@@ -7,18 +7,7 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public class SoBuildModeTargetingComponent : ScriptableObject, IBuildModeTargetingComponent
     {
-        [SerializeField]
-        protected int range;
-
-        public int Range
-        {
-            get
-            {
-                return range;
-            }
-        }
-
-        public virtual IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
+        public virtual IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position, IReadOnlyMapData mapData)
         {
             throw new NotImplementedException("Base BMTargetingComponent cannot find targets and should not be used.");
         }

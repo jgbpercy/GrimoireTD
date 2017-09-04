@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.Technical;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.UI;
@@ -104,7 +103,7 @@ namespace GrimoireTD.Map
 
                 tileHighlighter.position = mouseOverCoord.ToPositionVector();
 
-                if (interfaceController.SelectedBuildModeAbilityTargetingComponent.IsValidTarget(interfaceController.SelectedUnitInstance, mouseOverCoord))
+                if (interfaceController.SelectedBuildModeAbilityTargetingComponent.IsValidTarget(interfaceController.SelectedUnitInstance, mouseOverCoord, GameModels.Models[0].MapData))
                 {
                     tileHighlighterRenderer.material.color = tileHighlighterTestBright;
                 }

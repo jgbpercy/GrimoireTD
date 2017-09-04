@@ -1,4 +1,5 @@
-﻿using GrimoireTD.Economy;
+﻿using System.Collections.Generic;
+using GrimoireTD.Economy;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
@@ -8,6 +9,6 @@ namespace GrimoireTD.Abilities.BuildMode
 
         IBuildModeTargetingComponent TargetingComponent { get; }
 
-        IBuildModeEffectComponent EffectComponent { get; }
+        IEnumerable<IBuildModeEffectComponentTemplate> EffectComponents { get; }
     }
 }
