@@ -9,11 +9,11 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public class CMoveEffectComponent : CBuildModeEffectComponent, IMoveEffectComponent
     {
-        private IMoveEffectComponentTemplate moveEffectComponentTemplate;
+        //private IMoveEffectComponentTemplate moveEffectComponentTemplate;
 
         public CMoveEffectComponent(IMoveEffectComponentTemplate moveEffectComponentTemplate) : base(moveEffectComponentTemplate)
         {
-            this.moveEffectComponentTemplate = moveEffectComponentTemplate;
+            //this.moveEffectComponentTemplate = moveEffectComponentTemplate;
         }
 
         public override void ExecuteEffect(IDefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)

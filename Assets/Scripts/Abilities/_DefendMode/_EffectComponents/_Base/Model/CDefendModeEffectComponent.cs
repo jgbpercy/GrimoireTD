@@ -6,11 +6,11 @@ namespace GrimoireTD.Abilities.DefendMode
 {
     public abstract class CDefendModeEffectComponent : IDefendModeEffectComponent
     {
-        private IDefendModeEffectComponentTemplate defendModeEffectComponentTemplate;
+        //private IDefendModeEffectComponentTemplate defendModeEffectComponentTemplate;
 
         public CDefendModeEffectComponent(IDefendModeEffectComponentTemplate defendModeEffectComponentTemplate)
         {
-            this.defendModeEffectComponentTemplate = defendModeEffectComponentTemplate;
+            //this.defendModeEffectComponentTemplate = defendModeEffectComponentTemplate;
         }
 
         public abstract void ExecuteEffect(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets);

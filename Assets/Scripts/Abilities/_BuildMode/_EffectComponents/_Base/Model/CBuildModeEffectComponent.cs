@@ -5,11 +5,11 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public abstract class CBuildModeEffectComponent : IBuildModeEffectComponent
     {
-        private IBuildModeEffectComponentTemplate buildModeEffectComponentTemplate;
+        //private IBuildModeEffectComponentTemplate buildModeEffectComponentTemplate;
 
         public CBuildModeEffectComponent(IBuildModeEffectComponentTemplate buildModeEffectComponentTemplate)
         {
-            this.buildModeEffectComponentTemplate = buildModeEffectComponentTemplate;
+            //this.buildModeEffectComponentTemplate = buildModeEffectComponentTemplate;
         }
 
         public abstract void ExecuteEffect(IDefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets);

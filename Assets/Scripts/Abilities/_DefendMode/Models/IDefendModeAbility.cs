@@ -1,4 +1,5 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Creeps;
+using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -16,7 +17,7 @@ namespace GrimoireTD.Abilities.DefendMode
         float TimeSinceExecuted { get; }
         float TimeSinceExecutedClamped { get; }
 
-        //TODO: makereadonly?
+        //TODO: make readonly defendingentity?
         bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity);
 
         void WasExecuted();

@@ -64,10 +64,11 @@ namespace GrimoireTD.DefendingEntities
                 {
                     foreach (IDefendModeAbility defendModeAbility in mouseOverHex.StructureHere.Abilities.DefendModeAbilities())
                     {
-                        ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
-                        if (targetingComponentFloatRange != null)
+                        //TODO: referencing SOs here - make interfaces?
+                        SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent.TargetingRule as SoFloatRangeArgsTemplate;
+                        if (floatRangeTargetingArgs != null)
                         {
-                            ranges.Add(targetingComponentFloatRange.GetActualRange(mouseOverHex.StructureHere));
+                            ranges.Add(floatRangeTargetingArgs.GetActualRange(mouseOverHex.StructureHere));
                         }
                     }
                 }
@@ -76,10 +77,10 @@ namespace GrimoireTD.DefendingEntities
                 {
                     foreach (IDefendModeAbility defendModeAbility in mouseOverHex.UnitHere.Abilities.DefendModeAbilities())
                     {
-                        ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
-                        if (targetingComponentFloatRange != null)
+                        SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent.TargetingRule as SoFloatRangeArgsTemplate;
+                        if (floatRangeTargetingArgs != null)
                         {
-                            ranges.Add(targetingComponentFloatRange.GetActualRange(mouseOverHex.UnitHere));
+                            ranges.Add(floatRangeTargetingArgs.GetActualRange(mouseOverHex.UnitHere));
                         }
                     }
                 }
@@ -121,10 +122,10 @@ namespace GrimoireTD.DefendingEntities
                 IDefendModeAbilityTemplate defendModeAbilityTemplate = abilityTemplate as IDefendModeAbilityTemplate;
                 if (defendModeAbilityTemplate != null)
                 {
-                    ITargetingComponentFloatRange targetingComponentFloatRange = defendModeAbilityTemplate.TargetingComponent as ITargetingComponentFloatRange;
-                    if (targetingComponentFloatRange != null)
+                    SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbilityTemplate.TargetingComponent.TargetingRule as SoFloatRangeArgsTemplate;
+                    if (floatRangeTargetingArgs != null)
                     {
-                        SetUpRangeIndicator(i, targetingComponentFloatRange.BaseRange);
+                        SetUpRangeIndicator(i, floatRangeTargetingArgs.GetActualRange(null));
 
                         i++;
                     }

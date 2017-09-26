@@ -4,21 +4,19 @@ using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
-    public class SoTargetingComponentFloatRange : SoDefendModeTargetingComponent, ITargetingComponentFloatRange
+    public class SoFloatRangeArgsTemplate : SoDefendModeTargetingArgsTemplate
     {
         [SerializeField]
         private float baseRange;
 
-        public float BaseRange
+        //TODO: logic in SO - think of a way to clean up?
+        public float GetActualRange(IDefendingEntity attachedToDefendingEntity)
         {
-            get
+            if (attachedToDefendingEntity == null)
             {
                 return baseRange;
             }
-        }
 
-        public float GetActualRange(IDefendingEntity attachedToDefendingEntity)
-        {
             return baseRange * (1 + attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.rangeBonus).Value());
         }
     }

@@ -74,7 +74,7 @@ namespace GrimoireTD.Abilities.DefendMode
 
         public bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity)
         {
-            IReadOnlyList<IDefendModeTargetable> targetList = DefendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity);
+            IReadOnlyList<IDefendModeTargetable> targetList = DefendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity, GameModels.Models[0].CreepManager);
 
             if (targetList == null) { return false; }
 
