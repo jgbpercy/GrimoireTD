@@ -2,7 +2,7 @@
 
 namespace GrimoireTD.Abilities.DefendMode
 {
-    public interface IProjectileLauncherComponent
+    public interface IProjectileLauncherComponentTemplate : IDefendModeEffectComponentTemplate
     {
         IProjectileTemplate ProjectileToFireTemplate { get; }
     }

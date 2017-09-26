@@ -2,7 +2,7 @@
 
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    public interface IAttributeModifierEffectType
+    public interface IAttributeModifierEffectType : IModifierEffectType
     {
         CreepAttributeName CreepAttributeName { get; }
     }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using GrimoireTD.DefendingEntities;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -13,7 +14,7 @@ namespace GrimoireTD.Abilities.DefendMode
         protected SoDefendModeTargetingComponent targetingComponent;
 
         [SerializeField]
-        protected SoDefendModeEffectComponent effectComponent;
+        protected SoDefendModeEffectComponentTemplate[] effectComponentTemplates;
 
         public float BaseCooldown
         {
@@ -31,11 +32,11 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public IDefendModeEffectComponent EffectComponent
+        public IEnumerable<IDefendModeEffectComponentTemplate> EffectComponentTemplates
         {
             get
             {
-                return effectComponent;
+                return effectComponentTemplates;
             }
         }
 

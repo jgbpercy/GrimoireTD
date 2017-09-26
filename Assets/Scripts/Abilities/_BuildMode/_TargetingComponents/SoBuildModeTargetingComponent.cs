@@ -9,7 +9,7 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         public virtual IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position, IReadOnlyMapData mapData)
         {
-            throw new NotImplementedException("Base BMTargetingComponent cannot find targets and should not be used.");
+            throw new NotImplementedException("Base BuildModeTargetingComponent cannot find targets and should not be used.");
         }
     }
 }

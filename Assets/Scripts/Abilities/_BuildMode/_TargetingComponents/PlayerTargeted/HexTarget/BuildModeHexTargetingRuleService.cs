@@ -28,7 +28,7 @@ namespace GrimoireTD.Abilities.BuildMode
         private static bool ValidMove(ValidMoveArgs args)
         {
             var sourceUnit = args.SourceEntity as IUnit;
-            if (sourceUnit == null) throw new ArgumentException("ValidMove was passed a non-Unit"); //optimisation: disable check in release build
+            if (sourceUnit == null) throw new ArgumentException("ValidMove was passed a non-Unit"); //optimisation: disable in release build
 
             if (!HexIsInRange(new HexIsInRangeArgs(args.SourceEntity, args.TargetCoord, args.MapData, args.Range)))
             {

@@ -1,4 +1,6 @@
-﻿namespace GrimoireTD.Abilities.DefendMode
+﻿using System.Collections.Generic;
+
+namespace GrimoireTD.Abilities.DefendMode
 {
     public interface IDefendModeAbilityTemplate : IAbilityTemplate
     {
@@ -6,6 +8,6 @@
 
         IDefendModeTargetingComponent TargetingComponent { get; }
 
-        IDefendModeEffectComponent EffectComponent { get; }
+        IEnumerable<IDefendModeEffectComponentTemplate> EffectComponentTemplates { get; }
     }
 }

@@ -23,7 +23,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
             effectComponents = new List<IBuildModeEffectComponent>();
 
-            foreach (var effectComponentTemplate in template.EffectComponents)
+            foreach (var effectComponentTemplate in template.EffectComponentTemplates)
             {
                 effectComponents.Add(effectComponentTemplate.GenerateEffectComponent());
             }
@@ -31,7 +31,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
         public void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition, IReadOnlyMapData mapData)
         {
-            IReadOnlyList<IBuildModeTargetable> targetList = BuildModeAbilityTemplate.TargetingComponent.FindTargets(executionPosition, mapData);
+            IReadOnlyList<IBuildModeTargetable> targetList = targetingComponent.FindTargets(executionPosition, mapData);
 
             foreach(var effectComponent in effectComponents)
             {

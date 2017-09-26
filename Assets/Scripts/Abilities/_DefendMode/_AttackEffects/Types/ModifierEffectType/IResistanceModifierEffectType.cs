@@ -1,6 +1,6 @@
 ﻿namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
-    public interface IResistanceModifierEffectType
+    public interface IResistanceModifierEffectType : IModifierEffectType
     {
         ISpecificDamageEffectType ResistanceToModify { get; }
     }

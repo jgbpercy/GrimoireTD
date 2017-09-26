@@ -46,6 +46,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
                 return basicMetaDamageTypes;
             }
         }
+
         public IReadOnlyList<IWeakMetaDamageEffectType> WeakMetaDamageTypes
         {
             get
@@ -154,6 +155,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             IBasicMetaDamageEffectType basicMetaDamageEffectType = damageEffectType as IBasicMetaDamageEffectType;
             if (basicMetaDamageEffectType != null)
             {
+                metaDamageTypes.Add(basicMetaDamageEffectType);
                 basicMetaDamageTypes.Add(basicMetaDamageEffectType);
                 return;
             }
@@ -161,6 +163,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             IWeakMetaDamageEffectType weakMetaDamageEffectType = damageEffectType as IWeakMetaDamageEffectType;
             if (weakMetaDamageEffectType != null)
             {
+                metaDamageTypes.Add(weakMetaDamageEffectType);
                 weakMetaDamageTypes.Add(weakMetaDamageEffectType);
                 return;
             }
@@ -168,6 +171,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             IStrongMetaDamageEffectType strongMetaDamageEffectType = damageEffectType as IStrongMetaDamageEffectType;
             if (strongMetaDamageEffectType != null)
             {
+                metaDamageTypes.Add(strongMetaDamageEffectType);
                 strongMetaDamageTypes.Add(strongMetaDamageEffectType);
                 return;
             }

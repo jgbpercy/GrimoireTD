@@ -85,7 +85,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         }
 
         [Test]
-        public void RunRule_PassedValidMoveRuleAndNonUnit_ThrowsFailedAssertion()
+        public void RunRule_PassedValidMoveRuleAndNonUnit_ThrowsException()
         {
             Assert.Throws(typeof(System.ArgumentException), () => 
                 BuildModeHexTargetingRuleService.RunRule(new ValidMoveArgs(

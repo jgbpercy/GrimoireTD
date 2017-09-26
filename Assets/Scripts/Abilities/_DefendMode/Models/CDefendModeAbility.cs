@@ -13,6 +13,8 @@ namespace GrimoireTD.Abilities.DefendMode
 
         public IDefendModeAbilityTemplate DefendModeAbilityTemplate { get; }
 
+        private List<IDefendModeEffectComponent> effectComponents;
+
         public float TimeSinceExecuted { get; private set; }
         public float ActualCooldown { get; private set; }
 
@@ -55,6 +57,13 @@ namespace GrimoireTD.Abilities.DefendMode
 
             attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).OnAttributeChanged += OnAttachedDefendingEntityCooldownReductionChange;
 
+            effectComponents = new List<IDefendModeEffectComponent>();
+
+            foreach (var effectComponentTemplate in template.EffectComponentTemplates)
+            {
+                effectComponents.Add(effectComponentTemplate.GenerateEffectComponent());
+            }
+
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
         }
 
@@ -69,7 +78,11 @@ namespace GrimoireTD.Abilities.DefendMode
 
             if (targetList == null) { return false; }
 
-            DefendModeAbilityTemplate.EffectComponent.ExecuteEffect(attachedToDefendingEntity, targetList);
+            foreach (var effectComponent in effectComponents)
+            {
+                effectComponent.ExecuteEffect(attachedToDefendingEntity, targetList);
+            }
+
             return true;
         }
 

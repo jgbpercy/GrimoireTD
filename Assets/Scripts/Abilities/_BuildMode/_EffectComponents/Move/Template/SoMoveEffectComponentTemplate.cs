@@ -7,7 +7,7 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         public override IBuildModeEffectComponent GenerateEffectComponent()
         {
-            return new CMoveEffectComponent();
+            return new CMoveEffectComponent(this);
         }
     }
 }

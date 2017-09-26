@@ -9,6 +9,6 @@ namespace GrimoireTD.Abilities.BuildMode
 
         IBuildModeTargetingComponent TargetingComponent { get; }
 
-        IEnumerable<IBuildModeEffectComponentTemplate> EffectComponents { get; }
+        IEnumerable<IBuildModeEffectComponentTemplate> EffectComponentTemplates { get; }
     }
 }

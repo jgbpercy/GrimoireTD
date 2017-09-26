@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.Map;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.DefendingEntities;
-using System;
 
-namespace GrimoireTD.Tests.BuildModeAbility
+namespace GrimoireTD.Tests.BuildModeAbilityTests
 {
     public class BuildModeAbilityTests
     {
@@ -62,7 +62,7 @@ namespace GrimoireTD.Tests.BuildModeAbility
 
             template = Substitute.For<IBuildModeAbilityTemplate>();
             template.TargetingComponent.Returns(targetingComponent);
-            template.EffectComponents.Returns(new List<IBuildModeEffectComponentTemplate> { effectComponentTemplate, effectComponentTemplateTwo });
+            template.EffectComponentTemplates.Returns(new List<IBuildModeEffectComponentTemplate> { effectComponentTemplate, effectComponentTemplateTwo });
 
             subject = new CBuildModeAbility(template);
         }
