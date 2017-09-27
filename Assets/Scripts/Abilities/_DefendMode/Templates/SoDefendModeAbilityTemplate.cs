@@ -11,7 +11,7 @@ namespace GrimoireTD.Abilities.DefendMode
         protected float baseCooldown;
 
         [SerializeField]
-        protected SoDefendModeTargetingComponent targetingComponent;
+        protected SoDefendModeTargetingComponentTemplate targetingComponentTemplate;
 
         [SerializeField]
         protected SoDefendModeEffectComponentTemplate[] effectComponentTemplates;
@@ -24,11 +24,11 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public IDefendModeTargetingComponent TargetingComponent
+        public IDefendModeTargetingComponentTemplate TargetingComponentTemplate
         {
             get
             {
-                return targetingComponent;
+                return targetingComponentTemplate;
             }
         }
 

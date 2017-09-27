@@ -2,7 +2,6 @@
 using UnityEngine;
 using GrimoireTD.Abilities;
 using GrimoireTD.Abilities.DefendMode;
-using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.Technical;
 using GrimoireTD.Map;
 using GrimoireTD.UI;
@@ -65,7 +64,7 @@ namespace GrimoireTD.DefendingEntities
                     foreach (IDefendModeAbility defendModeAbility in mouseOverHex.StructureHere.Abilities.DefendModeAbilities())
                     {
                         //TODO: referencing SOs here - make interfaces?
-                        SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent.TargetingRule as SoFloatRangeArgsTemplate;
+                        SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbility.DefendModeAbilityTemplate.TargetingComponentTemplate.TargetingRule as SoFloatRangeArgsTemplate;
                         if (floatRangeTargetingArgs != null)
                         {
                             ranges.Add(floatRangeTargetingArgs.GetActualRange(mouseOverHex.StructureHere));
@@ -77,7 +76,7 @@ namespace GrimoireTD.DefendingEntities
                 {
                     foreach (IDefendModeAbility defendModeAbility in mouseOverHex.UnitHere.Abilities.DefendModeAbilities())
                     {
-                        SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbility.DefendModeAbilityTemplate.TargetingComponent.TargetingRule as SoFloatRangeArgsTemplate;
+                        SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbility.DefendModeAbilityTemplate.TargetingComponentTemplate.TargetingRule as SoFloatRangeArgsTemplate;
                         if (floatRangeTargetingArgs != null)
                         {
                             ranges.Add(floatRangeTargetingArgs.GetActualRange(mouseOverHex.UnitHere));
@@ -122,7 +121,7 @@ namespace GrimoireTD.DefendingEntities
                 IDefendModeAbilityTemplate defendModeAbilityTemplate = abilityTemplate as IDefendModeAbilityTemplate;
                 if (defendModeAbilityTemplate != null)
                 {
-                    SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbilityTemplate.TargetingComponent.TargetingRule as SoFloatRangeArgsTemplate;
+                    SoFloatRangeArgsTemplate floatRangeTargetingArgs = defendModeAbilityTemplate.TargetingComponentTemplate.TargetingRule as SoFloatRangeArgsTemplate;
                     if (floatRangeTargetingArgs != null)
                     {
                         SetUpRangeIndicator(i, floatRangeTargetingArgs.GetActualRange(null));

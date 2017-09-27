@@ -6,7 +6,7 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         float BaseCooldown { get; }
 
-        IDefendModeTargetingComponent TargetingComponent { get; }
+        IDefendModeTargetingComponentTemplate TargetingComponentTemplate { get; }
 
         IEnumerable<IDefendModeEffectComponentTemplate> EffectComponentTemplates { get; }
     }

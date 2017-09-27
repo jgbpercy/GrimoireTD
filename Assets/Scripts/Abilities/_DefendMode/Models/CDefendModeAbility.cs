@@ -13,6 +13,8 @@ namespace GrimoireTD.Abilities.DefendMode
 
         public IDefendModeAbilityTemplate DefendModeAbilityTemplate { get; }
 
+        private IDefendModeTargetingComponent targetingComponent; 
+
         private List<IDefendModeEffectComponent> effectComponents;
 
         public float TimeSinceExecuted { get; private set; }
@@ -57,6 +59,8 @@ namespace GrimoireTD.Abilities.DefendMode
 
             attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).OnAttributeChanged += OnAttachedDefendingEntityCooldownReductionChange;
 
+            targetingComponent = template.TargetingComponentTemplate.GenerateTargetingComponent();
+
             effectComponents = new List<IDefendModeEffectComponent>();
 
             foreach (var effectComponentTemplate in template.EffectComponentTemplates)
@@ -74,7 +78,10 @@ namespace GrimoireTD.Abilities.DefendMode
 
         public bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity)
         {
-            IReadOnlyList<IDefendModeTargetable> targetList = DefendModeAbilityTemplate.TargetingComponent.FindTargets(attachedToDefendingEntity, GameModels.Models[0].CreepManager);
+            var targetList = targetingComponent.FindTargets(
+                attachedToDefendingEntity, 
+                GameModels.Models[0].CreepManager
+            );
 
             if (targetList == null) { return false; }
 
