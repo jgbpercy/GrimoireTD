@@ -46,7 +46,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedValidMoveRuleAndOutOfRangeHex_ReturnsFalse()
         {
-            var result = BuildModeHexTargetingRuleService.RunRule(new ValidMoveArgs(
+            var result = PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                 unit,
                 new Coord(3, 3),
                 mapData,
@@ -61,7 +61,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         {
             mapData.CanMoveUnitTo(Arg.Any<Coord>(), Arg.Any<List<Coord>>()).Returns(false);
 
-            var result = BuildModeHexTargetingRuleService.RunRule(new ValidMoveArgs(
+            var result = PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                 unit,
                 new Coord(0,1),
                 mapData,
@@ -74,7 +74,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedValidMoveRuleAndHexInRange_ReturnsTrueIfMapReturnsTrue()
         {
-            var result = BuildModeHexTargetingRuleService.RunRule(new ValidMoveArgs(
+            var result = PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                 unit,
                 new Coord(0, 1),
                 mapData,
@@ -88,7 +88,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         public void RunRule_PassedValidMoveRuleAndNonUnit_ThrowsException()
         {
             Assert.Throws(typeof(System.ArgumentException), () => 
-                BuildModeHexTargetingRuleService.RunRule(new ValidMoveArgs(
+                PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                     structure,
                     new Coord(0, 1),
                     mapData,
@@ -100,7 +100,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedHexIsInRangeRuleAndHexInRange_ReturnsTrue()
         {
-            var result = BuildModeHexTargetingRuleService.RunRule(new HexIsInRangeArgs(
+            var result = PlayerTargetsHexRuleService.RunRule(new HexIsInRangeArgs(
                 unit,
                 new Coord(0, 1),
                 mapData,
@@ -113,7 +113,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedHexIsInRangeRuleAndHexOutOfRange_ReturnsFalse()
         {
-            var result = BuildModeHexTargetingRuleService.RunRule(new HexIsInRangeArgs(
+            var result = PlayerTargetsHexRuleService.RunRule(new HexIsInRangeArgs(
                 unit,
                 new Coord(3, 3),
                 mapData,

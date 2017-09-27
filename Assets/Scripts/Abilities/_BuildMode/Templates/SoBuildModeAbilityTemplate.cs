@@ -12,7 +12,7 @@ namespace GrimoireTD.Abilities.BuildMode
         private SEconomyTransaction cost;
 
         [SerializeField]
-        private SoBuildModeTargetingComponent targetingComponent;
+        private SoBuildModeTargetingComponentTemplate targetingComponentTemplate;
 
         [SerializeField]
         private SoBuildModeEffectComponentTemplate[] effectComponentTemplates;
@@ -25,11 +25,11 @@ namespace GrimoireTD.Abilities.BuildMode
             }
         }
 
-        public IBuildModeTargetingComponent TargetingComponent
+        public IBuildModeTargetingComponentTemplate TargetingComponentTemplate
         {
             get
             {
-                return targetingComponent;
+                return targetingComponentTemplate;
             }
         }
 

@@ -294,7 +294,7 @@ namespace GrimoireTD.UI
                 return;
             }
 
-            IPlayerTargetedComponent playerTargetedComponent = abilityToActivate.BuildModeAbilityTemplate.TargetingComponent as IPlayerTargetedComponent;
+            IPlayerTargetedComponent playerTargetedComponent = abilityToActivate.TargetingComponent as IPlayerTargetedComponent;
             if (playerTargetedComponent != null)
             {
                 CDebug.Log(CDebug.buildModeAbilities, "Player Targeted ability activated");

@@ -61,7 +61,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
             effectComponentTemplateTwo.GenerateEffectComponent().Returns(effectComponentTwo);
 
             template = Substitute.For<IBuildModeAbilityTemplate>();
-            template.TargetingComponent.Returns(targetingComponent);
+            template.TargetingComponentTemplate.GenerateTargetingComponent().Returns(targetingComponent);
             template.EffectComponentTemplates.Returns(new List<IBuildModeEffectComponentTemplate> { effectComponentTemplate, effectComponentTemplateTwo });
 
             subject = new CBuildModeAbility(template);

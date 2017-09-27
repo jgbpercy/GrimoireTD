@@ -7,7 +7,7 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         IEconomyTransaction Cost { get; }
 
-        IBuildModeTargetingComponent TargetingComponent { get; }
+        IBuildModeTargetingComponentTemplate TargetingComponentTemplate { get; }
 
         IEnumerable<IBuildModeEffectComponentTemplate> EffectComponentTemplates { get; }
     }
