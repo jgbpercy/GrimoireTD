@@ -7,7 +7,7 @@ namespace GrimoireTD.Abilities.BuildMode
     public static class PlayerTargetsHexRuleService
     {
         //Wrapper function
-        public static bool RunRule<T>(T args) where T : PlayerTargetsHexArgs
+        public static Func<PlayerTargetsHexArgs, bool> RunRule = (args) =>
         {
             var validMoveArgs = args as ValidMoveArgs;
             if (validMoveArgs != null)
@@ -22,7 +22,7 @@ namespace GrimoireTD.Abilities.BuildMode
             }
 
             throw new ArgumentException("BuildModeAbilityHexTargetingRuleService was passed a rule args for which there was no rule.");
-        }
+        };
 
         //Rules
         private static bool ValidMove(ValidMoveArgs args)

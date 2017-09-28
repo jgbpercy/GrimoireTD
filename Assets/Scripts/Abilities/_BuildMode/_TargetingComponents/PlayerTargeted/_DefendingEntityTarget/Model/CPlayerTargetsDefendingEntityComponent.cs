@@ -2,6 +2,7 @@
 using UnityEngine.Assertions;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Map;
+using System;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
@@ -22,7 +23,10 @@ namespace GrimoireTD.Abilities.BuildMode
         {
             IDefendingEntity potentialTargetDefendingEntity = potentialTarget as IDefendingEntity;
 
-            Assert.IsTrue(potentialTargetDefendingEntity != null);
+            if (potentialTargetDefendingEntity == null)
+            {
+                throw new ArgumentException("CPlayerTargetsDefendingEntityComponent IsValidTarget was passed a non-DefendingEntity IBuildModeTargetable.");
+            }
 
             return PlayerTargetsDefendingEntityRuleService.RunRule(
                 PlayerTargetsDefendingEntityComponentTemplate.TargetingRule.GenerateArgs(

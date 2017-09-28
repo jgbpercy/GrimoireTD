@@ -6,7 +6,7 @@ namespace GrimoireTD.Abilities.BuildMode
     public static class BuildModeAbilityAutoTargetedRuleService
     {
         //Wrapper Function
-        public static List<IBuildModeTargetable> RunRule<T>(T args) where T : BuildModeAutoTargetedArgs
+        public static Func<BuildModeAutoTargetedArgs, List<IBuildModeTargetable>> RunRule = (args) =>
         {
             var singleHexArgs = args as SingleHexArgs;
             if (singleHexArgs != null)
@@ -15,7 +15,7 @@ namespace GrimoireTD.Abilities.BuildMode
             }
 
             throw new ArgumentException("BuildModeAbilityAutoTargetedRuleService was passed a rule args for which there was no rule.");
-        }
+        };
 
         //Rules
         private static List<IBuildModeTargetable> SingleHex(SingleHexArgs args)

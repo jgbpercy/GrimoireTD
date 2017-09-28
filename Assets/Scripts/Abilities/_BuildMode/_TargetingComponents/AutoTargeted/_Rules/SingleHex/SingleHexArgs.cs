@@ -7,7 +7,10 @@ namespace GrimoireTD.Abilities.BuildMode
         public SingleHexArgs(
             Coord targetCoord,
             IReadOnlyMapData mapData
-        ) : base(targetCoord, mapData)
+        ) : base(
+            targetCoord, 
+            mapData
+        )
         { }
     }
 }

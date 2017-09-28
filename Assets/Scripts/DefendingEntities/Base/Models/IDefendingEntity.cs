@@ -26,8 +26,6 @@ namespace GrimoireTD.DefendingEntities
 
         IReadOnlyAttributes<DefendingEntityAttributeName> Attributes { get; }
 
-        Coord CoordPosition { get; }
-
         string CurrentName { get; }
 
         string UIText { get; }

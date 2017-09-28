@@ -28,6 +28,14 @@ namespace GrimoireTD.Map
             }
         }
 
+        public Coord CoordPosition
+        {
+            get
+            {
+                return this;
+            }
+        }
+
         public Coord(int x, int y)
         {
             this.x = x;

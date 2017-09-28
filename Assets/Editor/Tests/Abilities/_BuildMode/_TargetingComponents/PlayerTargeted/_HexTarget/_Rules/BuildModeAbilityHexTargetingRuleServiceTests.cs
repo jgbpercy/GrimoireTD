@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.ChannelDebug;
@@ -87,7 +88,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedValidMoveRuleAndNonUnit_ThrowsException()
         {
-            Assert.Throws(typeof(System.ArgumentException), () => 
+            Assert.Throws(typeof(ArgumentException), () => 
                 PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                     structure,
                     new Coord(0, 1),

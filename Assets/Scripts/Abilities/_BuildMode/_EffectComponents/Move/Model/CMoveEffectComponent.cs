@@ -7,16 +7,16 @@ using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
-    public class CMoveEffectComponent : CBuildModeEffectComponent, IMoveEffectComponent
+    public class CMoveEffectComponent : IMoveEffectComponent
     {
         //private IMoveEffectComponentTemplate moveEffectComponentTemplate;
 
-        public CMoveEffectComponent(IMoveEffectComponentTemplate moveEffectComponentTemplate) : base(moveEffectComponentTemplate)
+        public CMoveEffectComponent(IMoveEffectComponentTemplate moveEffectComponentTemplate)
         {
             //this.moveEffectComponentTemplate = moveEffectComponentTemplate;
         }
 
-        public override void ExecuteEffect(IDefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
+        public void ExecuteEffect(IDefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
         {
             CDebug.Log(CDebug.buildModeAbilities, "Call ExecuteEffect for a MoveEffectComponent");
 

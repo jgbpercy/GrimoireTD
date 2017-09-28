@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using UnityEngine.Assertions;
+﻿using System;
+using System.Collections.Generic;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Map;
 
@@ -22,7 +22,10 @@ namespace GrimoireTD.Abilities.BuildMode
         {
             Coord potentialTargetCoord = potentialTarget as Coord;
 
-            Assert.IsTrue(potentialTargetCoord != null);
+            if (potentialTargetCoord == null)
+            {
+                throw new ArgumentException("CPlayerTargetsHexComponent IsValidTarget was passed a non-coord IBuildModeTargetable");
+            }
 
             return PlayerTargetsHexRuleService.RunRule(
                 PlayerTargetsHexComponentTemplate.TargetingRule.GenerateArgs(
