@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine.Assertions;
+﻿using System;
+using System.Collections.Generic;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Map;
-using System;
 
 namespace GrimoireTD.Abilities.BuildMode
 {

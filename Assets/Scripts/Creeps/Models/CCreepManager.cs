@@ -56,14 +56,14 @@ namespace GrimoireTD.Creeps
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
         }
 
-        public void ModelObjectFrameUpdate()
+        public void ModelObjectFrameUpdate(float deltaTime)
         {
             if (gameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }
 
-            waveTimeElapsed += Time.deltaTime;
+            waveTimeElapsed += deltaTime;
 
             if (waveTimeElapsed >= waveList[currentWaveIndex].NextSpawnTime() && waveIsSpawning)
             {
@@ -72,7 +72,7 @@ namespace GrimoireTD.Creeps
 
             if (!waveIsSpawning)
             {
-                timeSinceWaveStoppedSpawning += Time.deltaTime;
+                timeSinceWaveStoppedSpawning += deltaTime;
 
                 if(timeSinceWaveStoppedSpawning >= idleTimeToTrackAfterSpawnEnd && creepList.Count == 0)
                 {

@@ -23,9 +23,9 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             isExploding = false;
         }
 
-        public override void ModelObjectFrameUpdate()
+        public override void ModelObjectFrameUpdate(float deltaTime)
         {
-            base.ModelObjectFrameUpdate();
+            base.ModelObjectFrameUpdate(deltaTime);
 
             if (destroyingForHitTarget)
             {

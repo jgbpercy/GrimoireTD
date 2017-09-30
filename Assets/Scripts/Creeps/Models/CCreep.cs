@@ -145,19 +145,19 @@ namespace GrimoireTD.Creeps
             return new Vector3(Position.x, Position.y, -0.4f);
         }
 
-        public void ModelObjectFrameUpdate()
+        public void ModelObjectFrameUpdate(float deltaTime)
         {
             float distanceFromCurrentDestination = Vector3.Magnitude(Position - currentDestinationVector);
 
             DistanceFromEnd = currentDestinationPathNode * MapRenderer.HEX_OFFSET + distanceFromCurrentDestination;
 
-            if (distanceFromCurrentDestination < CurrentSpeed * Time.deltaTime)
+            if (distanceFromCurrentDestination < CurrentSpeed * deltaTime)
             {
                 currentDestinationPathNode = currentDestinationPathNode - 1 < 0 ? 0 : currentDestinationPathNode - 1;
                 currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             }
 
-            Position = Vector3.MoveTowards(Position, currentDestinationVector, CurrentSpeed * Time.deltaTime);
+            Position = Vector3.MoveTowards(Position, currentDestinationVector, CurrentSpeed * deltaTime);
         }
 
         public void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefendingEntity sourceDefendingEntity)

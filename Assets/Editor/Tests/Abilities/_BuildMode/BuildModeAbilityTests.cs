@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.DefendingEntities.Units;
@@ -98,24 +97,14 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
         [Test]
         public void ExecuteAbility_PassedValidInput_FiresOnExecutedEvent()
         {
-            var eventFired = false;
-            object testSender = null;
-            EAOnExecutedBuildModeAbility testArgs = null;
-
-            var eventHandler = new EventHandler<EAOnExecutedBuildModeAbility>((object sender, EAOnExecutedBuildModeAbility args) =>
-            {
-                eventFired = true;
-                testSender = sender;
-                testArgs = args;
-            });
-
-            subject.OnExecuted += eventHandler;
+            var eventTester = new EventTester<EAOnExecutedBuildModeAbility>();
+            subject.OnExecuted += eventTester.Handler;
 
             subject.ExecuteAbility(unit, new Coord(0, 0), mapData);
 
-            Assert.True(eventFired);
-            Assert.AreEqual(testSender, subject);
-            Assert.AreEqual(testArgs.ExecutedAbility, subject);
+            eventTester.AssertFired(true);
+            Assert.AreEqual(eventTester.SenderResult, subject);
+            Assert.AreEqual(eventTester.ArgsResult.ExecutedAbility, subject);
         }
     }
 }

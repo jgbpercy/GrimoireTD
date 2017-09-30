@@ -1,6 +1,6 @@
 ﻿namespace GrimoireTD.Abilities.DefendMode
 {
-    public interface IProjectileLauncherComponent
+    public interface IProjectileLauncherComponent : IDefendModeEffectComponent
     {
 
     }

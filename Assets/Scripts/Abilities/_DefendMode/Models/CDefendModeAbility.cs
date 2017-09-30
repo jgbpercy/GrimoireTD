@@ -7,7 +7,7 @@ using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
-    public class CDefendModeAbility : CAbility, IDefendModeAbility, IFrameUpdatee 
+    public class CDefendModeAbility : CAbility, IDefendModeAbility 
     {
         private int id;
 
@@ -127,9 +127,9 @@ namespace GrimoireTD.Abilities.DefendMode
             return TimeSinceExecuted > ActualCooldown;
         }
 
-        public void ModelObjectFrameUpdate()
+        public void ModelObjectFrameUpdate(float deltaTime)
         {
-            TimeSinceExecuted += Time.deltaTime;
+            TimeSinceExecuted += deltaTime;
         }
 
         public void WasExecuted()

@@ -7,8 +7,10 @@ using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
-    public class CProjectile : IProjectile, IFrameUpdatee
+    public class CProjectile : IProjectile
     {
+        public const float NoTargetDestructionDelay = 5f;
+
         protected int id;
 
         public IProjectileTemplate ProjectileTemplate { get; }
@@ -33,13 +35,20 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public CProjectile(Vector3 startPosition, IDefendModeTargetable target, IProjectileTemplate template, IDefendingEntity sourceDefendingEntity)
+        public CProjectile(
+            Vector3 startPosition, 
+            IDefendModeTargetable target, 
+            IProjectileTemplate template, 
+            IDefendingEntity sourceDefendingEntity
+        )
         {
             id = IdGen.GetNextId();
 
             Position = startPosition;
+
             this.target = target;
             target.OnDied += OnTargetDied;
+
             this.sourceDefendingEntity = sourceDefendingEntity;
 
             ProjectileTemplate = template;
@@ -52,7 +61,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                 " (" + target.NameInGame + ")");
         }
 
-        public virtual void ModelObjectFrameUpdate()
+        public virtual void ModelObjectFrameUpdate(float deltaTime)
         {
             if (destroyingForHitTarget)
             {
@@ -63,7 +72,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             {
                 if (!destroyingForNoTarget)
                 {
-                    Destroy(5f);
+                    Destroy(NoTargetDestructionDelay);
                     destroyingForNoTarget = true;
                 }
 
@@ -71,11 +80,12 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                 {
                     Destroy();
                 }
-                Position = Position + currentDirection * ProjectileTemplate.Speed * Time.deltaTime;
+
+                Position = Position + currentDirection * ProjectileTemplate.Speed * deltaTime;
             }
             else
             {
-                Position = Vector3.MoveTowards(Position, target.TargetPosition(), ProjectileTemplate.Speed * Time.deltaTime);
+                Position = Vector3.MoveTowards(Position, target.TargetPosition(), ProjectileTemplate.Speed * deltaTime);
                 currentDirection = (target.TargetPosition() - Position).normalized;
             }
         }

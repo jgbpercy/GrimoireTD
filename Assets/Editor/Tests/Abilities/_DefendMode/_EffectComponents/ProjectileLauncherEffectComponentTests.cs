@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
+using UnityEngine;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Map;
-using UnityEngine;
 
 namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
 {

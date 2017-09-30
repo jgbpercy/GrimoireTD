@@ -1,10 +1,9 @@
 ﻿using System;
-using UnityEngine;
 using GrimoireTD.Technical;
 
 namespace GrimoireTD.TemporaryEffects
 {
-    public class CTemporaryEffect : ITemporaryEffect, IFrameUpdatee
+    public class CTemporaryEffect : ITemporaryEffect
     {
         public object Key { get; }
 
@@ -37,9 +36,9 @@ namespace GrimoireTD.TemporaryEffects
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
         }
 
-        public void ModelObjectFrameUpdate()
+        public void ModelObjectFrameUpdate(float deltaTime)
         {
-            Elapsed += Time.deltaTime;
+            Elapsed += deltaTime;
 
             if (Elapsed > Duration)
             {

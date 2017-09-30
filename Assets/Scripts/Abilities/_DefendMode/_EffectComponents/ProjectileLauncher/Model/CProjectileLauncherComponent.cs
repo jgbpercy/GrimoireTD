@@ -4,16 +4,16 @@ using GrimoireTD.DefendingEntities;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
-    public class CProjectileLauncherComponent : CDefendModeEffectComponent, IProjectileLauncherComponent
+    public class CProjectileLauncherComponent : IProjectileLauncherComponent
     {
         private IProjectileLauncherComponentTemplate projectileLauncherComponentTemplate;
 
-        public CProjectileLauncherComponent(IProjectileLauncherComponentTemplate projectileLauncherComponentTemplate) : base(projectileLauncherComponentTemplate)
+        public CProjectileLauncherComponent(IProjectileLauncherComponentTemplate projectileLauncherComponentTemplate)
         {
             this.projectileLauncherComponentTemplate = projectileLauncherComponentTemplate;
         }
 
-        public override void ExecuteEffect(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
+        public void ExecuteEffect(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
         {
             foreach (IDefendModeTargetable target in targets)
             {

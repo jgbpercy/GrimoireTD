@@ -2,6 +2,6 @@
 {
     public interface IFrameUpdatee
     {
-        void ModelObjectFrameUpdate();
+        void ModelObjectFrameUpdate(float deltaTime);
     }
 }
