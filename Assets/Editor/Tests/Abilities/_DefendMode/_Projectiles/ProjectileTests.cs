@@ -66,7 +66,7 @@ namespace GrimoireTD.Tests.ProjectileTests
         }
 
         [SetUp]
-        public void SetUp()
+        public void EachTestSetUp()
         {
             GameObject testGo = new GameObject();
 
@@ -127,7 +127,7 @@ namespace GrimoireTD.Tests.ProjectileTests
             subject.HitCreep(targetCreep, destructionDelay);
 
             eventTester.AssertFired(true);
-            eventTester.AssertResults(subject, x => Mathf.Approximately(x.WaitSeconds, destructionDelay));
+            eventTester.AssertResult(subject, x => Mathf.Approximately(x.WaitSeconds, destructionDelay));
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace GrimoireTD.Tests.ProjectileTests
             subject.ModelObjectFrameUpdate(deltaTime);
 
             eventTester.AssertFired(true);
-            eventTester.AssertResults(subject, x => Mathf.Approximately(x.WaitSeconds, 0f));
+            eventTester.AssertResult(subject, x => Mathf.Approximately(x.WaitSeconds, 0f));
         }
 
         [Test]
@@ -171,7 +171,7 @@ namespace GrimoireTD.Tests.ProjectileTests
             subject.ModelObjectFrameUpdate(deltaTime);
 
             eventTester.AssertFired(true);
-            eventTester.AssertResults(subject, x => Mathf.Approximately(x.WaitSeconds, CProjectile.NoTargetDestructionDelay));
+            eventTester.AssertResult(subject, x => Mathf.Approximately(x.WaitSeconds, CProjectile.NoTargetDestructionDelay));
         }
 
         [Test]

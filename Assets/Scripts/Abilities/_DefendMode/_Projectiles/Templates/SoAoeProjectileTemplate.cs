@@ -15,7 +15,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         protected float aoeRadius;
 
         [SerializeField]
-        protected float aoeExpansionLerpFactor = 0.15f;
+        protected float aoeExplosionTime;
 
         public IEnumerable<IAttackEffect> AoeAttackEffects
         {
@@ -33,11 +33,11 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public float AoeExpansionLerpFactor
+        public float AoeExplosionTime
         {
             get
             {
-                return aoeExpansionLerpFactor;
+                return aoeExplosionTime;
             }
         }
 

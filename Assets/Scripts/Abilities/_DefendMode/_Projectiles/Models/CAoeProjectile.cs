@@ -12,14 +12,21 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         public float CurrentAoeRadius { get; private set; }
 
         private bool isExploding;
+        private float timeExploding;
 
         public event EventHandler<EAOnExplosionStarted> OnExplosionStarted;
         public event EventHandler<EAOnExplosionFinished> OnExplosionFinished;
 
-        public CAoeProjectile(Vector3 startPosition, IDefendModeTargetable target, IAoeProjectileTemplate template, IDefendingEntity sourceDefendingEntity) : base(startPosition, target, template, sourceDefendingEntity)
+        public CAoeProjectile(
+            Vector3 startPosition, 
+            IDefendModeTargetable target, 
+            IAoeProjectileTemplate template, 
+            IDefendingEntity sourceDefendingEntity
+        ) : base(startPosition, target, template, sourceDefendingEntity)
         {
             AoeProjectileTemplate = template;
-            CurrentAoeRadius = 0.001f;
+            CurrentAoeRadius = 0.0000001f;
+            timeExploding = 0f;
             isExploding = false;
         }
 
@@ -35,9 +42,15 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                     OnExplosionStarted?.Invoke(this, new EAOnExplosionStarted());
                 }
 
-                CurrentAoeRadius = Mathf.Lerp(CurrentAoeRadius, AoeProjectileTemplate.AoeRadius, AoeProjectileTemplate.AoeExpansionLerpFactor);
+                timeExploding += deltaTime;
 
-                if (AoeProjectileTemplate.AoeRadius - CurrentAoeRadius < 0.01f)
+                CurrentAoeRadius = Mathf.Lerp(
+                    0f, 
+                    AoeProjectileTemplate.AoeRadius, 
+                    Mathf.Pow(timeExploding/AoeProjectileTemplate.AoeExplosionTime, 1/3)
+                );
+                
+                if (AoeProjectileTemplate.AoeExplosionTime - timeExploding < 0.01f)
                 {
                     OnExplosionFinished?.Invoke(this, new EAOnExplosionFinished());
                 }

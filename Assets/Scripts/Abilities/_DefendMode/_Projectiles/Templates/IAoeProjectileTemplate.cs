@@ -9,6 +9,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         float AoeRadius { get; }
 
-        float AoeExpansionLerpFactor { get; }
+        float AoeExplosionTime { get; }
     }
 }
