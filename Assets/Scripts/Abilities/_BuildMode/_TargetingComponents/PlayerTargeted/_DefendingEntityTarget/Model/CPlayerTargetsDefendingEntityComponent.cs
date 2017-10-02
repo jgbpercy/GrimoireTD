@@ -38,7 +38,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
         public IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position, IReadOnlyMapData mapData)
         {
-            return BuildModeAbilityAutoTargetedRuleService.RunRule(
+            return BuildModeAutoTargetedRuleService.RunRule(
                 PlayerTargetsDefendingEntityComponentTemplate.AoeRule.GenerateArgs(position, mapData)
             );
         }

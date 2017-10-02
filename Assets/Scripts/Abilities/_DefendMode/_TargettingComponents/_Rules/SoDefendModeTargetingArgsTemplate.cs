@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Creeps;
@@ -9,7 +10,7 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         public virtual DefendModeTargetingArgs GenerateArgs(
             IDefendingEntity attachedToDefendingEntity,
-            IReadOnlyCreepManager creepManager
+            IReadOnlyList<ICreep> creepList
         )
         {
             throw new Exception("SoDefendModeTargetingArgsTemplate is pseudo abstract. Use inheriting classes to generate args.");

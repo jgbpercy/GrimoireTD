@@ -27,6 +27,14 @@ namespace GrimoireTD.Creeps
 
         public event EventHandler<EAOnCreepSpawned> OnCreepSpawned;
 
+        public IReadOnlyList<ICreep> CreepList
+        {
+            get
+            {
+                return creepList;
+            }
+        }
+
         public CCreepManager()
         {
             creepList = new List<ICreep>();
@@ -86,22 +94,6 @@ namespace GrimoireTD.Creeps
             }
 
             creepList.Sort((x, y) => x.DistanceFromEnd.CompareTo(y.DistanceFromEnd));
-        }
-
-        public IDefendModeTargetable CreepInRangeNearestToEnd(Vector3 fromPosition, float range)
-        {
-            float creepDistanceFromPosition;
-
-            for (int i = 0; i < creepList.Count; i++)
-            {
-                creepDistanceFromPosition = Vector3.Magnitude(creepList[i].Position - fromPosition);
-                if (creepDistanceFromPosition < range)
-                {
-                    return creepList[i];
-                }
-            }
-
-            return null;
         }
 
         private void SpawnCreep(ICreepTemplate creepToSpawn)

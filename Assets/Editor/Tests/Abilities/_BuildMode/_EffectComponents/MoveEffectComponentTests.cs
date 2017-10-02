@@ -47,7 +47,7 @@ namespace GrimoireTD.Tests.MoveEffectComponentTests
         {
             subject.ExecuteEffect(unit, targetList);
 
-            unit.Received().Move(Arg.Is(targetCoord));
+            unit.Received(1).Move(Arg.Is(targetCoord));
         }
 
         [Test]
@@ -59,9 +59,11 @@ namespace GrimoireTD.Tests.MoveEffectComponentTests
         [Test]
         public void ExecuteEffect_PassedMultipleTargets_ThrowsException()
         {
-            var multiTargetList = targetList;
-
-            multiTargetList.Add(new Coord(2, 2));
+            var multiTargetList = new List<IBuildModeTargetable>
+            {
+                targetCoord,
+                new Coord(2, 2)
+            };
 
             Assert.Throws(typeof(ArgumentException), () => subject.ExecuteEffect(unit, multiTargetList));
         }

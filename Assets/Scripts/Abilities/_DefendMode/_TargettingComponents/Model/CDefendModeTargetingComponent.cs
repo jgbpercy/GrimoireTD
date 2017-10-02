@@ -13,9 +13,14 @@ namespace GrimoireTD.Abilities.DefendMode
             DefendModeTargetingComponentTemplate = template;
         }
 
-        public virtual IReadOnlyList<IDefendModeTargetable> FindTargets(IDefendingEntity attachedToDefendingEntity, IReadOnlyCreepManager creepManager)
+        public virtual IReadOnlyList<IDefendModeTargetable> FindTargets(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<ICreep> creepLit)
         {
-            return DefendModeTargetingRuleService.RunRule(DefendModeTargetingComponentTemplate.TargetingRule.GenerateArgs(attachedToDefendingEntity, creepManager));
+            return DefendModeTargetingRuleService.RunRule(
+                DefendModeTargetingComponentTemplate.TargetingRule.GenerateArgs(
+                    attachedToDefendingEntity, 
+                    creepLit
+                )
+            );
         }
     }
 }

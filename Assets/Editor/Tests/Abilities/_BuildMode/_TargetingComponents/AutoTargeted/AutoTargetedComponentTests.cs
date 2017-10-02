@@ -42,7 +42,7 @@ namespace GrimoireTD.Tests.AutoTargetedComponentTests
                 target
             };
 
-            BuildModeAbilityAutoTargetedRuleService.RunRule = (args) =>
+            BuildModeAutoTargetedRuleService.RunRule = (args) =>
             {
                 if (args == buildModeAutoTargetedArgs)
                 {
@@ -60,7 +60,7 @@ namespace GrimoireTD.Tests.AutoTargetedComponentTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(BuildModeAbilityAutoTargetedRuleService).TypeInitializer.Invoke(null, null);
+            typeof(BuildModeAutoTargetedRuleService).TypeInitializer.Invoke(null, null);
         }
 
         [Test]

@@ -14,8 +14,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
 
         private IBuildModeTargetingComponent targetingComponent;
 
-        private Coord executionPosition;
-
         private IReadOnlyList<IBuildModeTargetable> returnedTargetList;
 
         private IReadOnlyMapData mapData;

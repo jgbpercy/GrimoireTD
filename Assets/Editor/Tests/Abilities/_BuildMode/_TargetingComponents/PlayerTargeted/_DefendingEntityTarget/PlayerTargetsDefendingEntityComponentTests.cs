@@ -5,7 +5,6 @@ using NSubstitute;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Map;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.DefendingEntities.Units;
 
 namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
 {
@@ -82,7 +81,7 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
                 target
             };
 
-            BuildModeAbilityAutoTargetedRuleService.RunRule = (args) =>
+            BuildModeAutoTargetedRuleService.RunRule = (args) =>
             {
                 if (args == buildModeAutoTargetedArgs)
                 {
@@ -101,7 +100,7 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
         public void OneTimeTearDown()
         {
             typeof(PlayerTargetsDefendingEntityRuleService).TypeInitializer.Invoke(null, null);
-            typeof(BuildModeAbilityAutoTargetedRuleService).TypeInitializer.Invoke(null, null);
+            typeof(BuildModeAutoTargetedRuleService).TypeInitializer.Invoke(null, null);
         }
 
         [Test]

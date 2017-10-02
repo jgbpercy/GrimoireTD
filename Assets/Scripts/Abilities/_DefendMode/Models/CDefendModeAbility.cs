@@ -80,7 +80,7 @@ namespace GrimoireTD.Abilities.DefendMode
         {
             var targetList = targetingComponent.FindTargets(
                 attachedToDefendingEntity, 
-                GameModels.Models[0].CreepManager
+                GameModels.Models[0].CreepManager.CreepList
             );
 
             if (targetList == null) { return false; }

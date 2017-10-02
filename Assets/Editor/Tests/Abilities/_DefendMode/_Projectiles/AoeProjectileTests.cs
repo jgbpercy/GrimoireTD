@@ -13,14 +13,8 @@ namespace GrimoireTD.Tests.AoeProjectileTests
 {
     public class AoeProjectileTests
     {
-        //private float startX = 1f;
-        //private float startY = 1f;
-        //private float startZ = 1f;
         private Vector3 startPosition;
 
-        //private float targetX = 2f;
-        //private float targetY = 3f;
-        //private float targetZ = 4f;
         private ICreep targetCreep;
 
         private IDefendingEntity sourceDefendingEntity;

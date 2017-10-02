@@ -1,12 +1,11 @@
 ﻿using System;
-using UnityEngine;
-using GrimoireTD.Abilities.DefendMode;
+using System.Collections.Generic;
 
 namespace GrimoireTD.Creeps
 {
     public interface IReadOnlyCreepManager
     {
-        IDefendModeTargetable CreepInRangeNearestToEnd(Vector3 fromPosition, float range);
+        IReadOnlyList<ICreep> CreepList { get; }
 
         event EventHandler<EAOnWaveOver> OnWaveOver;
 

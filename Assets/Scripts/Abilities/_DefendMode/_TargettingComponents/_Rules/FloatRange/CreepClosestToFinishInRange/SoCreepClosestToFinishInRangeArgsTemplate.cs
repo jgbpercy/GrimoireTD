@@ -1,6 +1,7 @@
-﻿using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Creeps;
+using GrimoireTD.DefendingEntities;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -9,12 +10,12 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         public override DefendModeTargetingArgs GenerateArgs(
             IDefendingEntity attachedToDefendingEntity, 
-            IReadOnlyCreepManager creepManager
+            IReadOnlyList<ICreep> creepList
         )
         {
             var range = GetActualRange(attachedToDefendingEntity);
 
-            return new CreepClosestToFinishInRangeArgs(attachedToDefendingEntity, range, creepManager);
+            return new CreepClosestToFinishInRangeArgs(attachedToDefendingEntity, range, creepList);
         }
     }
 }

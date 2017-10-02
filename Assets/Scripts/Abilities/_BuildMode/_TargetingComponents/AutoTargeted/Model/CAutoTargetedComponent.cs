@@ -17,7 +17,7 @@ namespace GrimoireTD.Abilities.BuildMode
             IReadOnlyMapData mapData
         )
         {
-            return BuildModeAbilityAutoTargetedRuleService.RunRule(
+            return BuildModeAutoTargetedRuleService.RunRule(
                 AutoTargetedComponentTemplate.TargetingRule.GenerateArgs(position, mapData)
             );
         }

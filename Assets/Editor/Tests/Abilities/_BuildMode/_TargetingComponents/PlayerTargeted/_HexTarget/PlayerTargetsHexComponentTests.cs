@@ -82,7 +82,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
                 target
             };
 
-            BuildModeAbilityAutoTargetedRuleService.RunRule = (args) =>
+            BuildModeAutoTargetedRuleService.RunRule = (args) =>
             {
                 if (args == buildModeAutoTargetedArgs)
                 {
@@ -101,7 +101,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         public void OneTimeTearDown()
         {
             typeof(PlayerTargetsHexRuleService).TypeInitializer.Invoke(null, null);
-            typeof(BuildModeAbilityAutoTargetedRuleService).TypeInitializer.Invoke(null, null);
+            typeof(BuildModeAutoTargetedRuleService).TypeInitializer.Invoke(null, null);
         }
 
         [Test]

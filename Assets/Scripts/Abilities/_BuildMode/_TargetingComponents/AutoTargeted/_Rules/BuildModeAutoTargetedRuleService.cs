@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
-    public static class BuildModeAbilityAutoTargetedRuleService
+    public static class BuildModeAutoTargetedRuleService
     {
         //Wrapper Function
         public static Func<BuildModeAutoTargetedArgs, List<IBuildModeTargetable>> RunRule = (args) =>
@@ -20,6 +20,11 @@ namespace GrimoireTD.Abilities.BuildMode
         //Rules
         private static List<IBuildModeTargetable> SingleHex(SingleHexArgs args)
         {
+            if (args.TargetCoord == null)
+            {
+                return null;
+            }
+
             return new List<IBuildModeTargetable> { args.TargetCoord };
         }
     }

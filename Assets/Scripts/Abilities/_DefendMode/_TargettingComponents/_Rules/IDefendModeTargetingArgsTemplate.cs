@@ -1,4 +1,5 @@
-﻿using GrimoireTD.Creeps;
+﻿using System.Collections.Generic;
+using GrimoireTD.Creeps;
 using GrimoireTD.DefendingEntities;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -7,7 +8,7 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         DefendModeTargetingArgs GenerateArgs(
             IDefendingEntity attachedToDefendingEntity,
-            IReadOnlyCreepManager creepManager
+            IReadOnlyList<ICreep> creepManager
         );
     }
 }
