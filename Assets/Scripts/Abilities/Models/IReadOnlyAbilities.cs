@@ -9,6 +9,8 @@ namespace GrimoireTD.Abilities
     { 
         IReadOnlyDictionary<int, IAbility> AbilityList { get; }
 
+        IReadOnlyDefendModeAbilityManager DefendModeAbilityManager { get; }
+
         event EventHandler<EAOnAbilityAdded> OnAbilityAdded;
         event EventHandler<EAOnAbilityRemoved> OnAbilityRemoved;
 

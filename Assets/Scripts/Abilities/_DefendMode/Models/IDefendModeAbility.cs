@@ -1,6 +1,6 @@
-﻿using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
+using System;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -17,11 +17,11 @@ namespace GrimoireTD.Abilities.DefendMode
         float TimeSinceExecuted { get; }
         float TimeSinceExecutedClamped { get; }
 
+        bool IsOffCooldown { get; }
+
+        event EventHandler<EAOnAbilityOffCooldown> OnAbilityOffCooldown;
+
         //TODO: make readonly defendingentity?
         bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity);
-
-        void WasExecuted();
-
-        bool OffCooldown();
     }
 }

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using GrimoireTD.Economy;
 using GrimoireTD.Map;
+using GrimoireTD.Technical;
 
 namespace GrimoireTD.DefendingEntities.Units
 {
-    public interface IUnit : IDefendingEntity
+    public interface IUnit : IDefendingEntity, IFrameUpdatee
     {
         IUnitTemplate UnitTemplate { get; }
 
@@ -33,8 +34,6 @@ namespace GrimoireTD.DefendingEntities.Units
         void Move(Coord targetCoord);
 
         void RegenerateCachedDisallowedMovementDestinations();
-
-        void TrackTime(bool wasIdle, float time);
 
         bool TryLevelUp(IUnitTalent talentChosen);
 

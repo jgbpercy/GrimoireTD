@@ -9,12 +9,13 @@ using GrimoireTD.Map;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
+using GrimoireTD.Abilities.DefendMode;
+using GrimoireTD.Abilities;
 
 namespace GrimoireTD.DefendingEntities.Units
 {
     public class CUnit : CDefendingEntity, IUnit
     {
-        
         //Template
         public IUnitTemplate UnitTemplate { get; }
 
@@ -28,6 +29,8 @@ namespace GrimoireTD.DefendingEntities.Units
 
         public float TimeIdle { get; private set; }
         public float TimeActive { get; private set; }
+
+        private bool isIdle = true;
 
         public int Experience { get; private set; }
         public int Fatigue { get; private set; }
@@ -112,6 +115,7 @@ namespace GrimoireTD.DefendingEntities.Units
                 return UnitTemplate.Description;
             }
 
+            //TODO? Hack cos Structures need to set but this should exist at DE level?
             protected set
             {
                 return;
@@ -129,6 +133,18 @@ namespace GrimoireTD.DefendingEntities.Units
 
             conditionalHexOccupationBonuses = new CallbackList<IHexOccupationBonus>();
             conditionalStructureOccupationBonuses = new CallbackList<IStructureOccupationBonus>();
+
+            abilities.OnDefendModeAbilityAdded += (object sender, EAOnDefendModeAbilityAdded args) =>
+            {
+                args.DefendModeAbility.OnAbilityExecuted += OnDefendModeAbilityExecuted;
+            };
+
+            abilities.OnDefendModeAbilityRemoved += (object sender, EAOnDefendModeAbilityRemoved args) =>
+            {
+                args.DefendModeAbility.OnAbilityExecuted -= OnDefendModeAbilityExecuted;
+            };
+
+            abilities.DefendModeAbilityManager.OnAllDefendModeAbilitiesOffCooldown += OnAllDefendModeAbilitiesOffCooldown;
 
             ApplyUnitImprovement(unitTemplate.BaseUnitCharacteristics);
 
@@ -149,8 +165,11 @@ namespace GrimoireTD.DefendingEntities.Units
             {
                 GameModels.Models[0].OnGameModelSetUp += OnGameModelSetUp;
             }
+
+            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
         }
 
+        //Set Up
         private void OnGameModelSetUp(object sender, EAOnGameModelSetUp args)
         {
             SetUpFatigueVars(args.GameModel.UnitFatigueFactorInfelctionPoint, args.GameModel.UnitFatigueFactorShallownessMultiplier);
@@ -162,7 +181,6 @@ namespace GrimoireTD.DefendingEntities.Units
             this.shallownessMultiplier = shallownessMultiplier;
         }
 
-        //Set Up
         private void SetUpTalentsAchieved()
         {
             levelledTalents = new Dictionary<IUnitTalent, int>();
@@ -206,17 +224,33 @@ namespace GrimoireTD.DefendingEntities.Units
             GetDefenderAurasFromCurrentHex();
         }
 
-        //Time Tracking
-        public void TrackTime(bool wasIdle, float time)
+        //Update loop
+        public void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (wasIdle)
+            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
             {
-                TimeIdle += time;
+                return;
+            }
+
+            if (isIdle)
+            {
+                TimeIdle += deltaTime;
             }
             else
             {
-                TimeActive += time;
+                TimeActive += deltaTime;
             }
+        }
+
+        //Time Tracking
+        private void OnAllDefendModeAbilitiesOffCooldown(object sender, EAOnAllDefendModeAbilitiesOffCooldown args)
+        {
+            isIdle = true;
+        }
+
+        private void OnDefendModeAbilityExecuted(object sender, EAOnAbilityExecuted args)
+        {
+            isIdle = false;
         }
 
         //Enter Build Mode

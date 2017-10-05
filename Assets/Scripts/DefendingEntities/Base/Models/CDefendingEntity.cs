@@ -129,7 +129,7 @@ namespace GrimoireTD.DefendingEntities
 
             attributes = new CAttributes<DefendingEntityAttributeName>(DefendingEntityAttributes.NewAttributesDictionary());
 
-            abilities = new Abilities.Abilities();
+            abilities = new Abilities.CAbilities(this);
 
             flatHexOccupationBonuses = new CallbackList<IHexOccupationBonus>();
 

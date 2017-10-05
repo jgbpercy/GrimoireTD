@@ -7,7 +7,7 @@ using GrimoireTD.Abilities.BuildMode;
 
 namespace GrimoireTD.Abilities
 {
-    public class Abilities : IAbilities
+    public class CAbilities : IAbilities
     {
         private SortedList<int, IAbility> abilityList;
 
@@ -20,6 +20,8 @@ namespace GrimoireTD.Abilities
         public event EventHandler<EAOnDefendModeAbilityAdded> OnDefendModeAbilityAdded;
         public event EventHandler<EAOnDefendModeAbilityRemoved> OnDefendModeAbilityRemoved;
 
+        private IDefendModeAbilityManager defendModeAbilityManager;
+
         public IReadOnlyDictionary<int, IAbility> AbilityList
         {
             get
@@ -28,9 +30,19 @@ namespace GrimoireTD.Abilities
             }
         }
 
-        public Abilities()
+        public IReadOnlyDefendModeAbilityManager DefendModeAbilityManager
+        {
+            get
+            {
+                return defendModeAbilityManager;
+            }
+        }
+
+        public CAbilities(IDefendingEntity attachedToDefendingEntity)
         {
             abilityList = new SortedList<int, IAbility>();
+
+            defendModeAbilityManager = new CDefendModeAbilityManager(this, attachedToDefendingEntity);
         }
 
         public void AddAbility(IAbility ability)

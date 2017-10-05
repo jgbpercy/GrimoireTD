@@ -64,6 +64,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
             subject = new CBuildModeAbility(template);
         }
 
+        //TODO: This is bad - remove this test but ensure that below tests check that return from targeting is passed to execute effect
         [Test]
         public void ExecuteAbility_PassedExecutionPosition_PassesExecutionPositionToTargetingComponent()
         {

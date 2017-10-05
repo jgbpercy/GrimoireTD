@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -22,6 +22,8 @@ namespace GrimoireTD.Abilities.DefendMode
 
         private IDefendingEntity attachedToDefendingEntity;
 
+        public event EventHandler<EAOnAbilityOffCooldown> OnAbilityOffCooldown;
+
         public float TimeSinceExecutedClamped
         {
             get
@@ -35,6 +37,14 @@ namespace GrimoireTD.Abilities.DefendMode
             get
             {
                 return Mathf.Clamp(TimeSinceExecuted / ActualCooldown, 0f, 1f);
+            }
+        }
+
+        public bool IsOffCooldown
+        {
+            get
+            {
+                return TimeSinceExecuted > ActualCooldown;
             }
         }
 
@@ -57,7 +67,8 @@ namespace GrimoireTD.Abilities.DefendMode
 
             ActualCooldown = GetActualCooldown();
 
-            attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).OnAttributeChanged += OnAttachedDefendingEntityCooldownReductionChange;
+            attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction)
+                .OnAttributeChanged += OnAttachedDefendingEntityCooldownReductionChange;
 
             targetingComponent = template.TargetingComponentTemplate.GenerateTargetingComponent();
 
@@ -69,6 +80,25 @@ namespace GrimoireTD.Abilities.DefendMode
             }
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+
+            GameModels.Models[0].GameStateManager.OnEnterDefendMode += OnEnterDefendMode;
+        }
+
+        public void ModelObjectFrameUpdate(float deltaTime)
+        {
+            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
+            {
+                return;
+            }
+
+            var wasOffCooldown = IsOffCooldown;
+
+            TimeSinceExecuted += deltaTime;
+
+            if (!wasOffCooldown && IsOffCooldown)
+            {
+                OnAbilityOffCooldown?.Invoke(this, new EAOnAbilityOffCooldown(this));
+            }
         }
 
         public override string UIText()
@@ -83,29 +113,23 @@ namespace GrimoireTD.Abilities.DefendMode
                 GameModels.Models[0].CreepManager.CreepList
             );
 
-            if (targetList == null) { return false; }
+            if (targetList == null) return false;
 
             foreach (var effectComponent in effectComponents)
             {
                 effectComponent.ExecuteEffect(attachedToDefendingEntity, targetList);
             }
 
+            TimeSinceExecuted = 0f;
+
+            OnAbilityExecutedVirtual(new EAOnAbilityExecuted(this));
+
             return true;
         }
 
         private float GetActualCooldown()
         {
-            float cooldown = GetCooldownAfterReduction(attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).Value());
-
-            CDebug.Log(CDebug.unitAttributes, 
-                Id + 
-                " (" + DefendModeAbilityTemplate.NameInGame + ") " + 
-                "cooldown: " + cooldown + 
-                " = " + DefendModeAbilityTemplate.BaseCooldown + 
-                " * " + (1 - attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).Value())
-            );
-
-            return cooldown;
+            return GetCooldownAfterReduction(attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).Value());
         }
 
         private float GetCooldownAfterReduction(float cooldownReduction)
@@ -122,19 +146,14 @@ namespace GrimoireTD.Abilities.DefendMode
             ActualCooldown = newCooldown;
         }
 
-        public bool OffCooldown()
+        private void OnEnterDefendMode(object sender, EAOnEnterDefendMode args)
         {
-            return TimeSinceExecuted > ActualCooldown;
-        }
+            if (!IsOffCooldown)
+            {
+                OnAbilityOffCooldown?.Invoke(this, new EAOnAbilityOffCooldown(this));
 
-        public void ModelObjectFrameUpdate(float deltaTime)
-        {
-            TimeSinceExecuted += deltaTime;
-        }
-
-        public void WasExecuted()
-        {
-            TimeSinceExecuted = 0f;
+                TimeSinceExecuted = GetActualCooldown() + 0.01f;
+            }
         }
     }
 }
