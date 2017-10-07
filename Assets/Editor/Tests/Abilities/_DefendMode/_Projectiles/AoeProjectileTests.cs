@@ -107,11 +107,11 @@ namespace GrimoireTD.Tests.AoeProjectileTests
 
             subject.ModelObjectFrameUpdate(deltaTime);
             float expectedAoeRadius = Mathf.Pow(deltaTime / explosionTime, 1/3) * finalAoeRadius;
-            Assert.True(Mathf.Approximately(subject.CurrentAoeRadius, expectedAoeRadius));
+            Assert.True(CustomMath.Approximately(subject.CurrentAoeRadius, expectedAoeRadius));
 
             subject.ModelObjectFrameUpdate(deltaTime);
             expectedAoeRadius = Mathf.Pow((deltaTime * 2) / explosionTime, 1/3) * finalAoeRadius;
-            Assert.True(Mathf.Approximately(subject.CurrentAoeRadius, expectedAoeRadius));
+            Assert.True(CustomMath.Approximately(subject.CurrentAoeRadius, expectedAoeRadius));
         }
 
         [Test]

@@ -42,8 +42,8 @@ namespace GrimoireTD.Creeps
             selectedCreep.Resistances.OnAnyResistanceChanged += OnCreepResistancesChange;
             selectedCreep.Resistances.OnAnyBlockChanged += OnCreepBlocksChange;
 
-            selectedCreep.Attributes.GetAttribute(CreepAttributeName.armorMultiplier).OnAttributeChanged += OnCreepArmorChange;
-            selectedCreep.Attributes.GetAttribute(CreepAttributeName.rawArmor).OnAttributeChanged += OnCreepArmorChange;
+            selectedCreep.Attributes.Get(CreepAttrName.armorMultiplier).OnAttributeChanged += OnCreepArmorChange;
+            selectedCreep.Attributes.Get(CreepAttrName.rawArmor).OnAttributeChanged += OnCreepArmorChange;
         }
 
         private void OnCreepDeselected(object sender, EAOnCreepDeselected args)
@@ -62,14 +62,14 @@ namespace GrimoireTD.Creeps
                 selectedCreep.Resistances.OnAnyResistanceChanged -= OnCreepResistancesChange;
                 selectedCreep.Resistances.OnAnyBlockChanged -= OnCreepBlocksChange;
 
-                selectedCreep.Attributes.GetAttribute(CreepAttributeName.armorMultiplier).OnAttributeChanged -= OnCreepArmorChange;
-                selectedCreep.Attributes.GetAttribute(CreepAttributeName.rawArmor).OnAttributeChanged -= OnCreepArmorChange;
+                selectedCreep.Attributes.Get(CreepAttrName.armorMultiplier).OnAttributeChanged -= OnCreepArmorChange;
+                selectedCreep.Attributes.Get(CreepAttrName.rawArmor).OnAttributeChanged -= OnCreepArmorChange;
             }
 
             selectedCreep = null;
         }
 
-        private void OnCreepAttibutesChange(object sender, EAOnAnyAttributeChanged<CreepAttributeName> args)
+        private void OnCreepAttibutesChange(object sender, EAOnAnyAttributeChanged<CreepAttrName> args)
         {
             attributesText.text = GetAttributesText();
         }
@@ -93,11 +93,11 @@ namespace GrimoireTD.Creeps
         {
             string attributesText = "Attributes:\n";
 
-            foreach (KeyValuePair<CreepAttributeName,string> creepAttributeName in CreepAttributes.DisplayNames)
+            foreach (KeyValuePair<CreepAttrName, string> creepAttributeName in CreepAttributes.DisplayNames)
             {
                 attributesText += 
                     creepAttributeName.Value + ": " + 
-                    selectedCreep.Attributes.GetAttribute(creepAttributeName.Key).Value() +
+                    selectedCreep.Attributes.Get(creepAttributeName.Key).Value() +
                     "\n";
             }
 

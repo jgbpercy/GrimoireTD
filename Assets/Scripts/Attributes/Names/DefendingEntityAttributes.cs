@@ -4,20 +4,20 @@ namespace GrimoireTD.Attributes
 {
     public static class DefendingEntityAttributes
     {
-        public static readonly Dictionary<DefendingEntityAttributeName, string> DisplayNames = new Dictionary<DefendingEntityAttributeName, string>
+        public static readonly Dictionary<DEAttrName, string> DisplayNames = new Dictionary<DEAttrName, string>
         {
-            { DefendingEntityAttributeName.rangeBonus, "Range Bonus" },
-            { DefendingEntityAttributeName.damageBonus, "Damage Bonus" },
-            { DefendingEntityAttributeName.cooldownReduction, "Cooldown Reduction" }
+            { DEAttrName.rangeBonus, "Range Bonus" },
+            { DEAttrName.damageBonus, "Damage Bonus" },
+            { DEAttrName.cooldownReduction, "Cooldown Reduction" }
         };
 
-        public static Dictionary<DefendingEntityAttributeName, IAttribute> NewAttributesDictionary()
+        public static Dictionary<DEAttrName, IAttribute> NewAttributesDictionary()
         {
-            return new Dictionary<DefendingEntityAttributeName, IAttribute>
+            return new Dictionary<DEAttrName, IAttribute>
             {
-                { DefendingEntityAttributeName.rangeBonus, new CAdditiveAttribute(DisplayNames[DefendingEntityAttributeName.rangeBonus]) },
-                { DefendingEntityAttributeName.damageBonus, new CAdditiveAttribute(DisplayNames[DefendingEntityAttributeName.damageBonus]) },
-                { DefendingEntityAttributeName.cooldownReduction, new CDiminishingAttribute(DisplayNames[DefendingEntityAttributeName.cooldownReduction]) }
+                { DEAttrName.rangeBonus, new CAdditiveAttribute(DisplayNames[DEAttrName.rangeBonus]) },
+                { DEAttrName.damageBonus, new CAdditiveAttribute(DisplayNames[DEAttrName.damageBonus]) },
+                { DEAttrName.cooldownReduction, new CDiminishingAttribute(DisplayNames[DEAttrName.cooldownReduction]) }
             };
         }
     }

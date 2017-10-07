@@ -20,7 +20,7 @@ namespace GrimoireTD.Creeps
 
         float DistanceFromEnd { get; }
 
-        IReadOnlyAttributes<CreepAttributeName> Attributes { get; }
+        IReadOnlyAttributes<CreepAttrName> Attributes { get; }
 
         IReadOnlyResistances Resistances { get; }
 

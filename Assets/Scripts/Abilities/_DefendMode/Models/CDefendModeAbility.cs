@@ -65,9 +65,11 @@ namespace GrimoireTD.Abilities.DefendMode
 
             this.attachedToDefendingEntity = attachedToDefendingEntity;
 
-            ActualCooldown = GetActualCooldown();
+            ActualCooldown = GetCooldownAfterReduction(
+                attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value()
+            );
 
-            attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction)
+            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction)
                 .OnAttributeChanged += OnAttachedDefendingEntityCooldownReductionChange;
 
             targetingComponent = template.TargetingComponentTemplate.GenerateTargetingComponent();
@@ -127,11 +129,6 @@ namespace GrimoireTD.Abilities.DefendMode
             return true;
         }
 
-        private float GetActualCooldown()
-        {
-            return GetCooldownAfterReduction(attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.cooldownReduction).Value());
-        }
-
         private float GetCooldownAfterReduction(float cooldownReduction)
         {
             return DefendModeAbilityTemplate.BaseCooldown * (1 - cooldownReduction);
@@ -152,7 +149,7 @@ namespace GrimoireTD.Abilities.DefendMode
             {
                 OnAbilityOffCooldown?.Invoke(this, new EAOnAbilityOffCooldown(this));
 
-                TimeSinceExecuted = GetActualCooldown() + 0.01f;
+                TimeSinceExecuted = ActualCooldown + 0.01f;
             }
         }
     }

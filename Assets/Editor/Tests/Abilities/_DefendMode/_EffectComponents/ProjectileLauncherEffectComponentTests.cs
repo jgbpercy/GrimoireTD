@@ -6,6 +6,7 @@ using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Map;
+using GrimoireTD.Technical;
 
 namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
 {
@@ -91,7 +92,7 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
             subject.ExecuteEffect(defendingEntity, targetList);
 
             projectileTemplate.Received(1).GenerateProjectile(
-                Arg.Is<Vector3>(vec => Mathf.Approximately(vec.x, projectileCreationPosition.x) && Mathf.Approximately(vec.y, projectileCreationPosition.y) && Mathf.Approximately(vec.z, projectileCreationPosition.z)),
+                Arg.Is<Vector3>(vec => CustomMath.Approximately(vec, projectileCreationPosition)),
                 Arg.Any<IDefendModeTargetable>(),
                 Arg.Any<IDefendingEntity>()
             );

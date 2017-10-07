@@ -17,7 +17,7 @@ namespace GrimoireTD.Abilities.DefendMode
                 return baseRange;
             }
 
-            return baseRange * (1 + attachedToDefendingEntity.Attributes.GetAttribute(DefendingEntityAttributeName.rangeBonus).Value());
+            return baseRange * (1 + attachedToDefendingEntity.Attributes.Get(DEAttrName.rangeBonus).Value());
         }
     }
 }

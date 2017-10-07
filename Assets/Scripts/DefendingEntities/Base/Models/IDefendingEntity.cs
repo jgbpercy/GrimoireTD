@@ -24,7 +24,7 @@ namespace GrimoireTD.DefendingEntities
 
         IReadOnlyCallbackList<IHexOccupationBonus> FlatHexOccupationBonuses { get; }
 
-        IReadOnlyAttributes<DefendingEntityAttributeName> Attributes { get; }
+        IReadOnlyAttributes<DEAttrName> Attributes { get; }
 
         string CurrentName { get; }
 

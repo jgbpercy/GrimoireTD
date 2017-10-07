@@ -27,7 +27,7 @@ namespace GrimoireTD.Attributes
 
             attributeToModify.AddModifier(attributeModifier);
 
-            float newAttributeValue = GetAttribute(attributeModifier.AttributeName).Value();
+            float newAttributeValue = Get(attributeModifier.AttributeName).Value();
 
             OnAnyAttributeChanged?.Invoke(this, new EAOnAnyAttributeChanged<T>(attributeModifier.AttributeName, newAttributeValue));
         }
@@ -36,7 +36,7 @@ namespace GrimoireTD.Attributes
         {
             if (attributesDict[attributeModifier.AttributeName].TryRemoveModifier(attributeModifier))
             {
-                float newAttributeValue = GetAttribute(attributeModifier.AttributeName).Value();
+                float newAttributeValue = Get(attributeModifier.AttributeName).Value();
 
                 OnAnyAttributeChanged?.Invoke(this, new EAOnAnyAttributeChanged<T>(attributeModifier.AttributeName, newAttributeValue));
 
@@ -46,7 +46,7 @@ namespace GrimoireTD.Attributes
             return false;
         }
 
-        public IReadOnlyAttribute GetAttribute(T attributeName)
+        public IReadOnlyAttribute Get(T attributeName)
         {
             return attributesDict[attributeName];
         }

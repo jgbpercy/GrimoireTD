@@ -21,7 +21,7 @@ namespace GrimoireTD.DefendingEntities
         public IDefendingEntityTemplate DefendingEntityTemplate { get; }
 
         //Attributes
-        protected IAttributes<DefendingEntityAttributeName> attributes;
+        protected IAttributes<DEAttrName> attributes;
 
         //Position
         public Coord CoordPosition { get; protected set; }
@@ -59,7 +59,7 @@ namespace GrimoireTD.DefendingEntities
         }
 
         //Attributes
-        public IReadOnlyAttributes<DefendingEntityAttributeName> Attributes
+        public IReadOnlyAttributes<DEAttrName> Attributes
         {
             get
             {
@@ -127,7 +127,7 @@ namespace GrimoireTD.DefendingEntities
 
             DefendingEntityTemplate = template;
 
-            attributes = new CAttributes<DefendingEntityAttributeName>(DefendingEntityAttributes.NewAttributesDictionary());
+            attributes = new CAttributes<DEAttrName>(DefendingEntityAttributes.NewAttributesDictionary());
 
             abilities = new Abilities.CAbilities(this);
 
@@ -182,7 +182,7 @@ namespace GrimoireTD.DefendingEntities
         //Improvements
         protected void ApplyImprovement(IDefendingEntityImprovement improvement)
         {
-            foreach (INamedAttributeModifier<DefendingEntityAttributeName> attributeModifier in improvement.AttributeModifiers)
+            foreach (INamedAttributeModifier<DEAttrName> attributeModifier in improvement.AttributeModifiers)
             {
                 attributes.AddModifier(attributeModifier);
             }
@@ -207,7 +207,7 @@ namespace GrimoireTD.DefendingEntities
         {
             bool wasPresent;
 
-            foreach (INamedAttributeModifier<DefendingEntityAttributeName> attributeModifier in improvement.AttributeModifiers)
+            foreach (INamedAttributeModifier<DEAttrName> attributeModifier in improvement.AttributeModifiers)
             {
                 wasPresent = attributes.TryRemoveModifier(attributeModifier);
                 Assert.IsTrue(wasPresent);

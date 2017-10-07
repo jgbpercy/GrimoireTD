@@ -31,7 +31,7 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        public IEnumerable<INamedAttributeModifier<CreepAttributeName>> BaseAttributes
+        public IEnumerable<INamedAttributeModifier<CreepAttrName>> BaseAttributes
         {
             get
             {

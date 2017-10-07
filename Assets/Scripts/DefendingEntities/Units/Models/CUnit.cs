@@ -377,7 +377,7 @@ namespace GrimoireTD.DefendingEntities.Units
             if (levelledTalents[talentChosen] != 0)
             {
                 //TODO: remove entire previous level improvement, not just attributes
-                foreach (INamedAttributeModifier<DefendingEntityAttributeName> outgoingNamedModifier in talentChosen.UnitImprovements[levelledTalents[talentChosen] - 1].AttributeModifiers)
+                foreach (INamedAttributeModifier<DEAttrName> outgoingNamedModifier in talentChosen.UnitImprovements[levelledTalents[talentChosen] - 1].AttributeModifiers)
                 {
                     bool removedModifier = attributes.TryRemoveModifier(outgoingNamedModifier);
                     Assert.IsTrue(removedModifier);

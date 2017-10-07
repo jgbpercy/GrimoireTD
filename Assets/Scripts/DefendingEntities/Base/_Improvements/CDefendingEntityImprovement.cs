@@ -8,7 +8,7 @@ namespace GrimoireTD.DefendingEntities
 {
     public class CDefendingEntityImprovement : IDefendingEntityImprovement
     {
-        public IEnumerable<INamedAttributeModifier<DefendingEntityAttributeName>> AttributeModifiers { get; }
+        public IEnumerable<INamedAttributeModifier<DEAttrName>> AttributeModifiers { get; }
 
         public IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses { get; }
 
@@ -17,12 +17,12 @@ namespace GrimoireTD.DefendingEntities
         public IEnumerable<IDefenderAuraTemplate> Auras { get; }
 
         public CDefendingEntityImprovement(
-            ICollection<INamedAttributeModifier<DefendingEntityAttributeName>> attributeModifiers,
+            ICollection<INamedAttributeModifier<DEAttrName>> attributeModifiers,
             ICollection<IHexOccupationBonus> flatHexOccupationBonuses,
             ICollection<IAbilityTemplate> abilities,
             ICollection<IDefenderAuraTemplate> auras)
         {
-            var tempAttributeModifiers = new INamedAttributeModifier<DefendingEntityAttributeName>[attributeModifiers.Count];
+            var tempAttributeModifiers = new INamedAttributeModifier<DEAttrName>[attributeModifiers.Count];
             var tempFlatHexOccupationBonuses = new IHexOccupationBonus[flatHexOccupationBonuses.Count];
             var tempAbilities = new IAbilityTemplate[abilities.Count];
             var tempAuras = new IDefenderAuraTemplate[auras.Count];
@@ -45,7 +45,7 @@ namespace GrimoireTD.DefendingEntities
 
         public static IDefendingEntityImprovement Combine(IDefendingEntityImprovement firstImprovement, IDefendingEntityImprovement secondImprovement)
         {
-            List<INamedAttributeModifier<DefendingEntityAttributeName>> combinedAttributeModifiers = new List<INamedAttributeModifier<DefendingEntityAttributeName>>();
+            List<INamedAttributeModifier<DEAttrName>> combinedAttributeModifiers = new List<INamedAttributeModifier<DEAttrName>>();
             combinedAttributeModifiers.AddRange(firstImprovement.AttributeModifiers);
             combinedAttributeModifiers.AddRange(secondImprovement.AttributeModifiers);
 

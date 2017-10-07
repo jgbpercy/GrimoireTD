@@ -19,11 +19,9 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
         private IReadOnlyMapData mapData;
 
         private IBuildModeEffectComponentTemplate effectComponentTemplate;
-
         private IBuildModeEffectComponentTemplate effectComponentTemplateTwo;
 
         private IBuildModeEffectComponent effectComponent;
-
         private IBuildModeEffectComponent effectComponentTwo;
 
         private IBuildModeAbilityTemplate template;
@@ -59,7 +57,11 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
 
             template = Substitute.For<IBuildModeAbilityTemplate>();
             template.TargetingComponentTemplate.GenerateTargetingComponent().Returns(targetingComponent);
-            template.EffectComponentTemplates.Returns(new List<IBuildModeEffectComponentTemplate> { effectComponentTemplate, effectComponentTemplateTwo });
+            template.EffectComponentTemplates.Returns(new List<IBuildModeEffectComponentTemplate>
+            {
+                effectComponentTemplate,
+                effectComponentTemplateTwo
+            });
 
             subject = new CBuildModeAbility(template);
         }

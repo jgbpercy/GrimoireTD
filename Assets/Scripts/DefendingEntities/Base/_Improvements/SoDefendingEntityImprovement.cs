@@ -22,7 +22,7 @@ namespace GrimoireTD.DefendingEntities
         [SerializeField]
         private SoDefenderAuraTemplate[] auras;
 
-        public IEnumerable<INamedAttributeModifier<DefendingEntityAttributeName>> AttributeModifiers
+        public IEnumerable<INamedAttributeModifier<DEAttrName>> AttributeModifiers
         {
             get
             {

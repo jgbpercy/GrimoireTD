@@ -4,22 +4,22 @@ namespace GrimoireTD.Attributes
 {
     public static class CreepAttributes
     {
-        public static readonly Dictionary<CreepAttributeName, string> DisplayNames = new Dictionary<CreepAttributeName, string>
+        public static readonly Dictionary<CreepAttrName, string> DisplayNames = new Dictionary<CreepAttrName, string>
         {
-            { CreepAttributeName.rawArmor, "Raw Armor" },
-            { CreepAttributeName.armorMultiplier, "Armor Multiplier" },
-            { CreepAttributeName.rawSpeed, "Raw Speed" },
-            { CreepAttributeName.speedMultiplier, "Speed Multiplier" }
+            { CreepAttrName.rawArmor, "Raw Armor" },
+            { CreepAttrName.armorMultiplier, "Armor Multiplier" },
+            { CreepAttrName.rawSpeed, "Raw Speed" },
+            { CreepAttrName.speedMultiplier, "Speed Multiplier" }
         };
 
-        public static Dictionary<CreepAttributeName, IAttribute> NewAttributesDictionary()
+        public static Dictionary<CreepAttrName, IAttribute> NewAttributesDictionary()
         {
-            return new Dictionary<CreepAttributeName, IAttribute>
+            return new Dictionary<CreepAttrName, IAttribute>
             {
-                { CreepAttributeName.rawArmor, new CAdditiveAttribute(DisplayNames[CreepAttributeName.rawArmor]) },
-                { CreepAttributeName.armorMultiplier, new CAdditiveAttribute(DisplayNames[CreepAttributeName.armorMultiplier]) },
-                { CreepAttributeName.rawSpeed, new CAdditiveAttribute(DisplayNames[CreepAttributeName.rawSpeed]) },
-                { CreepAttributeName.speedMultiplier, new CAdditiveAttribute(DisplayNames[CreepAttributeName.speedMultiplier]) }
+                { CreepAttrName.rawArmor, new CAdditiveAttribute(DisplayNames[CreepAttrName.rawArmor]) },
+                { CreepAttrName.armorMultiplier, new CAdditiveAttribute(DisplayNames[CreepAttrName.armorMultiplier]) },
+                { CreepAttrName.rawSpeed, new CAdditiveAttribute(DisplayNames[CreepAttrName.rawSpeed]) },
+                { CreepAttrName.speedMultiplier, new CAdditiveAttribute(DisplayNames[CreepAttrName.speedMultiplier]) }
             };
         }
     }

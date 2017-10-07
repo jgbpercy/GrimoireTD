@@ -8,7 +8,7 @@ namespace GrimoireTD.DefendingEntities
 {
     public interface IDefendingEntityImprovement
     {
-        IEnumerable<INamedAttributeModifier<DefendingEntityAttributeName>> AttributeModifiers { get; }
+        IEnumerable<INamedAttributeModifier<DEAttrName>> AttributeModifiers { get; }
 
         IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses { get; }
 

@@ -80,7 +80,11 @@ namespace GrimoireTD.Tests
 
         public void AssertFired(bool eventFired)
         {
-            Assert.AreEqual(eventFired, EventFired);
+            Assert.AreEqual(eventFired, EventFired, 
+                eventFired ? 
+                "Event Tester expected event to fire, but it did not" : 
+                "Event Tester expected event not to fire, but it did"
+            );
         }
 
         public void AssertResult(object senderResult, Func<T, bool> argTests)
@@ -92,7 +96,7 @@ namespace GrimoireTD.Tests
 
         public void AssertFired(int numberOfTimes)
         {
-            Assert.AreEqual(numberOfTimes, EventFiredCount);
+            Assert.AreEqual(numberOfTimes, EventFiredCount, "Event Tester received unexpected number of events\nExp: " + numberOfTimes + "\nGot: " + EventFiredCount);
         }
 
         public void AssertResults(Func<IEnumerable<T>, bool> argTests)

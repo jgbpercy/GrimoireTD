@@ -10,9 +10,9 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
     public class SoAttributeModifierEffectType : SoModifierEffectType, IAttributeModifierEffectType
     {
         [SerializeField]
-        private CreepAttributeName creepAttributeName;
+        private CreepAttrName creepAttributeName;
 
-        public CreepAttributeName CreepAttributeName
+        public CreepAttrName CreepAttributeName
         {
             get
             {

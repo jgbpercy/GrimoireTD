@@ -4,17 +4,17 @@ using UnityEngine;
 namespace GrimoireTD.Attributes
 {
     [Serializable]
-    public class SNamedCreepAttributeModifier : SAttributeModifier, INamedAttributeModifier<CreepAttributeName>
+    public class SNamedCreepAttributeModifier : SAttributeModifier, INamedAttributeModifier<CreepAttrName>
     {
         [SerializeField]
-        private CreepAttributeName attributeName;
+        private CreepAttrName attributeName;
 
-        public SNamedCreepAttributeModifier(float magnitude, CreepAttributeName attributeName) : base(magnitude)
+        public SNamedCreepAttributeModifier(float magnitude, CreepAttrName attributeName) : base(magnitude)
         {
             this.attributeName = attributeName;
         }
 
-        public CreepAttributeName AttributeName
+        public CreepAttrName AttributeName
         {
             get
             {

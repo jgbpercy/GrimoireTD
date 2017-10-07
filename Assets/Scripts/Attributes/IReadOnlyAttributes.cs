@@ -6,6 +6,6 @@ namespace GrimoireTD.Attributes
     {
         event EventHandler<EAOnAnyAttributeChanged<T>> OnAnyAttributeChanged;
 
-        IReadOnlyAttribute GetAttribute(T attributeName);
+        IReadOnlyAttribute Get(T attributeName);
     }
 }

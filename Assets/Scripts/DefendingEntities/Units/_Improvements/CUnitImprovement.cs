@@ -13,7 +13,7 @@ namespace GrimoireTD.DefendingEntities.Units
         public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
 
         public CUnitImprovement(
-            ICollection<INamedAttributeModifier<DefendingEntityAttributeName>> attributeModifiers,
+            ICollection<INamedAttributeModifier<DEAttrName>> attributeModifiers,
             ICollection<IHexOccupationBonus> flatHexOccupationBonuses,
             ICollection<IAbilityTemplate> abilities,
             ICollection<IDefenderAuraTemplate> auras,

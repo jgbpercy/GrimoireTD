@@ -619,11 +619,11 @@ namespace GrimoireTD.DefendingEntities
         {
             string attributesText = "Attributes:\n";
 
-            foreach (KeyValuePair<DefendingEntityAttributeName,string> attributeName in DefendingEntityAttributes.DisplayNames)
+            foreach (KeyValuePair<DEAttrName,string> attributeName in DefendingEntityAttributes.DisplayNames)
             {
                 attributesText += 
                     attributeName.Value + ": " + 
-                    defendingEntity.Attributes.GetAttribute(attributeName.Key).Value() + 
+                    defendingEntity.Attributes.Get(attributeName.Key).Value() + 
                     "\n";
             }
 
@@ -702,7 +702,7 @@ namespace GrimoireTD.DefendingEntities
             structureAurasText.text = GetAuraText(selectedStructure);
         }
 
-        private void OnStructureAttributesChange(object sender, EAOnAnyAttributeChanged<DefendingEntityAttributeName> args)
+        private void OnStructureAttributesChange(object sender, EAOnAnyAttributeChanged<DEAttrName> args)
         {
             structureAttributesText.text = GetAttributesText(selectedStructure);
         }
@@ -737,7 +737,7 @@ namespace GrimoireTD.DefendingEntities
             unitAurasText.text = GetAuraText(selectedUnit);
         }
 
-        private void OnUnitAttributesChange(object sender, EAOnAnyAttributeChanged<DefendingEntityAttributeName> args)
+        private void OnUnitAttributesChange(object sender, EAOnAnyAttributeChanged<DEAttrName> args)
         {
             unitAttributesText.text = GetAttributesText(selectedUnit);
         }
@@ -806,17 +806,17 @@ namespace GrimoireTD.DefendingEntities
 
         private void DebugLogSelectedUnitAttributes()
         {
-            foreach (DefendingEntityAttributeName attributeName in Enum.GetValues(typeof(DefendingEntityAttributeName)))
+            foreach (DEAttrName attributeName in Enum.GetValues(typeof(DEAttrName)))
             {
-                CDebug.Log(CDebug.unitAttributes, selectedUnit.Attributes.GetAttribute(attributeName).DisplayName + ": " + selectedUnit.Attributes.GetAttribute(attributeName).Value());
+                CDebug.Log(CDebug.unitAttributes, selectedUnit.Attributes.Get(attributeName).DisplayName + ": " + selectedUnit.Attributes.Get(attributeName).Value());
             }
         }
 
         private void DebugLogSelectedStructureAttributes()
         {
-            foreach (DefendingEntityAttributeName attributeName in Enum.GetValues(typeof(DefendingEntityAttributeName)))
+            foreach (DEAttrName attributeName in Enum.GetValues(typeof(DEAttrName)))
             {
-                CDebug.Log(CDebug.structureUpgrades, selectedStructure.Attributes.GetAttribute(attributeName).DisplayName + ": " + selectedStructure.Attributes.GetAttribute(attributeName).Value());
+                CDebug.Log(CDebug.structureUpgrades, selectedStructure.Attributes.Get(attributeName).DisplayName + ": " + selectedStructure.Attributes.Get(attributeName).Value());
             }
         }
     }

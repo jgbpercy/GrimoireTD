@@ -29,7 +29,7 @@ namespace GrimoireTD.Creeps
         public float DistanceFromEnd { get; private set; }
 
         //Attributes
-        private IAttributes<CreepAttributeName> attributes;
+        private IAttributes<CreepAttrName> attributes;
 
         //Resistances
         private IResistances resistances;
@@ -68,7 +68,7 @@ namespace GrimoireTD.Creeps
         }
 
         //Attributes
-        public IReadOnlyAttributes<CreepAttributeName> Attributes
+        public IReadOnlyAttributes<CreepAttrName> Attributes
         {
             get
             {
@@ -91,7 +91,7 @@ namespace GrimoireTD.Creeps
         {
             get
             {
-                return attributes.GetAttribute(CreepAttributeName.rawSpeed).Value() * (1 + attributes.GetAttribute(CreepAttributeName.speedMultiplier).Value());
+                return attributes.Get(CreepAttrName.rawSpeed).Value() * (1 + attributes.Get(CreepAttrName.speedMultiplier).Value());
             }
         }
 
@@ -99,7 +99,7 @@ namespace GrimoireTD.Creeps
         {
             get
             {
-                return attributes.GetAttribute(CreepAttributeName.rawArmor).Value() * (1 + attributes.GetAttribute(CreepAttributeName.armorMultiplier).Value());
+                return attributes.Get(CreepAttrName.rawArmor).Value() * (1 + attributes.Get(CreepAttrName.armorMultiplier).Value());
             }
         }
 
@@ -124,10 +124,10 @@ namespace GrimoireTD.Creeps
             resistances = new CResistances(CreepTemplate.BaseResistances);
 
             //Attributes
-            attributes = new CAttributes<CreepAttributeName>(CreepAttributes.NewAttributesDictionary());
+            attributes = new CAttributes<CreepAttrName>(CreepAttributes.NewAttributesDictionary());
 
             //  TODO: put this inside the attributes ctor like resistances
-            foreach (INamedAttributeModifier<CreepAttributeName> attributeModifier in CreepTemplate.BaseAttributes)
+            foreach (INamedAttributeModifier<CreepAttrName> attributeModifier in CreepTemplate.BaseAttributes)
             {
                 attributes.AddModifier(attributeModifier);
             }

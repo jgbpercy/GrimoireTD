@@ -9,7 +9,7 @@ namespace GrimoireTD.Creeps
     {
         string NameInGame { get; }
 
-        IEnumerable<INamedAttributeModifier<CreepAttributeName>> BaseAttributes { get; }
+        IEnumerable<INamedAttributeModifier<CreepAttrName>> BaseAttributes { get; }
 
         int MaxHitpoints { get; }
 

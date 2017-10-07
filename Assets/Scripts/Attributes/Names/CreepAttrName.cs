@@ -1,6 +1,6 @@
 ﻿namespace GrimoireTD.Attributes
 {
-    public enum CreepAttributeName
+    public enum CreepAttrName
     {
         rawArmor,
         armorMultiplier,
