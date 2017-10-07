@@ -10,15 +10,13 @@ namespace GrimoireTD.Abilities.DefendMode
     {
         private IDefendingEntity attachedToDefendingEntity;
 
-        private List<IDefendModeAbility> offCooldownAbilities;
+        private List<IDefendModeAbility> offCooldownAbilities = new List<IDefendModeAbility>();
         private int numberOfAbilitiesOnCooldown;
 
         public event EventHandler<EAOnAllDefendModeAbilitiesOffCooldown> OnAllDefendModeAbilitiesOffCooldown;
 
         public CDefendModeAbilityManager(IAbilities abilities, IDefendingEntity attachedToDefendingEntity)
         {
-            offCooldownAbilities = new List<IDefendModeAbility>();
-
             numberOfAbilitiesOnCooldown = 0;
 
             foreach (var ability in abilities.DefendModeAbilities())

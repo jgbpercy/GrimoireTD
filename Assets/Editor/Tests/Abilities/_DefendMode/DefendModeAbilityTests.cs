@@ -61,7 +61,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         }
 
         [SetUp]
-        public void EachTimeSetUp()
+        public void EachTestSetUp()
         {
             template.BaseCooldown.Returns(defaultBaseCooldown);
 
