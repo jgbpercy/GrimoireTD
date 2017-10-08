@@ -26,8 +26,6 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
         private IReadOnlyGameStateManager gameStateManager = Substitute.For<IReadOnlyGameStateManager>();
 
-        private CDefendModeAbilityManager subject;
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {

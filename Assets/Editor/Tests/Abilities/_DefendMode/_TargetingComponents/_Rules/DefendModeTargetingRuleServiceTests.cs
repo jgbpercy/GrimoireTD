@@ -10,13 +10,11 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
 {
     public class DefendModeTargetingRuleServiceTests
     {
-        private IDefendingEntity attachedToDefendingEntity;
+        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
-
             attachedToDefendingEntity.CoordPosition.Returns(new Coord(0, 0));
         }
 

@@ -13,41 +13,33 @@ namespace GrimoireTD.Tests.AoeProjectileTests
 {
     public class AoeProjectileTests
     {
-        private Vector3 startPosition;
-
-        private ICreep targetCreep;
-
-        private IDefendingEntity sourceDefendingEntity;
-
-        private IAoeProjectileTemplate template;
-
-        private IAttackEffect attackEffectOne;
-        private IAttackEffect attackEffectTwo;
-        private IEnumerable<IAttackEffect> aoeAttackEffects;
-
         private float explosionTime = 0.8f;
 
         private float finalAoeRadius = 2f;
 
         private float deltaTime = 0.2f;
 
-        private CAoeProjectile subject;
+        private Vector3 startPosition = new Vector3();
+
+        private ICreep targetCreep = Substitute.For<ICreep>();
+
+        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+
+        private IAoeProjectileTemplate template = Substitute.For<IAoeProjectileTemplate>();
+
+        private IAttackEffect attackEffectOne = Substitute.For<IAttackEffect>();
+        private IAttackEffect attackEffectTwo = Substitute.For<IAttackEffect>();
+        private IEnumerable<IAttackEffect> aoeAttackEffects;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             CDebug.InitialiseDebugChannels();
 
-            startPosition = new Vector3();
+            GameObject testGo = new GameObject();
 
-            targetCreep = Substitute.For<ICreep>();
+            testGo.AddComponent<ModelObjectFrameUpdater>();
 
-            sourceDefendingEntity = Substitute.For<IDefendingEntity>();
-
-            template = Substitute.For<IAoeProjectileTemplate>();
-
-            attackEffectOne = Substitute.For<IAttackEffect>();
-            attackEffectTwo = Substitute.For<IAttackEffect>();
             aoeAttackEffects = new List<IAttackEffect>
             {
                 attackEffectOne,
@@ -64,23 +56,24 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         [SetUp]
         public void EachTestSetUp()
         {
-            GameObject testGo = new GameObject();
+            targetCreep.ClearReceivedCalls();
+        }
 
-            testGo.AddComponent<ModelObjectFrameUpdater>();
-
-            subject = new CAoeProjectile(
+        public CAoeProjectile ConstructSubject()
+        {
+            return new CAoeProjectile(
                 startPosition,
                 targetCreep,
                 template,
                 sourceDefendingEntity
             );
-
-            targetCreep.ClearReceivedCalls();
         }
 
         [Test]
         public void HitCreepInAoe_AppliesAttackEffectsToCreep()
         {
+            var subject = ConstructSubject();
+
             subject.HitCreepInAoe(targetCreep);
 
             targetCreep.Received(1).ApplyAttackEffects(aoeAttackEffects, sourceDefendingEntity);
@@ -89,6 +82,8 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         [Test]
         public void ModelObjectFrameUpdatee_AfterProjectileHitsCreep_FiresExplosionStartedEvent()
         {
+            var subject = ConstructSubject();
+
             var eventTester = new EventTester<EAOnExplosionStarted>();
             subject.OnExplosionStarted += eventTester.Handler;
 
@@ -103,6 +98,8 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         [Test]
         public void ModelObjectFrameUpdatee_AfterProjectileHitsCreep_ExpandsExplosionRadiusAsCubeRouteOfExplosionProportionPassed()
         {
+            var subject = ConstructSubject();
+
             subject.HitCreep(targetCreep, 5f);
 
             subject.ModelObjectFrameUpdate(deltaTime);
@@ -117,6 +114,8 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         [Test]
         public void ModelObjectFrameUpdatee_AfterProjectileHitsCreepAndExplosionTimeHasPasses_FiresExplosionFinishedEvent()
         {
+            var subject = ConstructSubject();
+
             var eventTester = new EventTester<EAOnExplosionFinished>();
             subject.OnExplosionFinished += eventTester.Handler;
 

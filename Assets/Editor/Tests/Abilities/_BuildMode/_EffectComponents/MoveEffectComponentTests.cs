@@ -11,35 +11,33 @@ namespace GrimoireTD.Tests.MoveEffectComponentTests
 {
     public class MoveEffectComponentTests
     {
-        private IMoveEffectComponentTemplate moveEffectComponentTemplate;
+        private Coord targetCoord = new Coord(1, 1);
 
-        private IUnit unit;
+        private IMoveEffectComponentTemplate moveEffectComponentTemplate = Substitute.For<IMoveEffectComponentTemplate>();
 
-        private Coord targetCoord;
+        private IUnit unit = Substitute.For<IUnit>();
 
         private List<IBuildModeTargetable> targetList;
 
-        private IStructure structure;
+        private IStructure structure = Substitute.For<IStructure>();
 
         private CMoveEffectComponent subject;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            moveEffectComponentTemplate = Substitute.For<IMoveEffectComponentTemplate>();
-
-            unit = Substitute.For<IUnit>();
-
-            targetCoord = new Coord(1, 1);
-
             targetList = new List<IBuildModeTargetable>
             {
                 targetCoord
             };
 
-            structure = Substitute.For<IStructure>();
-
             subject = new CMoveEffectComponent(moveEffectComponentTemplate);
+        }
+
+        [SetUp]
+        public void EachTestSetUp()
+        {
+            unit.ClearReceivedCalls();
         }
 
         [Test]

@@ -12,34 +12,26 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
 {
     public class BuildModeAbilityHexTargetingRuleServiceTests
     {
-        private IUnit unit;
+        private Coord unitPosition = new Coord(0, 0);
 
-        private IStructure structure;
+        private IUnit unit = Substitute.For<IUnit>();
 
-        private Coord unitPosition;
+        private IStructure structure = Substitute.For<IStructure>();
 
-        private IMapData mapData;
+        private IMapData mapData = Substitute.For<IMapData>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             CDebug.InitialiseDebugChannels();
 
-            unit = Substitute.For<IUnit>();
-
-            structure = Substitute.For<IStructure>();
-
-            mapData = Substitute.For<IMapData>();
+            unit.CoordPosition.Returns(unitPosition);
         }
 
         [SetUp]
         public void EachTestSetUp()
         {
             mapData.CanMoveUnitTo(Arg.Any<Coord>(), Arg.Any<List<Coord>>()).Returns(true);
-
-            unitPosition = new Coord(0, 0);
-
-            unit.CoordPosition.Returns(unitPosition);
 
             unit.CachedDisallowedMovementDestinations.Returns(new List<Coord>());
         }

@@ -11,21 +11,21 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
 {
     public class PlayerTargetsHexComponentTests
     {
-        private Coord targetCoord;
+        private Coord targetCoord = new Coord(2, 3);
 
-        private IUnit targetUnit;
+        private IUnit targetUnit = Substitute.For<IUnit>();
 
-        private IReadOnlyMapData mapData;
+        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
 
-        private IDefendingEntity sourceDefendingEntity;
+        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+
+        private IPlayerTargetsHexComponentTemplate template = Substitute.For<IPlayerTargetsHexComponentTemplate>();
+
+        private IBuildModeTargetable target = Substitute.For<IBuildModeTargetable>();
 
         private PlayerTargetsHexArgs playerTargetsHexArgs;
 
         private BuildModeAutoTargetedArgs buildModeAutoTargetedArgs;
-
-        private IPlayerTargetsHexComponentTemplate template;
-
-        private IBuildModeTargetable target;
 
         private List<IBuildModeTargetable> targetList;
 
@@ -34,16 +34,6 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            targetCoord = new Coord(2, 3);
-
-            mapData = Substitute.For<IReadOnlyMapData>();
-
-            template = Substitute.For<IPlayerTargetsHexComponentTemplate>();
-
-            sourceDefendingEntity = Substitute.For<IDefendingEntity>();
-
-            targetUnit = Substitute.For<IUnit>();
-
             playerTargetsHexArgs = new PlayerTargetsHexArgs(
                 sourceDefendingEntity,
                 targetCoord,
@@ -74,8 +64,6 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
             template.AoeRule
                 .GenerateArgs(targetCoord, mapData)
                 .Returns(buildModeAutoTargetedArgs);
-
-            target = Substitute.For<IBuildModeTargetable>();
 
             targetList = new List<IBuildModeTargetable>
             {

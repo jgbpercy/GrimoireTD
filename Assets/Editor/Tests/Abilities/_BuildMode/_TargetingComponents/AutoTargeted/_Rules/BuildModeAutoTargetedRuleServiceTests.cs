@@ -7,13 +7,7 @@ namespace GrimoireTD.Tests.BuildModeAutoTargetedRuleServiceTests
 {
     public class BuildModeAutoTargetedRuleServiceTests
     {
-        private IReadOnlyMapData mapData;
-
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            mapData = Substitute.For<IReadOnlyMapData>();
-        }
+        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
 
         [Test]
         public void RunRule_PassedSingleHexAndOneTargetCoord_ReturnsListWithOneCoord()

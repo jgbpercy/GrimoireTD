@@ -16,11 +16,9 @@ namespace GrimoireTD.Tests.AbilitiesTests
         private IDefendModeAbilityManager defendModeAbilityManager = Substitute.For<IDefendModeAbilityManager>();
 
         private IDefendModeAbilityTemplate defendModeAbilityTemplate = Substitute.For<IDefendModeAbilityTemplate>();
-
-        private IBuildModeAbilityTemplate buildModeAbilityTemplate = Substitute.For<IBuildModeAbilityTemplate>();
-
         private IDefendModeAbility defendModeAbility = Substitute.For<IDefendModeAbility>();
 
+        private IBuildModeAbilityTemplate buildModeAbilityTemplate = Substitute.For<IBuildModeAbilityTemplate>();
         private IBuildModeAbility buildModeAbility = Substitute.For<IBuildModeAbility>();
 
         [OneTimeSetUp]
@@ -36,12 +34,6 @@ namespace GrimoireTD.Tests.AbilitiesTests
 
             buildModeAbility.AbilityTemplate.Returns(buildModeAbilityTemplate);
             buildModeAbility.BuildModeAbilityTemplate.Returns(buildModeAbilityTemplate);
-        }
-
-        [SetUp]
-        public void EachTestSetup()
-        {
-
         }
 
         [OneTimeTearDown]

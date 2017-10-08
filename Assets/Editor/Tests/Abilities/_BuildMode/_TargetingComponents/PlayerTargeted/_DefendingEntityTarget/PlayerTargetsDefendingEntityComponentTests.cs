@@ -10,39 +10,29 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
 {
     public class PlayerTargetsDefendingEntityComponentTests
     {
-        private Coord targetCoord;
+        private Coord targetCoord = new Coord(2, 3);
 
-        private IReadOnlyMapData mapData;
+        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
 
-        private IDefendingEntity sourceDefendingEntity;
+        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
 
-        private IDefendingEntity targetDefendingEntity;
+        private IDefendingEntity targetDefendingEntity = Substitute.For<IDefendingEntity>();
+
+        private IPlayerTargetsDefendingEntityComponentTemplate template = Substitute.For<IPlayerTargetsDefendingEntityComponentTemplate>();
+
+        private IBuildModeTargetable target = Substitute.For<IBuildModeTargetable>();
+
+        private List<IBuildModeTargetable> targetList;
 
         private PlayerTargetsDefendingEntityArgs playerTargetsDefendingEntityArgs;
 
         private BuildModeAutoTargetedArgs buildModeAutoTargetedArgs;
-
-        private IPlayerTargetsDefendingEntityComponentTemplate template;
-
-        private IBuildModeTargetable target;
-
-        private List<IBuildModeTargetable> targetList;
 
         private CPlayerTargetsDefendingEntityComponent subject;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            targetCoord = new Coord(2, 3);
-
-            mapData = Substitute.For<IReadOnlyMapData>();
-
-            template = Substitute.For<IPlayerTargetsDefendingEntityComponentTemplate>();
-
-            sourceDefendingEntity = Substitute.For<IDefendingEntity>();
-
-            targetDefendingEntity = Substitute.For<IDefendingEntity>();
-
             playerTargetsDefendingEntityArgs = new PlayerTargetsDefendingEntityArgs(
                 sourceDefendingEntity,
                 targetDefendingEntity,
@@ -73,8 +63,6 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
             template.AoeRule
                 .GenerateArgs(targetCoord, mapData)
                 .Returns(buildModeAutoTargetedArgs);
-
-            target = Substitute.For<IBuildModeTargetable>();
 
             targetList = new List<IBuildModeTargetable>
             {

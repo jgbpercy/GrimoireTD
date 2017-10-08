@@ -8,34 +8,26 @@ namespace GrimoireTD.Tests.AutoTargetedComponentTests
 {
     public class AutoTargetedComponentTests
     {
-        private Coord targetCoord;
+        private Coord targetCoord = new Coord(2, 2);
 
-        private IReadOnlyMapData mapData;
+        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
 
-        private BuildModeAutoTargetedArgs buildModeAutoTargetedArgs;
+        private IAutoTargetedComponentTemplate template = Substitute.For<IAutoTargetedComponentTemplate>();
 
-        private IAutoTargetedComponentTemplate template;
-
-        private IBuildModeTargetable target;
+        private IBuildModeTargetable target = Substitute.For<IBuildModeTargetable>();
 
         private List<IBuildModeTargetable> targetList;
+
+        private BuildModeAutoTargetedArgs buildModeAutoTargetedArgs;
 
         private CAutoTargetedComponent subject;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            targetCoord = new Coord(2, 2);
-
-            mapData = Substitute.For<IReadOnlyMapData>();
-
-            template = Substitute.For<IAutoTargetedComponentTemplate>();
-
             buildModeAutoTargetedArgs = new BuildModeAutoTargetedArgs(targetCoord, mapData);
 
             template.TargetingRule.GenerateArgs(targetCoord, mapData).Returns(buildModeAutoTargetedArgs);
-
-            target = Substitute.For<IBuildModeTargetable>();
 
             targetList = new List<IBuildModeTargetable>
             {

@@ -9,39 +9,32 @@ namespace GrimoireTD.Tests.DefendModeTargetingComponentTests
 {
     public class DefendModeTargetingComponentTests
     {
-        private IDefendingEntity attachedToDefendingEntity;
+        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
 
-        private List<ICreep> creepList;
+        private List<ICreep> creepList = new List<ICreep>();
 
-        private IDefendModeTargetable target;
+        private IDefendModeTargetable target = Substitute.For<IDefendModeTargetable>();
 
-        private List<IDefendModeTargetable> targetList;
+        private IDefendModeTargetingComponentTemplate template = Substitute.For<IDefendModeTargetingComponentTemplate>();
 
         private DefendModeTargetingArgs defendModeTargetingArgs;
 
-        private IDefendModeTargetingComponentTemplate template;
+        private List<IDefendModeTargetable> targetList;
 
         private CDefendModeTargetingComponent subject;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
-
-            creepList = new List<ICreep>();
-
-            target = Substitute.For<IDefendModeTargetable>();
-
             targetList = new List<IDefendModeTargetable>
             {
                 target
             };
 
-            template = Substitute.For<IDefendModeTargetingComponentTemplate>();
-
             defendModeTargetingArgs = new DefendModeTargetingArgs(attachedToDefendingEntity);
 
-            template.TargetingRule.GenerateArgs(attachedToDefendingEntity, creepList)
+            template.TargetingRule
+                .GenerateArgs(attachedToDefendingEntity, creepList)
                 .Returns(defendModeTargetingArgs);
 
             DefendModeTargetingRuleService.RunRule = (args) =>

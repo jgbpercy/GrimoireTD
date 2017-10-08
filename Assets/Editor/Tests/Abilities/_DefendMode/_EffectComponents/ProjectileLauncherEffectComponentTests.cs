@@ -12,16 +12,19 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
 {
     public class ProjectileLauncherEffectComponentTests
     {
-        private IProjectileLauncherComponentTemplate projectileLauncherComponentTemplate;
+        private Coord defendingEntityCoord = new Coord(1, 1);
 
-        private IDefendingEntity defendingEntity;
+        private IProjectileLauncherComponentTemplate projectileLauncherComponentTemplate 
+            = Substitute.For<IProjectileLauncherComponentTemplate>();
 
-        private IProjectileTemplate projectileTemplate;
+        private IDefendingEntity defendingEntity = Substitute.For<IDefendingEntity>();
 
-        private IProjectile projectile;
+        private IProjectileTemplate projectileTemplate = Substitute.For<IProjectileTemplate>();
 
-        private IDefendModeTargetable targetOne;
-        private IDefendModeTargetable targetTwo;
+        private IProjectile projectile = Substitute.For<IProjectile>();
+
+        private IDefendModeTargetable targetOne = Substitute.For<IDefendModeTargetable>();
+        private IDefendModeTargetable targetTwo = Substitute.For<IDefendModeTargetable>();
 
         private List<IDefendModeTargetable> targetList;
 
@@ -32,17 +35,9 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var deCoord = new Coord(1, 1);
+            defendingEntity.CoordPosition.Returns(defendingEntityCoord);
 
-            defendingEntity = Substitute.For<IDefendingEntity>();
-
-            defendingEntity.CoordPosition.Returns(deCoord);
-
-            projectileCreationPosition = deCoord.ToFirePointVector();
-
-            projectile = Substitute.For<IProjectile>();
-
-            projectileTemplate = Substitute.For<IProjectileTemplate>();
+            projectileCreationPosition = defendingEntityCoord.ToFirePointVector();
 
             projectileTemplate.GenerateProjectile(
                 Arg.Any<Vector3>(), 
@@ -51,12 +46,7 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
             )
                 .Returns(projectile);
 
-            projectileLauncherComponentTemplate = Substitute.For<IProjectileLauncherComponentTemplate>();
-
             projectileLauncherComponentTemplate.ProjectileToFireTemplate.Returns(projectileTemplate);
-
-            targetOne = Substitute.For<IDefendModeTargetable>();
-            targetTwo = Substitute.For<IDefendModeTargetable>();
 
             targetList = new List<IDefendModeTargetable>
             {

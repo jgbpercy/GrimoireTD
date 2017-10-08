@@ -10,100 +10,90 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
 {
     public class BuildModeAbilityTests
     {
-        private IUnit unit;
+        private IUnit unit = Substitute.For<IUnit>();
 
-        private IBuildModeTargetingComponent targetingComponent;
+        private IBuildModeTargetingComponent targetingComponent = Substitute.For<IBuildModeTargetingComponent>();
 
         private IReadOnlyList<IBuildModeTargetable> returnedTargetList;
 
-        private IReadOnlyMapData mapData;
+        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
 
-        private IBuildModeEffectComponentTemplate effectComponentTemplate;
-        private IBuildModeEffectComponentTemplate effectComponentTemplateTwo;
+        private IBuildModeEffectComponentTemplate effectComponentTemplate = Substitute.For<IBuildModeEffectComponentTemplate>();
+        private IBuildModeEffectComponentTemplate effectComponentTemplateTwo = Substitute.For<IBuildModeEffectComponentTemplate>();
 
-        private IBuildModeEffectComponent effectComponent;
-        private IBuildModeEffectComponent effectComponentTwo;
+        private IBuildModeEffectComponent effectComponent = Substitute.For<IBuildModeEffectComponent>();
+        private IBuildModeEffectComponent effectComponentTwo = Substitute.For<IBuildModeEffectComponent>();
 
-        private IBuildModeAbilityTemplate template;
-
-        private CBuildModeAbility subject;
+        private IBuildModeAbilityTemplate template = Substitute.For<IBuildModeAbilityTemplate>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            unit = Substitute.For<IUnit>();
-
-            targetingComponent = Substitute.For<IBuildModeTargetingComponent>();
-
             returnedTargetList = new List<IBuildModeTargetable>
             {
                 new Coord(1, 1)
             };
 
-            mapData = Substitute.For<IReadOnlyMapData>();
-
             targetingComponent
                 .FindTargets(Arg.Any<Coord>(), mapData)
                 .Returns(returnedTargetList);
 
-            effectComponentTemplate = Substitute.For<IBuildModeEffectComponentTemplate>();
-            effectComponentTemplateTwo = Substitute.For<IBuildModeEffectComponentTemplate>();
-
-            effectComponent = Substitute.For<IBuildModeEffectComponent>();
-            effectComponentTwo = Substitute.For<IBuildModeEffectComponent>();
-
             effectComponentTemplate.GenerateEffectComponent().Returns(effectComponent);
             effectComponentTemplateTwo.GenerateEffectComponent().Returns(effectComponentTwo);
 
-            template = Substitute.For<IBuildModeAbilityTemplate>();
             template.TargetingComponentTemplate.GenerateTargetingComponent().Returns(targetingComponent);
             template.EffectComponentTemplates.Returns(new List<IBuildModeEffectComponentTemplate>
             {
                 effectComponentTemplate,
                 effectComponentTemplateTwo
             });
-
-            subject = new CBuildModeAbility(template);
         }
 
-        //TODO: This is bad - remove this test but ensure that below tests check that return from targeting is passed to execute effect
-        [Test]
-        public void ExecuteAbility_PassedExecutionPosition_PassesExecutionPositionToTargetingComponent()
+        [SetUp]
+        public void EachTestSetUp()
         {
-            var executionPosition = new Coord(3, 3);
+            effectComponent.ClearReceivedCalls();
+            effectComponentTwo.ClearReceivedCalls();
+        }
 
-            subject.ExecuteAbility(unit, executionPosition, mapData);
-
-            targetingComponent.Received().FindTargets(Arg.Is(executionPosition), Arg.Any<IReadOnlyMapData>());
+        private CBuildModeAbility ConstructSubject()
+        {
+            return new  CBuildModeAbility(template);
         }
 
         [Test]
-        public void ExecuteAbility_PassedExecutingEntity_PassesExecutingEntityToEffectComponents()
+        public void ExecuteAbility_PassedExecutingEntity_ExecutesEffectWithPassedEntity()
         {
+            var subject = ConstructSubject();
+
             subject.ExecuteAbility(unit, new Coord(0, 0), mapData);
 
-            effectComponent.Received().ExecuteEffect(Arg.Is(unit), Arg.Any<IReadOnlyList<IBuildModeTargetable>>());
-            effectComponentTwo.Received().ExecuteEffect(Arg.Is(unit), Arg.Any<IReadOnlyList<IBuildModeTargetable>>());
+            effectComponent.Received(1).ExecuteEffect(unit, Arg.Any<IReadOnlyList<IBuildModeTargetable>>());
+            effectComponentTwo.Received(1).ExecuteEffect(unit, Arg.Any<IReadOnlyList<IBuildModeTargetable>>());
         }
 
         [Test]
-	    public void ExecuteAbility_PassedValidInput_PassesTargetsToEffectComponents()
+	    public void ExecuteAbility_PassedValidInput_ExecutesEffectWithReturnedTargets()
         {
+            var subject = ConstructSubject();
+
             subject.ExecuteAbility(unit, new Coord(0, 0), mapData);
 
-            effectComponent.Received().ExecuteEffect(Arg.Any<IDefendingEntity>(), Arg.Is(returnedTargetList));
-            effectComponentTwo.Received().ExecuteEffect(Arg.Any<IDefendingEntity>(), Arg.Is(returnedTargetList));
+            effectComponent.Received(1).ExecuteEffect(Arg.Any<IDefendingEntity>(), returnedTargetList);
+            effectComponentTwo.Received(1).ExecuteEffect(Arg.Any<IDefendingEntity>(), returnedTargetList);
         }
 
         [Test]
         public void ExecuteAbility_PassedValidInput_FiresOnExecutedEvent()
         {
+            var subject = ConstructSubject();
+
             var eventTester = new EventTester<EAOnExecutedBuildModeAbility>();
             subject.OnExecuted += eventTester.Handler;
 
             subject.ExecuteAbility(unit, new Coord(0, 0), mapData);
 
-            eventTester.AssertFired(true);
+            eventTester.AssertFired(1);
             Assert.AreEqual(eventTester.SenderResult, subject);
             Assert.AreEqual(eventTester.ArgsResult.ExecutedAbility, subject);
         }

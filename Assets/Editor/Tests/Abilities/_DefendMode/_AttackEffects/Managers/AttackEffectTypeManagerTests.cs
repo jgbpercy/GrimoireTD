@@ -8,23 +8,23 @@ namespace GrimoireTD.Tests.AttackEffectTypeManagerTests
 {
     public class AttackEffectTypeManagerTests
     {
-        private IBasicMetaDamageEffectType basicInternetDamage;
-        private IWeakMetaDamageEffectType weakInternetDamage;
-        private IStrongMetaDamageEffectType strongInternetDamage;
+        private IBasicMetaDamageEffectType basicInternetDamage = Substitute.For<IBasicMetaDamageEffectType>();
+        private IWeakMetaDamageEffectType weakInternetDamage = Substitute.For<IWeakMetaDamageEffectType>();
+        private IStrongMetaDamageEffectType strongInternetDamage = Substitute.For<IStrongMetaDamageEffectType>();
 
-        private ISpecificDamageEffectType lolCatDamage;
-        private ISpecificDamageEffectType redditDamage;
-        private ISpecificDamageEffectType geoCitiesDamage;
+        private ISpecificDamageEffectType lolCatDamage = Substitute.For<ISpecificDamageEffectType>();
+        private ISpecificDamageEffectType redditDamage = Substitute.For<ISpecificDamageEffectType>();
+        private ISpecificDamageEffectType geoCitiesDamage = Substitute.For<ISpecificDamageEffectType>();
 
-        private IBasicMetaDamageEffectType basicNonNetworkedDamage;
-        private IWeakMetaDamageEffectType weakNonNetworkedDamage;
-        private IStrongMetaDamageEffectType strongNonNetworkedDamage;
+        private IBasicMetaDamageEffectType basicNonNetworkedDamage = Substitute.For<IBasicMetaDamageEffectType>();
+        private IWeakMetaDamageEffectType weakNonNetworkedDamage = Substitute.For<IWeakMetaDamageEffectType>();
+        private IStrongMetaDamageEffectType strongNonNetworkedDamage = Substitute.For<IStrongMetaDamageEffectType>();
 
-        private ISpecificDamageEffectType realityDamage;
+        private ISpecificDamageEffectType realityDamage = Substitute.For<ISpecificDamageEffectType>();
 
-        private IAttributeModifierEffectType attributeModifierEffectType;
+        private IAttributeModifierEffectType attributeModifierEffectType = Substitute.For<IAttributeModifierEffectType>();
 
-        private IResistanceModifierEffectType resistanceModifierEffectType;
+        private IResistanceModifierEffectType resistanceModifierEffectType = Substitute.For<IResistanceModifierEffectType>();
 
         private List<IAttackEffectType> attackEffectTypeList;
 
@@ -33,23 +33,6 @@ namespace GrimoireTD.Tests.AttackEffectTypeManagerTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            basicInternetDamage = Substitute.For<IBasicMetaDamageEffectType>();
-            weakInternetDamage = Substitute.For<IWeakMetaDamageEffectType>();
-            strongInternetDamage = Substitute.For<IStrongMetaDamageEffectType>();
-
-            lolCatDamage = Substitute.For<ISpecificDamageEffectType>();
-            redditDamage = Substitute.For<ISpecificDamageEffectType>();
-            geoCitiesDamage = Substitute.For<ISpecificDamageEffectType>();
-
-            basicNonNetworkedDamage = Substitute.For<IBasicMetaDamageEffectType>();
-            weakNonNetworkedDamage = Substitute.For<IWeakMetaDamageEffectType>();
-            strongNonNetworkedDamage = Substitute.For<IStrongMetaDamageEffectType>();
-
-            realityDamage = Substitute.For<ISpecificDamageEffectType>();
-
-            attributeModifierEffectType = Substitute.For<IAttributeModifierEffectType>();
-            resistanceModifierEffectType = Substitute.For<IResistanceModifierEffectType>();
-
             weakInternetDamage.BasicMetaDamageType.Returns(basicInternetDamage);
             strongInternetDamage.BasicMetaDamageType.Returns(basicInternetDamage);
 
@@ -62,20 +45,21 @@ namespace GrimoireTD.Tests.AttackEffectTypeManagerTests
 
             realityDamage.BasicMetaDamageEffectType.Returns(basicNonNetworkedDamage);
 
-            attackEffectTypeList = new List<IAttackEffectType>();
-
-            attackEffectTypeList.Add(basicInternetDamage);
-            attackEffectTypeList.Add(weakInternetDamage);
-            attackEffectTypeList.Add(strongInternetDamage);
-            attackEffectTypeList.Add(lolCatDamage);
-            attackEffectTypeList.Add(redditDamage);
-            attackEffectTypeList.Add(geoCitiesDamage);
-            attackEffectTypeList.Add(basicNonNetworkedDamage);
-            attackEffectTypeList.Add(weakNonNetworkedDamage);
-            attackEffectTypeList.Add(strongNonNetworkedDamage);
-            attackEffectTypeList.Add(realityDamage);
-            attackEffectTypeList.Add(attributeModifierEffectType);
-            attackEffectTypeList.Add(resistanceModifierEffectType);
+            attackEffectTypeList = new List<IAttackEffectType>
+            {
+                basicInternetDamage,
+                weakInternetDamage,
+                strongInternetDamage,
+                lolCatDamage,
+                redditDamage,
+                geoCitiesDamage,
+                basicNonNetworkedDamage,
+                weakNonNetworkedDamage,
+                strongNonNetworkedDamage,
+                realityDamage,
+                attributeModifierEffectType,
+                resistanceModifierEffectType
+            };
 
             subject = new CAttackEffectTypeManager();
 
