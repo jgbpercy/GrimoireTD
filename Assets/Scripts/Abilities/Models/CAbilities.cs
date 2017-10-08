@@ -4,6 +4,7 @@ using System.Linq;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.BuildMode;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities
 {
@@ -42,7 +43,7 @@ namespace GrimoireTD.Abilities
         {
             abilityList = new SortedList<int, IAbility>();
 
-            defendModeAbilityManager = new CDefendModeAbilityManager(this, attachedToDefendingEntity);
+            defendModeAbilityManager = DependencyProvider.DefendModeAbilityManager(this, attachedToDefendingEntity);
         }
 
         public void AddAbility(IAbility ability)
@@ -66,14 +67,17 @@ namespace GrimoireTD.Abilities
             }
         }
 
+        //TODO: audit use of this to see if we ever legitamately call it without knowing if the ability will be present to remove
+        //if not, then handle that in a more error like way
         public bool TryRemoveAbility(IAbility ability)
         {
-            if (!abilityList.ContainsValue(ability))
+            int indexOfAbility = abilityList.IndexOfValue(ability);
+
+            if (indexOfAbility == -1)
             {
                 return false;
             }
 
-            int indexOfAbility = abilityList.IndexOfValue(ability);
             abilityList.RemoveAt(indexOfAbility);
 
             OnAbilityRemoved?.Invoke(this, new EAOnAbilityRemoved(ability));
@@ -107,59 +111,23 @@ namespace GrimoireTD.Abilities
                 return false;
             }
 
-            int indexOfAbility = abilityList.IndexOfValue(abilityToRemove);
-            abilityList.RemoveAt(indexOfAbility);
-
-            OnAbilityRemoved?.Invoke(this, new EAOnAbilityRemoved(abilityToRemove));
-
-            var buildModeAbility = abilityToRemove as IBuildModeAbility;
-            if (buildModeAbility != null)
-            {
-                OnBuildModeAbilityRemoved?.Invoke(this, new EAOnBuildModeAbilityRemoved(buildModeAbility));
-                return true;
-            }
-
-            var defendModeAbility = abilityToRemove as IDefendModeAbility;
-            if (defendModeAbility != null)
-            {
-                OnDefendModeAbilityRemoved?.Invoke(this, new EAOnDefendModeAbilityRemoved(defendModeAbility));
-                return true;
-            }
-
-            return true;
+            return TryRemoveAbility(abilityToRemove);
         }
 
-        //TODO: wont this have a problem if ability removed? Change to foreach? Or just change list implementation overall?
         public IReadOnlyList<IDefendModeAbility> DefendModeAbilities()
         {
-            List<IDefendModeAbility> defendModeAbilities = new List<IDefendModeAbility>();
-
-            for (int i = 0; i < abilityList.Count; i++)
-            {
-                var defendModeAbility = abilityList[i] as IDefendModeAbility;
-                if (defendModeAbility != null)
-                {
-                    defendModeAbilities.Add(defendModeAbility);
-                }
-            }
-
-            return defendModeAbilities;
+            return abilityList
+                .Where(kvp => kvp.Value is IDefendModeAbility)
+                .Select(kvp => kvp.Value as IDefendModeAbility)
+                .ToList();
         }
 
         public IReadOnlyList<IBuildModeAbility> BuildModeAbilities()
         {
-            List<IBuildModeAbility> buildModeAbilities = new List<IBuildModeAbility>();
-
-            for (int i = 0; i < abilityList.Count; i++)
-            {
-                var buildModeAbility = abilityList[i] as IBuildModeAbility;
-                if (buildModeAbility != null)
-                {
-                    buildModeAbilities.Add(buildModeAbility);
-                }
-            }
-
-            return buildModeAbilities;
+            return abilityList
+                .Where(kvp => kvp.Value is IBuildModeAbility)
+                .Select(kvp => kvp.Value as IBuildModeAbility)
+                .ToList();
         }
     }
 }
