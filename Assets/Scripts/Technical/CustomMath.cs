@@ -5,7 +5,7 @@ namespace GrimoireTD.Technical
 {
     public static class CustomMath
     {
-        private static readonly float myEpsilon = Mathf.Epsilon;
+        private static readonly float myEpsilon = 0.00001f; //#optimisation #robustness where do I use this and what value is ok?
 
         public static float SignedOddRoot(float value, int nthRoot)
         {

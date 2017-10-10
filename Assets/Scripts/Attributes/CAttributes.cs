@@ -22,7 +22,7 @@ namespace GrimoireTD.Attributes
 
             if (!hasAttribute)
             {
-                throw new Exception("Attempted to add a modifier to attribute " + attributeToModify + ", which entity does not have.");
+                throw new ArgumentException("Attempted to add a modifier to attribute " + attributeToModify + ", which entity does not have.");
             }
 
             attributeToModify.AddModifier(attributeModifier);
@@ -34,7 +34,16 @@ namespace GrimoireTD.Attributes
 
         public bool TryRemoveModifier(INamedAttributeModifier<T> attributeModifier)
         {
-            if (attributesDict[attributeModifier.AttributeName].TryRemoveModifier(attributeModifier))
+            IAttribute attributeToModify;
+
+            bool hasAttribute = attributesDict.TryGetValue(attributeModifier.AttributeName, out attributeToModify);
+
+            if (!hasAttribute)
+            {
+                throw new ArgumentException("Attempted to add a modifier to attribute " + attributeToModify + ", which entity does not have.");
+            }
+
+            if (attributeToModify.TryRemoveModifier(attributeModifier))
             {
                 float newAttributeValue = Get(attributeModifier.AttributeName).Value();
 
