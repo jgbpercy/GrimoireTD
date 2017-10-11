@@ -11,7 +11,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         [SerializeField]
         private float effectOfArmor;
 
-        public float EffectOfArmor
+        public override float EffectOfArmor
         {
             get
             {

@@ -3,31 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
+using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Creeps
 {
     public class CResistances : IResistances
     {
-        private Dictionary<ISpecificDamageEffectType, RecalculatorList<IResistanceModifier, float>> resistanceModifiers;
+        private Dictionary<
+            ISpecificDamageEffectType, 
+            RecalculatorList<IResistanceModifier, float>> 
+            resistanceModifiers = new Dictionary<ISpecificDamageEffectType, RecalculatorList<IResistanceModifier, float>>();
 
-        private Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EARecalculatorListChange<float>>> metaResistanceDict;
+        private Dictionary<
+            IMetaDamageEffectType, 
+            MutableRecalculatorList<
+                RecalculatorList<IResistanceModifier, float>, 
+                float, 
+                EARecalculatorListChange<float>>> 
+            metaResistanceDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EARecalculatorListChange<float>>>();
 
-        private Dictionary<ISpecificDamageEffectType, RecalculatorList<IBlockModifier, int>> blockModifiers;
+        private Dictionary<
+            ISpecificDamageEffectType, 
+            RecalculatorList<IBlockModifier, int>> 
+            blockModifiers = new Dictionary<ISpecificDamageEffectType, RecalculatorList<IBlockModifier, int>>();
 
-        private Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EARecalculatorListChange<int>>> metaBlockDict;
+        private Dictionary<
+            IMetaDamageEffectType, 
+            MutableRecalculatorList<
+                RecalculatorList<IBlockModifier, int>, 
+                int, 
+                EARecalculatorListChange<int>>> 
+            metaBlockDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EARecalculatorListChange<int>>>();
+
+        private Dictionary<ISpecificDamageEffectType, IResistanceModifier> modifiersFromArmor = new Dictionary<ISpecificDamageEffectType, IResistanceModifier>();
 
         public event EventHandler<EAOnAnyResistanceChanged> OnAnyResistanceChanged;
 
         public event EventHandler<EAOnAnyBlockChanged> OnAnyBlockChanged;
 
-        public CResistances(IBaseResistances baseResistances)
+        public CResistances(ICreep attachedToCreep, IBaseResistances baseResistances)
         {
-            resistanceModifiers = new Dictionary<ISpecificDamageEffectType, RecalculatorList<IResistanceModifier, float>>();
-            metaResistanceDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EARecalculatorListChange<float>>>();
-            
-            blockModifiers = new Dictionary<ISpecificDamageEffectType, RecalculatorList<IBlockModifier, int>>();
-            metaBlockDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EARecalculatorListChange<int>>>();
-
             foreach (var specificDamageType in GameModels.Models[0].AttackEffectTypeManager.SpecificDamageTypes)
             {
                 resistanceModifiers.Add(specificDamageType, new RecalculatorList<IResistanceModifier, float>(CalculateSpecificResistance));
@@ -90,9 +105,13 @@ namespace GrimoireTD.Creeps
                     )
                 );
             }
+
+            AddArmorResistanceModifiers(attachedToCreep.CurrentArmor);
+
+            attachedToCreep.OnArmorChanged += OnArmorChanged;
         }
 
-        public IReadOnlyRecalculatorList<float> GetBaseResistance(IDamageEffectType damageEffectType)
+        public IReadOnlyRecalculatorList<float> GetResistance(IDamageEffectType damageEffectType)
         {
             var specificDamageEffectType = damageEffectType as ISpecificDamageEffectType;
             if (specificDamageEffectType != null)
@@ -124,6 +143,101 @@ namespace GrimoireTD.Creeps
             }
 
             throw new Exception("Unhandled damageEffectType");
+        }
+
+        public void AddResistanceModifier(IResistanceModifier modifier)
+        {
+            var newValue = resistanceModifiers[modifier.DamageType].Add(modifier);
+
+            OnAnyResistanceChanged?.Invoke(this, new EAOnAnyResistanceChanged(modifier.DamageType, newValue));
+        }
+
+        public void RemoveResistanceModifer(IResistanceModifier modifier)
+        {
+            var newValue = resistanceModifiers[modifier.DamageType].Remove(modifier);
+
+            OnAnyResistanceChanged?.Invoke(this, new EAOnAnyResistanceChanged(modifier.DamageType, newValue));
+        }
+
+        public void AddBlockModifier(IBlockModifier modifier)
+        {
+            var newValue = blockModifiers[modifier.DamageType].Add(modifier);
+
+            OnAnyBlockChanged?.Invoke(this, new EAOnAnyBlockChanged(modifier.DamageType, newValue));
+        }
+
+        public void RemoveBlockModifier(IBlockModifier modifier)
+        {
+            var newValue = blockModifiers[modifier.DamageType].Remove(modifier);
+
+            OnAnyBlockChanged?.Invoke(this, new EAOnAnyBlockChanged(modifier.DamageType, newValue));
+        }
+
+        /* TODO: #optimisation: can definitely way reduce number of calcs here by returning a dto like thing where we only calculate
+         * each specific damage type's value once as an optimised call when all are needed (e.g. on armor change) 
+         * with the ability to still just get a specific one when a specific resistance changes
+         * */
+        public float GetResistanceWithoutArmor(IDamageEffectType damageEffectType)
+        {
+            ISpecificDamageEffectType specificDamageEffectType = damageEffectType as ISpecificDamageEffectType;
+            if (specificDamageEffectType != null)
+            {
+                return GetSpecificResistanceWithoutArmor(specificDamageEffectType);
+            }
+
+            IBasicMetaDamageEffectType basicDamageEffectType = damageEffectType as IBasicMetaDamageEffectType;
+            if (basicDamageEffectType != null)
+            {
+                return GetBasicResistanceWithoutArmor(basicDamageEffectType);
+            }
+
+            IWeakMetaDamageEffectType weakDamageEffectType = damageEffectType as IWeakMetaDamageEffectType;
+            if (weakDamageEffectType != null)
+            {
+                return GetWeakResistanceWithoutArmor(weakDamageEffectType);
+            }
+
+            IStrongMetaDamageEffectType strongDamageEffectType = damageEffectType as IStrongMetaDamageEffectType;
+            if (strongDamageEffectType != null)
+            {
+                return GetStrongResistanceWithoutArmor(strongDamageEffectType);
+            }
+
+            throw new Exception("Unhandled damageEffectType");
+        }
+
+        private void OnArmorChanged(object sender, EAOnAttributeChanged args)
+        {
+            RemoveArmorResistanceModifiers();
+
+            AddArmorResistanceModifiers(args.NewValue);
+        }
+
+        private void RemoveArmorResistanceModifiers()
+        {
+            foreach (var specificDamageType in GameModels.Models[0].AttackEffectTypeManager.SpecificDamageTypes)
+            {
+                //TODO #optimisation: surpress event on these removes as we will always be firing on the adds?
+                RemoveResistanceModifer(modifiersFromArmor[specificDamageType]);
+                modifiersFromArmor.Remove(specificDamageType);
+            }
+        }
+
+        private void AddArmorResistanceModifiers(float newArmorValue)
+        {
+            foreach (var basicDamageType in GameModels.Models[0].AttackEffectTypeManager.BasicMetaDamageTypes)
+            {
+                float armorModifierMagnitude = 1 - Mathf.Pow((1 - basicDamageType.EffectOfArmor), newArmorValue);
+
+                foreach (var specificDamageType in basicDamageType.SpecificDamageTypes)
+                {
+                    var newResistanceModifier = new CResistanceModifier(armorModifierMagnitude, specificDamageType);
+
+                    AddResistanceModifier(newResistanceModifier);
+
+                    modifiersFromArmor.Add(specificDamageType, newResistanceModifier);
+                }
+            }
         }
 
         private float CalculateSpecificResistance(List<IResistanceModifier> modifierList)
@@ -211,103 +325,34 @@ namespace GrimoireTD.Creeps
                 .Min();
         }
 
-
-        public void AddResistanceModifier(IResistanceModifier modifier)
+        private float GetSpecificResistanceWithoutArmor(ISpecificDamageEffectType specificDamageEffectType)
         {
-            var newValue = resistanceModifiers[modifier.DamageType].Add(modifier);
+            float resistance = GetResistance(specificDamageEffectType).Value;
 
-            OnAnyResistanceChanged?.Invoke(this, new EAOnAnyResistanceChanged(modifier.DamageType, newValue));
+            float armorModifierMagnitude = modifiersFromArmor[specificDamageEffectType].Magnitude;
+
+            return 1 - ((1 - resistance) / (1 - armorModifierMagnitude));
         }
 
-        public void RemoveResistanceModifer(IResistanceModifier modifier)
+        private float GetBasicResistanceWithoutArmor(IBasicMetaDamageEffectType basicDamageEffectType)
         {
-            var newValue = resistanceModifiers[modifier.DamageType].Remove(modifier);
-
-            OnAnyResistanceChanged?.Invoke(this, new EAOnAnyResistanceChanged(modifier.DamageType, newValue));
+            return basicDamageEffectType.SpecificDamageTypes
+                .Select(x => GetResistanceWithoutArmor(x))
+                .Average();
         }
 
-        public void AddBlockModifier(IBlockModifier modifier)
+        private float GetWeakResistanceWithoutArmor(IWeakMetaDamageEffectType weakDamageEffectType)
         {
-            var newValue = blockModifiers[modifier.DamageType].Add(modifier);
-
-            OnAnyBlockChanged?.Invoke(this, new EAOnAnyBlockChanged(modifier.DamageType, newValue));
+            return weakDamageEffectType.SpecificDamageTypes
+                .Select(x => GetResistanceWithoutArmor(x))
+                .Max();
         }
 
-        public void RemoveBlockModifier(IBlockModifier modifier)
+        private float GetStrongResistanceWithoutArmor(IStrongMetaDamageEffectType strongDamageEffectType)
         {
-            var newValue = blockModifiers[modifier.DamageType].Remove(modifier);
-
-            OnAnyBlockChanged?.Invoke(this, new EAOnAnyBlockChanged(modifier.DamageType, newValue));
-        }
-
-        public float GetResistanceAfterArmor(IDamageEffectType damageEffectType, float currentArmor)
-        {
-            ISpecificDamageEffectType specificDamageEffectType = damageEffectType as ISpecificDamageEffectType;
-            if (specificDamageEffectType != null)
-            {
-                return GetSpecificResistanceAfterArmor(specificDamageEffectType, currentArmor);
-            }
-
-            IBasicMetaDamageEffectType basicDamageEffectType = damageEffectType as IBasicMetaDamageEffectType;
-            if (basicDamageEffectType != null)
-            {
-                return GetBasicResistanceAfterArmor(basicDamageEffectType, currentArmor);
-            }
-
-            IWeakMetaDamageEffectType weakDamageEffectType = damageEffectType as IWeakMetaDamageEffectType;
-            if (weakDamageEffectType != null)
-            {
-                return GetWeakResistanceAfterArmor(weakDamageEffectType, currentArmor);
-            }
-
-            IStrongMetaDamageEffectType strongDamageEffectType = damageEffectType as IStrongMetaDamageEffectType;
-            if (strongDamageEffectType != null)
-            {
-                return GetStrongResistanceAfterArmor(strongDamageEffectType, currentArmor);
-            }
-
-            throw new Exception("Unhandled damageEffectType");
-        }
-
-        private float GetSpecificResistanceAfterArmor(ISpecificDamageEffectType specificDamageEffectType, float actualArmor)
-        {
-            float resistanceBeforeArmor = resistanceModifiers[specificDamageEffectType].Value;
-
-            return GetResistanceAfterArmor(resistanceBeforeArmor, actualArmor, specificDamageEffectType.BasicMetaDamageEffectType.EffectOfArmor);
-        }
-
-        //TODO: put the relevant stuff on a meta damage type so this can be one method
-        private float GetBasicResistanceAfterArmor(IBasicMetaDamageEffectType basicDamageEffectType, float actualArmor)
-        {
-            float resistanceBeforeArmor = metaResistanceDict[basicDamageEffectType].Value;
-
-            return GetResistanceAfterArmor(resistanceBeforeArmor, actualArmor, basicDamageEffectType.EffectOfArmor);
-        }
-
-        private float GetWeakResistanceAfterArmor(IWeakMetaDamageEffectType weakDamageEffectType, float actualArmor)
-        {
-            float resistanceBeforeArmor = metaResistanceDict[weakDamageEffectType].Value;
-
-            return GetResistanceAfterArmor(resistanceBeforeArmor, actualArmor, weakDamageEffectType.BasicMetaDamageType.EffectOfArmor);
-        }
-
-        private float GetStrongResistanceAfterArmor(IStrongMetaDamageEffectType strongDamageEffectType, float actualArmor)
-        {
-            float resistanceBeforeArmor = metaResistanceDict[strongDamageEffectType].Value;
-
-            return GetResistanceAfterArmor(resistanceBeforeArmor, actualArmor, strongDamageEffectType.BasicMetaDamageType.EffectOfArmor);
-        }
-
-        private float GetResistanceAfterArmor(float resistanceBeforeArmor, float actualArmor, float effectOfArmor)
-        {
-            float resistanceAfterArmor = resistanceBeforeArmor;
-
-            for (int i = 0; i < actualArmor; i++)
-            {
-                resistanceAfterArmor += resistanceAfterArmor + (1 - resistanceAfterArmor) * effectOfArmor;
-            }
-
-            return resistanceAfterArmor;
+            return strongDamageEffectType.SpecificDamageTypes
+                .Select(x => GetResistanceWithoutArmor(x))
+                .Min();
         }
     }
 }

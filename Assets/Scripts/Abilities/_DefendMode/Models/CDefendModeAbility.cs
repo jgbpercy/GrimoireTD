@@ -63,8 +63,6 @@ namespace GrimoireTD.Abilities.DefendMode
             TimeSinceExecuted = 0f;
             DefendModeAbilityTemplate = template;
 
-            this.attachedToDefendingEntity = attachedToDefendingEntity;
-
             ActualCooldown = GetCooldownAfterReduction(
                 attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value()
             );

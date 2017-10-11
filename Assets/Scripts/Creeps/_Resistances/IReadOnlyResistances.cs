@@ -6,11 +6,11 @@ namespace GrimoireTD.Creeps
 {
     public interface IReadOnlyResistances
     {
-        IReadOnlyRecalculatorList<float> GetBaseResistance(IDamageEffectType damageEffectType);
+        IReadOnlyRecalculatorList<float> GetResistance(IDamageEffectType damageEffectType);
 
         IReadOnlyRecalculatorList<int> GetBlock(IDamageEffectType damageEffectType);
 
-        float GetResistanceAfterArmor(IDamageEffectType damageEffectType, float currentArmor);
+        float GetResistanceWithoutArmor(IDamageEffectType damageEffectType);
 
         event EventHandler<EAOnAnyResistanceChanged> OnAnyResistanceChanged;
 

@@ -113,15 +113,15 @@ namespace GrimoireTD.Creeps
             foreach (IBasicMetaDamageEffectType basicMetaDamageType in GameModels.Models[0].AttackEffectTypeManager.BasicMetaDamageTypes)
             {
                 resistancesText += basicMetaDamageType.ShortName + " -" +
-                    " W: " + selectedCreep.Resistances.GetResistanceAfterArmor(basicMetaDamageType.WeakMetaDamageType, currentCreepArmor).ToString("0.0") +
-                    " B: " + selectedCreep.Resistances.GetResistanceAfterArmor(basicMetaDamageType, currentCreepArmor).ToString("0.0") +
-                    " S: " + selectedCreep.Resistances.GetResistanceAfterArmor(basicMetaDamageType.StrongMetaDamageType, currentCreepArmor).ToString("0.0") +
+                    " W: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType.WeakMetaDamageType).Value.ToString("0.0") +
+                    " B: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType).Value.ToString("0.0") +
+                    " S: " + selectedCreep.Resistances.GetResistance(basicMetaDamageType.StrongMetaDamageType).Value.ToString("0.0") +
                     "\n";
 
                 foreach (ISpecificDamageEffectType specificDamageType in basicMetaDamageType.SpecificDamageTypes)
                 {
-                    float resistanceIncludingArmor = selectedCreep.Resistances.GetResistanceAfterArmor(specificDamageType, currentCreepArmor);
-                    float resistanceWithoutArmor = selectedCreep.Resistances.GetBaseResistance(specificDamageType).Value;
+                    float resistanceIncludingArmor = selectedCreep.Resistances.GetResistance(specificDamageType).Value;
+                    float resistanceWithoutArmor = selectedCreep.Resistances.GetResistanceWithoutArmor(specificDamageType);
 
                     resistancesText += specificDamageType.ShortName + ": " +
                         resistanceIncludingArmor.ToString("0.0") + " (" +

@@ -2,6 +2,6 @@
 {
     public interface IDamageEffectType : IAttackEffectType
     {
-
+        float EffectOfArmor { get; }
     }
 }

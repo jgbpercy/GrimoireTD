@@ -23,5 +23,13 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         {
             return "Strong " + base.EffectName();
         }
+
+        public override float EffectOfArmor
+        {
+            get
+            {
+                return basicMetaDamageType.EffectOfArmor;
+            }
+        }
     }
 }

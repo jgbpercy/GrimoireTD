@@ -6,5 +6,13 @@
         {
             return base.EffectName() + " Damage";
         }
+
+        public virtual float EffectOfArmor
+        {
+            get
+            {
+                return 0f;
+            }
+        }
     }
 }

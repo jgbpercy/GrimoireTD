@@ -39,7 +39,11 @@ namespace GrimoireTD.Creeps
 
         public event EventHandler OnDied;
         public event EventHandler<EAOnHealthChanged> OnHealthChanged;
-        
+
+        public event EventHandler<EAOnAttributeChanged> OnArmorChanged;
+
+        public event EventHandler<EAOnAttributeChanged> OnSpeedChanged;
+
         //Properties
         //Name/Id
         public string Id
@@ -120,9 +124,6 @@ namespace GrimoireTD.Creeps
             currentDestinationPathNode = GameModels.Models[0].MapData.CreepPath.Count - 2;
             currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             
-            //Resistances
-            resistances = new CResistances(CreepTemplate.BaseResistances);
-
             //Attributes
             attributes = new CAttributes<CreepAttrName>(CreepAttributes.NewAttributesDictionary());
 
@@ -131,6 +132,23 @@ namespace GrimoireTD.Creeps
             {
                 attributes.AddModifier(attributeModifier);
             }
+
+            EventHandler<EAOnAttributeChanged> OnArmorAttributeChanged = ((object sender, EAOnAttributeChanged args) =>
+            {
+                OnArmorChanged?.Invoke(this, new EAOnAttributeChanged(CurrentArmor));
+            });
+            attributes.Get(CreepAttrName.armorMultiplier).OnAttributeChanged += OnArmorAttributeChanged;
+            attributes.Get(CreepAttrName.rawArmor).OnAttributeChanged += OnArmorAttributeChanged;
+
+            EventHandler<EAOnAttributeChanged> OnSpeedAttributeChanged = ((object sender, EAOnAttributeChanged args) =>
+            {
+                OnSpeedChanged?.Invoke(this, new EAOnAttributeChanged(CurrentSpeed));
+            });
+            attributes.Get(CreepAttrName.speedMultiplier).OnAttributeChanged += OnSpeedAttributeChanged;
+            attributes.Get(CreepAttrName.rawSpeed).OnAttributeChanged += OnSpeedAttributeChanged;
+
+            //Resistances
+            resistances = new CResistances(this, CreepTemplate.BaseResistances);
 
             //Health
             CurrentHitpoints = template.MaxHitpoints;
@@ -202,7 +220,7 @@ namespace GrimoireTD.Creeps
         {
             float magnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
             int block = resistances.GetBlock(damageEffectType).Value;
-            float resistance = resistances.GetResistanceAfterArmor(damageEffectType, CurrentArmor);
+            float resistance = resistances.GetResistance(damageEffectType).Value;
 
             CDebug.Log(CDebug.combatLog, "Bl: " + block + ", Res: " + resistance);
 

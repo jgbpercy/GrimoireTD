@@ -76,7 +76,7 @@ namespace GrimoireTD.Tests.AttributeTests
             var eventTester = new EventTester<EAOnAttributeChanged>();
             subject.OnAttributeChanged += eventTester.Handler;
 
-            var result = subject.TryRemoveModifier(modifier);
+            subject.TryRemoveModifier(modifier);
 
             eventTester.AssertFired(1);
         }
