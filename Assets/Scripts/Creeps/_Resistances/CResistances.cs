@@ -296,7 +296,7 @@ namespace GrimoireTD.Creeps
                 block += modifier.Magnitude;
             }
 
-            return Math.Min(block, 0);
+            return Math.Max(block, 0);
         }
 
         private int CalculateBasicBlock(List<RecalculatorList<IBlockModifier, int>> specificBlockList)
