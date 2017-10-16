@@ -4,6 +4,6 @@
     {
         V Value { get; }
 
-        event EventHandler<EARecalculatorListChange<V>> OnChange;
+        event EventHandler<EAOnRecalculatorListChange<V>> OnChange;
     }
 }

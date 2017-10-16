@@ -19,8 +19,8 @@ namespace GrimoireTD.Creeps
             MutableRecalculatorList<
                 RecalculatorList<IResistanceModifier, float>, 
                 float, 
-                EARecalculatorListChange<float>>> 
-            metaResistanceDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EARecalculatorListChange<float>>>();
+                EAOnRecalculatorListChange<float>>> 
+            metaResistanceDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EAOnRecalculatorListChange<float>>>();
 
         private Dictionary<
             ISpecificDamageEffectType, 
@@ -32,8 +32,8 @@ namespace GrimoireTD.Creeps
             MutableRecalculatorList<
                 RecalculatorList<IBlockModifier, int>, 
                 int, 
-                EARecalculatorListChange<int>>> 
-            metaBlockDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EARecalculatorListChange<int>>>();
+                EAOnRecalculatorListChange<int>>> 
+            metaBlockDict = new Dictionary<IMetaDamageEffectType, MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EAOnRecalculatorListChange<int>>>();
 
         private Dictionary<ISpecificDamageEffectType, IResistanceModifier> modifiersFromArmor = new Dictionary<ISpecificDamageEffectType, IResistanceModifier>();
 
@@ -59,7 +59,7 @@ namespace GrimoireTD.Creeps
 
                 metaResistanceDict.Add(
                     basicMetaDamageType,
-                    new MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EARecalculatorListChange<float>>(
+                    new MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EAOnRecalculatorListChange<float>>(
                         specificDamageTypeResistanceLists,
                         CalculateBasicResistance
                     )
@@ -67,7 +67,7 @@ namespace GrimoireTD.Creeps
 
                 metaResistanceDict.Add(
                     basicMetaDamageType.WeakMetaDamageType,
-                    new MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EARecalculatorListChange<float>>(
+                    new MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EAOnRecalculatorListChange<float>>(
                         specificDamageTypeResistanceLists,
                         CalculateWeakResistance
                     )
@@ -75,7 +75,7 @@ namespace GrimoireTD.Creeps
 
                 metaResistanceDict.Add(
                     basicMetaDamageType.StrongMetaDamageType,
-                    new MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EARecalculatorListChange<float>>(
+                    new MutableRecalculatorList<RecalculatorList<IResistanceModifier, float>, float, EAOnRecalculatorListChange<float>>(
                         specificDamageTypeResistanceLists,
                         CalculateStrongResistance
                     )
@@ -83,7 +83,7 @@ namespace GrimoireTD.Creeps
 
                 metaBlockDict.Add(
                     basicMetaDamageType,
-                    new MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EARecalculatorListChange<int>>(
+                    new MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EAOnRecalculatorListChange<int>>(
                         specificDamageTypeBlockLists,
                         CalculateBasicBlock
                     )
@@ -91,7 +91,7 @@ namespace GrimoireTD.Creeps
 
                 metaBlockDict.Add(
                     basicMetaDamageType.WeakMetaDamageType,
-                    new MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EARecalculatorListChange<int>>(
+                    new MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EAOnRecalculatorListChange<int>>(
                         specificDamageTypeBlockLists,
                         CalculateWeakBlock
                     )
@@ -99,7 +99,7 @@ namespace GrimoireTD.Creeps
 
                 metaBlockDict.Add(
                     basicMetaDamageType.StrongMetaDamageType,
-                    new MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EARecalculatorListChange<int>>(
+                    new MutableRecalculatorList<RecalculatorList<IBlockModifier, int>, int, EAOnRecalculatorListChange<int>>(
                         specificDamageTypeBlockLists,
                         CalculateStrongBlock
                     )
@@ -173,7 +173,7 @@ namespace GrimoireTD.Creeps
             OnAnyBlockChanged?.Invoke(this, new EAOnAnyBlockChanged(modifier.DamageType, newValue));
         }
 
-        /* TODO: #optimisation: can definitely way reduce number of calcs here by returning a dto like thing where we only calculate
+        /* #optimisation: can definitely way reduce number of calcs here by returning a dto like thing where we only calculate
          * each specific damage type's value once as an optimised call when all are needed (e.g. on armor change) 
          * with the ability to still just get a specific one when a specific resistance changes
          * */

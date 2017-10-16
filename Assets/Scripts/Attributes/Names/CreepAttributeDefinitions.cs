@@ -2,7 +2,7 @@
 
 namespace GrimoireTD.Attributes
 {
-    public static class CreepAttributes
+    public static class CreepAttributeDefinitions
     {
         public static readonly Dictionary<CreepAttrName, string> DisplayNames = new Dictionary<CreepAttrName, string>
         {

@@ -93,7 +93,7 @@ namespace GrimoireTD.Creeps
         {
             string attributesText = "Attributes:\n";
 
-            foreach (KeyValuePair<CreepAttrName, string> creepAttributeName in CreepAttributes.DisplayNames)
+            foreach (KeyValuePair<CreepAttrName, string> creepAttributeName in CreepAttributeDefinitions.DisplayNames)
             {
                 attributesText += 
                     creepAttributeName.Value + ": " + 

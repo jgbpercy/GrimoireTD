@@ -1,10 +1,10 @@
 ﻿namespace System.Collections.Generic
 {
-    public class EARecalculatorListChange<V> : EventArgs
+    public class EAOnRecalculatorListChange<V> : EventArgs
     {
         public readonly V NewValue;
 
-        public EARecalculatorListChange(V newValue)
+        public EAOnRecalculatorListChange(V newValue)
         {
             NewValue = newValue;
         }

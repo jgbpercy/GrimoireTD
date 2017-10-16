@@ -99,7 +99,7 @@ namespace GrimoireTD.Tests
             Assert.AreEqual(numberOfTimes, EventFiredCount, "Event Tester received unexpected number of events\nExp: " + numberOfTimes + "\nGot: " + EventFiredCount);
         }
 
-        public void AssertResults(Func<IEnumerable<T>, bool> argTests)
+        public void AssertResults(Func<List<T>, bool> argTests)
         {
             Assert.True(EventFired);
             Assert.True(argTests(argResults));

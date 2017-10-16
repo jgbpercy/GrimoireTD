@@ -47,7 +47,7 @@
         {
             CalculateValue();
 
-            OnChangeVirtual(new EARecalculatorListChange<V>(Value));
+            OnChangeVirtual(new EAOnRecalculatorListChange<V>(Value));
         }
     }
 }

@@ -3,6 +3,8 @@ using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Creeps;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
+using GrimoireTD.Technical;
+using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Tests.ResistancesTests
 {
@@ -18,6 +20,8 @@ namespace GrimoireTD.Tests.ResistancesTests
         private IWeakMetaDamageEffectType weakInternetDamage = Substitute.For<IWeakMetaDamageEffectType>();
         private IStrongMetaDamageEffectType strongInternetDamage = Substitute.For<IStrongMetaDamageEffectType>();
 
+        private float internetDamageEffectOfArmor = 0.03f;
+
         private ISpecificDamageEffectType lolCatDamage = Substitute.For<ISpecificDamageEffectType>();
         private ISpecificDamageEffectType redditDamage = Substitute.For<ISpecificDamageEffectType>();
         private ISpecificDamageEffectType geoCitiesDamage = Substitute.For<ISpecificDamageEffectType>();
@@ -26,6 +30,8 @@ namespace GrimoireTD.Tests.ResistancesTests
         private IWeakMetaDamageEffectType weakNonNetworkedDamage = Substitute.For<IWeakMetaDamageEffectType>();
         private IStrongMetaDamageEffectType strongNonNetworkedDamage = Substitute.For<IStrongMetaDamageEffectType>();
 
+        private float nonNetworkedDamageEffectOfArmor = 0.05f;
+
         private ISpecificDamageEffectType realityDamage = Substitute.For<ISpecificDamageEffectType>();
         private ISpecificDamageEffectType goOutsideDamage = Substitute.For<ISpecificDamageEffectType>();
         private ISpecificDamageEffectType seeTheSunshineDamage = Substitute.For<ISpecificDamageEffectType>();
@@ -33,32 +39,32 @@ namespace GrimoireTD.Tests.ResistancesTests
         private IBaseResistances baseResistances = Substitute.For<IBaseResistances>();
 
         private IResistanceModifier baseLolCatResistanceModifier = Substitute.For<IResistanceModifier>();
-        private float baseLolCatResistanceMagnitude = 10f;
+        private float baseLolCatResistanceMagnitude = 0.1f;
         private IResistanceModifier baseRedditResistanceModifier = Substitute.For<IResistanceModifier>();
-        private float baseRedditResistanceMagnitude = 12f;
+        private float baseRedditResistanceMagnitude = 0.12f;
         private IResistanceModifier baseGeoCitiesResistanceModifier = Substitute.For<IResistanceModifier>();
-        private float baseGeoCitiesResistanceMagnitude = 14f;
+        private float baseGeoCitiesResistanceMagnitude = 0.16f;
 
         private IResistanceModifier baseRealityResistanceModifier = Substitute.For<IResistanceModifier>();
-        private float baseRealityResistanceMagnitude = 7f;
+        private float baseRealityResistanceMagnitude = 0.17f;
         private IResistanceModifier baseGoOutsideResistanceModifier = Substitute.For<IResistanceModifier>();
-        private float baseGoOutsideResistanceMagnitude = 11f;
+        private float baseGoOutsideResistanceMagnitude = 0.11f;
         private IResistanceModifier baseSeeTheSunshineResistanceModifier = Substitute.For<IResistanceModifier>();
-        private float baseSeeTheSunshineResistanceMagnitude = 15f;
+        private float baseSeeTheSunshineResistanceMagnitude = 0.15f;
 
         private IBlockModifier baseLolCatBlockModifier = Substitute.For<IBlockModifier>();
-        private int baseLolCatBlockMagnitude = 2;
+        private int baseLolCatBlockMagnitude = 4;
         private IBlockModifier baseRedditBlockModifier = Substitute.For<IBlockModifier>();
-        private int baseRedditBlockMagnitude = 3;
+        private int baseRedditBlockMagnitude = 6;
         private IBlockModifier baseGeoCitiesBlockModifer = Substitute.For<IBlockModifier>();
-        private int baseGeoCitiesBlockMagnitude = 4;
+        private int baseGeoCitiesBlockMagnitude = 9;
 
         private IBlockModifier baseRealityBlockModifier = Substitute.For<IBlockModifier>();
-        private int baseRealityBlockMagnitude = 5;
+        private int baseRealityBlockMagnitude = 2;
         private IBlockModifier baseGoOutsideBlockModifier = Substitute.For<IBlockModifier>();
-        private int baseGoOutsideBlockMagnitude = 7;
+        private int baseGoOutsideBlockMagnitude = 3;
         private IBlockModifier baseSeeTheSunshineBlockModifier = Substitute.For<IBlockModifier>();
-        private int baseSeeTheSunshineBlockMagnitude = 9;
+        private int baseSeeTheSunshineBlockMagnitude = 6;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -83,19 +89,37 @@ namespace GrimoireTD.Tests.ResistancesTests
 
             GameModels.Models.Add(gameModel);
 
-            basicInternetDamage.SpecificDamageTypes.Returns(new List<ISpecificDamageEffectType>
+            var specificInternetDamageTypes = new List<ISpecificDamageEffectType>
             {
                 lolCatDamage,
                 redditDamage,
                 geoCitiesDamage
-            });
+            };
 
-            basicNonNetworkedDamage.SpecificDamageTypes.Returns(new List<ISpecificDamageEffectType>
+            basicInternetDamage.SpecificDamageTypes.Returns(specificInternetDamageTypes);
+            weakInternetDamage.SpecificDamageTypes.Returns(specificInternetDamageTypes);
+            strongInternetDamage.SpecificDamageTypes.Returns(specificInternetDamageTypes);
+
+            var specificNonNetworkedDamageTypes = new List<ISpecificDamageEffectType>
             {
                 realityDamage,
                 goOutsideDamage,
                 seeTheSunshineDamage
-            });
+            };
+
+            basicNonNetworkedDamage.SpecificDamageTypes.Returns(specificNonNetworkedDamageTypes);
+            weakNonNetworkedDamage.SpecificDamageTypes.Returns(specificNonNetworkedDamageTypes);
+            strongNonNetworkedDamage.SpecificDamageTypes.Returns(specificNonNetworkedDamageTypes);
+
+            weakInternetDamage.BasicMetaDamageType.Returns(basicInternetDamage);
+            strongInternetDamage.BasicMetaDamageType.Returns(basicInternetDamage);
+            basicInternetDamage.WeakMetaDamageType.Returns(weakInternetDamage);
+            basicInternetDamage.StrongMetaDamageType.Returns(strongInternetDamage);
+
+            weakNonNetworkedDamage.BasicMetaDamageType.Returns(basicNonNetworkedDamage);
+            strongNonNetworkedDamage.BasicMetaDamageType.Returns(basicNonNetworkedDamage);
+            basicNonNetworkedDamage.WeakMetaDamageType.Returns(weakNonNetworkedDamage);
+            basicNonNetworkedDamage.StrongMetaDamageType.Returns(strongNonNetworkedDamage);
 
             baseResistances.GetResistanceModifier(lolCatDamage).Returns(baseLolCatResistanceModifier);
             baseResistances.GetResistanceModifier(redditDamage).Returns(baseRedditResistanceModifier);
@@ -128,6 +152,10 @@ namespace GrimoireTD.Tests.ResistancesTests
             baseRealityBlockModifier.Magnitude.Returns(baseRealityBlockMagnitude);
             baseGoOutsideBlockModifier.Magnitude.Returns(baseGoOutsideBlockMagnitude);
             baseSeeTheSunshineBlockModifier.Magnitude.Returns(baseSeeTheSunshineBlockMagnitude);
+
+            basicInternetDamage.EffectOfArmor.Returns(internetDamageEffectOfArmor);
+
+            basicNonNetworkedDamage.EffectOfArmor.Returns(nonNetworkedDamageEffectOfArmor);
         }
 
         [SetUp]
@@ -158,6 +186,36 @@ namespace GrimoireTD.Tests.ResistancesTests
         }
 
         [Test]
+        public void GetResistance_AfterConstructionWithBaseResistances_ReturnsCorrectBasicResistance()
+        {
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistance(basicInternetDamage).Value;
+
+            AssertExt.Approximately(0.12666667f, result);
+        }
+
+        [Test]
+        public void GetResistance_AfterConstructionWithBaseResistances_ReturnsCorrectWeakResistance()
+        {
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistance(weakInternetDamage).Value;
+
+            AssertExt.Approximately(0.16f, result);
+        }
+
+        [Test]
+        public void GetResistance_AfterConstructionWithBaseResistances_ReturnsCorrectStrongResistance()
+        {
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistance(strongInternetDamage).Value;
+
+            AssertExt.Approximately(0.1f, result);
+        }
+
+        [Test]
         public void GetBlock_AfterConstructionWithBaseResistances_ReturnsBaseValuesForSpecificDamageType()
         {
             var subject = ConstructSubject();
@@ -165,6 +223,377 @@ namespace GrimoireTD.Tests.ResistancesTests
             var result = subject.GetBlock(geoCitiesDamage).Value;
 
             Assert.AreEqual(baseGeoCitiesBlockMagnitude, result);
+        }
+
+        [Test]
+        public void GetBlock_AfterConstructionWithBaseResistances_ReturnsCorrectBasicBlock()
+        {
+            var subject = ConstructSubject();
+
+            var result = subject.GetBlock(basicNonNetworkedDamage).Value;
+
+            Assert.AreEqual(4, result);
+        }
+
+        [Test]
+        public void GetBlock_AfterConstructionWithBaseResistances_ReturnsCorrectWeakBlock()
+        {
+            var subject = ConstructSubject();
+
+            var result = subject.GetBlock(weakNonNetworkedDamage).Value;
+
+            Assert.AreEqual(6, result);
+        }
+
+        [Test]
+        public void GetBlock_AfterConstructioNWithBaseResistances_ReturnsCorrectStrongBlock()
+        {
+            var subject = ConstructSubject();
+
+            var result = subject.GetBlock(strongNonNetworkedDamage).Value;
+
+            Assert.AreEqual(2, result);
+        }
+
+        [Test]
+        public void GetResistance_AfterConstructionWithBaseResistancesAndArmor_ReturnsResistanceForBasePlusArmor()
+        {
+            attachedToCreep.CurrentArmor.Returns(2.5f);
+
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistance(redditDamage).Value;
+
+            AssertExt.Approximately(0.1845224f, result);
+        }
+
+        [Test]
+        public void GetResistanceWithoutArmor_Always_ReturnsCorrectSpecificResistance()
+        {
+            attachedToCreep.CurrentArmor.Returns(2.5f);
+
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistanceWithoutArmor(redditDamage);
+
+            AssertExt.Approximately(baseRedditResistanceMagnitude, result);
+        }
+
+        [Test]
+        public void GetResistanceWithoutArmor_Always_ReturnsCorrectBasicResistance()
+        {
+            attachedToCreep.CurrentArmor.Returns(2.5f);
+
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistanceWithoutArmor(basicInternetDamage);
+
+            AssertExt.Approximately(0.12666667f, result);
+        }
+
+        [Test]
+        public void GetResistanceWithoutArmor_Always_ReturnsCorrectWeakResistance()
+        {
+            attachedToCreep.CurrentArmor.Returns(2.5f);
+
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistanceWithoutArmor(weakInternetDamage);
+
+            AssertExt.Approximately(0.16f, result);
+        }
+
+        [Test]
+        public void GetResistanceWithoutArmor_Always_ReturnsCorrectStrongResistance()
+        {
+            attachedToCreep.CurrentArmor.Returns(2.5f);
+
+            var subject = ConstructSubject();
+
+            var result = subject.GetResistanceWithoutArmor(strongInternetDamage);
+
+            AssertExt.Approximately(0.1f, result);
+        }
+
+        [Test]
+        public void AddResistanceModifier_Always_ChangesResistanceValue()
+        {
+            var subject = ConstructSubject();
+
+            var addedModifier = Substitute.For<IResistanceModifier>();
+            addedModifier.DamageType.Returns(goOutsideDamage);
+            addedModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(addedModifier);
+
+            var result = subject.GetResistance(goOutsideDamage).Value;
+
+            AssertExt.Approximately(0.377f, result);
+        }
+
+        [Test]
+        public void AddResistanceModifier_Always_FiresOnAnyResistanceChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnAnyResistanceChanged>();
+            subject.OnAnyResistanceChanged += eventTester.Handler;
+
+            var addedModifier = Substitute.For<IResistanceModifier>();
+            addedModifier.DamageType.Returns(goOutsideDamage);
+            addedModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(addedModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject, args => CustomMath.Approximately(0.377f, args.NewValue));
+        }
+
+        [Test]
+        public void AddResistanceModifier_Always_FiresOnResistanceChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnRecalculatorListChange<float>>();
+            subject.GetResistance(goOutsideDamage).OnChange += eventTester.Handler;
+
+            var addedModifier = Substitute.For<IResistanceModifier>();
+            addedModifier.DamageType.Returns(goOutsideDamage);
+            addedModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(addedModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject.GetResistance(goOutsideDamage), args => CustomMath.Approximately(0.377f, args.NewValue));
+        }
+
+        [Test]
+        public void RemoveResistanceModifier_PassedModifierThatWasAddedPreviously_ChangesResistanceValue()
+        {
+            var subject = ConstructSubject();
+
+            var addedModifier = Substitute.For<IResistanceModifier>();
+            addedModifier.DamageType.Returns(goOutsideDamage);
+            addedModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(addedModifier);
+
+            subject.RemoveResistanceModifer(addedModifier);
+
+            var result = subject.GetResistance(goOutsideDamage).Value;
+
+            AssertExt.Approximately(baseGoOutsideResistanceMagnitude, result);
+        }
+
+        [Test]
+        public void RemoveResistanceModifier_PassedModifierThatWasAddedPreviously_FiresOnAnyResistanceChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnAnyResistanceChanged>();
+            subject.OnAnyResistanceChanged += eventTester.Handler;
+
+            var addedModifier = Substitute.For<IResistanceModifier>();
+            addedModifier.DamageType.Returns(goOutsideDamage);
+            addedModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(addedModifier);
+
+            subject.RemoveResistanceModifer(addedModifier);
+
+            eventTester.AssertFired(2);
+
+            eventTester.AssertResults(argList => argList[1].NewValue == baseGoOutsideResistanceMagnitude);
+        }
+
+        [Test]
+        public void RemoveResistanceModifier_PassedModifierThatWasAddedPreviously_FiresOnResistanceChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnRecalculatorListChange<float>>();
+            subject.GetResistance(goOutsideDamage).OnChange += eventTester.Handler;
+
+            var addedModifier = Substitute.For<IResistanceModifier>();
+            addedModifier.DamageType.Returns(goOutsideDamage);
+            addedModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(addedModifier);
+
+            subject.RemoveResistanceModifer(addedModifier);
+
+            eventTester.AssertFired(2);
+
+            eventTester.AssertResults(argList => argList[1].NewValue == baseGoOutsideResistanceMagnitude);
+        }
+
+
+        [Test]
+        public void RemoveResistanceModifier_PassedModifierNotPreviouslyAdded_ThrowsKeyNotFoundException()
+        {
+            var subject = ConstructSubject();
+
+            var removedModifier = Substitute.For<IResistanceModifier>();
+
+            Assert.Throws(typeof(KeyNotFoundException), () => subject.RemoveResistanceModifer(removedModifier));
+        }
+
+        [Test]
+        public void AddBlockModifier_Always_ChangesBlockValue()
+        {
+            var subject = ConstructSubject();
+
+            var addedBlockMagnitude = 4;
+
+            var addedModifier = Substitute.For<IBlockModifier>();
+            addedModifier.DamageType.Returns(seeTheSunshineDamage);
+            addedModifier.Magnitude.Returns(addedBlockMagnitude);
+
+            subject.AddBlockModifier(addedModifier);
+
+            var result = subject.GetBlock(seeTheSunshineDamage).Value;
+
+            Assert.AreEqual(baseSeeTheSunshineBlockMagnitude + addedBlockMagnitude, result);
+        }
+
+        [Test]
+        public void AddBlockModifier_Always_FiresOnAnyBlockChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnAnyBlockChanged>();
+            subject.OnAnyBlockChanged += eventTester.Handler;
+
+            var addedBlockMagnitude = 4;
+
+            var addedModifier = Substitute.For<IBlockModifier>();
+            addedModifier.DamageType.Returns(seeTheSunshineDamage);
+            addedModifier.Magnitude.Returns(addedBlockMagnitude);
+
+            subject.AddBlockModifier(addedModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject, args => args.NewValue == baseSeeTheSunshineBlockMagnitude + addedBlockMagnitude);
+        }
+
+        [Test]
+        public void AddBlockModifier_Always_FiresOnBlockChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnRecalculatorListChange<int>>();
+            subject.GetBlock(seeTheSunshineDamage).OnChange += eventTester.Handler;
+
+            var addedBlockMagnitude = 4;
+
+            var addedModifier = Substitute.For<IBlockModifier>();
+            addedModifier.DamageType.Returns(seeTheSunshineDamage);
+            addedModifier.Magnitude.Returns(addedBlockMagnitude);
+
+            subject.AddBlockModifier(addedModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject.GetBlock(seeTheSunshineDamage), args => args.NewValue == baseSeeTheSunshineBlockMagnitude + addedBlockMagnitude);
+        }
+
+        [Test]
+        public void RemoveBlockModifier_PassedModifierThatWasAddedPreviously_ChangesBlockValue()
+        {
+            var subject = ConstructSubject();
+
+            var addedModifier = Substitute.For<IBlockModifier>();
+            addedModifier.DamageType.Returns(seeTheSunshineDamage);
+            addedModifier.Magnitude.Returns(3);
+
+            subject.AddBlockModifier(addedModifier);
+
+            subject.RemoveBlockModifier(addedModifier);
+
+            var result = subject.GetBlock(seeTheSunshineDamage).Value;
+
+            Assert.AreEqual(baseSeeTheSunshineBlockMagnitude, result);
+        }
+
+        [Test]
+        public void RemoveBlockModifier_PassedModifierThatWasAddedPreviously_FiresOnAnyBlockChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnAnyBlockChanged>();
+            subject.OnAnyBlockChanged += eventTester.Handler;
+
+            var addedModifier = Substitute.For<IBlockModifier>();
+            addedModifier.DamageType.Returns(seeTheSunshineDamage);
+            addedModifier.Magnitude.Returns(3);
+
+            subject.AddBlockModifier(addedModifier);
+
+            subject.RemoveBlockModifier(addedModifier);
+
+            eventTester.AssertFired(2);
+
+            eventTester.AssertResults(argList => argList[1].NewValue == baseSeeTheSunshineBlockMagnitude);
+        }
+
+        [Test]
+        public void RemoveBlockModifier_PassModifierThatWasAddedPreviously_FiresOnBlockChangedEvent()
+        {
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnRecalculatorListChange<int>>();
+            subject.GetBlock(seeTheSunshineDamage).OnChange += eventTester.Handler;
+
+            var addedModifier = Substitute.For<IBlockModifier>();
+            addedModifier.DamageType.Returns(seeTheSunshineDamage);
+            addedModifier.Magnitude.Returns(3);
+
+            subject.AddBlockModifier(addedModifier);
+
+            subject.RemoveBlockModifier(addedModifier);
+
+            eventTester.AssertFired(2);
+
+            eventTester.AssertResults(argList => argList[1].NewValue == baseSeeTheSunshineBlockMagnitude);
+        }
+
+        [Test]
+        public void RemoveBlockModifier_PassedModifierNotPreviouslyAdded_ThrowsKeyNotFoundExeption()
+        {
+            var subject = ConstructSubject();
+
+            var removedModifier = Substitute.For<IBlockModifier>();
+
+            Assert.Throws(typeof(KeyNotFoundException), () => subject.RemoveBlockModifier(removedModifier));
+        }
+
+        [Test]
+        public void GetResistance_AfterArmorChangedEvent_ChangesValueCorrectly()
+        {
+            attachedToCreep.CurrentArmor.Returns(3f);
+
+            var subject = ConstructSubject();
+
+            attachedToCreep.CurrentArmor.Returns(3.5f);
+            attachedToCreep.OnArmorChanged += Raise.EventWith(new EAOnAttributeChanged(3.5f));
+
+            var result = subject.GetResistance(geoCitiesDamage).Value;
+
+            AssertExt.Approximately(0.244941f, result);
+        }
+
+        [Test]
+        public void GetReistanceWithoutArmor_AfterArmorChangedEvent_DoesNotChangeArmorValue()
+        {
+            attachedToCreep.CurrentArmor.Returns(3f);
+
+            var subject = ConstructSubject();
+
+            attachedToCreep.CurrentArmor.Returns(3.5f);
+            attachedToCreep.OnArmorChanged += Raise.EventWith(new EAOnAttributeChanged(3.5f));
+
+            var result = subject.GetResistanceWithoutArmor(geoCitiesDamage);
+
+            AssertExt.Approximately(0.16f, result);
         }
     }
 }

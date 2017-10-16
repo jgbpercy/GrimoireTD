@@ -1,6 +1,6 @@
 ﻿namespace System.Collections.Generic
 {
-    public class RecalculatorList<U, V> : IReadOnlyRecalculatorList<V>, INotifyOnChange<EARecalculatorListChange<V>>
+    public class RecalculatorList<U, V> : IReadOnlyRecalculatorList<V>, INotifyOnChange<EAOnRecalculatorListChange<V>>
     {
         private List<U> internalList;
 
@@ -8,7 +8,7 @@
 
         public V Value { get; private set; }
 
-        public event EventHandler<EARecalculatorListChange<V>> OnChange;
+        public event EventHandler<EAOnRecalculatorListChange<V>> OnChange;
 
         public RecalculatorList(List<U> list, Func<List<U>, V> valueFunction)
         {
@@ -28,7 +28,7 @@
 
             CalculateValue();
 
-            OnChange?.Invoke(this, new EARecalculatorListChange<V>(Value));
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
 
             return Value;
         }
@@ -39,7 +39,7 @@
 
             CalculateValue();
 
-            OnChange?.Invoke(this, new EARecalculatorListChange<V>(Value));
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
 
             return Value;
         }
@@ -50,7 +50,7 @@
 
             CalculateValue();
 
-            OnChange?.Invoke(this, new EARecalculatorListChange<V>(Value));
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
 
             return Value;
         }
@@ -61,9 +61,9 @@
         }
 
         //see: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/events/how-to-raise-base-class-events-in-derived-classes
-        protected virtual void OnChangeVirtual(EARecalculatorListChange<V> eventArgs)
+        protected virtual void OnChangeVirtual(EAOnRecalculatorListChange<V> eventArgs)
         {
-            EventHandler<EARecalculatorListChange<V>> tempCopy = OnChange;
+            EventHandler<EAOnRecalculatorListChange<V>> tempCopy = OnChange;
 
             tempCopy?.Invoke(this, eventArgs);
         }

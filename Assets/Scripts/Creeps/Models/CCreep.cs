@@ -8,6 +8,7 @@ using GrimoireTD.Map;
 using GrimoireTD.ChannelDebug;
 using GrimoireTD.Attributes;
 using GrimoireTD.TemporaryEffects;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Creeps
 {
@@ -30,6 +31,9 @@ namespace GrimoireTD.Creeps
 
         //Attributes
         private IAttributes<CreepAttrName> attributes;
+
+        public float CurrentSpeed { get; private set; }
+        public float CurrentArmor { get; private set; }
 
         //Resistances
         private IResistances resistances;
@@ -89,24 +93,6 @@ namespace GrimoireTD.Creeps
             }
         }
 
-        //Attributes
-        //TODO: cache these two and update on change event
-        public float CurrentSpeed
-        {
-            get
-            {
-                return attributes.Get(CreepAttrName.rawSpeed).Value() * (1 + attributes.Get(CreepAttrName.speedMultiplier).Value());
-            }
-        }
-
-        public float CurrentArmor
-        {
-            get
-            {
-                return attributes.Get(CreepAttrName.rawArmor).Value() * (1 + attributes.Get(CreepAttrName.armorMultiplier).Value());
-            }
-        }
-
         //Constructor
         public CCreep(ICreepTemplate template, Vector3 spawnPosition)
         {
@@ -116,7 +102,7 @@ namespace GrimoireTD.Creeps
             CreepTemplate = template;
 
             //Temporary Effects
-            temporaryEffects = new CTemporaryEffectsManager();
+            temporaryEffects = DependencyProvider.TemporaryEffectsManager();
 
             //Pathing/Position
             Position = spawnPosition;
@@ -125,16 +111,11 @@ namespace GrimoireTD.Creeps
             currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             
             //Attributes
-            attributes = new CAttributes<CreepAttrName>(CreepAttributes.NewAttributesDictionary());
-
-            //  TODO: put this inside the attributes ctor like resistances
-            foreach (INamedAttributeModifier<CreepAttrName> attributeModifier in CreepTemplate.BaseAttributes)
-            {
-                attributes.AddModifier(attributeModifier);
-            }
+            attributes = DependencyProvider.CreepAttributes();
 
             EventHandler<EAOnAttributeChanged> OnArmorAttributeChanged = ((object sender, EAOnAttributeChanged args) =>
             {
+                CurrentArmor = attributes.Get(CreepAttrName.rawArmor).Value() * (1 + attributes.Get(CreepAttrName.armorMultiplier).Value());
                 OnArmorChanged?.Invoke(this, new EAOnAttributeChanged(CurrentArmor));
             });
             attributes.Get(CreepAttrName.armorMultiplier).OnAttributeChanged += OnArmorAttributeChanged;
@@ -142,13 +123,19 @@ namespace GrimoireTD.Creeps
 
             EventHandler<EAOnAttributeChanged> OnSpeedAttributeChanged = ((object sender, EAOnAttributeChanged args) =>
             {
+                CurrentSpeed = attributes.Get(CreepAttrName.rawSpeed).Value() * (1 + attributes.Get(CreepAttrName.speedMultiplier).Value());
                 OnSpeedChanged?.Invoke(this, new EAOnAttributeChanged(CurrentSpeed));
             });
             attributes.Get(CreepAttrName.speedMultiplier).OnAttributeChanged += OnSpeedAttributeChanged;
             attributes.Get(CreepAttrName.rawSpeed).OnAttributeChanged += OnSpeedAttributeChanged;
 
+            foreach (INamedAttributeModifier<CreepAttrName> attributeModifier in CreepTemplate.BaseAttributes)
+            {
+                attributes.AddModifier(attributeModifier);
+            }
+
             //Resistances
-            resistances = new CResistances(this, CreepTemplate.BaseResistances);
+            resistances = DependencyProvider.Resistances(this, CreepTemplate.BaseResistances);
 
             //Health
             CurrentHitpoints = template.MaxHitpoints;
