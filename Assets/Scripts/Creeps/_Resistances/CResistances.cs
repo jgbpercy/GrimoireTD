@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Attributes;
+using UnityEngine.Assertions;
 
 namespace GrimoireTD.Creeps
 {
@@ -106,7 +107,7 @@ namespace GrimoireTD.Creeps
                 );
             }
 
-            AddArmorResistanceModifiers(attachedToCreep.CurrentArmor);
+            RefreshArmorResistanceModifier(attachedToCreep.CurrentArmor);
 
             attachedToCreep.OnArmorChanged += OnArmorChanged;
         }
@@ -159,6 +160,22 @@ namespace GrimoireTD.Creeps
             OnAnyResistanceChanged?.Invoke(this, new EAOnAnyResistanceChanged(modifier.DamageType, newValue));
         }
 
+        /* Replaces modifier only firing one change event at the end
+         * Should only be called with incoming and outgoing modifiers of the same damage type
+         * */
+        public void ReplaceResistanceModifier(IResistanceModifier outgoingModifier, IResistanceModifier incomingModifier)
+        {
+            //#optimisation remove in live
+            if (outgoingModifier.DamageType != incomingModifier.DamageType)
+            {
+                throw new ArgumentException("ReplaceResistanceModifier passed modifiers for different damage types");
+            }
+
+            var newValue = resistanceModifiers[outgoingModifier.DamageType].Replace(outgoingModifier, incomingModifier);
+
+            OnAnyResistanceChanged?.Invoke(this, new EAOnAnyResistanceChanged(outgoingModifier.DamageType, newValue));
+        }
+
         public void AddBlockModifier(IBlockModifier modifier)
         {
             var newValue = blockModifiers[modifier.DamageType].Add(modifier);
@@ -171,6 +188,22 @@ namespace GrimoireTD.Creeps
             var newValue = blockModifiers[modifier.DamageType].Remove(modifier);
 
             OnAnyBlockChanged?.Invoke(this, new EAOnAnyBlockChanged(modifier.DamageType, newValue));
+        }
+
+        /* Replaces modifier only firing one change event at the end
+         * Should only be called with incoming and outgoing modifiers of the same damage type
+         * */
+        public void ReplaceBlockModifier(IBlockModifier outgoingModifier, IBlockModifier incomingModifier)
+        {
+            //#optimisation remove in live
+            if (outgoingModifier.DamageType != incomingModifier.DamageType)
+            {
+                throw new ArgumentException("ReplaceBlockModifier passed modifiers for different damage types");
+            }
+
+            var newValue = blockModifiers[outgoingModifier.DamageType].Replace(outgoingModifier, incomingModifier);
+
+            OnAnyBlockChanged?.Invoke(this, new EAOnAnyBlockChanged(outgoingModifier.DamageType, newValue));
         }
 
         /* #optimisation: can definitely way reduce number of calcs here by returning a dto like thing where we only calculate
@@ -208,32 +241,28 @@ namespace GrimoireTD.Creeps
 
         private void OnArmorChanged(object sender, EAOnAttributeChanged args)
         {
-            RemoveArmorResistanceModifiers();
-
-            AddArmorResistanceModifiers(args.NewValue);
+            RefreshArmorResistanceModifier(args.NewValue);
         }
 
-        private void RemoveArmorResistanceModifiers()
-        {
-            foreach (var specificDamageType in GameModels.Models[0].AttackEffectTypeManager.SpecificDamageTypes)
-            {
-                //TODO #optimisation: surpress event on these removes as we will always be firing on the adds?
-                RemoveResistanceModifer(modifiersFromArmor[specificDamageType]);
-                modifiersFromArmor.Remove(specificDamageType);
-            }
-        }
-
-        private void AddArmorResistanceModifiers(float newArmorValue)
+        private void RefreshArmorResistanceModifier(float armorValue)
         {
             foreach (var basicDamageType in GameModels.Models[0].AttackEffectTypeManager.BasicMetaDamageTypes)
             {
-                float armorModifierMagnitude = 1 - Mathf.Pow((1 - basicDamageType.EffectOfArmor), newArmorValue);
+                float armorModifierMagnitude = 1 - Mathf.Pow((1 - basicDamageType.EffectOfArmor), armorValue);
 
                 foreach (var specificDamageType in basicDamageType.SpecificDamageTypes)
                 {
                     var newResistanceModifier = new CResistanceModifier(armorModifierMagnitude, specificDamageType);
 
-                    AddResistanceModifier(newResistanceModifier);
+                    if (modifiersFromArmor.ContainsKey(specificDamageType))
+                    {
+                        ReplaceResistanceModifier(modifiersFromArmor[specificDamageType], newResistanceModifier);
+                        modifiersFromArmor.Remove(specificDamageType);
+                    }
+                    else
+                    {
+                        AddResistanceModifier(newResistanceModifier);
+                    }
 
                     modifiersFromArmor.Add(specificDamageType, newResistanceModifier);
                 }

@@ -9,5 +9,9 @@
         void RemoveResistanceModifer(IResistanceModifier modifier);
 
         void RemoveBlockModifier(IBlockModifier modifier);
+
+        void ReplaceResistanceModifier(IResistanceModifier outgoingModifier, IResistanceModifier incomingModifier);
+
+        void ReplaceBlockModifier(IBlockModifier outgoingModifier, IBlockModifier incomingModifier);
     }
 }

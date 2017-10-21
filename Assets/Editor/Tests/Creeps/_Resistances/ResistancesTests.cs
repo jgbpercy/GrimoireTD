@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Creeps;
@@ -346,7 +347,7 @@ namespace GrimoireTD.Tests.ResistancesTests
             subject.AddResistanceModifier(addedModifier);
 
             eventTester.AssertFired(1);
-            eventTester.AssertResult(subject, args => CustomMath.Approximately(0.377f, args.NewValue));
+            eventTester.AssertResult(subject, args => CustomMath.Approximately(0.377f, args.NewValue) && args.DamageType == goOutsideDamage);
         }
 
         [Test]
@@ -390,20 +391,20 @@ namespace GrimoireTD.Tests.ResistancesTests
         {
             var subject = ConstructSubject();
 
-            var eventTester = new EventTester<EAOnAnyResistanceChanged>();
-            subject.OnAnyResistanceChanged += eventTester.Handler;
-
             var addedModifier = Substitute.For<IResistanceModifier>();
             addedModifier.DamageType.Returns(goOutsideDamage);
             addedModifier.Magnitude.Returns(0.3f);
 
             subject.AddResistanceModifier(addedModifier);
 
+            var eventTester = new EventTester<EAOnAnyResistanceChanged>();
+            subject.OnAnyResistanceChanged += eventTester.Handler;
+
             subject.RemoveResistanceModifer(addedModifier);
 
-            eventTester.AssertFired(2);
+            eventTester.AssertFired(1);
 
-            eventTester.AssertResults(argList => argList[1].NewValue == baseGoOutsideResistanceMagnitude);
+            eventTester.AssertResult(subject, args => args.NewValue == baseGoOutsideResistanceMagnitude && args.DamageType == goOutsideDamage);
         }
 
         [Test]
@@ -411,20 +412,23 @@ namespace GrimoireTD.Tests.ResistancesTests
         {
             var subject = ConstructSubject();
 
-            var eventTester = new EventTester<EAOnRecalculatorListChange<float>>();
-            subject.GetResistance(goOutsideDamage).OnChange += eventTester.Handler;
-
             var addedModifier = Substitute.For<IResistanceModifier>();
             addedModifier.DamageType.Returns(goOutsideDamage);
             addedModifier.Magnitude.Returns(0.3f);
 
             subject.AddResistanceModifier(addedModifier);
 
+            var eventTester = new EventTester<EAOnRecalculatorListChange<float>>();
+            subject.GetResistance(goOutsideDamage).OnChange += eventTester.Handler;
+
             subject.RemoveResistanceModifer(addedModifier);
 
-            eventTester.AssertFired(2);
+            eventTester.AssertFired(1);
 
-            eventTester.AssertResults(argList => argList[1].NewValue == baseGoOutsideResistanceMagnitude);
+            eventTester.AssertResult(
+                subject.GetResistance(goOutsideDamage), 
+                args => args.NewValue == baseGoOutsideResistanceMagnitude
+            );
         }
 
 
@@ -434,8 +438,114 @@ namespace GrimoireTD.Tests.ResistancesTests
             var subject = ConstructSubject();
 
             var removedModifier = Substitute.For<IResistanceModifier>();
+            removedModifier.DamageType.Returns(lolCatDamage);
+            removedModifier.Magnitude.Returns(4.5f);
 
             Assert.Throws(typeof(KeyNotFoundException), () => subject.RemoveResistanceModifer(removedModifier));
+        }
+
+        [Test]
+        public void ReplaceResistanceModifier_PassedModifierThatWasAddedPreviously_ChangesResistanceValue()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IResistanceModifier>();
+            firstModifier.DamageType.Returns(goOutsideDamage);
+            firstModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(firstModifier);
+
+            var secondModifier = Substitute.For<IResistanceModifier>();
+            secondModifier.DamageType.Returns(goOutsideDamage);
+            secondModifier.Magnitude.Returns(0.4f);
+
+            subject.ReplaceResistanceModifier(firstModifier, secondModifier);
+
+            var result = subject.GetResistance(goOutsideDamage).Value;
+
+            AssertExt.Approximately(0.466f, result);
+        }
+
+        [Test]
+        public void ReplaceResistanceModifier_PassedModifierThatWasAddedPreviously_FiresOnAnyResistanceChangedEventOnce()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IResistanceModifier>();
+            firstModifier.DamageType.Returns(goOutsideDamage);
+            firstModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(firstModifier);
+
+            var eventTester = new EventTester<EAOnAnyResistanceChanged>();
+            subject.OnAnyResistanceChanged += eventTester.Handler;
+
+            var secondModifier = Substitute.For<IResistanceModifier>();
+            secondModifier.DamageType.Returns(goOutsideDamage);
+            secondModifier.Magnitude.Returns(0.4f);
+
+            subject.ReplaceResistanceModifier(firstModifier, secondModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject, args => args.NewValue == 0.466f && args.DamageType == goOutsideDamage);
+        }
+
+        [Test]
+        public void ReplaceResistanceModifier_PassedModifierThatWasAddedPreviously_FireOnResistanceChangedEventOnce()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IResistanceModifier>();
+            firstModifier.DamageType.Returns(goOutsideDamage);
+            firstModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(firstModifier);
+
+            var eventTester = new EventTester<EAOnRecalculatorListChange<float>>();
+            subject.GetResistance(goOutsideDamage).OnChange += eventTester.Handler;
+
+            var secondModifier = Substitute.For<IResistanceModifier>();
+            secondModifier.DamageType.Returns(goOutsideDamage);
+            secondModifier.Magnitude.Returns(0.4f);
+
+            subject.ReplaceResistanceModifier(firstModifier, secondModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject.GetResistance(goOutsideDamage), args => args.NewValue == 0.466f);
+        }
+
+        [Test]
+        public void ReplaceResistanceModifier_PassedModifierNotPreviouslyAdded_ThrowsKeyNotFoundException()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IResistanceModifier>();
+            firstModifier.DamageType.Returns(goOutsideDamage);
+            firstModifier.Magnitude.Returns(0.3f);
+
+            var secondModifier = Substitute.For<IResistanceModifier>();
+            secondModifier.DamageType.Returns(goOutsideDamage);
+            secondModifier.Magnitude.Returns(0.4f);
+
+            Assert.Throws(typeof(KeyNotFoundException), () => subject.ReplaceResistanceModifier(firstModifier, secondModifier));
+        }
+
+        [Test]
+        public void ReplaceResistanceModifier_PassedModifiersForDifferentDamageTypes_ThrowsArgumentException()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IResistanceModifier>();
+            firstModifier.DamageType.Returns(goOutsideDamage);
+            firstModifier.Magnitude.Returns(0.3f);
+
+            subject.AddResistanceModifier(firstModifier);
+
+            var secondModifier = Substitute.For<IResistanceModifier>();
+            secondModifier.DamageType.Returns(seeTheSunshineDamage);
+            secondModifier.Magnitude.Returns(0.4f);
+
+            Assert.Throws(typeof(ArgumentException), () => subject.ReplaceResistanceModifier(firstModifier, secondModifier));
         }
 
         [Test]
@@ -519,20 +629,22 @@ namespace GrimoireTD.Tests.ResistancesTests
         {
             var subject = ConstructSubject();
 
-            var eventTester = new EventTester<EAOnAnyBlockChanged>();
-            subject.OnAnyBlockChanged += eventTester.Handler;
-
             var addedModifier = Substitute.For<IBlockModifier>();
             addedModifier.DamageType.Returns(seeTheSunshineDamage);
             addedModifier.Magnitude.Returns(3);
 
             subject.AddBlockModifier(addedModifier);
 
+            var eventTester = new EventTester<EAOnAnyBlockChanged>();
+            subject.OnAnyBlockChanged += eventTester.Handler;
+
             subject.RemoveBlockModifier(addedModifier);
 
-            eventTester.AssertFired(2);
-
-            eventTester.AssertResults(argList => argList[1].NewValue == baseSeeTheSunshineBlockMagnitude);
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(
+                subject, 
+                args => args.NewValue == baseSeeTheSunshineBlockMagnitude && args.DamageType == seeTheSunshineDamage
+            );
         }
 
         [Test]
@@ -540,20 +652,22 @@ namespace GrimoireTD.Tests.ResistancesTests
         {
             var subject = ConstructSubject();
 
-            var eventTester = new EventTester<EAOnRecalculatorListChange<int>>();
-            subject.GetBlock(seeTheSunshineDamage).OnChange += eventTester.Handler;
-
             var addedModifier = Substitute.For<IBlockModifier>();
             addedModifier.DamageType.Returns(seeTheSunshineDamage);
             addedModifier.Magnitude.Returns(3);
 
             subject.AddBlockModifier(addedModifier);
 
+            var eventTester = new EventTester<EAOnRecalculatorListChange<int>>();
+            subject.GetBlock(seeTheSunshineDamage).OnChange += eventTester.Handler;
+
             subject.RemoveBlockModifier(addedModifier);
 
-            eventTester.AssertFired(2);
-
-            eventTester.AssertResults(argList => argList[1].NewValue == baseSeeTheSunshineBlockMagnitude);
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(
+                subject.GetBlock(seeTheSunshineDamage), 
+                args => args.NewValue == baseSeeTheSunshineBlockMagnitude
+            );
         }
 
         [Test]
@@ -562,8 +676,114 @@ namespace GrimoireTD.Tests.ResistancesTests
             var subject = ConstructSubject();
 
             var removedModifier = Substitute.For<IBlockModifier>();
+            removedModifier.DamageType.Returns(realityDamage);
+            removedModifier.Magnitude.Returns(2);
 
             Assert.Throws(typeof(KeyNotFoundException), () => subject.RemoveBlockModifier(removedModifier));
+        }
+
+        [Test]
+        public void ReplaceBlockModifier_PassedModifierThatWasAddedPreviously_ChangesBlockValue()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IBlockModifier>();
+            firstModifier.DamageType.Returns(lolCatDamage);
+            firstModifier.Magnitude.Returns(6);
+
+            subject.AddBlockModifier(firstModifier);
+
+            var secondModifier = Substitute.For<IBlockModifier>();
+            secondModifier.DamageType.Returns(lolCatDamage);
+            secondModifier.Magnitude.Returns(7);
+
+            subject.ReplaceBlockModifier(firstModifier, secondModifier);
+
+            var result = subject.GetBlock(lolCatDamage).Value;
+
+            Assert.AreEqual(7 + baseLolCatBlockMagnitude, result);
+        }
+
+        [Test]
+        public void ReplaceBlockModifier_PassedModifierThatWasAddedPreviously_FiresOnAnyBlockChangedEventOnce()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IBlockModifier>();
+            firstModifier.DamageType.Returns(lolCatDamage);
+            firstModifier.Magnitude.Returns(6);
+
+            subject.AddBlockModifier(firstModifier);
+
+            var eventTester = new EventTester<EAOnAnyBlockChanged>();
+            subject.OnAnyBlockChanged += eventTester.Handler;
+
+            var secondModifier = Substitute.For<IBlockModifier>();
+            secondModifier.DamageType.Returns(lolCatDamage);
+            secondModifier.Magnitude.Returns(7);
+
+            subject.ReplaceBlockModifier(firstModifier, secondModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject, args => args.NewValue == 7 + baseLolCatBlockMagnitude && args.DamageType == lolCatDamage);
+        }
+
+        [Test]
+        public void ReplaceBlockModifier_PassedModifierThatWasAddedPreviously_FireOnBlockChangedEventOnce()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IBlockModifier>();
+            firstModifier.DamageType.Returns(lolCatDamage);
+            firstModifier.Magnitude.Returns(6);
+
+            subject.AddBlockModifier(firstModifier);
+
+            var eventTester = new EventTester<EAOnRecalculatorListChange<int>>();
+            subject.GetBlock(lolCatDamage).OnChange += eventTester.Handler;
+
+            var secondModifier = Substitute.For<IBlockModifier>();
+            secondModifier.DamageType.Returns(lolCatDamage);
+            secondModifier.Magnitude.Returns(7);
+
+            subject.ReplaceBlockModifier(firstModifier, secondModifier);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject.GetBlock(lolCatDamage), args => args.NewValue == 7 + baseLolCatBlockMagnitude);
+        }
+
+        [Test]
+        public void ReplaceBlockModifier_PassedModifierNotPreviouslyAdded_ThrowsKeyNotFoundException()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IBlockModifier>();
+            firstModifier.DamageType.Returns(lolCatDamage);
+            firstModifier.Magnitude.Returns(6);
+
+            var secondModifier = Substitute.For<IBlockModifier>();
+            secondModifier.DamageType.Returns(lolCatDamage);
+            secondModifier.Magnitude.Returns(7);
+
+            Assert.Throws(typeof(KeyNotFoundException), () => subject.ReplaceBlockModifier(firstModifier, secondModifier));
+        }
+
+        [Test]
+        public void ReplaceBlockModifier_PassedModifiersForDifferentDamageTypes_ThrowsArgumentException()
+        {
+            var subject = ConstructSubject();
+
+            var firstModifier = Substitute.For<IBlockModifier>();
+            firstModifier.DamageType.Returns(lolCatDamage);
+            firstModifier.Magnitude.Returns(3);
+
+            subject.AddBlockModifier(firstModifier);
+
+            var secondModifier = Substitute.For<IBlockModifier>();
+            secondModifier.DamageType.Returns(redditDamage);
+            secondModifier.Magnitude.Returns(4);
+
+            Assert.Throws(typeof(ArgumentException), () => subject.ReplaceBlockModifier(firstModifier, secondModifier));
         }
 
         [Test]
@@ -594,6 +814,42 @@ namespace GrimoireTD.Tests.ResistancesTests
             var result = subject.GetResistanceWithoutArmor(geoCitiesDamage);
 
             AssertExt.Approximately(0.16f, result);
+        }
+
+        [Test]
+        public void Resistances_OnArmorChangeEvent_FiresOnAnyResistanceChangedEventOnceForEachResistance()
+        {
+            attachedToCreep.CurrentArmor.Returns(2.5f);
+
+            var subject = ConstructSubject();
+
+            var eventTester = new EventTester<EAOnAnyResistanceChanged>();
+            subject.OnAnyResistanceChanged += eventTester.Handler;
+
+            attachedToCreep.CurrentArmor.Returns(4f);
+            attachedToCreep.OnArmorChanged += Raise.EventWith(new EAOnAttributeChanged(4f));
+
+            eventTester.AssertFired(6);
+        }
+
+        [Test]
+        public void Resistance_OnArmorChangedEvent_FiresOnResistanceChangedEventOnceForEachResistance()
+        {
+            attachedToCreep.CurrentArmor.Returns(2.5f);
+
+            var subject = ConstructSubject();
+
+            var eventTester1 = new EventTester<EAOnRecalculatorListChange<float>>();
+            subject.GetResistance(goOutsideDamage).OnChange += eventTester1.Handler;
+
+            var eventTester2 = new EventTester<EAOnRecalculatorListChange<float>>();
+            subject.GetResistance(geoCitiesDamage).OnChange += eventTester2.Handler;
+
+            attachedToCreep.CurrentArmor.Returns(4f);
+            attachedToCreep.OnArmorChanged += Raise.EventWith(new EAOnAttributeChanged(4f));
+
+            eventTester1.AssertFired(1);
+            eventTester2.AssertFired(1);
         }
     }
 }

@@ -199,7 +199,7 @@ namespace GrimoireTD.Tests.CreepTests
         [Test]
         public void Ctor_Always_AddsBaseAttributes()
         {
-            var subject = ConstructSubject();
+            ConstructSubject();
 
             attributes.Received(1).AddModifier(baseAttributeModifier1);
             attributes.Received(1).AddModifier(baseAttributeModifier2);

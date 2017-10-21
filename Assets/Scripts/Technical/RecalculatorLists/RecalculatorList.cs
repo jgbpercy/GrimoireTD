@@ -46,7 +46,9 @@
 
         public virtual V Remove(U item)
         {
-            internalList.Remove(item);
+            var found = internalList.Remove(item);
+
+            if (!found) throw new KeyNotFoundException("Attempted to remove non-existent item from RecalculatorList");
 
             CalculateValue();
 
@@ -54,6 +56,25 @@
 
             return Value;
         }
+
+        //TODO? RemoveRange
+
+        public virtual V Replace(U outgoingItem, U incomingItem)
+        {
+            var found = internalList.Remove(outgoingItem);
+
+            if (!found) throw new KeyNotFoundException("Attempted to replace a non-existent item in RecalculatorList");
+
+            internalList.Add(incomingItem);
+
+            CalculateValue();
+
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
+
+            return Value;
+        }
+
+        //TODO? ReplaceRange
 
         protected void CalculateValue()
         {
