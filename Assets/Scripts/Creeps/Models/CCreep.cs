@@ -5,7 +5,6 @@ using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
 using GrimoireTD.Map;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Attributes;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Dependencies;
@@ -14,6 +13,8 @@ namespace GrimoireTD.Creeps
 {
     public class CCreep : ICreep
     {
+        public const float TARGET_POSITION_Z_OFFSET = -0.4f;
+
         private int id;
         
         //Template
@@ -41,7 +42,7 @@ namespace GrimoireTD.Creeps
         //Health
         public int CurrentHitpoints { get; private set; }
 
-        public event EventHandler OnDied;
+        public event EventHandler<EventArgs> OnDied;
         public event EventHandler<EAOnHealthChanged> OnHealthChanged;
 
         public event EventHandler<EAOnAttributeChanged> OnArmorChanged;
@@ -109,7 +110,11 @@ namespace GrimoireTD.Creeps
 
             currentDestinationPathNode = GameModels.Models[0].MapData.CreepPath.Count - 2;
             currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
-            
+
+            float distanceFromCurrentDestination = GetDistanceFromCurrentDestination();
+
+            DistanceFromEnd = GetDistanceFromEnd(distanceFromCurrentDestination);
+
             //Attributes
             attributes = DependencyProvider.CreepAttributes();
 
@@ -147,37 +152,42 @@ namespace GrimoireTD.Creeps
         public Vector3 TargetPosition()
         {
             //TODO unhardcode this height
-            return new Vector3(Position.x, Position.y, -0.4f);
+            return new Vector3(Position.x, Position.y, TARGET_POSITION_Z_OFFSET);
         }
 
         public void ModelObjectFrameUpdate(float deltaTime)
         {
-            float distanceFromCurrentDestination = Vector3.Magnitude(Position - currentDestinationVector);
+            float distanceFromCurrentDestination = GetDistanceFromCurrentDestination();
 
-            DistanceFromEnd = currentDestinationPathNode * MapRenderer.HEX_OFFSET + distanceFromCurrentDestination;
-
-            if (distanceFromCurrentDestination < CurrentSpeed * deltaTime)
+            if (distanceFromCurrentDestination <= CurrentSpeed * deltaTime)
             {
                 currentDestinationPathNode = currentDestinationPathNode - 1 < 0 ? 0 : currentDestinationPathNode - 1;
                 currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             }
 
-            Position = Vector3.MoveTowards(Position, currentDestinationVector, CurrentSpeed * deltaTime);
+            float movementAmount = CurrentSpeed * deltaTime;
+
+            distanceFromCurrentDestination -= movementAmount;
+
+            Position = Vector3.MoveTowards(Position, currentDestinationVector, movementAmount);
+
+            DistanceFromEnd = GetDistanceFromEnd(distanceFromCurrentDestination);
+        }
+
+        private float GetDistanceFromCurrentDestination()
+        {
+            return Vector3.Magnitude(Position - currentDestinationVector);
+        }
+
+        private float GetDistanceFromEnd(float distanceFromCurrentDestination)
+        {
+            return currentDestinationPathNode * MapRenderer.HEX_OFFSET + distanceFromCurrentDestination;
         }
 
         public void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefendingEntity sourceDefendingEntity)
         {
-            CDebug.Log(CDebug.combatLog, Id + " receiving attack effects:");
-
             foreach (IAttackEffect attackEffect in attackEffects)
             {
-                CDebug.Log(CDebug.combatLog, "Applying attack effect: " + attackEffect.EffectName +
-                    ", base magnitude: " + attackEffect.BaseMagnitude +
-                    ", base duration: " + attackEffect.BaseDuration +
-                    ", actual magnitude: " + attackEffect.GetActualMagnitude(sourceDefendingEntity) +
-                    ", actual duration: " + attackEffect.GetActualDuration(sourceDefendingEntity)
-                );
-
                 IDamageEffectType damageEffectType = attackEffect.AttackEffectType as IDamageEffectType;
                 if (damageEffectType != null)
                 {
@@ -203,13 +213,12 @@ namespace GrimoireTD.Creeps
             }
         }
 
+        //TODO: #optimisation total up damage from all effects and apply?
         private void ApplyDamageEffect(IAttackEffect attackEffect, IDefendingEntity sourceDefendingEntity, IDamageEffectType damageEffectType)
         {
             float magnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
             int block = resistances.GetBlock(damageEffectType).Value;
             float resistance = resistances.GetResistance(damageEffectType).Value;
-
-            CDebug.Log(CDebug.combatLog, "Bl: " + block + ", Res: " + resistance);
 
             TakeDamage(
                 Mathf.RoundToInt(
@@ -279,9 +288,11 @@ namespace GrimoireTD.Creeps
                     () => { resistances.AddBlockModifier(blockModifier); },
                     (object sender, EAOnTemporaryEffectEnd args) => { resistances.RemoveBlockModifier(blockModifier); }
                 );
+
+                return;
             }
 
-                throw new Exception("Unhandled ModifierEffectType");
+            throw new Exception("Unhandled ModifierEffectType");
         }
 
         private void ApplyPermanentEffect(IAttackEffect attackEffect, IDefendingEntity sourceDefendingEntity, IModifierEffectType modifierEffectType)
@@ -319,7 +330,7 @@ namespace GrimoireTD.Creeps
             {
                 IBlockModifier blockModifier = new CBlockModifier(
                     Mathf.RoundToInt(actualMagnitude),
-                    resistanceModifierEffectType.ResistanceToModify
+                    blockModifierEffectType.BlockTypeToModify
                 );
 
                 resistances.AddBlockModifier(blockModifier);
@@ -334,8 +345,6 @@ namespace GrimoireTD.Creeps
         {
             CurrentHitpoints -= damage;
 
-            CDebug.Log(CDebug.combatLog, Id + " takes " + damage + " damage, leaving " + CurrentHitpoints);
-
             if (CurrentHitpoints < 1)
             {
                 CurrentHitpoints = 0;
@@ -345,16 +354,10 @@ namespace GrimoireTD.Creeps
 
             if (CurrentHitpoints == 0)
             {
-                CDebug.Log(CDebug.combatLog, Id + " died");
-
                 OnDied?.Invoke(this, EventArgs.Empty);
-            }
-        }
 
-        //TODO: make callback? Or change? Seems bad
-        public void GameObjectDestroyed()
-        {
-            ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
+                ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
+            }
         }
     }
 }

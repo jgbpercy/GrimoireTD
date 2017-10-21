@@ -3,7 +3,6 @@ using UnityEngine;
 using GrimoireTD.Creeps;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
@@ -54,11 +53,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             ProjectileTemplate = template;
 
             ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
-
-            CDebug.Log(CDebug.combatLog, 
-                "Projectile " + Id + 
-                " was created, target: " + target.Id + 
-                " (" + target.NameInGame + ")");
         }
 
         public virtual void ModelObjectFrameUpdate(float deltaTime)
@@ -80,7 +74,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
                 {
                     Destroy();
                 }
-
+                
                 Position = Position + currentDirection * ProjectileTemplate.Speed * deltaTime;
             }
             else
@@ -91,12 +85,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         }
 
         public void HitCreep(ICreep creep, float destructionDelay)
-        {
-            CDebug.Log(CDebug.combatLog, 
-                "Projectile " + Id + 
-                " hit " + creep.Id + 
-                " (" + creep.NameInGame + ")");
-
+        { 
             //TODO: apply modifiers from defending entity at the point of projectile creation, rather than at the point of effect application?
             creep.ApplyAttackEffects(ProjectileTemplate.AttackEffects, sourceDefendingEntity);
             destroyingForHitTarget = true;
@@ -118,6 +107,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             OnDestroyProjectile?.Invoke(this, new EAOnDestroyProjectile(waitSeconds));
         }
 
+        //TODO get rid of this
         public void GameObjectDestroyed()
         {
             ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.UI
@@ -61,8 +60,6 @@ namespace GrimoireTD.UI
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Camera Controller Start");
-
             //camera components
             mainCamera = Camera.main;
             cameraTilter = mainCamera.transform.parent.transform;

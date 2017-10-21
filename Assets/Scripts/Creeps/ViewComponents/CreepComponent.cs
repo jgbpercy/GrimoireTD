@@ -43,10 +43,5 @@ namespace GrimoireTD.Creeps
         {
             healthBar.value = args.NewValue;
         }
-
-        private void OnDestroy()
-        {
-            creepModel.GameObjectDestroyed();
-        }
     }
 }

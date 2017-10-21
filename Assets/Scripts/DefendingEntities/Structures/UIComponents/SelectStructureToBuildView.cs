@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.DefendingEntities.Structures
 {
-    //TODO: the available 
     public class SelectStructureToBuildView : SingletonMonobehaviour<SelectStructureToBuildView>
     {
         [SerializeField]
@@ -14,8 +12,6 @@ namespace GrimoireTD.DefendingEntities.Structures
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Structure Select View Start");
-
             GameModels.Models[0].OnGameModelSetUp += SetUpStructurePanel;
         }
 

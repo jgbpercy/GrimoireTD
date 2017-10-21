@@ -5,7 +5,6 @@ using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 using GrimoireTD.Technical;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Creeps;
 
@@ -34,8 +33,6 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            CDebug.InitialiseDebugChannels();
-
             GameObject testGo = new GameObject();
 
             testGo.AddComponent<ModelObjectFrameUpdater>();

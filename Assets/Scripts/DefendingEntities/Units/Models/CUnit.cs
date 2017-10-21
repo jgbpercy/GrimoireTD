@@ -6,7 +6,6 @@ using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Economy;
 using GrimoireTD.Map;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
 using GrimoireTD.Abilities.DefendMode;
@@ -269,23 +268,15 @@ namespace GrimoireTD.DefendingEntities.Units
         //Economy
         private void OnEnterBuildModeEconomyChanges()
         {
-            CDebug.Log(CDebug.hexEconomy, "Time Active: " + TimeActive.ToString("0.0"));
-            CDebug.Log(CDebug.hexEconomy, "Time Idle: " + TimeIdle.ToString("0.0"));
-
             float activeProportion = TimeActive / (TimeActive + TimeIdle);
-            CDebug.Log(CDebug.hexEconomy, "Active Proportion: " + activeProportion.ToString("0.000"));
 
             IEconomyTransaction grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
-            CDebug.Log(CDebug.hexEconomy, "Gross Hex Oc Bonus: " + grossConditionalHexOccuationBonus);
 
             IEconomyTransaction netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(activeProportion);
-            CDebug.Log(CDebug.hexEconomy, "Net Hex Oc Bonus: " + netConditionalHexOccupationBonus);
 
             IEconomyTransaction grossConditionalStructureOccupationBonus = GetStructureOccupationBonus(OnHex.StructureHere, conditionalStructureOccupationBonuses);
-            CDebug.Log(CDebug.hexEconomy, "Gross Structure Oc Bonus: " + grossConditionalStructureOccupationBonus);
 
             IEconomyTransaction netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(activeProportion);
-            CDebug.Log(CDebug.hexEconomy, "Net Structure Oc Bonus: " + netConditionalStructureOccupationBonus);
 
             OnTriggeredConditionalOccupationBonuses?.Invoke(this, new EAOnTriggeredConditionalOccupationBonus(this, netConditionalHexOccupationBonus, netConditionalStructureOccupationBonus));
         }
@@ -316,26 +307,16 @@ namespace GrimoireTD.DefendingEntities.Units
         //Experience, Fatigue and Talents
         private void OnEnterBuildModeExperienceAndFatigueChanges()
         {
-            CDebug.Log(CDebug.experienceAndFatigue, "Time Active: " + TimeActive.ToString("0.0"));
-            CDebug.Log(CDebug.experienceAndFatigue, "Time Idle: " + TimeIdle.ToString("0.0"));
-
             float rawExperienceGain = (TimeActive / (TimeActive + TimeIdle)) * 100;
-
-            CDebug.Log(CDebug.experienceAndFatigue, "Raw Experience: " + rawExperienceGain.ToString("0.000"));
 
             float fatigueFactor = FatigueFactor();
 
             int experienceGain = Mathf.RoundToInt(rawExperienceGain * fatigueFactor);
             Experience += experienceGain;
 
-            CDebug.Log(CDebug.experienceAndFatigue, "Fatigue: " + Fatigue + ", Factor: " + fatigueFactor);
-            CDebug.Log(CDebug.experienceAndFatigue, "Experience gain: " + experienceGain + ", new Experience: " + Experience);
-
             Fatigue += Mathf.RoundToInt((TimeActive / (TimeActive + TimeIdle)) * 10) - 5;
 
             Fatigue = Mathf.Max(Fatigue, 0);
-
-            CDebug.Log(CDebug.experienceAndFatigue, "New fatigue: " + Fatigue);
 
             LevelUpsPending = (Experience - Level * UnitTemplate.ExperienceToLevelUp) / UnitTemplate.ExperienceToLevelUp;
 
@@ -345,12 +326,7 @@ namespace GrimoireTD.DefendingEntities.Units
 
         private float FatigueFactor()
         {
-            CDebug.Log(CDebug.experienceAndFatigue, "Inflection Point: " + inflectionPoint);
-            CDebug.Log(CDebug.experienceAndFatigue, "Shallowness Multiplier: " + shallownessMultiplier);
-
             float rawInverserFactor = CustomMath.SignedOddRoot((Fatigue - inflectionPoint) / shallownessMultiplier, 3) + Mathf.Pow(inflectionPoint / shallownessMultiplier, 1f / 3f);
-
-            CDebug.Log(CDebug.experienceAndFatigue, "Calculated raw inverse factor: " + rawInverserFactor);
 
             return Mathf.Clamp(1 - rawInverserFactor, 0f, 1f);
         }

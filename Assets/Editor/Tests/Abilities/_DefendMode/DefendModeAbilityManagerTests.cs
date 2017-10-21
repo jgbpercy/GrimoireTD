@@ -6,7 +6,6 @@ using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 {
@@ -29,8 +28,6 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            CDebug.InitialiseDebugChannels();
-
             gameModel.GameStateManager.Returns(gameStateManager);
 
             GameModels.Models.Add(gameModel);

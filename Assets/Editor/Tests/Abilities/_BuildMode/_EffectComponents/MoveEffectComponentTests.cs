@@ -13,8 +13,6 @@ namespace GrimoireTD.Tests.MoveEffectComponentTests
     {
         private Coord targetCoord = new Coord(1, 1);
 
-        private IMoveEffectComponentTemplate moveEffectComponentTemplate = Substitute.For<IMoveEffectComponentTemplate>();
-
         private IUnit unit = Substitute.For<IUnit>();
 
         private List<IBuildModeTargetable> targetList;
@@ -31,7 +29,7 @@ namespace GrimoireTD.Tests.MoveEffectComponentTests
                 targetCoord
             };
 
-            subject = new CMoveEffectComponent(moveEffectComponentTemplate);
+            subject = new CMoveEffectComponent();
         }
 
         [SetUp]

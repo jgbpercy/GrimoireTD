@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Technical;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -43,11 +42,6 @@ namespace GrimoireTD.Abilities.DefendMode
             {
                 if (abilityOffCooldown.ExecuteAbility(attachedToDefendingEntity))
                 {
-                    CDebug.Log(CDebug.combatLog,
-                        attachedToDefendingEntity.Id
-                        + " (" + attachedToDefendingEntity.CurrentName
-                        + ") executed ability " + abilityOffCooldown.DefendModeAbilityTemplate.NameInGame);
-
                     break;
                 }
             }

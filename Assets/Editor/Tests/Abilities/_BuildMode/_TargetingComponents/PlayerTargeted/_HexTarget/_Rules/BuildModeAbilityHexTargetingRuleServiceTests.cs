@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.Map;
@@ -23,8 +22,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            CDebug.InitialiseDebugChannels();
-
             unit.CoordPosition.Returns(unitPosition);
         }
 

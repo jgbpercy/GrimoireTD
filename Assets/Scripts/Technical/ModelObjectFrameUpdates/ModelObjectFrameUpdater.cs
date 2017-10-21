@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.Technical
 {
@@ -10,11 +9,6 @@ namespace GrimoireTD.Technical
 
         private List<IFrameUpdatee> frameUpdateesToAdd = new List<IFrameUpdatee>();
         private List<IFrameUpdatee> frameUpdateesToRemove = new List<IFrameUpdatee>();
-
-        private void Start()
-        {
-            CDebug.Log(CDebug.applicationLoading, "Model Object Frame Updater Start");
-        }
 
         private void Update()
         {

@@ -6,7 +6,6 @@ using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Economy;
 using GrimoireTD.Map;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Attributes;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 
@@ -170,13 +169,9 @@ namespace GrimoireTD.DefendingEntities
         //Enter Build Mode
         protected virtual void OnEnterBuildMode(object sender, EAOnEnterBuildMode args)
         {
-            CDebug.Log(CDebug.hexEconomy, Id + " entered build mode:");
-
             IEconomyTransaction flatHexOccupationBonus = GetHexOccupationBonus(OnHexType, flatHexOccupationBonuses);
 
             OnTriggeredFlatHexOccupationBonus?.Invoke(this, new EAOnTriggeredFlatHexOccupationBonus(this, flatHexOccupationBonus));
-
-            CDebug.Log(CDebug.hexEconomy, Id + " added flat occupation bonus " + flatHexOccupationBonus);
         }
 
         //Improvements

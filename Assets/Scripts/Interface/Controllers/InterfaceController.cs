@@ -8,7 +8,6 @@ using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.Map;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.UI
 {
@@ -92,8 +91,6 @@ namespace GrimoireTD.UI
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Interface Controller Start");
-
             Time.timeScale = tempDebugTimeScale;
 
             //map
@@ -204,8 +201,6 @@ namespace GrimoireTD.UI
                 SelectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, MouseOverCoord, mapData)
             )
             {
-                CDebug.Log(CDebug.buildModeAbilities, "InterfaceController detected hex targeted build mode ability click");
-
                 selectedBuildModeAbility.ExecuteAbility(SelectedUnitInstance, MouseOverCoord, mapData);
 
                 SetCursorModeSelect();
@@ -217,8 +212,6 @@ namespace GrimoireTD.UI
 
         public void ButtonClickDefend()
         {
-            CDebug.Log(CDebug.gameState, "Interface Controller registered defend button click");
-
             OnEnterDefendModePlayerAction?.Invoke(this, new EAOnEnterDefendModePlayerAction());
         }
 
@@ -297,8 +290,6 @@ namespace GrimoireTD.UI
             IPlayerTargetedComponent playerTargetedComponent = abilityToActivate.TargetingComponent as IPlayerTargetedComponent;
             if (playerTargetedComponent != null)
             {
-                CDebug.Log(CDebug.buildModeAbilities, "Player Targeted ability activated");
-
                 CurrentCursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;
 
                 SelectedBuildModeAbilityTargetingComponent = playerTargetedComponent;

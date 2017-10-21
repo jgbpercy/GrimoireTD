@@ -1,5 +1,4 @@
 ﻿using System;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.UI;
 using GrimoireTD.Creeps;
 
@@ -28,18 +27,12 @@ namespace GrimoireTD
             {
                 if (value == GameMode.DEFEND)
                 {
-                    CDebug.Log(CDebug.gameState, "Game State Manager Entered Defend Mode, callback member count: " + OnEnterDefendMode?.GetInvocationList().Length);
-
                     _gameMode = GameMode.DEFEND;
-
                     OnEnterDefendMode?.Invoke(this, new EAOnEnterDefendMode());
                 }
                 else
                 {
-                    CDebug.Log(CDebug.gameState, "Game State Manager Entered Build Mode, callback member count: " + OnEnterBuildMode?.GetInvocationList().Length);
-
                     _gameMode = GameMode.BUILD;
-
                     OnEnterBuildMode?.Invoke(this, new EAOnEnterBuildMode());
                 }
             }

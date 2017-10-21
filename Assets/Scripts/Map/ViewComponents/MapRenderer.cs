@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.Map
 {
@@ -36,8 +35,6 @@ namespace GrimoireTD.Map
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Map Renderer Start");
-
             tileImages = (Texture2D)mapGraphicsRenderer.material.mainTexture;
 
             mapData = GameModels.Models[0].MapData;

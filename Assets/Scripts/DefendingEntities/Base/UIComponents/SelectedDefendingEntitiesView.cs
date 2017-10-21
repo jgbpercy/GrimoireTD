@@ -10,7 +10,6 @@ using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Economy;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Map;
 using GrimoireTD.Attributes;
 using GrimoireTD.UI;
@@ -121,8 +120,6 @@ namespace GrimoireTD.DefendingEntities
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Selected Defending Entites View Start");
-
             unitTalentButtonText = unitTalentButton.GetComponentInChildren<Text>();
 
             selectedStructurePanel.SetActive(false);
@@ -137,7 +134,7 @@ namespace GrimoireTD.DefendingEntities
         private void Update()
         {
             //TEMP DEBUG ADDEXPERIENCE TODO: REMOVE
-            if (CDebug.debugCommands.Enabled && Input.GetAxisRaw("DebugSpawnWave") > 0)
+            if (Input.GetAxisRaw("DebugSpawnWave") > 0)
             {
                 selectedUnit.TempDebugAddExperience();
             }
@@ -215,11 +212,6 @@ namespace GrimoireTD.DefendingEntities
 
             selectedStructure.FlatHexOccupationBonuses.OnAdd += OnStructureFlatHexOccupationBonusAdded;
             selectedStructure.FlatHexOccupationBonuses.OnRemove -= OnStructureFlatHexOccupationBonusRemoved;
-
-            if (CDebug.structureUpgrades.Enabled)
-            {
-                DebugLogSelectedStructureAttributes();
-            }
         }
 
         private void OnUnitSelected(IUnit newSelectedUnit)
@@ -264,11 +256,6 @@ namespace GrimoireTD.DefendingEntities
             selectedUnit.ConditionalHexOccupationBonuses.OnRemove -= OnUnitConditionalHexOccupationBonusRemoved;
             selectedUnit.ConditionalStructureOccupationBonuses.OnAdd += OnUnitConditionalStructureOccupationBonusAdded;
             selectedUnit.ConditionalStructureOccupationBonuses.OnRemove += OnUnitConditionalStructureOccupationBonusRemoved;
-
-            if (CDebug.unitAttributes.Enabled)
-            {
-                DebugLogSelectedUnitAttributes();
-            }
         }
 
         private void OnDefendingEntitySelected(IDefendingEntity newSelection, GameObject panel, Text nameText, Text descriptionText, GameObject abilityVerticalLayout)
@@ -802,22 +789,6 @@ namespace GrimoireTD.DefendingEntities
             talentDisplays.ForEach(x => Destroy(x.gameObject));
 
             talentDisplays = new List<GameObject>();
-        }
-
-        private void DebugLogSelectedUnitAttributes()
-        {
-            foreach (DEAttrName attributeName in Enum.GetValues(typeof(DEAttrName)))
-            {
-                CDebug.Log(CDebug.unitAttributes, selectedUnit.Attributes.Get(attributeName).DisplayName + ": " + selectedUnit.Attributes.Get(attributeName).Value());
-            }
-        }
-
-        private void DebugLogSelectedStructureAttributes()
-        {
-            foreach (DEAttrName attributeName in Enum.GetValues(typeof(DEAttrName)))
-            {
-                CDebug.Log(CDebug.structureUpgrades, selectedStructure.Attributes.Get(attributeName).DisplayName + ": " + selectedStructure.Attributes.Get(attributeName).Value());
-            }
         }
     }
 }

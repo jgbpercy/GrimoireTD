@@ -36,7 +36,5 @@ namespace GrimoireTD.Creeps
         event EventHandler<EAOnAttributeChanged> OnSpeedChanged;
 
         void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefendingEntity sourceDefendingEntity);
-
-        void GameObjectDestroyed();
     }
 }

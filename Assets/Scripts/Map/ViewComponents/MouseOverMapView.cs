@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.UI;
 
 namespace GrimoireTD.Map
@@ -29,8 +28,6 @@ namespace GrimoireTD.Map
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Mouseover Map View Start");
-
             interfaceController = InterfaceController.Instance;
 
             //tile highlighter

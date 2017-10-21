@@ -5,7 +5,6 @@ using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 using GrimoireTD.Technical;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Creeps;
 
@@ -38,8 +37,6 @@ namespace GrimoireTD.Tests.ProjectileTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            CDebug.InitialiseDebugChannels();
-
             startPosition = new Vector3(startX, startY, startZ);
 
             targetCreep.TargetPosition().Returns(new Vector3(targetX, targetY, targetZ));
@@ -80,27 +77,27 @@ namespace GrimoireTD.Tests.ProjectileTests
 
             subject.ModelObjectFrameUpdate(defaultDeltaTime);
 
-            Vector3 startToTarget = new Vector3(
+            var startToTargetVector = new Vector3(
                 targetX - startX,
                 targetY - startY,
                 targetZ - startZ
             );
 
-            float totalStartToTargetMagnitude = Mathf.Sqrt(
-                Mathf.Pow(startToTarget.x, 2) +
-                Mathf.Pow(startToTarget.y, 2) +
-                Mathf.Pow(startToTarget.z, 2)
+            float startToTargetDistance = Mathf.Sqrt(
+                Mathf.Pow(startToTargetVector.x, 2) +
+                Mathf.Pow(startToTargetVector.y, 2) +
+                Mathf.Pow(startToTargetVector.z, 2)
             );
 
-            float distanceDeltaFactor = (defaultDeltaTime * startSpeed) / totalStartToTargetMagnitude;
+            float expectedProportionOfTotalDistanceTravelled = (defaultDeltaTime * startSpeed) / startToTargetDistance;
 
-            Vector3 expectedPos = new Vector3(
-                startX + startToTarget.x * distanceDeltaFactor,
-                startY + startToTarget.y * distanceDeltaFactor,
-                startZ + startToTarget.z * distanceDeltaFactor
+            var expectedPosition = new Vector3(
+                startX + startToTargetVector.x * expectedProportionOfTotalDistanceTravelled,
+                startY + startToTargetVector.y * expectedProportionOfTotalDistanceTravelled,
+                startZ + startToTargetVector.z * expectedProportionOfTotalDistanceTravelled
             );
 
-            Assert.True(CustomMath.Approximately(expectedPos, subject.Position));
+            Assert.True(CustomMath.Approximately(expectedPosition, subject.Position));
         }
 
         [Test]
@@ -190,27 +187,27 @@ namespace GrimoireTD.Tests.ProjectileTests
 
             subject.ModelObjectFrameUpdate(defaultDeltaTime);
 
-            Vector3 startToTarget = new Vector3(
+            var startToTargetVector = new Vector3(
                 targetX - startX,
                 targetY - startY,
                 targetZ - startZ
             );
 
-            float totalStartToTargetMagnitude = Mathf.Sqrt(
-                Mathf.Pow(startToTarget.x, 2) +
-                Mathf.Pow(startToTarget.y, 2) +
-                Mathf.Pow(startToTarget.z, 2)
+            float startToTargetDistance = Mathf.Sqrt(
+                Mathf.Pow(startToTargetVector.x, 2) +
+                Mathf.Pow(startToTargetVector.y, 2) +
+                Mathf.Pow(startToTargetVector.z, 2)
             );
 
-            float distanceDeltaFactor = (2 * defaultDeltaTime * startSpeed) / totalStartToTargetMagnitude;
+            float expectedProportionOfTotalDistanceTravelled = (2 * defaultDeltaTime * startSpeed) / startToTargetDistance;
 
-            Vector3 expectedPos = new Vector3(
-                startX + startToTarget.x * distanceDeltaFactor,
-                startY + startToTarget.y * distanceDeltaFactor,
-                startZ + startToTarget.z * distanceDeltaFactor
+            var expectedPosition = new Vector3(
+                startX + startToTargetVector.x * expectedProportionOfTotalDistanceTravelled,
+                startY + startToTargetVector.y * expectedProportionOfTotalDistanceTravelled,
+                startZ + startToTargetVector.z * expectedProportionOfTotalDistanceTravelled
             );
 
-            Assert.True(CustomMath.Approximately(expectedPos, subject.Position));
+            Assert.True(CustomMath.Approximately(expectedPosition, subject.Position));
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.UI;
 using GrimoireTD.Technical;
@@ -35,8 +34,6 @@ namespace GrimoireTD.Creeps
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Selected Creep View Start");
-
             InterfaceController.Instance.OnCreepSelected += OnNewSelection;
             InterfaceController.Instance.OnCreepDeselected += OnDeselection;
 

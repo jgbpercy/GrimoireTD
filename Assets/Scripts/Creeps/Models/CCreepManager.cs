@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.Abilities.DefendMode;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Technical;
 
 namespace GrimoireTD.Creeps
@@ -98,8 +96,6 @@ namespace GrimoireTD.Creeps
 
         private void SpawnCreep(ICreepTemplate creepToSpawn)
         {
-            CDebug.Log(CDebug.creepSpawning, "SpawnCreep called for " + creepToSpawn.NameInGame);
-
             //TODO unhardcode spawnposition at zero
             ICreep newCreep = creepToSpawn.GenerateCreep(Vector3.zero);
 
@@ -112,8 +108,6 @@ namespace GrimoireTD.Creeps
 
         private void StartNextWave(object sender, EAOnEnterDefendMode args)
         {
-            CDebug.Log(CDebug.creepSpawning, "Start Next Wave called, currentWave = " + currentWaveIndex);
-
             waveTimeElapsed = 0f;
 
             if (waveList.Count <= currentWaveIndex)

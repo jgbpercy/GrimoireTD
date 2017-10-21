@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 
 namespace GrimoireTD.Economy
 {
@@ -14,8 +13,6 @@ namespace GrimoireTD.Economy
 
         void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Economy View Start");
-
             economyManager = GameModels.Models[0].EconomyManager;
 
             economyManager.OnAnyResourceChanged += OnResourceValueChange;

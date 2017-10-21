@@ -6,7 +6,6 @@ using UnityEngine.Assertions;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.Units;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Levels;
 using GrimoireTD.UI;
 
@@ -48,12 +47,10 @@ namespace GrimoireTD.Map
         {
             set
             {
-                CDebug.Log(CDebug.pathing, "The _path was changed");
                 _path = value;
 
                 OnPathGeneratedOrChanged?.Invoke(this, new EAOnPathGeneratedOrChanged(value));
 
-                CDebug.Log(CDebug.pathing, "The Path property called update disallowed coords");
                 disallowedCoords = PathingService.DisallowedCoords(_path, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
             }
         }
@@ -81,18 +78,12 @@ namespace GrimoireTD.Map
             HexTypes = colorsToTypesDictionary.Values.ToList();
 
             //Generate Map
-            CDebug.Log(CDebug.mapGeneration, "Call to MapData set up with image");
-
             Width = mapImage.width / 2;
             Height = mapImage.height / 2;
-
-            CDebug.Log(CDebug.mapGeneration, "Map dimensions: (" + Width + ", " + Height + ")");
 
             Color32[] allPixels = mapImage.GetPixels32();
             int xPixelCoord;
             int yPixelCoord;
-
-            CDebug.Log(CDebug.mapGeneration, "Pixels in array " + allPixels.GetLength(0));
 
             IHexType currentHexType;
             bool foundHexType;
@@ -104,19 +95,7 @@ namespace GrimoireTD.Map
                     xPixelCoord = y % 2 == 0 ? 2 * x : 2 * x + 1;
                     yPixelCoord = 2 * y;
 
-                    CDebug.Log(CDebug.mapGeneration, "Setting tile (" + x + ", " + y + ") from pixel (" + xPixelCoord + ", " + yPixelCoord + ")");
-
-                    CDebug.Log(CDebug.mapGeneration, "Pixel Color: " + allPixels[xPixelCoord + yPixelCoord * Width * 2]);
-
                     foundHexType = colorsToTypesDictionary.TryGetValue(allPixels[xPixelCoord + yPixelCoord * Width * 2], out currentHexType);
-                    if (!foundHexType)
-                    {
-                        CDebug.Log(CDebug.mapGeneration, "didn't find hex for coord: " + x + ", " + y);
-                        CDebug.Log(CDebug.mapGeneration, "R:" + allPixels[xPixelCoord + yPixelCoord * Width * 2].r);
-                        CDebug.Log(CDebug.mapGeneration, "G:" + allPixels[xPixelCoord + yPixelCoord * Width * 2].g);
-                        CDebug.Log(CDebug.mapGeneration, "B:" + allPixels[xPixelCoord + yPixelCoord * Width * 2].b);
-                        CDebug.Log(CDebug.mapGeneration, "A:" + allPixels[xPixelCoord + yPixelCoord * Width * 2].a);
-                    }
 
                     Assert.IsTrue(foundHexType);
 
@@ -157,15 +136,7 @@ namespace GrimoireTD.Map
         //  until variable start/ends etc, to at least just store the hardcoded start and ends in one place
         private void TempRegeneratePath()
         {
-            CDebug.Log(CDebug.pathing, "TempRegeneratePath called the Pathing service");
             Path = PathingService.GeneratePath(this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
-
-            if (CDebug.pathing.Enabled)
-            {
-                string debugString = "";
-                _path.ForEach(x => debugString += x + " ");
-                CDebug.Log(CDebug.pathing, "The path is now: " + debugString);
-            }
         }
 
         private void TempRegenerateDisallowedCoords()
@@ -254,7 +225,6 @@ namespace GrimoireTD.Map
 
             if (disallowedCoords.Contains(coord))
             {
-                CDebug.Log(CDebug.pathing, "CanBuildStructureAt found " + coord + " in disallowed coords");
                 return false;
             }
 
@@ -281,7 +251,6 @@ namespace GrimoireTD.Map
 
             if (CreepPath.Contains(coord))
             {
-                CDebug.Log(CDebug.pathing, "TryBuildStructureAt found coord " + coord + " in Path and called TempRegeneratePath");
                 TempRegeneratePath();
             }
             else
@@ -303,7 +272,6 @@ namespace GrimoireTD.Map
 
             if (disallowedCoords.Contains(coord))
             {
-                CDebug.Log(CDebug.pathing, "CanCreateUnitAt found " + coord + " in disallowed coords");
                 return false;
             }
 
@@ -353,7 +321,6 @@ namespace GrimoireTD.Map
 
             if (disallowedCoordsForMove.Contains(targetCoord))
             {
-                CDebug.Log(CDebug.pathing, "CanMoveUnitTo found " + targetCoord + " in disallowed coords for move");
                 return false;
             }
 
@@ -406,9 +373,6 @@ namespace GrimoireTD.Map
 
                 baseHorizontalDistance = Mathf.Abs(startHex.X - fakeX);
             }
-
-            CDebug.Log(CDebug.distanceCalculations, "Ver: " + baseVerticalDistance);
-            CDebug.Log(CDebug.distanceCalculations, "Hor: " + baseHorizontalDistance);
 
             return baseVerticalDistance + Mathf.Max(baseHorizontalDistance - (baseVerticalDistance / 2), 0);
         }

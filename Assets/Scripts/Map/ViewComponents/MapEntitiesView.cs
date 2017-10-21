@@ -2,7 +2,6 @@
 using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.Technical;
-using GrimoireTD.ChannelDebug;
 using GrimoireTD.Creeps;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 using GrimoireTD.DefendingEntities;
@@ -90,8 +89,6 @@ namespace GrimoireTD.Map
 
         private void Start()
         {
-            CDebug.Log(CDebug.applicationLoading, "Map Entities View Start");
-
             mapData = GameModels.Models[0].MapData;
             creepManager = GameModels.Models[0].CreepManager;
 
