@@ -1,6 +1,7 @@
 ﻿using System;
 using GrimoireTD.Map;
 using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
@@ -30,12 +31,12 @@ namespace GrimoireTD.Abilities.BuildMode
             var sourceUnit = args.SourceEntity as IUnit;
             if (sourceUnit == null) throw new ArgumentException("ValidMove was passed a non-Unit"); //optimisation: disable in release build
 
-            if (!HexIsInRange(new HexIsInRangeArgs(args.SourceEntity, args.TargetCoord, args.MapData, args.Range)))
+            if (!HexIsInRange(new HexIsInRangeArgs(args.SourceEntity, args.TargetCoord, args.Range)))
             {
                 return false;
             }
 
-            return args.MapData.CanMoveUnitTo(args.TargetCoord, sourceUnit.CachedDisallowedMovementDestinations);
+            return DepsProv.TheMapData.CanMoveUnitTo(args.TargetCoord, sourceUnit.CachedDisallowedMovementDestinations);
         }
 
         private static bool DefendingEntityAtTarget(Coord targetCoord, IMapData mapData)

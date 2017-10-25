@@ -10,8 +10,6 @@ namespace GrimoireTD.Tests.AutoTargetedComponentTests
     {
         private Coord targetCoord = new Coord(2, 2);
 
-        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
-
         private IAutoTargetedComponentTemplate template = Substitute.For<IAutoTargetedComponentTemplate>();
 
         private IBuildModeTargetable target = Substitute.For<IBuildModeTargetable>();
@@ -25,9 +23,9 @@ namespace GrimoireTD.Tests.AutoTargetedComponentTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            buildModeAutoTargetedArgs = new BuildModeAutoTargetedArgs(targetCoord, mapData);
+            buildModeAutoTargetedArgs = new BuildModeAutoTargetedArgs(targetCoord);
 
-            template.TargetingRule.GenerateArgs(targetCoord, mapData).Returns(buildModeAutoTargetedArgs);
+            template.TargetingRule.GenerateArgs(targetCoord).Returns(buildModeAutoTargetedArgs);
 
             targetList = new List<IBuildModeTargetable>
             {
@@ -58,7 +56,7 @@ namespace GrimoireTD.Tests.AutoTargetedComponentTests
         [Test]
         public void FindTargets_PassedValidInput_ReturnsRuleResultForTheArgsGeneratedFromThisInput()
         {
-            var result = subject.FindTargets(targetCoord, mapData);
+            var result = subject.FindTargets(targetCoord);
 
             Assert.AreEqual(result, targetList);
         }

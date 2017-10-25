@@ -94,7 +94,7 @@ namespace GrimoireTD.Tests.CreepTests
         public void OneTimeSetUp()
         {
             //Model and Frame Updater
-            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            DepsProv.TheModelObjectFrameUpdater = () =>
             {
                 return frameUpdater;
             };
@@ -108,14 +108,14 @@ namespace GrimoireTD.Tests.CreepTests
 
             gameModel.MapData.Returns(mapData);
 
-            GameModels.Models.Add(gameModel);
+            DepsProv.SetTheGameModel(gameModel);
 
             //Dependency Provider Deps
-            DependencyProvider.CreepAttributes = () => attributes;
+            DepsProv.CreepAttributes = () => attributes;
 
-            DependencyProvider.TemporaryEffectsManager = () => temporaryEffects;
+            DepsProv.TemporaryEffectsManager = () => temporaryEffects;
 
-            DependencyProvider.Resistances = (creep, baseResistance) => resistances;
+            DepsProv.Resistances = (creep, baseResistance) => resistances;
 
             //Template Deps
             creepTemplate.MaxHitpoints.Returns(maxHitpoints);
@@ -180,8 +180,7 @@ namespace GrimoireTD.Tests.CreepTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
-            typeof(GameModels).TypeInitializer.Invoke(null, null);
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         private CCreep ConstructSubject()

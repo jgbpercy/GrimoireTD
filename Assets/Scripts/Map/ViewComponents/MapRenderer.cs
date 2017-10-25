@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Map
 {
@@ -37,7 +38,7 @@ namespace GrimoireTD.Map
         {
             tileImages = (Texture2D)mapGraphicsRenderer.material.mainTexture;
 
-            mapData = GameModels.Models[0].MapData;
+            mapData = DepsProv.TheMapData;
 
             mapData.OnMapCreated += InitialiseMap;
 

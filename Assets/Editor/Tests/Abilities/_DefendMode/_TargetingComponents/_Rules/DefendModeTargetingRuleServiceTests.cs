@@ -5,28 +5,42 @@ using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Creeps;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Map;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
 {
     public class DefendModeTargetingRuleServiceTests
     {
+        //Model and Frame Updater
+        private IReadOnlyGameModel gameModel = Substitute.For<IReadOnlyGameModel>();
+
+        private IReadOnlyCreepManager creepManager = Substitute.For<ICreepManager>();
+
+        //Other Objects Passed To Methods
         private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            gameModel.CreepManager.Returns(creepManager);
+
+            DepsProv.SetTheGameModel(gameModel);
+
             attachedToDefendingEntity.CoordPosition.Returns(new Coord(0, 0));
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTeardown()
+        {
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         [Test]
         public void RunRule_PassedCreepClosestToFinishInRangeAndNoCreeps_ReturnsNull()
         {
-            var creepList = new List<ICreep>();
-
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
                 attachedToDefendingEntity,
-                3f,
-                creepList
+                3f
             );
 
             var result = DefendModeTargetingRuleService.RunRule(creepClosestToFinishInRangeArgs);
@@ -37,24 +51,27 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedCreepClosestToFinishInRangeAndNoCreepsInRange_ReturnsNull()
         {
-            var creepList = new List<ICreep>();
-
             var creepOne = Substitute.For<ICreep>();
             creepOne.Position.Returns(new Coord(10, 10).ToPositionVector());
-            creepList.Add(creepOne);
 
             var creepTwo = Substitute.For<ICreep>();
             creepTwo.Position.Returns(new Coord(12, 8).ToPositionVector());
-            creepList.Add(creepTwo);
 
             var creepThree = Substitute.For<ICreep>();
             creepThree.Position.Returns(new Coord(7, 14).ToPositionVector());
-            creepList.Add(creepThree);
+
+            var creepList = new List<ICreep>
+            {
+                creepOne,
+                creepTwo,
+                creepThree
+            };
+
+            creepManager.CreepList.Returns(creepList);
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
                 attachedToDefendingEntity,
-                3f,
-                creepList
+                3f
             );
 
             var result = DefendModeTargetingRuleService.RunRule(creepClosestToFinishInRangeArgs);
@@ -65,25 +82,29 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedCreepClosestToFinishInRangeAndFirstCreepIsInRange_ReturnsListWithOnlyThatCreep()
         {
-            var creepList = new List<ICreep>();
 
             var creepOne = Substitute.For<ICreep>();
             creepOne.Position.Returns(new Coord(5, 5).ToPositionVector());
-            creepList.Add(creepOne);
 
             var creepTwo = Substitute.For<ICreep>();
             creepTwo.Position.Returns(new Coord(3, 3).ToPositionVector());
-            creepList.Add(creepTwo);
 
             var creepThree = Substitute.For<ICreep>();
             creepThree.Position.Returns(new Coord(4, 4).ToPositionVector());
-            creepList.Add(creepThree);
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
                 attachedToDefendingEntity,
-                20f,
-                creepList
+                20f
             );
+
+            var creepList = new List<ICreep>
+            {
+                creepOne,
+                creepTwo,
+                creepThree
+            };
+
+            creepManager.CreepList.Returns(creepList);
 
             var result = DefendModeTargetingRuleService.RunRule(creepClosestToFinishInRangeArgs);
 
@@ -94,24 +115,27 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedCreepClosestToFinishInRangeAndAMidListCreepIsInRange_ReturnsListWithOnlyThatCreep()
         {
-            var creepList = new List<ICreep>();
-
             var creepOne = Substitute.For<ICreep>();
             creepOne.Position.Returns(new Coord(40, 40).ToPositionVector());
-            creepList.Add(creepOne);
 
             var creepTwo = Substitute.For<ICreep>();
             creepTwo.Position.Returns(new Coord(3, 3).ToPositionVector());
-            creepList.Add(creepTwo);
 
             var creepThree = Substitute.For<ICreep>();
             creepThree.Position.Returns(new Coord(4, 4).ToPositionVector());
-            creepList.Add(creepThree);
+
+            var creepList = new List<ICreep>
+            {
+                creepOne,
+                creepTwo,
+                creepThree
+            };
+
+            creepManager.CreepList.Returns(creepList);
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
                 attachedToDefendingEntity,
-                10f,
-                creepList
+                10f
             );
 
             var result = DefendModeTargetingRuleService.RunRule(creepClosestToFinishInRangeArgs);
@@ -123,24 +147,27 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
         [Test]
         public void RunRule_PassedCreepClosestToFinishInRangeAndOnlyTheLastCreepIsInRange_ReturnsListWithOnlyThatCreep()
         {
-            var creepList = new List<ICreep>();
-
             var creepOne = Substitute.For<ICreep>();
             creepOne.Position.Returns(new Coord(40, 40).ToPositionVector());
-            creepList.Add(creepOne);
 
             var creepTwo = Substitute.For<ICreep>();
             creepTwo.Position.Returns(new Coord(50, 50).ToPositionVector());
-            creepList.Add(creepTwo);
 
             var creepThree = Substitute.For<ICreep>();
             creepThree.Position.Returns(new Coord(4, 4).ToPositionVector());
-            creepList.Add(creepThree);
+
+            var creepList = new List<ICreep>
+            {
+                creepOne,
+                creepTwo,
+                creepThree
+            };
+
+            creepManager.CreepList.Returns(creepList);
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
                 attachedToDefendingEntity,
-                10f,
-                creepList
+                10f
             );
 
             var result = DefendModeTargetingRuleService.RunRule(creepClosestToFinishInRangeArgs);

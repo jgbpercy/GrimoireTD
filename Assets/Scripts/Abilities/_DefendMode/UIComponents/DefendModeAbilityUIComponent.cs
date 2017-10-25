@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GrimoireTD.Dependencies;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -38,7 +39,7 @@ namespace GrimoireTD.Abilities.DefendMode
 
         private void Update()
         {
-            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }

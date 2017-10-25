@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GrimoireTD.Dependencies;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace GrimoireTD.Technical
@@ -10,8 +11,8 @@ namespace GrimoireTD.Technical
 
         private void Start()
         {
-            GameModels.Models[0].GameStateManager.OnEnterBuildMode += (object sender, EAOnEnterBuildMode args) => modeText.text = "Mode: Build";
-            GameModels.Models[0].GameStateManager.OnEnterDefendMode += (object sender, EAOnEnterDefendMode args) => modeText.text = "Mode: Defend";
+            DepsProv.TheGameStateManager.OnEnterBuildMode += (object sender, EAOnEnterBuildMode args) => modeText.text = "Mode: Build";
+            DepsProv.TheGameStateManager.OnEnterDefendMode += (object sender, EAOnEnterDefendMode args) => modeText.text = "Mode: Defend";
         }
     }
 }

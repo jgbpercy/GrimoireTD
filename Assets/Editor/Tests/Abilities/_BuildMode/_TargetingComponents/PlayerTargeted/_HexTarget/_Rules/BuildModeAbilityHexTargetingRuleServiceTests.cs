@@ -6,31 +6,51 @@ using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.Map;
 using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
 {
     public class BuildModeAbilityHexTargetingRuleServiceTests
     {
+        //Primitives and Basic Objects
         private Coord unitPosition = new Coord(0, 0);
 
+        //Model and Frame Updater
+        private IMapData mapData = Substitute.For<IMapData>();
+
+        private IReadOnlyGameModel gameModel = Substitute.For<IReadOnlyGameModel>();
+
+        //Other Objects Passed To Methods
         private IUnit unit = Substitute.For<IUnit>();
 
         private IStructure structure = Substitute.For<IStructure>();
 
-        private IMapData mapData = Substitute.For<IMapData>();
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            //Model and Frame Updater
+            gameModel.MapData.Returns(mapData);
+
+            DepsProv.SetTheGameModel(gameModel);
+
+            //Other Objects Passed To Methods
             unit.CoordPosition.Returns(unitPosition);
         }
 
         [SetUp]
         public void EachTestSetUp()
         {
+            //Model and Frame Updater
             mapData.CanMoveUnitTo(Arg.Any<Coord>(), Arg.Any<List<Coord>>()).Returns(true);
 
+            //Other Objects Passed To Methods
             unit.CachedDisallowedMovementDestinations.Returns(new List<Coord>());
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         [Test]
@@ -39,7 +59,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
             var result = PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                 unit,
                 new Coord(3, 3),
-                mapData,
                 1
             ));
 
@@ -54,7 +73,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
             var result = PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                 unit,
                 new Coord(0,1),
-                mapData,
                 4
             ));
 
@@ -67,7 +85,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
             var result = PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                 unit,
                 new Coord(0, 1),
-                mapData,
                 4
             ));
 
@@ -81,7 +98,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
                 PlayerTargetsHexRuleService.RunRule(new ValidMoveArgs(
                     structure,
                     new Coord(0, 1),
-                    mapData,
                     4
                 ))
             );
@@ -93,7 +109,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
             var result = PlayerTargetsHexRuleService.RunRule(new HexIsInRangeArgs(
                 unit,
                 new Coord(0, 1),
-                mapData,
                 4
             ));
 
@@ -106,7 +121,6 @@ namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests
             var result = PlayerTargetsHexRuleService.RunRule(new HexIsInRangeArgs(
                 unit,
                 new Coord(3, 3),
-                mapData,
                 1
             ));
 

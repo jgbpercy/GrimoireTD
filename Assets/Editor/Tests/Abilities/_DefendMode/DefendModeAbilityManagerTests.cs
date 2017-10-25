@@ -33,14 +33,14 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         public void OneTimeSetUp()
         {
             //Model and Frame Updater
-            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            DepsProv.TheModelObjectFrameUpdater = () =>
             {
                 return frameUpdater;
             };
 
             gameModel.GameStateManager.Returns(gameStateManager);
 
-            GameModels.Models.Add(gameModel);
+            DepsProv.SetTheGameModel(gameModel);
         }
 
         [SetUp]
@@ -75,8 +75,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(GameModels).TypeInitializer.Invoke(null, null);
-            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         private CDefendModeAbilityManager ConstructSubject()

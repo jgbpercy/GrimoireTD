@@ -7,8 +7,7 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         PlayerTargetsDefendingEntityArgs GenerateArgs(
             IDefendingEntity sourceEntity, 
-            IDefendingEntity targetEntity, 
-            IReadOnlyMapData mapData
+            IDefendingEntity targetEntity
         );
     }
 }

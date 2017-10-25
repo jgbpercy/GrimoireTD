@@ -9,8 +9,7 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         public virtual PlayerTargetsDefendingEntityArgs GenerateArgs(
             IDefendingEntity sourceEntity,
-            IDefendingEntity targetEntity,
-            IReadOnlyMapData mapData
+            IDefendingEntity targetEntity
         )
         {
             throw new Exception("SoBuildModeAbilityDefendingEntityTargetedArgsTemplate is pseudo abstract. Use inheriting classes to generate args.");

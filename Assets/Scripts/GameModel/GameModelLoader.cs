@@ -7,6 +7,7 @@ using GrimoireTD.Map;
 using GrimoireTD.Levels;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Technical
 {
@@ -38,7 +39,7 @@ namespace GrimoireTD.Technical
             }
         }
 
-        public IGameModel GameModel { get; private set; }
+        private IGameModel gameModel;
 
         [SerializeField]
         private SoLevel level;
@@ -63,9 +64,19 @@ namespace GrimoireTD.Technical
         [SerializeField]
         private float unitFatigueFactorShallownessMultiplier;
 
+        public IReadOnlyGameModel GameModel
+        {
+            get
+            {
+                return gameModel;
+            }
+        }
+
         private void Awake()
         {
-            GameModel = new CGameModel();
+            gameModel = new CGameModel();
+
+            DepsProv.SetTheGameModel(gameModel);
         }
 
         private void Start()
@@ -87,7 +98,7 @@ namespace GrimoireTD.Technical
                 hexTypeList.Add(colorToType.hexType);
             }
 
-            GameModel.SetUp
+            gameModel.SetUp
             (
                 level,
                 resourceTemplates,

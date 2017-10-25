@@ -6,18 +6,82 @@ using GrimoireTD.Attributes;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Creeps;
 using GrimoireTD.Technical;
+using GrimoireTD.Map;
+using GrimoireTD.Economy;
+using GrimoireTD.Abilities.DefendMode.AttackEffects;
+
+// *** It should go without saying that changing any of this stuff outside of tests is inadvisable ***
 
 namespace GrimoireTD.Dependencies
 {
-    public static class DependencyProvider
+    public static class DepsProv
     {
-        //Model Object Frame Updater
+        //***Game Model***
+
+        private static IReadOnlyGameModel theGameModel;
+
+        public static void SetTheGameModel(IReadOnlyGameModel gameModel)
+        {
+            theGameModel = gameModel;
+        }
+
+        public static IReadOnlyGameModel TheGameModel
+        {
+            get
+            {
+                return theGameModel;
+            }
+        }
+
+        public static IReadOnlyGameStateManager TheGameStateManager
+        {
+            get
+            {
+                return theGameModel.GameStateManager;
+            }
+        }
+
+        public static IReadOnlyMapData TheMapData
+        {
+            get
+            {
+                return theGameModel.MapData;
+            }
+        }
+
+        public static IReadOnlyCreepManager TheCreepManager
+        {
+            get
+            {
+                return theGameModel.CreepManager;
+            }
+        }
+
+        public static IReadOnlyEconomyManager TheEconomyManager
+        {
+            get
+            {
+                return theGameModel.EconomyManager;
+            }
+        }
+
+        public static IReadOnlyAttackEffectTypeManager TheAttackEffectTypeManager 
+        {
+            get
+            {
+                return theGameModel.AttackEffectTypeManager;
+            }
+        }
+
+        //***Model Object Frame Updater***
+
         public static Func<IModelObjectFrameUpdater> TheModelObjectFrameUpdater = () =>
         {
             return ModelObjectFrameUpdater.Instance;
         };
 
-        //Instance Dependencies
+        //***Instance Dependencies***
+
         public static Func<IAbilities, IDefendingEntity, IDefendModeAbilityManager> DefendModeAbilityManager = 
             (abilities, defendingEntity) =>
         {

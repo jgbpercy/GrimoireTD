@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GrimoireTD.Dependencies;
+using System;
 using UnityEngine;
 
 namespace GrimoireTD.Economy
@@ -16,7 +17,7 @@ namespace GrimoireTD.Economy
         {
             get
             {
-                return GameModels.Models[0].EconomyManager.GetResourceFromTemplate(resource);
+                return DepsProv.TheEconomyManager.GetResourceFromTemplate(resource);
             }
         }
 

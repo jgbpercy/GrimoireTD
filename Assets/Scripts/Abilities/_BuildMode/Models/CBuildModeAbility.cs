@@ -29,9 +29,9 @@ namespace GrimoireTD.Abilities.BuildMode
             }
         }
 
-        public void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition, IReadOnlyMapData mapData)
+        public void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition)
         {
-            IReadOnlyList<IBuildModeTargetable> targetList = TargetingComponent.FindTargets(executionPosition, mapData);
+            IReadOnlyList<IBuildModeTargetable> targetList = TargetingComponent.FindTargets(executionPosition);
 
             foreach(var effectComponent in effectComponents)
             {

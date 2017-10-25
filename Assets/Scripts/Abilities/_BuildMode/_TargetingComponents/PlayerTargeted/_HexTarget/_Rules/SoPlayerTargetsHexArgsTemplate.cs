@@ -9,8 +9,7 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         public virtual PlayerTargetsHexArgs GenerateArgs(
             IDefendingEntity sourceEntity, 
-            Coord targetCoord, 
-            IReadOnlyMapData mapData
+            Coord targetCoord
         )
         {
             throw new Exception("SoBuildModeAbilityHexTargetedArgsTemplate is pseudo abstract. Use inheriting classes to generate args.");

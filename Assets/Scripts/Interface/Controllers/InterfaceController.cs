@@ -8,6 +8,7 @@ using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.Units;
 using GrimoireTD.Map;
 using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.UI
 {
@@ -94,10 +95,10 @@ namespace GrimoireTD.UI
             Time.timeScale = tempDebugTimeScale;
 
             //map
-            mapData = GameModels.Models[0].MapData;
+            mapData = DepsProv.TheMapData;
 
             //gamestate
-            gameStateManager = GameModels.Models[0].GameStateManager;
+            gameStateManager = DepsProv.TheGameStateManager;
 
             //camera
             mainCamera = Camera.main;
@@ -198,10 +199,10 @@ namespace GrimoireTD.UI
 
             if (
                 CurrentCursorMode == InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY &&
-                SelectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, MouseOverCoord, mapData)
+                SelectedBuildModeAbilityTargetingComponent.IsValidTarget(SelectedUnitInstance, MouseOverCoord)
             )
             {
-                selectedBuildModeAbility.ExecuteAbility(SelectedUnitInstance, MouseOverCoord, mapData);
+                selectedBuildModeAbility.ExecuteAbility(SelectedUnitInstance, MouseOverCoord);
 
                 SetCursorModeSelect();
 
@@ -300,7 +301,7 @@ namespace GrimoireTD.UI
             }
             else
             {
-                abilityToActivate.ExecuteAbility(SelectedUnitInstance, SelectedUnitInstance.CoordPosition, mapData);
+                abilityToActivate.ExecuteAbility(SelectedUnitInstance, SelectedUnitInstance.CoordPosition);
 
                 SetCursorModeSelect();
             }

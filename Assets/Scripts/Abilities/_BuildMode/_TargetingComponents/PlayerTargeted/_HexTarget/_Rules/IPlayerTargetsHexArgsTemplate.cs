@@ -7,8 +7,7 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         PlayerTargetsHexArgs GenerateArgs(
             IDefendingEntity sourceEntity,
-            Coord targetCoord,
-            IReadOnlyMapData mapData
+            Coord targetCoord
         );
     }
 }

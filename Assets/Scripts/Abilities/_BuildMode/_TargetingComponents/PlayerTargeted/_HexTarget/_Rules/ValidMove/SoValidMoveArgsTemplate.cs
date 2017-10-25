@@ -10,9 +10,9 @@ namespace GrimoireTD.Abilities.BuildMode
         [SerializeField]
         private int range;
 
-        public override PlayerTargetsHexArgs GenerateArgs(IDefendingEntity sourceEntity, Coord targetCoord, IReadOnlyMapData mapData)
+        public override PlayerTargetsHexArgs GenerateArgs(IDefendingEntity sourceEntity, Coord targetCoord)
         {
-            return new ValidMoveArgs(sourceEntity, targetCoord, mapData, range);
+            return new ValidMoveArgs(sourceEntity, targetCoord, range);
         }
     }
 }

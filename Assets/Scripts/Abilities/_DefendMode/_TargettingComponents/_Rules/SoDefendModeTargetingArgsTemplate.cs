@@ -9,8 +9,7 @@ namespace GrimoireTD.Abilities.DefendMode
     public class SoDefendModeTargetingArgsTemplate : ScriptableObject, IDefendModeTargetingArgsTemplate
     {
         public virtual DefendModeTargetingArgs GenerateArgs(
-            IDefendingEntity attachedToDefendingEntity,
-            IReadOnlyList<ICreep> creepList
+            IDefendingEntity attachedToDefendingEntity
         )
         {
             throw new Exception("SoDefendModeTargetingArgsTemplate is pseudo abstract. Use inheriting classes to generate args.");

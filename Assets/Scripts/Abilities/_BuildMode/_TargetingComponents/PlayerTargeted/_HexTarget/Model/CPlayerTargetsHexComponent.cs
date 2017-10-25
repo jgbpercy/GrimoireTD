@@ -16,8 +16,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
         public bool IsValidTarget(
             IDefendingEntity sourceDefendingEntity, 
-            IBuildModeTargetable potentialTarget, 
-            IReadOnlyMapData mapData
+            IBuildModeTargetable potentialTarget        
         )
         {
             Coord potentialTargetCoord = potentialTarget as Coord;
@@ -30,16 +29,15 @@ namespace GrimoireTD.Abilities.BuildMode
             return PlayerTargetsHexRuleService.RunRule(
                 PlayerTargetsHexComponentTemplate.TargetingRule.GenerateArgs(
                     sourceDefendingEntity, 
-                    potentialTargetCoord, 
-                    mapData
+                    potentialTargetCoord
                 )
             );
         }
 
-        public IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position, IReadOnlyMapData mapData)
+        public IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
         {
             return BuildModeAutoTargetedRuleService.RunRule(
-                PlayerTargetsHexComponentTemplate.AoeRule.GenerateArgs(position, mapData)
+                PlayerTargetsHexComponentTemplate.AoeRule.GenerateArgs(position)
             );
         }
     }

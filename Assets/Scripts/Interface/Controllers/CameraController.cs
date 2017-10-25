@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
 using GrimoireTD.Map;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.UI
 {
@@ -66,7 +67,7 @@ namespace GrimoireTD.UI
             cameraRotator = cameraTilter.parent.transform;
             cameraRigTargetPosition = cameraRotator.position;
 
-            GameModels.Models[0].OnGameModelSetUp += OnGameModelSetUp;
+            DepsProv.TheGameModel.OnGameModelSetUp += OnGameModelSetUp;
         }
 
         private void OnGameModelSetUp(object sender, EAOnGameModelSetUp args)

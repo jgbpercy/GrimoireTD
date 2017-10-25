@@ -6,6 +6,7 @@ using GrimoireTD.Creeps;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.ResistancesTests
 {
@@ -88,7 +89,7 @@ namespace GrimoireTD.Tests.ResistancesTests
 
             gameModel.AttackEffectTypeManager.Returns(attackEffectTypeManager);
 
-            GameModels.Models.Add(gameModel);
+            DepsProv.SetTheGameModel(gameModel);
 
             var specificInternetDamageTypes = new List<ISpecificDamageEffectType>
             {
@@ -168,7 +169,7 @@ namespace GrimoireTD.Tests.ResistancesTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(GameModels).TypeInitializer.Invoke(null, null);
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         private CResistances ConstructSubject()

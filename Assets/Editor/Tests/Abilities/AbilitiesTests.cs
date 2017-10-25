@@ -24,7 +24,7 @@ namespace GrimoireTD.Tests.AbilitiesTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            DependencyProvider.DefendModeAbilityManager = (abilities, defendingEntity) =>
+            DepsProv.DefendModeAbilityManager = (abilities, defendingEntity) =>
             {
                 return defendModeAbilityManager;
             };
@@ -39,7 +39,7 @@ namespace GrimoireTD.Tests.AbilitiesTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         private CAbilities ConstructSubject()

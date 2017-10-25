@@ -48,7 +48,7 @@ namespace GrimoireTD.Tests.ProjectileTests
             startPosition = new Vector3(startX, startY, startZ);
 
             //Model and Frame Updater
-            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            DepsProv.TheModelObjectFrameUpdater = () =>
             {
                 return frameUpdater;
             };
@@ -78,7 +78,7 @@ namespace GrimoireTD.Tests.ProjectileTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         private CProjectile ConstructSubject()

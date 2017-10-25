@@ -1,6 +1,7 @@
 ﻿using System;
 using GrimoireTD.UI;
 using GrimoireTD.Creeps;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD
 {
@@ -47,7 +48,7 @@ namespace GrimoireTD
 
         public void SetUp()
         {
-            GameModels.Models[0].CreepManager.OnWaveOver += (object sender, EAOnWaveOver args) => CurrentGameMode = GameMode.BUILD;
+            DepsProv.TheCreepManager.OnWaveOver += (object sender, EAOnWaveOver args) => CurrentGameMode = GameMode.BUILD;
         }
 
         private void SetGameModeDefend()

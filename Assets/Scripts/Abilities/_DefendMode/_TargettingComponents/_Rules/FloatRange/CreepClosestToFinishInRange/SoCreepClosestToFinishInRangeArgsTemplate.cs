@@ -9,13 +9,12 @@ namespace GrimoireTD.Abilities.DefendMode
     public class SoCreepClosestToFinishInRangeArgsTemplate : SoFloatRangeArgsTemplate
     {
         public override DefendModeTargetingArgs GenerateArgs(
-            IDefendingEntity attachedToDefendingEntity, 
-            IReadOnlyList<ICreep> creepList
+            IDefendingEntity attachedToDefendingEntity
         )
         {
             var range = GetActualRange(attachedToDefendingEntity);
 
-            return new CreepClosestToFinishInRangeArgs(attachedToDefendingEntity, range, creepList);
+            return new CreepClosestToFinishInRangeArgs(attachedToDefendingEntity, range);
         }
     }
 }

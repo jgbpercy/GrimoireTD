@@ -41,7 +41,7 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         public void OneTimeSetUp()
         {
             //Model and Frame Updater
-            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            DepsProv.TheModelObjectFrameUpdater = () =>
             {
                 return frameUpdater;
             };
@@ -71,7 +71,7 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         public CAoeProjectile ConstructSubject()

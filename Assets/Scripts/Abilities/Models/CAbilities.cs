@@ -43,7 +43,7 @@ namespace GrimoireTD.Abilities
         {
             abilityList = new SortedList<int, IAbility>();
 
-            defendModeAbilityManager = DependencyProvider.DefendModeAbilityManager(this, attachedToDefendingEntity);
+            defendModeAbilityManager = DepsProv.DefendModeAbilityManager(this, attachedToDefendingEntity);
         }
 
         public void AddAbility(IAbility ability)

@@ -4,13 +4,6 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public class SingleHexArgs : BuildModeAutoTargetedArgs
     {
-        public SingleHexArgs(
-            Coord targetCoord,
-            IReadOnlyMapData mapData
-        ) : base(
-            targetCoord, 
-            mapData
-        )
-        { }
+        public SingleHexArgs(Coord targetCoord) : base(targetCoord) { }
     }
 }

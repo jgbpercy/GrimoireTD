@@ -33,7 +33,7 @@ namespace GrimoireTD.TemporaryEffects
             EffectName = effectName;
             OnTemporaryEffectEnd = onEndEvent;
 
-            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
+            DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         private void ModelObjectFrameUpdate(float deltaTime)

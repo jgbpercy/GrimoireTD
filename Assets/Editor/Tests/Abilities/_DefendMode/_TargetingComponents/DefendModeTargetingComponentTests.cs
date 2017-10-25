@@ -11,8 +11,6 @@ namespace GrimoireTD.Tests.DefendModeTargetingComponentTests
     {
         private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
 
-        private List<ICreep> creepList = new List<ICreep>();
-
         private IDefendModeTargetable target = Substitute.For<IDefendModeTargetable>();
 
         private IDefendModeTargetingComponentTemplate template = Substitute.For<IDefendModeTargetingComponentTemplate>();
@@ -34,7 +32,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingComponentTests
             defendModeTargetingArgs = new DefendModeTargetingArgs(attachedToDefendingEntity);
 
             template.TargetingRule
-                .GenerateArgs(attachedToDefendingEntity, creepList)
+                .GenerateArgs(attachedToDefendingEntity)
                 .Returns(defendModeTargetingArgs);
 
             DefendModeTargetingRuleService.RunRule = (args) =>
@@ -61,7 +59,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingComponentTests
         [Test]
         public void FindTargets_PassedValidInput_ReturnsRuleResultForTheArgsGeneratedFromThisInput()
         {
-            var result = subject.FindTargets(attachedToDefendingEntity, creepList);
+            var result = subject.FindTargets(attachedToDefendingEntity);
 
             Assert.AreEqual(result, targetList);
         }

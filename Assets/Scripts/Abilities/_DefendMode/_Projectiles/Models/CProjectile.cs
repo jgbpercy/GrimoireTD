@@ -53,7 +53,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
             ProjectileTemplate = template;
 
-            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
+            DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         protected virtual void ModelObjectFrameUpdate(float deltaTime)
@@ -111,7 +111,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         //TODO get rid of this
         public void GameObjectDestroyed()
         {
-            DependencyProvider.TheModelObjectFrameUpdater().Deregister(ModelObjectFrameUpdate);
+            DepsProv.TheModelObjectFrameUpdater().Deregister(ModelObjectFrameUpdate);
 
             if (target != null)
             {

@@ -157,16 +157,18 @@ namespace GrimoireTD.DefendingEntities.Units
 
             cachedDisallowedMovementDestinations = new List<Coord>();
 
-            if (GameModels.Models[0].IsSetUp)
+            var gameModel = DepsProv.TheGameModel;
+
+            if (gameModel.IsSetUp)
             {
-                SetUpFatigueVars(GameModels.Models[0].UnitFatigueFactorInfelctionPoint, GameModels.Models[0].UnitFatigueFactorShallownessMultiplier);
+                SetUpFatigueVars(gameModel.UnitFatigueFactorInfelctionPoint, gameModel.UnitFatigueFactorShallownessMultiplier);
             }
             else
             {
-                GameModels.Models[0].OnGameModelSetUp += OnGameModelSetUp;
+                gameModel.OnGameModelSetUp += OnGameModelSetUp;
             }
 
-            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
+            DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         //Set Up
@@ -227,7 +229,7 @@ namespace GrimoireTD.DefendingEntities.Units
         //Update loop
         private void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }
@@ -455,7 +457,7 @@ namespace GrimoireTD.DefendingEntities.Units
 
         public void RegenerateCachedDisallowedMovementDestinations()
         {
-            cachedDisallowedMovementDestinations = GameModels.Models[0].MapData.GetDisallowedCoordsAfterUnitMove(CoordPosition);
+            cachedDisallowedMovementDestinations = DepsProv.TheMapData.GetDisallowedCoordsAfterUnitMove(CoordPosition);
         }
     }
 }

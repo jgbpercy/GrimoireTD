@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GrimoireTD.Dependencies;
+using System.Collections.Generic;
 
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
@@ -8,7 +9,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         {
             get
             {
-                return GameModels.Models[0].AttackEffectTypeManager.GetSpecificDamageTypes(this);
+                return DepsProv.TheAttackEffectTypeManager.GetSpecificDamageTypes(this);
             }
         }
     }

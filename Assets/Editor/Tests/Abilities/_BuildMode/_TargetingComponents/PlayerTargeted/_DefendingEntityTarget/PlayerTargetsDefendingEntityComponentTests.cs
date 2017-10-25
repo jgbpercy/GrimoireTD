@@ -40,7 +40,7 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
             );
 
             template.TargetingRule
-                .GenerateArgs(sourceDefendingEntity, targetDefendingEntity, mapData)
+                .GenerateArgs(sourceDefendingEntity, targetDefendingEntity)
                 .Returns(playerTargetsDefendingEntityArgs);
 
             PlayerTargetsDefendingEntityRuleService.RunRule = (args) =>
@@ -55,13 +55,10 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
                 }
             };
 
-            buildModeAutoTargetedArgs = new BuildModeAutoTargetedArgs(
-                targetCoord,
-                mapData
-            );
+            buildModeAutoTargetedArgs = new BuildModeAutoTargetedArgs(targetCoord);
 
             template.AoeRule
-                .GenerateArgs(targetCoord, mapData)
+                .GenerateArgs(targetCoord)
                 .Returns(buildModeAutoTargetedArgs);
 
             targetList = new List<IBuildModeTargetable>
@@ -97,8 +94,7 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
             Assert.Throws(typeof(ArgumentException), () =>
                 subject.IsValidTarget(
                     sourceDefendingEntity,
-                    targetCoord,
-                    mapData
+                    targetCoord
                 )
             );
         }
@@ -108,8 +104,7 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
         {
             var result = subject.IsValidTarget(
                 sourceDefendingEntity,
-                targetDefendingEntity,
-                mapData
+                targetDefendingEntity
             );
 
             Assert.True(result);
@@ -119,8 +114,7 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
         public void FindTargets_PassedValidInput_ReturnsRuleResultForTheArgsGeneratedFromThisInput()
         {
             var result = subject.FindTargets(
-                targetCoord,
-                mapData
+                targetCoord
             );
 
             Assert.AreEqual(result, targetList);

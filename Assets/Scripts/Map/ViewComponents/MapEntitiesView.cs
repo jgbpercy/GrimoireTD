@@ -6,6 +6,7 @@ using GrimoireTD.Creeps;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 using GrimoireTD.DefendingEntities;
 using System.Collections.Generic;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Map
 {
@@ -89,8 +90,8 @@ namespace GrimoireTD.Map
 
         private void Start()
         {
-            mapData = GameModels.Models[0].MapData;
-            creepManager = GameModels.Models[0].CreepManager;
+            mapData = DepsProv.TheMapData;
+            creepManager = DepsProv.TheCreepManager;
 
             mapData.OnStructureCreated += OnStructureCreated;
             mapData.OnUnitCreated += OnUnitCreated;

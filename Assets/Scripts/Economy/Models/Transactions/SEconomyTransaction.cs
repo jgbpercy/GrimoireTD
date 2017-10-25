@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GrimoireTD.Dependencies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace GrimoireTD.Economy
                 {
                     _transactionsDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-                    foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                    foreach (var resource in DepsProv.TheEconomyManager.Resources)
                     {
                         int amount = 0;
 

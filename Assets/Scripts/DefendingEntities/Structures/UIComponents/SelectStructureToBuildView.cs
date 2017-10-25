@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.DefendingEntities.Structures
 {
@@ -12,7 +13,7 @@ namespace GrimoireTD.DefendingEntities.Structures
 
         private void Start()
         {
-            GameModels.Models[0].OnGameModelSetUp += SetUpStructurePanel;
+            DepsProv.TheGameModel.OnGameModelSetUp += SetUpStructurePanel;
         }
 
         private void SetUpStructurePanel(object sender, EAOnGameModelSetUp args)

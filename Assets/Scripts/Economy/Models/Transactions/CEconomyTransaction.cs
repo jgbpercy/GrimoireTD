@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Economy
 {
@@ -8,13 +9,11 @@ namespace GrimoireTD.Economy
     {
         private IDictionary<IReadOnlyResource, IResourceTransaction> transactionsDictionary;
 
-        private IReadOnlyEconomyManager economyManager = GameModels.Models[0].EconomyManager;
-
         public CEconomyTransaction()
         {
             transactionsDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (IResource resource in economyManager.Resources)
+            foreach (IResource resource in DepsProv.TheEconomyManager.Resources)
             {
                 transactionsDictionary.Add(resource, new CResourceTransaction(resource, 0));
             }
@@ -24,7 +23,7 @@ namespace GrimoireTD.Economy
         {
             transactionsDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (IResource resource in economyManager.Resources)
+            foreach (IResource resource in DepsProv.TheEconomyManager.Resources)
             {
                 int amount = 0;
 
@@ -44,7 +43,7 @@ namespace GrimoireTD.Economy
         {
             this.transactionsDictionary = transactionsDictionary;
 
-            foreach (IResource resource in economyManager.Resources)
+            foreach (IResource resource in DepsProv.TheEconomyManager.Resources)
             {
                 if (!transactionsDictionary.ContainsKey(resource))
                 {
@@ -127,6 +126,8 @@ namespace GrimoireTD.Economy
         {
             IEconomyTransaction displayTransaction;
 
+            var resources = DepsProv.TheEconomyManager.Resources;
+
             if (absolute)
             {
                 displayTransaction = Abs(economyTransaction);
@@ -140,7 +141,7 @@ namespace GrimoireTD.Economy
 
             if (format == EconomyTransactionStringFormat.FullNameSingleLine)
             {
-                foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                foreach (var resource in resources)
                 {
                     transactionAsString += resource.NameInGame + ": " + displayTransaction.GetTransactionAmount(resource) + ", ";
                 }
@@ -148,7 +149,7 @@ namespace GrimoireTD.Economy
             }
             else if (format == EconomyTransactionStringFormat.FullNameLineBreaks)
             {
-                foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                foreach (var resource in resources)
                 {
                     transactionAsString += resource.NameInGame + ": " + displayTransaction.GetTransactionAmount(resource) + "\n";
                 }
@@ -156,7 +157,7 @@ namespace GrimoireTD.Economy
             }
             else if (format == EconomyTransactionStringFormat.ShortNameSingleLine)
             {
-                foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                foreach (var resource in resources)
                 {
                     transactionAsString += resource.ShortName + ": " + displayTransaction.GetTransactionAmount(resource) + ", ";
                 }
@@ -164,7 +165,7 @@ namespace GrimoireTD.Economy
             }
             else if (format == EconomyTransactionStringFormat.ShortNameLineBreaks)
             {
-                foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                foreach (var resource in resources)
                 {
                     transactionAsString += resource.ShortName + ": " + displayTransaction.GetTransactionAmount(resource) + "\n";
                 }
@@ -180,7 +181,7 @@ namespace GrimoireTD.Economy
         {
             var absDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+            foreach (var resource in DepsProv.TheEconomyManager.Resources)
             {
                 absDictionary.Add(resource, new CResourceTransaction(resource, Mathf.Abs(economyTransaction.GetTransactionAmount(resource))));
             }
@@ -192,7 +193,7 @@ namespace GrimoireTD.Economy
         {
             var addDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+            foreach (var resource in DepsProv.TheEconomyManager.Resources)
             {
                 addDictionary.Add(resource, new CResourceTransaction(resource, firstTransaction.GetTransactionAmount(resource) + secondTransaction.GetTransactionAmount(resource)));
             }
@@ -204,7 +205,7 @@ namespace GrimoireTD.Economy
         {
             var subtractDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+            foreach (var resource in DepsProv.TheEconomyManager.Resources)
             {
                 subtractDictionary.Add(resource, new CResourceTransaction(resource, firstTransaction.GetTransactionAmount(resource) - secondTransaction.GetTransactionAmount(resource)));
             }
@@ -216,7 +217,7 @@ namespace GrimoireTD.Economy
         {
             var multiplyDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+            foreach (var resource in DepsProv.TheEconomyManager.Resources)
             {
                 multiplyDictionary.Add(resource, new CResourceTransaction(resource, transaction.GetTransactionAmount(resource) * factor));
             }
@@ -228,9 +229,11 @@ namespace GrimoireTD.Economy
         {
             var multiplyDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
+            var economyManager = DepsProv.TheEconomyManager;
+
             if (roundingMode == RoundingMode.NEAREST)
             {
-                foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                foreach (var resource in economyManager.Resources)
                 {
                     multiplyDictionary.Add(resource, new CResourceTransaction(resource, Mathf.RoundToInt(transaction.GetTransactionAmount(resource) * factor)));
                 }
@@ -239,7 +242,7 @@ namespace GrimoireTD.Economy
             }
             else if (roundingMode == RoundingMode.UP)
             {
-                foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                foreach (var resource in economyManager.Resources)
                 {
                     multiplyDictionary.Add(resource, new CResourceTransaction(resource, Mathf.CeilToInt(transaction.GetTransactionAmount(resource) * factor)));
                 }
@@ -248,7 +251,7 @@ namespace GrimoireTD.Economy
             }
             else if (roundingMode == RoundingMode.DOWN)
             {
-                foreach (var resource in GameModels.Models[0].EconomyManager.Resources)
+                foreach (var resource in economyManager.Resources)
                 {
                     multiplyDictionary.Add(resource, new CResourceTransaction(resource, Mathf.FloorToInt(transaction.GetTransactionAmount(resource) * factor)));
                 }

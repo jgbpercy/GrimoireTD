@@ -7,17 +7,12 @@ namespace GrimoireTD.Tests.BuildModeAutoTargetedRuleServiceTests
 {
     public class BuildModeAutoTargetedRuleServiceTests
     {
-        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
-
         [Test]
         public void RunRule_PassedSingleHexAndOneTargetCoord_ReturnsListWithOneCoord()
         {
             var targetCoord = new Coord(3, 4);
 
-            var result = BuildModeAutoTargetedRuleService.RunRule(new SingleHexArgs(
-                targetCoord,
-                mapData
-            ));
+            var result = BuildModeAutoTargetedRuleService.RunRule(new SingleHexArgs(targetCoord));
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(targetCoord, result[0]);
@@ -27,10 +22,7 @@ namespace GrimoireTD.Tests.BuildModeAutoTargetedRuleServiceTests
         [Test]
         public void RunRule_PassedSingleHexAndNullTarget_ReturnsNull()
         {
-            var result = BuildModeAutoTargetedRuleService.RunRule(new SingleHexArgs(
-                null,
-                mapData
-            ));
+            var result = BuildModeAutoTargetedRuleService.RunRule(new SingleHexArgs(null));
             
             Assert.AreEqual(null, result);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -24,15 +25,19 @@ namespace GrimoireTD.Abilities.DefendMode
             float creepDistanceFromPosition;
             IDefendModeTargetable target = null;
 
-            for (int i = 0; i < args.CreepList.Count; i++)
+            var creepManager = DepsProv.TheCreepManager;
+
+            var creepList = creepManager.CreepList;
+
+            for (int i = 0; i < creepList.Count; i++)
             {
                 creepDistanceFromPosition = Vector3.Magnitude(
-                    args.CreepList[i].Position - args.AttachedToDefendingEntity.CoordPosition.ToPositionVector()
+                    creepList[i].Position - args.AttachedToDefendingEntity.CoordPosition.ToPositionVector()
                 );
 
                 if (creepDistanceFromPosition < args.Range)
                 {
-                    target = args.CreepList[i];
+                    target = creepList[i];
                     break;
                 }
             }

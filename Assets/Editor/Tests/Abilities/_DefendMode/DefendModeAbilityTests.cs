@@ -48,9 +48,9 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             gameModel.CreepManager.Returns(creepManager);
 
-            GameModels.Models.Add(gameModel);
+            DepsProv.SetTheGameModel(gameModel);
 
-            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            DepsProv.TheModelObjectFrameUpdater = () =>
             {
                 return frameUpdater;
             };
@@ -86,8 +86,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(GameModels).TypeInitializer.Invoke(null, null);
-            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
+            typeof(DepsProv).TypeInitializer.Invoke(null, null);
         }
 
         private CDefendModeAbility ConstructSubject()
@@ -314,7 +313,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_IfFindTargetReturnsNull_ReturnsFalse()
         {
             IReadOnlyList<IDefendModeTargetable> returnVal = null;
-            targetingComponent.FindTargets(attachedToDefendingEntity, Arg.Any<IReadOnlyList<ICreep>>()).Returns(returnVal);
+            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(returnVal);
 
             var subject = ConstructSubject();
 
@@ -327,7 +326,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_IfFindTargetReturnsNull_DoesNotFireOnAbilityExecutedEvent()
         {
             IReadOnlyList<IDefendModeTargetable> returnVal = null;
-            targetingComponent.FindTargets(attachedToDefendingEntity, Arg.Any<IReadOnlyList<ICreep>>()).Returns(returnVal);
+            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(returnVal);
 
             var subject = ConstructSubject();
 
@@ -343,7 +342,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_WhenTargetsAreReturned_ExecutesAllEffectsWithTheCorrectArguments()
         {
             var targetList = new List<IDefendModeTargetable>();
-            targetingComponent.FindTargets(attachedToDefendingEntity, Arg.Any<IReadOnlyList<ICreep>>()).Returns(targetList);
+            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(targetList);
 
             var subject = ConstructSubject();
 
@@ -357,7 +356,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_WhenTargetsAreReturned_ReturnsTrue()
         {
             var targetList = new List<IDefendModeTargetable>();
-            targetingComponent.FindTargets(attachedToDefendingEntity, Arg.Any<IReadOnlyList<ICreep>>()).Returns(targetList);
+            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(targetList);
 
             var subject = ConstructSubject();
 
@@ -370,7 +369,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_WhenTargetsAreReturned_FiresOnAbilityExecutedEvent()
         {
             var targetList = new List<IDefendModeTargetable>();
-            targetingComponent.FindTargets(attachedToDefendingEntity, Arg.Any<IReadOnlyList<ICreep>>()).Returns(targetList);
+            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(targetList);
 
             var subject = ConstructSubject();
 

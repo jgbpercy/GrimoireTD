@@ -15,14 +15,12 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
 
         private IUnit targetUnit = Substitute.For<IUnit>();
 
-        private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
-
         private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
 
         private IPlayerTargetsHexComponentTemplate template = Substitute.For<IPlayerTargetsHexComponentTemplate>();
 
         private IBuildModeTargetable target = Substitute.For<IBuildModeTargetable>();
-
+        
         private PlayerTargetsHexArgs playerTargetsHexArgs;
 
         private BuildModeAutoTargetedArgs buildModeAutoTargetedArgs;
@@ -36,12 +34,11 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         {
             playerTargetsHexArgs = new PlayerTargetsHexArgs(
                 sourceDefendingEntity,
-                targetCoord,
-                mapData
+                targetCoord
             );
 
             template.TargetingRule
-                .GenerateArgs(sourceDefendingEntity, targetCoord, mapData)
+                .GenerateArgs(sourceDefendingEntity, targetCoord)
                 .Returns(playerTargetsHexArgs);
 
             PlayerTargetsHexRuleService.RunRule = (args) =>
@@ -56,13 +53,10 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
                 }
             };
 
-            buildModeAutoTargetedArgs = new BuildModeAutoTargetedArgs(
-                targetCoord,
-                mapData
-            );
+            buildModeAutoTargetedArgs = new BuildModeAutoTargetedArgs(targetCoord);
 
             template.AoeRule
-                .GenerateArgs(targetCoord, mapData)
+                .GenerateArgs(targetCoord)
                 .Returns(buildModeAutoTargetedArgs);
 
             targetList = new List<IBuildModeTargetable>
@@ -98,8 +92,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
             Assert.Throws(typeof(ArgumentException), () =>
                 subject.IsValidTarget(
                     sourceDefendingEntity, 
-                    targetUnit, 
-                    mapData
+                    targetUnit 
                 )
             );
         }
@@ -109,8 +102,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         {
             var result = subject.IsValidTarget(
                 sourceDefendingEntity,
-                targetCoord,
-                mapData
+                targetCoord
             );
 
             Assert.True(result);
@@ -120,8 +112,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         public void FindTargets_PassedValidInput_ReturnsRuleResultForTheArgsGeneratedFromThisInput()
         {
             var result = subject.FindTargets(
-                targetCoord,
-                mapData
+                targetCoord
             );
 
             Assert.AreEqual(result, targetList);

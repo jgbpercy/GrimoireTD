@@ -16,6 +16,8 @@ namespace GrimoireTD.Abilities.DefendMode
 
         public CDefendModeAbilityManager(IAbilities abilities, IDefendingEntity attachedToDefendingEntity)
         {
+            DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
+
             numberOfAbilitiesOnCooldown = 0;
 
             foreach (var ability in abilities.DefendModeAbilities())
@@ -27,13 +29,12 @@ namespace GrimoireTD.Abilities.DefendMode
             abilities.OnDefendModeAbilityRemoved += OnDefendModeAbilityRemoved;
 
             this.attachedToDefendingEntity = attachedToDefendingEntity;
-
-            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         private void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (GameModels.Models[0].GameStateManager.CurrentGameMode != GameMode.DEFEND)
+            //TODO: If all model object frame updates are in defend mode, stop doing this check everywhere and only do the action in the right mode!
+            if (DepsProv.TheGameStateManager.CurrentGameMode != GameMode.DEFEND)
             {
                 return;
             }

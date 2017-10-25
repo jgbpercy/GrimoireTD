@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GrimoireTD.Dependencies;
+using UnityEngine;
 
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
@@ -23,7 +24,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         {
             get
             {
-                return GameModels.Models[0].AttackEffectTypeManager.GetWeakMetaDamageType(this);
+                return DepsProv.TheAttackEffectTypeManager.GetWeakMetaDamageType(this);
             }
         }
 
@@ -31,7 +32,7 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
         {
             get
             {
-                return GameModels.Models[0].AttackEffectTypeManager.GetStrongMetaDamageType(this);
+                return DepsProv.TheAttackEffectTypeManager.GetStrongMetaDamageType(this);
             }
         }
 

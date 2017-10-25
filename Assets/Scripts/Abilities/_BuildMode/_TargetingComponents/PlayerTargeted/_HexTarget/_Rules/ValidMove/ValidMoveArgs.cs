@@ -10,9 +10,8 @@ namespace GrimoireTD.Abilities.BuildMode
         public ValidMoveArgs(
             IDefendingEntity sourceEntity,
             Coord targetCoord,
-            IReadOnlyMapData mapData,
             int range
-        ) : base(sourceEntity, targetCoord, mapData)
+        ) : base(sourceEntity, targetCoord)
         {
             Range = range;
         }

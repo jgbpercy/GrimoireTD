@@ -8,6 +8,7 @@ using GrimoireTD.Map;
 using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.DefendingEntities
 {
@@ -107,7 +108,7 @@ namespace GrimoireTD.DefendingEntities
         {
             get
             {
-                return GameModels.Models[0].MapData.GetHexAt(CoordPosition);
+                return DepsProv.TheMapData.GetHexAt(CoordPosition);
             }
         }
 
@@ -142,7 +143,7 @@ namespace GrimoireTD.DefendingEntities
 
             SetUpAffectedByDefenderAuras();
 
-            GameModels.Models[0].GameStateManager.OnEnterBuildMode += OnEnterBuildMode;
+            DepsProv.TheGameStateManager.OnEnterBuildMode += OnEnterBuildMode;
         }
 
         //Set Up
@@ -257,11 +258,13 @@ namespace GrimoireTD.DefendingEntities
         //Defender Auras that this is the source of
         protected void OnInitialiseAura(object sender, EAOnCallbackListAdd<IDefenderAura> args)
         {
-            List<Coord> affectedCoords = GameModels.Models[0].MapData.CoordsInRange(args.AddedItem.Range, CoordPosition);
+            var mapData = DepsProv.TheMapData;
+
+            List<Coord> affectedCoords = mapData.CoordsInRange(args.AddedItem.Range, CoordPosition);
 
             foreach (Coord coord in affectedCoords)
             {
-                GameModels.Models[0].MapData.GetHexAt(coord).AddDefenderAura(args.AddedItem);
+                mapData.GetHexAt(coord).AddDefenderAura(args.AddedItem);
             }
         }
 

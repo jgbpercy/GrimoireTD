@@ -16,8 +16,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
         public bool IsValidTarget(
             IDefendingEntity sourceDefendingEntity, 
-            IBuildModeTargetable potentialTarget, 
-            IReadOnlyMapData mapData
+            IBuildModeTargetable potentialTarget
         )
         {
             IDefendingEntity potentialTargetDefendingEntity = potentialTarget as IDefendingEntity;
@@ -30,16 +29,15 @@ namespace GrimoireTD.Abilities.BuildMode
             return PlayerTargetsDefendingEntityRuleService.RunRule(
                 PlayerTargetsDefendingEntityComponentTemplate.TargetingRule.GenerateArgs(
                     sourceDefendingEntity, 
-                    potentialTargetDefendingEntity, 
-                    mapData
+                    potentialTargetDefendingEntity
                 )
             );
         }
 
-        public IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position, IReadOnlyMapData mapData)
+        public IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
         {
             return BuildModeAutoTargetedRuleService.RunRule(
-                PlayerTargetsDefendingEntityComponentTemplate.AoeRule.GenerateArgs(position, mapData)
+                PlayerTargetsDefendingEntityComponentTemplate.AoeRule.GenerateArgs(position)
             );
         }
     }

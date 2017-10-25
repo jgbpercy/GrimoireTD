@@ -103,20 +103,20 @@ namespace GrimoireTD.Creeps
             CreepTemplate = template;
 
             //Temporary Effects
-            temporaryEffects = DependencyProvider.TemporaryEffectsManager();
+            temporaryEffects = DepsProv.TemporaryEffectsManager();
 
             //Pathing/Position
             Position = spawnPosition;
 
-            currentDestinationPathNode = GameModels.Models[0].MapData.CreepPath.Count - 2;
-            currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
+            currentDestinationPathNode = DepsProv.TheMapData.CreepPath.Count - 2;
+            currentDestinationVector = DepsProv.TheMapData.CreepPath[currentDestinationPathNode].ToPositionVector();
 
             float distanceFromCurrentDestination = GetDistanceFromCurrentDestination();
 
             DistanceFromEnd = GetDistanceFromEnd(distanceFromCurrentDestination);
 
             //Attributes
-            attributes = DependencyProvider.CreepAttributes();
+            attributes = DepsProv.CreepAttributes();
 
             EventHandler<EAOnAttributeChanged> OnArmorAttributeChanged = ((object sender, EAOnAttributeChanged args) =>
             {
@@ -140,13 +140,13 @@ namespace GrimoireTD.Creeps
             }
 
             //Resistances
-            resistances = DependencyProvider.Resistances(this, CreepTemplate.BaseResistances);
+            resistances = DepsProv.Resistances(this, CreepTemplate.BaseResistances);
 
             //Health
             CurrentHitpoints = template.MaxHitpoints;
 
             //Updates
-            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
+            DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         public Vector3 TargetPosition()
@@ -162,7 +162,7 @@ namespace GrimoireTD.Creeps
             if (distanceFromCurrentDestination <= CurrentSpeed * deltaTime)
             {
                 currentDestinationPathNode = currentDestinationPathNode - 1 < 0 ? 0 : currentDestinationPathNode - 1;
-                currentDestinationVector = GameModels.Models[0].MapData.CreepPath[currentDestinationPathNode].ToPositionVector();
+                currentDestinationVector = DepsProv.TheMapData.CreepPath[currentDestinationPathNode].ToPositionVector();
             }
 
             float movementAmount = CurrentSpeed * deltaTime;
@@ -356,7 +356,7 @@ namespace GrimoireTD.Creeps
             {
                 OnDied?.Invoke(this, EventArgs.Empty);
 
-                DependencyProvider.TheModelObjectFrameUpdater().Deregister(ModelObjectFrameUpdate);
+                DepsProv.TheModelObjectFrameUpdater().Deregister(ModelObjectFrameUpdate);
             }
         }
     }

@@ -1,26 +1,23 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Economy
 {
     public class EconomyView : SingletonMonobehaviour<EconomyView>
     {
-        private IReadOnlyEconomyManager economyManager;
-
         [SerializeField]
         private Text resourceUIText;
 
         void Start()
         {
-            economyManager = GameModels.Models[0].EconomyManager;
-
-            economyManager.OnAnyResourceChanged += OnResourceValueChange;
+            DepsProv.TheEconomyManager.OnAnyResourceChanged += OnResourceValueChange;
         }
 
         private void OnResourceValueChange(object sender, EAOnAnyResourceChanged args)
         {
-            resourceUIText.text = economyManager.ResourcesAsTransaction.ToString(EconomyTransactionStringFormat.FullNameLineBreaks, false);
+            resourceUIText.text = DepsProv.TheEconomyManager.ResourcesAsTransaction.ToString(EconomyTransactionStringFormat.FullNameLineBreaks, false);
         }
     }
 }

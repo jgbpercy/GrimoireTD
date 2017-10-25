@@ -9,17 +9,13 @@ namespace GrimoireTD.Abilities.BuildMode
 
         public readonly Coord TargetCoord;
 
-        public readonly IReadOnlyMapData MapData;
-
         public PlayerTargetsHexArgs(
             IDefendingEntity sourceEntity, 
-            Coord targetCoord, 
-            IReadOnlyMapData mapData
+            Coord targetCoord
         )
         {
             SourceEntity = sourceEntity;
             TargetCoord = targetCoord;
-            MapData = mapData;
         }
     }
 }

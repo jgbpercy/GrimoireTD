@@ -6,15 +6,9 @@ namespace GrimoireTD.Abilities.BuildMode
     {
         public readonly Coord TargetCoord;
 
-        public readonly IReadOnlyMapData MapData;
-
-        public BuildModeAutoTargetedArgs(
-            Coord targetCoord,
-            IReadOnlyMapData mapData
-        )
+        public BuildModeAutoTargetedArgs(Coord targetCoord)
         {
             TargetCoord = targetCoord;
-            MapData = mapData;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GrimoireTD.Technical;
 using GrimoireTD.UI;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Map
 {
@@ -66,7 +67,7 @@ namespace GrimoireTD.Map
             {
                 tileHighlighterRenderer.enabled = false;
 
-                if (GameModels.Models[0].MapData.CanBuildStructureAt(mouseOverCoord))
+                if (DepsProv.TheMapData.CanBuildStructureAt(mouseOverCoord))
                 {
                     structureGhostRenderer.enabled = true;
 
@@ -100,7 +101,7 @@ namespace GrimoireTD.Map
 
                 tileHighlighter.position = mouseOverCoord.ToPositionVector();
 
-                if (interfaceController.SelectedBuildModeAbilityTargetingComponent.IsValidTarget(interfaceController.SelectedUnitInstance, mouseOverCoord, GameModels.Models[0].MapData))
+                if (interfaceController.SelectedBuildModeAbilityTargetingComponent.IsValidTarget(interfaceController.SelectedUnitInstance, mouseOverCoord))
                 {
                     tileHighlighterRenderer.material.color = tileHighlighterTestBright;
                 }

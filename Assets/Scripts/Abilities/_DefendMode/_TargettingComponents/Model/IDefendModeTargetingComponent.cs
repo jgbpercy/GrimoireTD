@@ -7,8 +7,7 @@ namespace GrimoireTD.Abilities.DefendMode
     public interface IDefendModeTargetingComponent
     {
         IReadOnlyList<IDefendModeTargetable> FindTargets(
-            IDefendingEntity attachedToDefendingEntity, 
-            IReadOnlyList<ICreep> creepManager
+            IDefendingEntity attachedToDefendingEntity        
         );
     }
 }

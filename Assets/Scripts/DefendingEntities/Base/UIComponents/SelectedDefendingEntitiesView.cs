@@ -13,6 +13,7 @@ using GrimoireTD.Technical;
 using GrimoireTD.Map;
 using GrimoireTD.Attributes;
 using GrimoireTD.UI;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.DefendingEntities
 {
@@ -128,7 +129,7 @@ namespace GrimoireTD.DefendingEntities
             InterfaceController.Instance.OnDefendingEntitySelected += OnNewSelection;
             InterfaceController.Instance.OnDefendingEntityDeselected += OnDefendingEntitiesDeselected;
 
-            GameModels.Models[0].GameStateManager.OnEnterDefendMode += OnEnterDefendMode;
+            DepsProv.TheGameStateManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void Update()
@@ -139,7 +140,7 @@ namespace GrimoireTD.DefendingEntities
                 selectedUnit.TempDebugAddExperience();
             }
 
-            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }
@@ -632,7 +633,7 @@ namespace GrimoireTD.DefendingEntities
 
             economyText += "Hexes (conditional):\n";
 
-            foreach (IHexType hexType in GameModels.Models[0].MapData.HexTypes)
+            foreach (IHexType hexType in DepsProv.TheMapData.HexTypes)
             {
                 economyText += unit.GetConditionalHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
             }
@@ -651,7 +652,7 @@ namespace GrimoireTD.DefendingEntities
         {
             string economyText = "Hexes (flat):\n";
 
-            foreach (IHexType hexType in GameModels.Models[0].MapData.HexTypes)
+            foreach (IHexType hexType in DepsProv.TheMapData.HexTypes)
             {
                 economyText += defendingEntity.GetFlatHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
             }

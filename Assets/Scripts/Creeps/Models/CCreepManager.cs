@@ -7,8 +7,6 @@ namespace GrimoireTD.Creeps
 {
     public class CCreepManager : ICreepManager
     {
-        private IReadOnlyGameStateManager gameStateManager;
-
         private List<IWave> waveList;
 
         private int currentWaveIndex;
@@ -48,9 +46,7 @@ namespace GrimoireTD.Creeps
 
         public void SetUp(IEnumerable<IWaveTemplate> waves, float idleTimeToTrackAfterSpawnEnd)
         {
-            gameStateManager = GameModels.Models[0].GameStateManager;
-
-            gameStateManager.OnEnterDefendMode += StartNextWave;
+            DepsProv.TheGameStateManager.OnEnterDefendMode += StartNextWave;
 
             foreach (IWaveTemplate waveTemplate in waves)
             {
@@ -59,12 +55,12 @@ namespace GrimoireTD.Creeps
 
             this.idleTimeToTrackAfterSpawnEnd = idleTimeToTrackAfterSpawnEnd;
 
-            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
+            DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         private void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (gameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }

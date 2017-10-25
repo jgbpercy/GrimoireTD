@@ -59,6 +59,10 @@ namespace GrimoireTD.Abilities.DefendMode
 
         public CDefendModeAbility(IDefendModeAbilityTemplate template, IDefendingEntity attachedToDefendingEntity) : base(template)
         {
+            DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
+
+            DepsProv.TheGameStateManager.OnEnterDefendMode += OnEnterDefendMode;
+
             id = IdGen.GetNextId();
 
             TimeSinceExecuted = 0f;
@@ -79,15 +83,11 @@ namespace GrimoireTD.Abilities.DefendMode
             {
                 effectComponents.Add(effectComponentTemplate.GenerateEffectComponent());
             }
-
-            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
-
-            GameModels.Models[0].GameStateManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }
@@ -110,8 +110,7 @@ namespace GrimoireTD.Abilities.DefendMode
         public bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity)
         {
             var targetList = targetingComponent.FindTargets(
-                attachedToDefendingEntity, 
-                GameModels.Models[0].CreepManager.CreepList
+                attachedToDefendingEntity
             );
 
             if (targetList == null) return false;

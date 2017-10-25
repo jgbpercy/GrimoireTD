@@ -12,13 +12,10 @@ namespace GrimoireTD.Abilities.BuildMode
             AutoTargetedComponentTemplate = template;
         }
 
-        public IReadOnlyList<IBuildModeTargetable> FindTargets(
-            Coord position, 
-            IReadOnlyMapData mapData
-        )
+        public IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position)
         {
             return BuildModeAutoTargetedRuleService.RunRule(
-                AutoTargetedComponentTemplate.TargetingRule.GenerateArgs(position, mapData)
+                AutoTargetedComponentTemplate.TargetingRule.GenerateArgs(position)
             );
         }
     }

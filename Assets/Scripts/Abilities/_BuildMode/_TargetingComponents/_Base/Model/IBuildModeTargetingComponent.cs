@@ -5,6 +5,6 @@ namespace GrimoireTD.Abilities.BuildMode
 {
     public interface IBuildModeTargetingComponent
     {
-        IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position, IReadOnlyMapData mapData);
+        IReadOnlyList<IBuildModeTargetable> FindTargets(Coord position);
     }
 }

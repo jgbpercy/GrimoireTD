@@ -5,6 +5,7 @@ using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Attributes;
 using UnityEngine.Assertions;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Creeps
 {
@@ -44,7 +45,7 @@ namespace GrimoireTD.Creeps
 
         public CResistances(ICreep attachedToCreep, IBaseResistances baseResistances)
         {
-            foreach (var specificDamageType in GameModels.Models[0].AttackEffectTypeManager.SpecificDamageTypes)
+            foreach (var specificDamageType in DepsProv.TheAttackEffectTypeManager.SpecificDamageTypes)
             {
                 resistanceModifiers.Add(specificDamageType, new RecalculatorList<IResistanceModifier, float>(CalculateSpecificResistance));
                 resistanceModifiers[specificDamageType].Add(baseResistances.GetResistanceModifier(specificDamageType));
@@ -53,7 +54,7 @@ namespace GrimoireTD.Creeps
                 blockModifiers[specificDamageType].Add(baseResistances.GetBlockModifier(specificDamageType));
             }
 
-            foreach (var basicMetaDamageType in GameModels.Models[0].AttackEffectTypeManager.BasicMetaDamageTypes)
+            foreach (var basicMetaDamageType in DepsProv.TheAttackEffectTypeManager.BasicMetaDamageTypes)
             {
                 var specificDamageTypeResistanceLists = basicMetaDamageType.SpecificDamageTypes.Select(x => resistanceModifiers[x]).ToList();
                 var specificDamageTypeBlockLists = basicMetaDamageType.SpecificDamageTypes.Select(x => blockModifiers[x]).ToList();
@@ -246,7 +247,7 @@ namespace GrimoireTD.Creeps
 
         private void RefreshArmorResistanceModifier(float armorValue)
         {
-            foreach (var basicDamageType in GameModels.Models[0].AttackEffectTypeManager.BasicMetaDamageTypes)
+            foreach (var basicDamageType in DepsProv.TheAttackEffectTypeManager.BasicMetaDamageTypes)
             {
                 float armorModifierMagnitude = 1 - Mathf.Pow((1 - basicDamageType.EffectOfArmor), armorValue);
 
