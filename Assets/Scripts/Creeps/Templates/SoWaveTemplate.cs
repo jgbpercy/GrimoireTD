@@ -1,51 +1,26 @@
-﻿using UnityEngine;
-using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace GrimoireTD.Creeps
 {
     [CreateAssetMenu(fileName = "NewWave", menuName = "Levels/Wave")]
     public class SoWaveTemplate : ScriptableObject, IWaveTemplate
     {
-        [Serializable]
-        public class Spawn
+        [SerializeField]
+        private SSpawn[] spawns;
+
+        public IReadOnlyList<ISpawn> Spawns
         {
-            [SerializeField]
-            private float timing;
-            [SerializeField]
-            private SoCreepTemplate creep;
-
-            public float Timing
+            get
             {
-                get
-                {
-                    return timing;
-                }
-            }
-
-            public ICreepTemplate Creep
-            {
-                get
-                {
-                    return creep;
-                }
+                return spawns.ToList();
             }
         }
 
-        [SerializeField]
-        private Spawn[] spawns;
-
         public IWave GenerateWave()
         {
-            float[] timings = new float[spawns.Length];
-            ICreepTemplate[] creeps = new ICreepTemplate[spawns.Length];
-
-            for (int i = 0; i < spawns.Length; i++)
-            {
-                timings[i] = i == 0 ? spawns[i].Timing : spawns[i].Timing + timings[i - 1];
-                creeps[i] = spawns[i].Creep;
-            }
-
-            return new CWave(timings, creeps);
+            return new CWave(this);
         }
     }
 }
