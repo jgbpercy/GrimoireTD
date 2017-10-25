@@ -1,8 +1,6 @@
-﻿using GrimoireTD.Technical;
-
-namespace GrimoireTD.TemporaryEffects
+﻿namespace GrimoireTD.TemporaryEffects
 {
-    public interface ITemporaryEffect : IReadOnlyTemporaryEffect, IFrameUpdatee
+    public interface ITemporaryEffect : IReadOnlyTemporaryEffect
     {
         object Key { get; }
 

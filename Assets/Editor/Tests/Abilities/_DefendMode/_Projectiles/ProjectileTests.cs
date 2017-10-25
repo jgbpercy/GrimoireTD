@@ -7,11 +7,13 @@ using GrimoireTD.Technical;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Creeps;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.ProjectileTests
 {
     public class ProjectileTests
     {
+        //Primitives and Basic Objects
         private float startSpeed = 5f;
 
         private float defaultDeltaTime = 0.2f;
@@ -24,21 +26,34 @@ namespace GrimoireTD.Tests.ProjectileTests
         private float targetX = 2f;
         private float targetY = 3f;
         private float targetZ = 4f;
-        private ICreep targetCreep = Substitute.For<ICreep>();
 
-        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+        //Model and Frame Updater
+        private FrameUpdaterStub frameUpdater;
 
+        //Template Deps
         private IProjectileTemplate template = Substitute.For<IProjectileTemplate>();
 
         private IAttackEffect attackEffectOne = Substitute.For<IAttackEffect>();
         private IAttackEffect attackEffectTwo = Substitute.For<IAttackEffect>();
         private IEnumerable<IAttackEffect> attackEffects;
 
+        //Other Deps Passed To Ctor
+        private ICreep targetCreep = Substitute.For<ICreep>();
+
+        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             startPosition = new Vector3(startX, startY, startZ);
 
+            //Model and Frame Updater
+            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            {
+                return frameUpdater;
+            };
+
+            //Template Deps
             targetCreep.TargetPosition().Returns(new Vector3(targetX, targetY, targetZ));
 
             template.Speed.Returns(startSpeed);
@@ -55,9 +70,15 @@ namespace GrimoireTD.Tests.ProjectileTests
         [SetUp]
         public void EachTestSetUp()
         {
-            GameObject testGo = new GameObject();
+            frameUpdater = new FrameUpdaterStub();
 
-            testGo.AddComponent<ModelObjectFrameUpdater>();
+            targetCreep.ClearReceivedCalls();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
         }
 
         private CProjectile ConstructSubject()
@@ -71,11 +92,11 @@ namespace GrimoireTD.Tests.ProjectileTests
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_ForNewProjectileWithTarget_MovesTowardsTargetAtTheCorrectRate()
+        public void FrameUpdate_ForNewProjectileWithTarget_MovesTowardsTargetAtTheCorrectRate()
         {
             var subject = ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             var startToTargetVector = new Vector3(
                 targetX - startX,
@@ -127,23 +148,23 @@ namespace GrimoireTD.Tests.ProjectileTests
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_AfterHittingCreep_DoesNotMoveProjectile()
+        public void FrameUpdate_AfterHittingCreep_DoesNotMoveProjectile()
         {
             var subject = ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             var positionAfterOneFrame = subject.Position;
 
             subject.HitCreep(targetCreep, 5f);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             Assert.True(CustomMath.Approximately(positionAfterOneFrame, subject.Position));
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_WhenTargetDiesAndProjectileHasNoDirection_FiresOnDestroyEventWithNoDelay()
+        public void FrameUpdate_WhenTargetDiesAndProjectileHasNoDirection_FiresOnDestroyEventWithNoDelay()
         {
             var subject = ConstructSubject();
 
@@ -152,40 +173,40 @@ namespace GrimoireTD.Tests.ProjectileTests
 
             targetCreep.OnDied += Raise.Event();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             eventTester.AssertFired(true);
             eventTester.AssertResult(subject, x => CustomMath.Approximately(x.WaitSeconds, 0f));
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_WhenTargetDiesAndProjectileAlreadyMoved_FiresOnDestroyEventWithStandardDelay()
+        public void FrameUpdate_WhenTargetDiesAndProjectileAlreadyMoved_FiresOnDestroyEventWithStandardDelay()
         {
             var subject = ConstructSubject();
 
             var eventTester = new EventTester<EAOnDestroyProjectile>();
             subject.OnDestroyProjectile += eventTester.Handler;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             targetCreep.OnDied += Raise.Event();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             eventTester.AssertFired(true);
             eventTester.AssertResult(subject, x => CustomMath.Approximately(x.WaitSeconds, CProjectile.NoTargetDestructionDelay));
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_WhenTargetDiesAndProjectileAlreadyMoved_ContinuesInPreviousDirection()
+        public void FrameUpdate_WhenTargetDiesAndProjectileAlreadyMoved_ContinuesInPreviousDirection()
         {
             var subject = ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             targetCreep.OnDied += Raise.Event();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             var startToTargetVector = new Vector3(
                 targetX - startX,

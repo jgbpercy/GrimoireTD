@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Creeps
 {
@@ -59,10 +59,10 @@ namespace GrimoireTD.Creeps
 
             this.idleTimeToTrackAfterSpawnEnd = idleTimeToTrackAfterSpawnEnd;
 
-            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
-        public void ModelObjectFrameUpdate(float deltaTime)
+        private void ModelObjectFrameUpdate(float deltaTime)
         {
             if (gameStateManager.CurrentGameMode == GameMode.BUILD)
             {

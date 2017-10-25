@@ -1,21 +1,24 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
-using UnityEngine;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
 using GrimoireTD.Creeps;
 using GrimoireTD.Abilities;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.DefendModeAbilityTests
 {
     public class DefendModeAbilityTests
     {
+        //Primitives and Basic Objects
         private float defaultBaseCooldown = 5f;
 
         private float defaultDeltaTime = 0.2f;
+
+        //Model and Frame Updater
+        private FrameUpdaterStub frameUpdater;
 
         private IReadOnlyGameModel gameModel = Substitute.For<IReadOnlyGameModel>();
 
@@ -23,8 +26,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
         private IReadOnlyCreepManager creepManager = Substitute.For<IReadOnlyCreepManager>();
 
-        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
-
+        //Template Deps
         private IDefendModeAbilityTemplate template = Substitute.For<IDefendModeAbilityTemplate>();
 
         private IDefendModeTargetingComponent targetingComponent = Substitute.For<IDefendModeTargetingComponent>();
@@ -35,9 +37,25 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         private IDefendModeEffectComponent effectComponentOne = Substitute.For<IDefendModeEffectComponent>();
         private IDefendModeEffectComponent effectComponentTwo = Substitute.For<IDefendModeEffectComponent>();
 
+        //Other Deps Passed To Ctor
+        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            //Model and Frame Updater
+            gameModel.GameStateManager.Returns(gameStateManager);
+
+            gameModel.CreepManager.Returns(creepManager);
+
+            GameModels.Models.Add(gameModel);
+
+            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            {
+                return frameUpdater;
+            };
+
+            //Template Deps
             template.TargetingComponentTemplate.GenerateTargetingComponent().Returns(targetingComponent);
 
             effectComponentTemplateOne.GenerateEffectComponent().Returns(effectComponentOne);
@@ -48,21 +66,13 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
                 effectComponentTemplateOne,
                 effectComponentTemplateTwo
             });
-
-            gameModel.GameStateManager.Returns(gameStateManager);
-
-            gameModel.CreepManager.Returns(creepManager);
-
-            GameModels.Models.Add(gameModel);
-
-            GameObject modelObjectFrameUpdaterGo = new GameObject();
-
-            modelObjectFrameUpdaterGo.AddComponent<ModelObjectFrameUpdater>();
         }
 
         [SetUp]
         public void EachTestSetUp()
         {
+            frameUpdater = new FrameUpdaterStub();
+
             template.BaseCooldown.Returns(defaultBaseCooldown);
 
             gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
@@ -77,6 +87,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void OneTimeTearDown()
         {
             typeof(GameModels).TypeInitializer.Invoke(null, null);
+            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
         }
 
         private CDefendModeAbility ConstructSubject()
@@ -123,7 +134,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_WhenInBuildMode_DoesNotIncreaseTimeSinceExecuted()
+        public void FrameUpdate_WhenInBuildMode_DoesNotIncreaseTimeSinceExecuted()
         {
             gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
 
@@ -131,19 +142,19 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             var startTimeSinceExecuted = subject.TimeSinceExecuted;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             Assert.AreEqual(startTimeSinceExecuted, subject.TimeSinceExecuted);
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_WhenInDefendMode_IncreasesTimeSinceExecuted()
+        public void FrameUpdate_WhenInDefendMode_IncreasesTimeSinceExecuted()
         {
             var subject = ConstructSubject();
 
             var startTimeSinceExecuted = subject.TimeSinceExecuted;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             AssertExt.Approximately(startTimeSinceExecuted + defaultDeltaTime, subject.TimeSinceExecuted);
         }
@@ -161,23 +172,23 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             AssertExt.Approximately(subject.TimeSinceExecuted, subject.TimeSinceExecutedClamped);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(subject.TimeSinceExecuted, subject.TimeSinceExecutedClamped);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(subject.TimeSinceExecuted, subject.TimeSinceExecutedClamped);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(subject.TimeSinceExecuted, subject.TimeSinceExecutedClamped);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(subject.ActualCooldown, subject.TimeSinceExecutedClamped);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(subject.ActualCooldown, subject.TimeSinceExecutedClamped);
         }
@@ -195,23 +206,23 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             AssertExt.Approximately(localDeltaTime * 0 / localBaseCooldown, subject.PercentOfCooldownPassed);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(localDeltaTime * 1 / localBaseCooldown, subject.PercentOfCooldownPassed);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(localDeltaTime * 2 / localBaseCooldown, subject.PercentOfCooldownPassed);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(localDeltaTime * 3 / localBaseCooldown, subject.PercentOfCooldownPassed);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(1f, subject.PercentOfCooldownPassed);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             AssertExt.Approximately(1f, subject.PercentOfCooldownPassed);
         }
@@ -223,7 +234,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             var subject = ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             var oldPercentOfCooldownPassed = subject.PercentOfCooldownPassed;
 
@@ -242,7 +253,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             var subject = ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             var oldTimeSinceExecuted = subject.TimeSinceExecuted;
 
@@ -267,17 +278,17 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             Assert.False(subject.IsOffCooldown);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             Assert.False(subject.IsOffCooldown);
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             Assert.True(subject.IsOffCooldown);
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_AsCooldownExpires_FiresOnAbilityOffCooldownEventOnce()
+        public void FrameUpdate_AsCooldownExpires_FiresOnAbilityOffCooldownEventOnce()
         {
             var localBaseCooldown = 0.7f;
 
@@ -290,11 +301,11 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             var localDeltaTime = 0.3f;
 
-            subject.ModelObjectFrameUpdate(localDeltaTime);
-            subject.ModelObjectFrameUpdate(localDeltaTime);
-            subject.ModelObjectFrameUpdate(localDeltaTime);
-            subject.ModelObjectFrameUpdate(localDeltaTime);
-            subject.ModelObjectFrameUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
+            frameUpdater.RunUpdate(localDeltaTime);
 
             eventTester.AssertFired(1);
         }

@@ -145,8 +145,8 @@ namespace GrimoireTD.Creeps
             //Health
             CurrentHitpoints = template.MaxHitpoints;
 
-            //Bullshit
-            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+            //Updates
+            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         public Vector3 TargetPosition()
@@ -155,7 +155,7 @@ namespace GrimoireTD.Creeps
             return new Vector3(Position.x, Position.y, TARGET_POSITION_Z_OFFSET);
         }
 
-        public void ModelObjectFrameUpdate(float deltaTime)
+        private void ModelObjectFrameUpdate(float deltaTime)
         {
             float distanceFromCurrentDestination = GetDistanceFromCurrentDestination();
 
@@ -356,7 +356,7 @@ namespace GrimoireTD.Creeps
             {
                 OnDied?.Invoke(this, EventArgs.Empty);
 
-                ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
+                DependencyProvider.TheModelObjectFrameUpdater().Deregister(ModelObjectFrameUpdate);
             }
         }
     }

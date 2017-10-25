@@ -4,6 +4,7 @@ using UnityEngine;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -79,12 +80,12 @@ namespace GrimoireTD.Abilities.DefendMode
                 effectComponents.Add(effectComponentTemplate.GenerateEffectComponent());
             }
 
-            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
 
             GameModels.Models[0].GameStateManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
-        public void ModelObjectFrameUpdate(float deltaTime)
+        private void ModelObjectFrameUpdate(float deltaTime)
         {
             if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
             {

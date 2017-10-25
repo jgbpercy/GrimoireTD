@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using GrimoireTD.Economy;
 using GrimoireTD.Map;
-using GrimoireTD.Technical;
 
 namespace GrimoireTD.DefendingEntities.Units
 {
-    public interface IUnit : IDefendingEntity, IFrameUpdatee
+    public interface IUnit : IDefendingEntity
     {
         IUnitTemplate UnitTemplate { get; }
 

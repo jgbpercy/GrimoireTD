@@ -30,7 +30,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             isExploding = false;
         }
 
-        public override void ModelObjectFrameUpdate(float deltaTime)
+        protected override void ModelObjectFrameUpdate(float deltaTime)
         {
             base.ModelObjectFrameUpdate(deltaTime);
 

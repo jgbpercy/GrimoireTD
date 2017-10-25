@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -28,10 +28,10 @@ namespace GrimoireTD.Abilities.DefendMode
 
             this.attachedToDefendingEntity = attachedToDefendingEntity;
 
-            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
-        public void ModelObjectFrameUpdate(float deltaTime)
+        private void ModelObjectFrameUpdate(float deltaTime)
         {
             if (GameModels.Models[0].GameStateManager.CurrentGameMode != GameMode.DEFEND)
             {

@@ -3,6 +3,7 @@ using UnityEngine;
 using GrimoireTD.Creeps;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
@@ -52,10 +53,10 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
             ProjectileTemplate = template;
 
-            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
-        public virtual void ModelObjectFrameUpdate(float deltaTime)
+        protected virtual void ModelObjectFrameUpdate(float deltaTime)
         {
             if (destroyingForHitTarget)
             {
@@ -110,7 +111,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         //TODO get rid of this
         public void GameObjectDestroyed()
         {
-            ModelObjectFrameUpdater.Instance.DeregisterAsModelObjectFrameUpdatee(this);
+            DependencyProvider.TheModelObjectFrameUpdater().Deregister(ModelObjectFrameUpdate);
 
             if (target != null)
             {

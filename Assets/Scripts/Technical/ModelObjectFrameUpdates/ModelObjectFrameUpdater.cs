@@ -1,45 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 namespace GrimoireTD.Technical
 {
-    public class ModelObjectFrameUpdater : SingletonMonobehaviour<ModelObjectFrameUpdater>
+    public class ModelObjectFrameUpdater : SingletonMonobehaviour<ModelObjectFrameUpdater>, IModelObjectFrameUpdater
     {
-        private List<IFrameUpdatee> modelObjectFrameUpdatees = new List<IFrameUpdatee>();
+        private Action<float> updateActions;
 
-        private List<IFrameUpdatee> frameUpdateesToAdd = new List<IFrameUpdatee>();
-        private List<IFrameUpdatee> frameUpdateesToRemove = new List<IFrameUpdatee>();
+        private Action<float> updateActionsToAdd;
+        private Action<float> updateActionsToRemove;
 
         private void Update()
         {
-            foreach (var modelObjectFrameUpdatee in modelObjectFrameUpdatees)
-            {
-                modelObjectFrameUpdatee.ModelObjectFrameUpdate(Time.deltaTime);
-            }
+            updateActions?.Invoke(Time.deltaTime);
 
-            foreach (var updateeToAdd in frameUpdateesToAdd)
-            {
-                modelObjectFrameUpdatees.Add(updateeToAdd);
-            }
+            updateActions += updateActionsToAdd;
+            updateActionsToAdd = null;
 
-            frameUpdateesToAdd.Clear();
-
-            foreach (var updateeToRemove in frameUpdateesToRemove)
-            {
-                modelObjectFrameUpdatees.RemoveAll(x => x == updateeToRemove);
-            }
-
-            frameUpdateesToRemove.Clear();
+            Delegate.RemoveAll(updateActions, updateActionsToRemove);
+            updateActionsToRemove = null;
         }
 
-        public void RegisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
+        public void Register(Action<float> updateAction)
         {
-            frameUpdateesToAdd.Add(modelObjectFrameUpdatee);
+            updateActionsToAdd += updateAction;
         }
 
-        public void DeregisterAsModelObjectFrameUpdatee(IFrameUpdatee modelObjectFrameUpdatee)
+        public void Deregister(Action<float> updateAction)
         {
-            frameUpdateesToRemove.Add(modelObjectFrameUpdatee);
+            updateActionsToRemove += updateAction;
         }
     }
 }

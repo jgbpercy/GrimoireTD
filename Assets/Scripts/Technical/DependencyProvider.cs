@@ -1,16 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using GrimoireTD.Abilities;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Attributes;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Creeps;
+using GrimoireTD.Technical;
 
 namespace GrimoireTD.Dependencies
 {
     public static class DependencyProvider
     {
+        //Model Object Frame Updater
+        public static Func<IModelObjectFrameUpdater> TheModelObjectFrameUpdater = () =>
+        {
+            return ModelObjectFrameUpdater.Instance;
+        };
+
+        //Instance Dependencies
         public static Func<IAbilities, IDefendingEntity, IDefendModeAbilityManager> DefendModeAbilityManager = 
             (abilities, defendingEntity) =>
         {

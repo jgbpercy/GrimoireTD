@@ -1,11 +1,10 @@
 ﻿using System;
 using UnityEngine;
 using GrimoireTD.Creeps;
-using GrimoireTD.Technical;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
-    public interface IProjectile : IFrameUpdatee
+    public interface IProjectile
     {
         string Id { get; }
 

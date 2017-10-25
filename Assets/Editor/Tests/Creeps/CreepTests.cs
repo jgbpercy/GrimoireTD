@@ -41,7 +41,9 @@ namespace GrimoireTD.Tests.CreepTests
         private string resistanceModifierAttackEffectTypeName = "resistance";
         private string blockModifierAttackEffectTypeName = "block";
 
-        //Model Deps
+        //Model and Frame Updater
+        private FrameUpdaterStub frameUpdater;
+
         private IGameModel gameModel = Substitute.For<IGameModel>();
 
         private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
@@ -91,7 +93,12 @@ namespace GrimoireTD.Tests.CreepTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            //Model Deps
+            //Model and Frame Updater
+            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            {
+                return frameUpdater;
+            };
+
             mapData.CreepPath.Returns(new List<Coord>
             {
                 thirdNode,
@@ -165,6 +172,8 @@ namespace GrimoireTD.Tests.CreepTests
         [SetUp]
         public void EachTestSetUp()
         {
+            frameUpdater = new FrameUpdaterStub();
+
             attributes.ClearReceivedCalls();
         }
 
@@ -368,7 +377,7 @@ namespace GrimoireTD.Tests.CreepTests
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_AfterConstruction_MovesCreepTowardsFirstNodeAtSpeedGivenByAttributes()
+        public void FrameUpdate_AfterConstruction_MovesCreepTowardsFirstNodeAtSpeedGivenByAttributes()
         {
             var subject = ConstructSubject();
 
@@ -378,7 +387,7 @@ namespace GrimoireTD.Tests.CreepTests
 
             attributes.Get(CreepAttrName.rawSpeed).OnAttributeChanged += Raise.EventWith(new EAOnAttributeChanged(startSpeed));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             var startToSecondNodeVector = new Vector3(
                 secondNode.ToPositionVector().x - startNode.ToPositionVector().x,
@@ -404,7 +413,7 @@ namespace GrimoireTD.Tests.CreepTests
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_AfterMovingFarEnoughToReachFirstNode_MovesCreepTowardsNextNode()
+        public void FrameUpdate_AfterMovingFarEnoughToReachFirstNode_MovesCreepTowardsNextNode()
         {
             var subject = ConstructSubject();
 
@@ -430,11 +439,11 @@ namespace GrimoireTD.Tests.CreepTests
 
             float deltaTimeToPass = deltaTimeToReachSecondNode - (defaultDeltaTime * 0.1f);
 
-            subject.ModelObjectFrameUpdate(deltaTimeToPass);
+            frameUpdater.RunUpdate(deltaTimeToPass);
 
             var positionAfterMovingToReachFirstNode = subject.Position;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             var afterMovePositionToThirdNodeVector = new Vector3(
                 thirdNode.ToPositionVector().x - positionAfterMovingToReachFirstNode.x,
@@ -460,7 +469,7 @@ namespace GrimoireTD.Tests.CreepTests
         }
 
         [Test]
-        public void ModelObjectFrameUpdate_AfterMovingCreep_UpdatesDistanceFromEnd()
+        public void FrameUpdate_AfterMovingCreep_UpdatesDistanceFromEnd()
         {
             var subject = ConstructSubject();
 
@@ -472,7 +481,7 @@ namespace GrimoireTD.Tests.CreepTests
 
             var startingDistanceFromEnd = subject.DistanceFromEnd;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             AssertExt.Approximately(startingDistanceFromEnd - startSpeed * defaultDeltaTime, subject.DistanceFromEnd);
         }

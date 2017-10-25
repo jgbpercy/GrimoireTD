@@ -1,5 +1,5 @@
 ﻿using System;
-using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.TemporaryEffects
 {
@@ -33,10 +33,10 @@ namespace GrimoireTD.TemporaryEffects
             EffectName = effectName;
             OnTemporaryEffectEnd = onEndEvent;
 
-            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
-        public void ModelObjectFrameUpdate(float deltaTime)
+        private void ModelObjectFrameUpdate(float deltaTime)
         {
             Elapsed += deltaTime;
 

@@ -7,36 +7,46 @@ using GrimoireTD.Technical;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Creeps;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.AoeProjectileTests
 {
     public class AoeProjectileTests
     {
+        //Primitives and Basic Objects
         private float explosionTime = 0.8f;
 
         private float finalAoeRadius = 2f;
 
-        private float deltaTime = 0.2f;
+        private float defaultDeltaTime = 0.2f;
 
         private Vector3 startPosition = new Vector3();
 
-        private ICreep targetCreep = Substitute.For<ICreep>();
+        //Model and Frame Updater
+        private FrameUpdaterStub frameUpdater;
 
-        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
-
+        //Template Deps
         private IAoeProjectileTemplate template = Substitute.For<IAoeProjectileTemplate>();
 
         private IAttackEffect attackEffectOne = Substitute.For<IAttackEffect>();
         private IAttackEffect attackEffectTwo = Substitute.For<IAttackEffect>();
         private IEnumerable<IAttackEffect> aoeAttackEffects;
 
+        //Other Deps Passed To Ctor
+        private ICreep targetCreep = Substitute.For<ICreep>();
+
+        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            GameObject testGo = new GameObject();
+            //Model and Frame Updater
+            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            {
+                return frameUpdater;
+            };
 
-            testGo.AddComponent<ModelObjectFrameUpdater>();
-
+            //Template Deps
             aoeAttackEffects = new List<IAttackEffect>
             {
                 attackEffectOne,
@@ -53,7 +63,15 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         [SetUp]
         public void EachTestSetUp()
         {
+            frameUpdater = new FrameUpdaterStub();
+
             targetCreep.ClearReceivedCalls();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
         }
 
         public CAoeProjectile ConstructSubject()
@@ -77,7 +95,7 @@ namespace GrimoireTD.Tests.AoeProjectileTests
         }
 
         [Test]
-        public void ModelObjectFrameUpdatee_AfterProjectileHitsCreep_FiresExplosionStartedEvent()
+        public void FrameUpdate_AfterProjectileHitsCreep_FiresExplosionStartedEvent()
         {
             var subject = ConstructSubject();
 
@@ -86,30 +104,30 @@ namespace GrimoireTD.Tests.AoeProjectileTests
 
             subject.HitCreep(targetCreep, 5f);
 
-            subject.ModelObjectFrameUpdate(deltaTime);
-            subject.ModelObjectFrameUpdate(deltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
             eventTester.AssertFired(1);
         }
 
         [Test]
-        public void ModelObjectFrameUpdatee_AfterProjectileHitsCreep_ExpandsExplosionRadiusAsCubeRouteOfExplosionProportionPassed()
+        public void FrameUpdate_AfterProjectileHitsCreep_ExpandsExplosionRadiusAsCubeRouteOfExplosionProportionPassed()
         {
             var subject = ConstructSubject();
 
             subject.HitCreep(targetCreep, 5f);
 
-            subject.ModelObjectFrameUpdate(deltaTime);
-            float expectedAoeRadius = Mathf.Pow(deltaTime / explosionTime, 1/3) * finalAoeRadius;
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            float expectedAoeRadius = Mathf.Pow(defaultDeltaTime / explosionTime, 1/3) * finalAoeRadius;
             Assert.True(CustomMath.Approximately(subject.CurrentAoeRadius, expectedAoeRadius));
 
-            subject.ModelObjectFrameUpdate(deltaTime);
-            expectedAoeRadius = Mathf.Pow((deltaTime * 2) / explosionTime, 1/3) * finalAoeRadius;
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            expectedAoeRadius = Mathf.Pow((defaultDeltaTime * 2) / explosionTime, 1/3) * finalAoeRadius;
             Assert.True(CustomMath.Approximately(subject.CurrentAoeRadius, expectedAoeRadius));
         }
 
         [Test]
-        public void ModelObjectFrameUpdatee_AfterProjectileHitsCreepAndExplosionTimeHasPasses_FiresExplosionFinishedEvent()
+        public void FrameUpdate_AfterProjectileHitsCreepAndExplosionTimeHasPasses_FiresExplosionFinishedEvent()
         {
             var subject = ConstructSubject();
 
@@ -118,9 +136,9 @@ namespace GrimoireTD.Tests.AoeProjectileTests
 
             subject.HitCreep(targetCreep, 5f);
 
-            subject.ModelObjectFrameUpdate(deltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            subject.ModelObjectFrameUpdate(explosionTime - deltaTime);
+            frameUpdater.RunUpdate(explosionTime - defaultDeltaTime);
 
             eventTester.AssertFired(1);
         }

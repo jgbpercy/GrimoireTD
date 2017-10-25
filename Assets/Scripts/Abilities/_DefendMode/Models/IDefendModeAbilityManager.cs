@@ -2,7 +2,7 @@
 
 namespace GrimoireTD.Abilities.DefendMode
 {
-    public interface IDefendModeAbilityManager : IReadOnlyDefendModeAbilityManager, IFrameUpdatee
+    public interface IDefendModeAbilityManager : IReadOnlyDefendModeAbilityManager
     {
 
     }

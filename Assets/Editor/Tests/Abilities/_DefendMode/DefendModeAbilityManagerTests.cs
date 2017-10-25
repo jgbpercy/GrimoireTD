@@ -1,71 +1,82 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
-using UnityEngine;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities;
 using GrimoireTD.DefendingEntities;
-using GrimoireTD.Technical;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 {
     public class DefendModeAbilityManagerTests
     {
+        //Primitives and Basic Objects
         private float defaultDeltaTime = 0.2f;
 
-        private IAbilities abilities = Substitute.For<IAbilities>();
-
-        private IDefendModeAbility abilityOne = Substitute.For<IDefendModeAbility>();
-        private IDefendModeAbility abilityTwo = Substitute.For<IDefendModeAbility>();
-        private IDefendModeAbility abilityThree = Substitute.For<IDefendModeAbility>();
-
-        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+        //Model and Frame Updater
+        private FrameUpdaterStub frameUpdater;
 
         private IReadOnlyGameModel gameModel = Substitute.For<IReadOnlyGameModel>();
 
         private IReadOnlyGameStateManager gameStateManager = Substitute.For<IReadOnlyGameStateManager>();
 
+        //Other Deps Passed To Ctor
+        private IAbilities abilities = Substitute.For<IAbilities>();
+
+        private IDefendModeAbility ability1 = Substitute.For<IDefendModeAbility>();
+        private IDefendModeAbility ability2 = Substitute.For<IDefendModeAbility>();
+        private IDefendModeAbility ability3 = Substitute.For<IDefendModeAbility>();
+
+        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            //Model and Frame Updater
+            DependencyProvider.TheModelObjectFrameUpdater = () =>
+            {
+                return frameUpdater;
+            };
+
             gameModel.GameStateManager.Returns(gameStateManager);
 
             GameModels.Models.Add(gameModel);
-
-            GameObject modelObjectFrameUpdaterGo = new GameObject();
-
-            modelObjectFrameUpdaterGo.AddComponent<ModelObjectFrameUpdater>();
         }
 
         [SetUp]
         public void EachTestSetUp()
         {
+            //Model and Frame Updater
+            frameUpdater = new FrameUpdaterStub();
+
             gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
 
+            //Other Deps Passed To Ctor
             abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility>
             {
-                abilityOne,
-                abilityTwo,
-                abilityThree
+                ability1,
+                ability2,
+                ability3
             });
 
-            abilityOne.IsOffCooldown.Returns(true);
-            abilityTwo.IsOffCooldown.Returns(true);
-            abilityThree.IsOffCooldown.Returns(true);
+            ability1.IsOffCooldown.Returns(true);
+            ability2.IsOffCooldown.Returns(true);
+            ability3.IsOffCooldown.Returns(true);
 
-            abilityOne.ClearReceivedCalls();
-            abilityTwo.ClearReceivedCalls();
-            abilityThree.ClearReceivedCalls();
+            ability1.ClearReceivedCalls();
+            ability2.ClearReceivedCalls();
+            ability3.ClearReceivedCalls();
 
-            abilityOne.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
-            abilityTwo.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
-            abilityThree.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
+            ability1.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
+            ability2.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
+            ability3.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
             typeof(GameModels).TypeInitializer.Invoke(null, null);
+            typeof(DependencyProvider).TypeInitializer.Invoke(null, null);
         }
 
         private CDefendModeAbilityManager ConstructSubject()
@@ -81,77 +92,77 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         {
             gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
 
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityOne.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            abilityTwo.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            abilityThree.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
         }
 
         [Test]
         public void Manager_WhenInDefendMode_ExecutesTheFirstAbilityInTheListOnce()
         {
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityOne.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability1.Received(1).ExecuteAbility(attachedToDefendingEntity);
         }
 
         //Intended behaviour until upswing/backswing times/animations
         [Test]
         public void Manager_WhenMultipleAbilitiesAreOffCooldown_ExecutesOneAbilityPerUpdate()
         {
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityOne.Received(1).ExecuteAbility(attachedToDefendingEntity);
-            abilityTwo.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
 
-            abilityOne.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(abilityOne));
+            ability1.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(ability1));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityTwo.Received(1).ExecuteAbility(attachedToDefendingEntity);
-            abilityThree.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability2.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
         }
 
         [Test]
         public void Manager_WhenMultipleAbilitiesAreOffCooldownAndTheFirstCannotExecute_ExecutesTheNextAbility()
         {
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            abilityOne.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(false);
+            ability1.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityTwo.Received(1).ExecuteAbility(attachedToDefendingEntity);
-            abilityThree.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability2.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
 
-            abilityTwo.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(abilityTwo));
+            ability2.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(ability2));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityThree.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability3.Received(1).ExecuteAbility(attachedToDefendingEntity);
         }
 
         [Test]
         public void Manager_IfAllAbilitiesAreOnCooldown_DoesNotExecuteAny()
         {
-            abilityOne.IsOffCooldown.Returns(false);
-            abilityTwo.IsOffCooldown.Returns(false);
-            abilityThree.IsOffCooldown.Returns(false);
+            ability1.IsOffCooldown.Returns(false);
+            ability2.IsOffCooldown.Returns(false);
+            ability3.IsOffCooldown.Returns(false);
 
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityOne.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            abilityTwo.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            abilityThree.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
         }
 
         [Test]
@@ -159,31 +170,31 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         {
             abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility>());
 
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(abilityOne));
+            abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(ability1));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityOne.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability1.Received(1).ExecuteAbility(attachedToDefendingEntity);
         }
 
         [Test]
         public void Manager_WhenAnAbilityThatWasOnCooldownComesOffCooldown_ExecutesThatAbility()
         {
-            abilityOne.IsOffCooldown.Returns(false);
-            abilityTwo.IsOffCooldown.Returns(false);
-            abilityThree.IsOffCooldown.Returns(false);
+            ability1.IsOffCooldown.Returns(false);
+            ability2.IsOffCooldown.Returns(false);
+            ability3.IsOffCooldown.Returns(false);
 
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityTwo.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityTwo));
+            ability2.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability2));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityTwo.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability2.Received(1).ExecuteAbility(attachedToDefendingEntity);
         }
 
         [Test]
@@ -191,154 +202,154 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         {
             abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility>());
 
-            abilityThree.IsOffCooldown.Returns(false);
+            ability3.IsOffCooldown.Returns(false);
 
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(abilityThree));
+            abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(ability3));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityThree.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityThree));
+            ability3.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability3));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityThree.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability3.Received(1).ExecuteAbility(attachedToDefendingEntity);
         }
 
         [Test]
         public void Manager_WhenAbilityIsRemoved_DoesNotExecuteItWhenItComesOffCooldown()
         {
-            abilityOne.IsOffCooldown.Returns(false);
+            ability1.IsOffCooldown.Returns(false);
 
-            abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility> { abilityOne });
+            abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility> { ability1 });
 
-            var subject = ConstructSubject();
+            ConstructSubject();
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilities.OnDefendModeAbilityRemoved += Raise.EventWith(new EAOnDefendModeAbilityRemoved(abilityOne));
+            abilities.OnDefendModeAbilityRemoved += Raise.EventWith(new EAOnDefendModeAbilityRemoved(ability1));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityOne.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityOne));
+            ability1.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability1));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
+            frameUpdater.RunUpdate(defaultDeltaTime);
 
-            abilityOne.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
         }
 
         [Test]
         public void Manager_WhenAllAbilitiesComeOffColldown_EmitsEventAtCorrectTime()
         {
-            abilityOne.IsOffCooldown.Returns(false);
-            abilityTwo.IsOffCooldown.Returns(false);
-            abilityThree.IsOffCooldown.Returns(false);
+            ability1.IsOffCooldown.Returns(false);
+            ability2.IsOffCooldown.Returns(false);
+            ability3.IsOffCooldown.Returns(false);
 
             var subject = ConstructSubject();
 
             var eventTester = new EventTester<EAOnAllDefendModeAbilitiesOffCooldown>();
             subject.OnAllDefendModeAbilitiesOffCooldown += eventTester.Handler;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityOne.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityOne));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability1.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability1));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityTwo.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityTwo));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability2.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability2));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityThree.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityThree));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability3.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability3));
             eventTester.AssertFired(1);
         }
 
         [Test]
         public void Manager_WhenAnAbilityWasAddedAndAllAbilitiesComeOffCooldown_EmitsEventAtCorrectTime()
         {
-            abilityOne.IsOffCooldown.Returns(false);
-            abilityTwo.IsOffCooldown.Returns(false);
-            abilityThree.IsOffCooldown.Returns(false);
+            ability1.IsOffCooldown.Returns(false);
+            ability2.IsOffCooldown.Returns(false);
+            ability3.IsOffCooldown.Returns(false);
 
-            abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility> { abilityOne, abilityTwo });
+            abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility> { ability1, ability2 });
 
             var subject = ConstructSubject();
 
             var eventTester = new EventTester<EAOnAllDefendModeAbilitiesOffCooldown>();
             subject.OnAllDefendModeAbilitiesOffCooldown += eventTester.Handler;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityOne.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityOne));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability1.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability1));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(abilityThree));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(ability3));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityThree.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityThree));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability3.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability3));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityTwo.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityTwo));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability2.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability2));
             eventTester.AssertFired(1);
         }
 
         [Test]
         public void Manager_WhenAnAbilityWasRemovedAndAllOtherAbilitiesComeOffCooldown_EmitsEventAtCorrectTime()
         {
-            abilityOne.IsOffCooldown.Returns(false);
-            abilityTwo.IsOffCooldown.Returns(false);
-            abilityThree.IsOffCooldown.Returns(false);
+            ability1.IsOffCooldown.Returns(false);
+            ability2.IsOffCooldown.Returns(false);
+            ability3.IsOffCooldown.Returns(false);
 
             var subject = ConstructSubject();
 
             var eventTester = new EventTester<EAOnAllDefendModeAbilitiesOffCooldown>();
             subject.OnAllDefendModeAbilitiesOffCooldown += eventTester.Handler;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityThree.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityThree));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability3.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability3));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilities.OnDefendModeAbilityRemoved += Raise.EventWith(new EAOnDefendModeAbilityRemoved(abilityTwo));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            abilities.OnDefendModeAbilityRemoved += Raise.EventWith(new EAOnDefendModeAbilityRemoved(ability2));
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityOne.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityOne));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability1.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability1));
             eventTester.AssertFired(1);
         }
 
         [Test]
         public void Manager_WhenAnAbilityComesOffCooldownAndThenIsExecutedAndThenAllAbilitiesComeOffCooldown_EmitsEventAtCorrectTime()
         {
-            abilityOne.IsOffCooldown.Returns(false);
-            abilityTwo.IsOffCooldown.Returns(false);
-            abilityThree.IsOffCooldown.Returns(false);
+            ability1.IsOffCooldown.Returns(false);
+            ability2.IsOffCooldown.Returns(false);
+            ability3.IsOffCooldown.Returns(false);
 
             var subject = ConstructSubject();
 
             var eventTester = new EventTester<EAOnAllDefendModeAbilitiesOffCooldown>();
             subject.OnAllDefendModeAbilitiesOffCooldown += eventTester.Handler;
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityThree.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityThree));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability3.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability3));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityTwo.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityTwo));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability2.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability2));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityThree.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(abilityThree));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability3.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(ability3));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityOne.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityOne));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability1.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability1));
             eventTester.AssertFired(false);
 
-            subject.ModelObjectFrameUpdate(defaultDeltaTime);
-            abilityThree.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(abilityThree));
+            frameUpdater.RunUpdate(defaultDeltaTime);
+            ability3.OnAbilityOffCooldown += Raise.EventWith(new EAOnAbilityOffCooldown(ability3));
             eventTester.AssertFired(1);
         }
     }

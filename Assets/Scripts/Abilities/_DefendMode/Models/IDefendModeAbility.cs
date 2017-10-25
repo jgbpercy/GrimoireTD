@@ -4,7 +4,7 @@ using System;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
-    public interface IDefendModeAbility : IAbility, IFrameUpdatee
+    public interface IDefendModeAbility : IAbility
     {
         float ActualCooldown { get; }
 

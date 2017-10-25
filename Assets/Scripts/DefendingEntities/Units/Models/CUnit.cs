@@ -10,6 +10,7 @@ using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.DefendingEntities.Units
 {
@@ -165,7 +166,7 @@ namespace GrimoireTD.DefendingEntities.Units
                 GameModels.Models[0].OnGameModelSetUp += OnGameModelSetUp;
             }
 
-            ModelObjectFrameUpdater.Instance.RegisterAsModelObjectFrameUpdatee(this);
+            DependencyProvider.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
         }
 
         //Set Up
@@ -224,7 +225,7 @@ namespace GrimoireTD.DefendingEntities.Units
         }
 
         //Update loop
-        public void ModelObjectFrameUpdate(float deltaTime)
+        private void ModelObjectFrameUpdate(float deltaTime)
         {
             if (GameModels.Models[0].GameStateManager.CurrentGameMode == GameMode.BUILD)
             {

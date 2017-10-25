@@ -6,11 +6,10 @@ using GrimoireTD.Attributes;
 using GrimoireTD.DefendingEntities;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Abilities.DefendMode;
-using GrimoireTD.Technical;
 
 namespace GrimoireTD.Creeps
 {
-    public interface ICreep : IDefendModeTargetable, IFrameUpdatee
+    public interface ICreep : IDefendModeTargetable
     {
         ICreepTemplate CreepTemplate { get; }
 
