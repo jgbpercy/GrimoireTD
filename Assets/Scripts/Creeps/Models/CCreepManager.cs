@@ -90,10 +90,10 @@ namespace GrimoireTD.Creeps
             creepList.Sort((x, y) => x.DistanceFromEnd.CompareTo(y.DistanceFromEnd));
         }
 
-        private void SpawnCreep(ICreepTemplate creepToSpawn)
+        private void SpawnCreep(ICreepTemplate creepToSpawnTemplate)
         {
             //TODO unhardcode spawnposition at zero
-            ICreep newCreep = creepToSpawn.GenerateCreep(Vector3.zero);
+            ICreep newCreep = creepToSpawnTemplate.GenerateCreep(Vector3.zero);
 
             creepList.Add(newCreep);
 
