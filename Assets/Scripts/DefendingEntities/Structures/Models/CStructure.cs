@@ -71,12 +71,6 @@ namespace GrimoireTD.DefendingEntities.Structures
 
             ApplyImprovement(structureTemplate.BaseCharacteristics);
 
-            SetUpUpgradesAndEnhancements();
-        }
-
-        //Upgrades
-        private void SetUpUpgradesAndEnhancements()
-        {
             upgradesBought = new Dictionary<IStructureUpgrade, bool>();
             enhancementsChosen = new Dictionary<IStructureEnhancement, bool>();
 
@@ -138,7 +132,9 @@ namespace GrimoireTD.DefendingEntities.Structures
         //Defender Auras Affected By
         protected override void OnNewDefenderAuraInCurrentHex(object sender, EAOnCallbackListAdd<IDefenderAura> args)
         {
-            if (args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.STRUCTURES)
+            if (
+                args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || 
+                args.AddedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.STRUCTURES)
             {
                 affectedByDefenderAuras.Add(args.AddedItem);
             }
@@ -146,12 +142,12 @@ namespace GrimoireTD.DefendingEntities.Structures
 
         protected override void OnClearDefenderAuraInCurrentHex(object sender, EAOnCallbackListRemove<IDefenderAura> args)
         {
-            if (args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
+            if (
+                args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || 
+                args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.STRUCTURES)
             {
-                bool wasPresent = affectedByDefenderAuras.Contains(args.RemovedItem);
+                bool wasPresent = affectedByDefenderAuras.TryRemove(args.RemovedItem);
                 Assert.IsTrue(wasPresent);
-
-                RemoveImprovement(args.RemovedItem.DefenderEffectTemplate.Improvement);
             }
         }
     }

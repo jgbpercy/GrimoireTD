@@ -102,5 +102,15 @@ namespace GrimoireTD.Dependencies
         {
             return new CResistances(attachedToCreep, baseResistances);
         };
+
+        public static Func<IAttributes<DEAttrName>> DefendingEntityAttributes = () =>
+        {
+            return new CAttributes<DEAttrName>(DefendingEntityAttributeDefinitions.NewAttributesDictionary());
+        };
+
+        public static Func<IDefendingEntity, IAbilities> Abilities = (attachedToDefendingEntity) =>
+        {
+            return new CAbilities(attachedToDefendingEntity);
+        };
     }
 }

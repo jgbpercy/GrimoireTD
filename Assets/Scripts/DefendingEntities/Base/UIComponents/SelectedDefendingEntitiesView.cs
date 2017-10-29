@@ -607,7 +607,7 @@ namespace GrimoireTD.DefendingEntities
         {
             string attributesText = "Attributes:\n";
 
-            foreach (KeyValuePair<DEAttrName,string> attributeName in DefendingEntityAttributes.DisplayNames)
+            foreach (KeyValuePair<DEAttrName,string> attributeName in DefendingEntityAttributeDefinitions.DisplayNames)
             {
                 attributesText += 
                     attributeName.Value + ": " + 

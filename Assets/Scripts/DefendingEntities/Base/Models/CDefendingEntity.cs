@@ -127,15 +127,15 @@ namespace GrimoireTD.DefendingEntities
 
             DefendingEntityTemplate = template;
 
-            attributes = new CAttributes<DEAttrName>(DefendingEntityAttributes.NewAttributesDictionary());
+            attributes = DepsProv.DefendingEntityAttributes();
 
-            abilities = new Abilities.CAbilities(this);
+            abilities = DepsProv.Abilities(this);
 
             flatHexOccupationBonuses = new CallbackList<IHexOccupationBonus>();
 
             aurasEmitted = new CallbackList<IDefenderAura>();
             aurasEmitted.OnAdd += OnInitialiseAura;
-            aurasEmitted.OnRemove -= OnRemoveAura;
+            aurasEmitted.OnRemove += OnRemoveAura;
 
             CoordPosition = position;
             OnHex.DefenderAurasHere.OnAdd += OnNewDefenderAuraInCurrentHex;
@@ -153,7 +153,7 @@ namespace GrimoireTD.DefendingEntities
 
             affectedByDefenderAuras.OnAdd += 
                 (object sender, EAOnCallbackListAdd<IDefenderAura> args) => ApplyImprovement(args.AddedItem.DefenderEffectTemplate.Improvement);
-            affectedByDefenderAuras.OnRemove -= 
+            affectedByDefenderAuras.OnRemove += 
                 (object sender, EAOnCallbackListRemove<IDefenderAura> args) => RemoveImprovement(args.RemovedItem.DefenderEffectTemplate.Improvement);
 
             GetDefenderAurasFromCurrentHex();
@@ -163,7 +163,7 @@ namespace GrimoireTD.DefendingEntities
         {
             foreach (IDefenderAura defenderAura in OnHex.DefenderAurasHere)
             {
-                affectedByDefenderAuras.Add(defenderAura);
+                OnNewDefenderAuraInCurrentHex(this, new EAOnCallbackListAdd<IDefenderAura>(defenderAura));
             }
         }
 
