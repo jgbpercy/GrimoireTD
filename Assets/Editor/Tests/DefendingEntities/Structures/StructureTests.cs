@@ -7,6 +7,8 @@ using GrimoireTD.DefendingEntities.Structures;
 using GrimoireTD.DefendingEntities.DefenderEffects;
 using GrimoireTD.Map;
 using GrimoireTD.Attributes;
+using GrimoireTD.Economy;
+using GrimoireTD.Abilities;
 
 namespace GrimoireTD.Tests.StructureTests
 {
@@ -14,14 +16,10 @@ namespace GrimoireTD.Tests.StructureTests
     {
         //Primitives and Basic Objects
         private string startingName = "Structure Starting Name";
-
         private string startingDescription = "Structure Starting Description";
 
-        //Model and Frame Updater
-
-
-        //Instance Dependency Provider Deps
-
+        private string upgradedName = "Structure Upgraded Name";
+        private string upgradedDescription = "Structure Upgraded Description";
 
         //Template Deps
         private IStructureTemplate template = Substitute.For<IStructureTemplate>();
@@ -37,11 +35,12 @@ namespace GrimoireTD.Tests.StructureTests
         private IStructureEnhancement upgrade2Enhancement1 = Substitute.For<IStructureEnhancement>();
         private IStructureEnhancement upgrade2Enhancement2 = Substitute.For<IStructureEnhancement>();
 
-        //Other Deps Passed To Ctor or SetUp
+        private INamedAttributeModifier<DEAttrName> upgradeAttributeModifier = Substitute.For<INamedAttributeModifier<DEAttrName>>();
 
+        private IAbilityTemplate upgradeAbilityTemplate = Substitute.For<IAbilityTemplate>();
+        private IAbility upgradeAbility = Substitute.For<IAbility>();
 
-        //Other Objects Passed To Methods
-
+        private IDefendingEntityImprovement combinedImprovement = Substitute.For<IDefendingEntityImprovement>();
 
         [OneTimeSetUp]
         public override void OneTimeSetUp()
@@ -50,8 +49,6 @@ namespace GrimoireTD.Tests.StructureTests
 
             //Model and Frame Updater
             mapData.CoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord> { startPosition });
-
-            //Instance Dependency Provider Deps
 
             //Template Deps
             template.BaseCharacteristics.Returns(baseCharacteristics);
@@ -67,6 +64,12 @@ namespace GrimoireTD.Tests.StructureTests
                 upgrade2
             });
 
+            upgrade1.NewStructureName.Returns(upgradedName);
+            upgrade1.NewStructureDescription.Returns(upgradedDescription);
+
+            upgrade2.NewStructureName.Returns(upgradedName);
+            upgrade2.NewStructureDescription.Returns(upgradedDescription);
+
             upgrade1.OptionalEnhancements.Returns(new List<IStructureEnhancement>
             {
                 upgrade1Enhancement1,
@@ -79,13 +82,23 @@ namespace GrimoireTD.Tests.StructureTests
                 upgrade2Enhancement2
             });
 
+            combinedImprovement.AttributeModifiers.Returns(new List<INamedAttributeModifier<DEAttrName>>
+            {
+                upgradeAttributeModifier
+            });
 
-            //Other Deps Passed To Ctor or SetUp
+            combinedImprovement.Abilities.Returns(new List<IAbilityTemplate>
+            {
+                upgradeAbilityTemplate
+            });
 
+            upgradeAbilityTemplate.GenerateAbility(Arg.Any<IDefendingEntity>()).Returns(upgradeAbility);
 
-            //Other Objects Passed To Methods
+            combinedImprovement.FlatHexOccupationBonuses.Returns(new List<IHexOccupationBonus>());
 
+            combinedImprovement.Auras.Returns(new List<IDefenderAuraTemplate>());
 
+            upgrade1.MainUpgradeBonus.Combine(upgrade1Enhancement1.EnhancementBonus).Returns(combinedImprovement);
         }
 
         [SetUp]
@@ -255,43 +268,82 @@ namespace GrimoireTD.Tests.StructureTests
         [Test]
         public void TryUpgrade_IfUpgradeAlreadyBought_ReturnsFalse()
         {
+            var subject = ConstructStructureSubject();
 
+            subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
+
+            var result = subject.TryUpgrade(upgrade1, upgrade1Enhancement2); ;
+
+            Assert.False(result);
         }
 
         [Test]
         public void TryUpgrade_IfCantDoTransaction_ReturnsFalse()
         {
+            var subject = ConstructStructureSubject();
 
+            upgrade1Enhancement1.Cost.CanDoTransaction().Returns(false);
+
+            var result = subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
+
+            Assert.False(result);
         }
 
         [Test]
         public void TryUpgrade_IfNotAlreadyBoughtAndCanDoTransaction_AppliesCombinedImprovement()
         {
+            var subject = ConstructStructureSubject();
 
+            subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
+
+            abilities.Received(1).AddAbility(upgradeAbility);
+            attributes.Received(1).AddModifier(upgradeAttributeModifier);
         }
 
         [Test]
         public void TryUpgrade_IfNotAlreadyBoughtAndCanDoTransaction_SetsUpgradeToBoughtAndEnhancementToChosen()
         {
+            var subject = ConstructStructureSubject();
 
+            subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
+
+            Assert.True(subject.UpgradesBought[upgrade1]);
+            Assert.True(subject.EnhancementsChosen[upgrade1Enhancement1]);
         }
 
         [Test]
         public void TryUpgrade_IfNotAlreadyBoughtAndCanDoTransaction_FiresOnUpgradedEvent()
         {
+            var subject = ConstructStructureSubject();
 
+            var eventTester = new EventTester<EAOnUpgraded>();
+            subject.OnUpgraded += eventTester.Handler;
+
+            subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
+
+            eventTester.AssertFired(1);
+            eventTester.AssertResult(subject, args => args.Upgrade == upgrade1 && args.Enhancement == upgrade1Enhancement1);
         }
 
         [Test]
         public void TryUpgrade_IfNotAlreadyBoughtAndCanDoTransaction_ChangesNameAndDescription()
         {
+            var subject = ConstructStructureSubject();
 
+            subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
+
+            Assert.AreEqual(upgradedName, subject.CurrentName);
+            Assert.AreEqual(upgradedDescription, subject.CurrentDescription);
         }
 
         [Test]
         public void TryUpgrade_IfNotAlreadyBoughtAndCanDoTransaction_ReturnsTrue()
         {
+            var subject = ConstructStructureSubject();
 
+            var result = subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
+
+            Assert.True(result);
         }
     }
 }
