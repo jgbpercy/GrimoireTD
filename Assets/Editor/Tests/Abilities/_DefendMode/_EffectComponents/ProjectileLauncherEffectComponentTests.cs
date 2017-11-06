@@ -4,7 +4,7 @@ using NSubstitute;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 using GrimoireTD.Technical;
 
@@ -12,12 +12,12 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
 {
     public class ProjectileLauncherEffectComponentTests
     {
-        private Coord defendingEntityCoord = new Coord(1, 1);
+        private Coord defenderCoord = new Coord(1, 1);
 
         private IProjectileLauncherComponentTemplate projectileLauncherComponentTemplate 
             = Substitute.For<IProjectileLauncherComponentTemplate>();
 
-        private IDefendingEntity defendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender defender = Substitute.For<IDefender>();
 
         private IProjectileTemplate projectileTemplate = Substitute.For<IProjectileTemplate>();
 
@@ -35,14 +35,14 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            defendingEntity.CoordPosition.Returns(defendingEntityCoord);
+            defender.CoordPosition.Returns(defenderCoord);
 
-            projectileCreationPosition = defendingEntityCoord.ToFirePointVector();
+            projectileCreationPosition = defenderCoord.ToFirePointVector();
 
             projectileTemplate.GenerateProjectile(
                 Arg.Any<Vector3>(), 
                 Arg.Any<IDefendModeTargetable>(), 
-                Arg.Any<IDefendingEntity>()
+                Arg.Any<IDefender>()
             )
                 .Returns(projectile);
 
@@ -61,63 +61,63 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
         {
             projectileTemplate.ClearReceivedCalls();
 
-            defendingEntity.ClearReceivedCalls();
+            defender.ClearReceivedCalls();
         }
 
         [Test]
         public void ExecuteEffect_PassedOneTarget_CreatesOneProjectile()
         {
-            subject.ExecuteEffect(defendingEntity, targetList);
+            subject.ExecuteEffect(defender, targetList);
 
             projectileTemplate.Received(1).GenerateProjectile(
                 Arg.Any<Vector3>(),
                 Arg.Any<IDefendModeTargetable>(),
-                Arg.Any<IDefendingEntity>()
+                Arg.Any<IDefender>()
             );
         }
 
         [Test]
         public void ExecuteEffect_PassedOneTarget_CreatesProjectileAtTheCorrectPosition()
         {
-            subject.ExecuteEffect(defendingEntity, targetList);
+            subject.ExecuteEffect(defender, targetList);
 
             projectileTemplate.Received(1).GenerateProjectile(
                 Arg.Is<Vector3>(vec => CustomMath.Approximately(vec, projectileCreationPosition)),
                 Arg.Any<IDefendModeTargetable>(),
-                Arg.Any<IDefendingEntity>()
+                Arg.Any<IDefender>()
             );
         }
 
         [Test]
         public void ExecuteEffect_PassedOneTarget_CreatesProjectileWithCorrectTarget()
         {
-            subject.ExecuteEffect(defendingEntity, targetList);
+            subject.ExecuteEffect(defender, targetList);
 
             projectileTemplate.Received(1).GenerateProjectile(
                 Arg.Any<Vector3>(),
                 targetOne,
-                Arg.Any<IDefendingEntity>()
+                Arg.Any<IDefender>()
             );
         }
 
         [Test]
         public void ExecuteEffect_PassedOneTarget_CreatesProjectileWithCorrectSource()
         {
-            subject.ExecuteEffect(defendingEntity, targetList);
+            subject.ExecuteEffect(defender, targetList);
 
             projectileTemplate.Received(1).GenerateProjectile(
                 Arg.Any<Vector3>(),
                 Arg.Any<IDefendModeTargetable>(),
-                defendingEntity
+                defender
             );
         }
 
         [Test]
-        public void ExecuteEffect_PassedOneTarget_CallsSourceEntityCreatedProjectile()
+        public void ExecuteEffect_PassedOneTarget_CallsSourceDefenderCreatedProjectile()
         {
-            subject.ExecuteEffect(defendingEntity, targetList);
+            subject.ExecuteEffect(defender, targetList);
 
-            defendingEntity.Received(1).CreatedProjectile(projectile);
+            defender.Received(1).CreatedProjectile(projectile);
         }
 
         [Test]
@@ -129,15 +129,15 @@ namespace GrimoireTD.Tests.ProjectileLauncherEffectComponentTests
                 targetTwo
             };
 
-            subject.ExecuteEffect(defendingEntity, multiTargetList);
+            subject.ExecuteEffect(defender, multiTargetList);
 
             projectileTemplate.Received(2).GenerateProjectile(
                 Arg.Any<Vector3>(),
                 Arg.Any<IDefendModeTargetable>(),
-                Arg.Any<IDefendingEntity>()
+                Arg.Any<IDefender>()
             );
 
-            defendingEntity.Received(2).CreatedProjectile(Arg.Any<IProjectile>());
+            defender.Received(2).CreatedProjectile(Arg.Any<IProjectile>());
         }
     }
 }

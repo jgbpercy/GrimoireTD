@@ -4,7 +4,7 @@ using NSubstitute;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
 using GrimoireTD.Technical;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Creeps;
 using GrimoireTD.Dependencies;
@@ -40,7 +40,7 @@ namespace GrimoireTD.Tests.ProjectileTests
         //Other Deps Passed To Ctor
         private ICreep targetCreep = Substitute.For<ICreep>();
 
-        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender sourceDefender = Substitute.For<IDefender>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -87,7 +87,7 @@ namespace GrimoireTD.Tests.ProjectileTests
                 startPosition,
                 targetCreep,
                 template,
-                sourceDefendingEntity
+                sourceDefender
             );
         }
 
@@ -128,7 +128,7 @@ namespace GrimoireTD.Tests.ProjectileTests
 
             subject.HitCreep(targetCreep, 5f);
 
-            targetCreep.Received(1).ApplyAttackEffects(attackEffects, sourceDefendingEntity);
+            targetCreep.Received(1).ApplyAttackEffects(attackEffects, sourceDefender);
         }
 
         [Test]

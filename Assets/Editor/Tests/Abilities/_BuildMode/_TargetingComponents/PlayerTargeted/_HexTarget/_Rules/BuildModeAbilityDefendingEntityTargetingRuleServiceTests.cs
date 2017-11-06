@@ -1,6 +1,6 @@
-﻿namespace GrimoireTD.Tests.BuildModeAbilityDefendingEntityTargetingRuleServiceTests
+﻿namespace GrimoireTD.Tests.BuildModeAbilityDefenderTargetingRuleServiceTests
 {
-    public class BuildModeAbilityDefendingEntityTargetingRuleServiceTests
+    public class BuildModeAbilityDefenderTargetingRuleServiceTests
     {
 
     }

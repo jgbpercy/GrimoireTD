@@ -1,6 +1,5 @@
-﻿using GrimoireTD.DefendingEntities;
-using GrimoireTD.Technical;
-using System;
+﻿using System;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -21,7 +20,7 @@ namespace GrimoireTD.Abilities.DefendMode
 
         event EventHandler<EAOnAbilityOffCooldown> OnAbilityOffCooldown;
 
-        //TODO: make readonly defendingentity?
-        bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity);
+        //TODO: make readonly defender?
+        bool ExecuteAbility(IDefender attachedToDefender);
     }
 }

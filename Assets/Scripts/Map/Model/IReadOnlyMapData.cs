@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Map
 {
@@ -30,7 +30,7 @@ namespace GrimoireTD.Map
 
         bool CanMoveUnitTo(Coord targetCoord, IReadOnlyList<Coord> disallowedCoordsForMove);
 
-        Coord WhereAmI(IDefendingEntity defendingEntity);
+        Coord WhereAmI(IDefender defender);
 
         List<Coord> CoordsInRange(int range, Coord startHex);
 

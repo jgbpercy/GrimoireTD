@@ -1,9 +1,9 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
     public interface IPlayerTargetedComponent : IBuildModeTargetingComponent
     {
-        bool IsValidTarget(IDefendingEntity sourceDefendingEntity, IBuildModeTargetable potentialTarget);
+        bool IsValidTarget(IDefender sourceDefender, IBuildModeTargetable potentialTarget);
     }
 }

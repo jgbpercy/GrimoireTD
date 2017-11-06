@@ -4,7 +4,7 @@ using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Economy;
 using GrimoireTD.Levels;
 using GrimoireTD.Map;
-using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Defenders.Structures;
 
 namespace GrimoireTD
 {

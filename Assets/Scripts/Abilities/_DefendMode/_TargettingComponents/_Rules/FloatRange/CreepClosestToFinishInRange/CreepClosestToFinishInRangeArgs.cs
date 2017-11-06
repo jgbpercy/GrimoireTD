@@ -1,15 +1,13 @@
-﻿using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
-using System.Collections.Generic;
+﻿using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
     public class CreepClosestToFinishInRangeArgs : FloatRangeArgs
     {
         public CreepClosestToFinishInRangeArgs(
-            IDefendingEntity attachedToDefendingEntity,
+            IDefender attachedToDefender,
             float baseRange
-        ) : base(attachedToDefendingEntity, baseRange)
+        ) : base(attachedToDefender, baseRange)
         {
 
         }

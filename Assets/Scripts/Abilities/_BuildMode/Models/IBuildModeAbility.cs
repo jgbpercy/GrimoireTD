@@ -1,5 +1,5 @@
 ﻿using System;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
@@ -12,6 +12,6 @@ namespace GrimoireTD.Abilities.BuildMode
 
         event EventHandler<EAOnExecutedBuildModeAbility> OnExecuted;
 
-        void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition);
+        void ExecuteAbility(IDefender executingDefender, Coord executionPosition);
     }
 }

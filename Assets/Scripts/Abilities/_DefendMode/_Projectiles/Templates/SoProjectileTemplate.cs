@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
@@ -30,9 +30,9 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public virtual IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefendingEntity sourceDefendingEntity)
+        public virtual IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefender sourceDefender)
         {
-            return new CProjectile(startPosition, target, this, sourceDefendingEntity);
+            return new CProjectile(startPosition, target, this, sourceDefender);
         }
     }
 }

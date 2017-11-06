@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Economy;
 using System.Collections.Generic;
 
@@ -41,7 +41,7 @@ namespace GrimoireTD.Abilities.BuildMode
             }
         }
 
-        public override IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity)
+        public override IAbility GenerateAbility(IDefender attachedToDefender)
         {
             return new CBuildModeAbility(this);
         }

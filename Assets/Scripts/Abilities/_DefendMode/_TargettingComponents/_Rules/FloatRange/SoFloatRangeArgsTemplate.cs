@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Abilities.DefendMode
@@ -10,14 +10,14 @@ namespace GrimoireTD.Abilities.DefendMode
         private float baseRange;
 
         //TODO: logic in SO - think of a way to clean up?
-        public float GetActualRange(IDefendingEntity attachedToDefendingEntity)
+        public float GetActualRange(IDefender attachedToDefender)
         {
-            if (attachedToDefendingEntity == null)
+            if (attachedToDefender == null)
             {
                 return baseRange;
             }
 
-            return baseRange * (1 + attachedToDefendingEntity.Attributes.Get(DEAttrName.rangeBonus).Value());
+            return baseRange * (1 + attachedToDefender.Attributes.Get(DeAttrName.rangeBonus).Value());
         }
     }
 }

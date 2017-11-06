@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrimoireTD.DefendingEntities;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
     public class CMoveEffectComponent : IMoveEffectComponent
     {
-        public void ExecuteEffect(IDefendingEntity executingEntity, IReadOnlyList<IBuildModeTargetable> targets)
+        public void ExecuteEffect(IDefender executingDefender, IReadOnlyList<IBuildModeTargetable> targets)
         {
-            IUnit executingUnit = executingEntity as IUnit;
+            IUnit executingUnit = executingDefender as IUnit;
 
             //#optimisation: disable in release build
             if (executingUnit == null) throw new ArgumentException("Non-unit passed to move ability ExecuteEffect");

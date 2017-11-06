@@ -1,14 +1,14 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
     public class DefendModeTargetingArgs
     {
-        public readonly IDefendingEntity AttachedToDefendingEntity;
+        public readonly IDefender AttachedToDefender;
 
-        public DefendModeTargetingArgs(IDefendingEntity attachedToDefendingEntity)
+        public DefendModeTargetingArgs(IDefender attachedToDefender)
         {
-            AttachedToDefendingEntity = attachedToDefendingEntity;
+            AttachedToDefender = attachedToDefender;
         }
     }
 }

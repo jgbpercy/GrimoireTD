@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -13,19 +13,19 @@ namespace GrimoireTD.Abilities.DefendMode
             this.projectileLauncherComponentTemplate = projectileLauncherComponentTemplate;
         }
 
-        public void ExecuteEffect(IDefendingEntity attachedToDefendingEntity, IReadOnlyList<IDefendModeTargetable> targets)
+        public void ExecuteEffect(IDefender attachedToDefender, IReadOnlyList<IDefendModeTargetable> targets)
         {
             foreach (IDefendModeTargetable target in targets)
             {
                 IProjectile projectile = projectileLauncherComponentTemplate.ProjectileToFireTemplate.GenerateProjectile
                 (
-                    attachedToDefendingEntity.CoordPosition.ToFirePointVector(),
+                    attachedToDefender.CoordPosition.ToFirePointVector(),
                     target,
-                    attachedToDefendingEntity
+                    attachedToDefender
                 );
 
                 //TODO: is there a good way to make this an event?
-                attachedToDefendingEntity.CreatedProjectile(projectile);
+                attachedToDefender.CreatedProjectile(projectile);
             }
         }
     }

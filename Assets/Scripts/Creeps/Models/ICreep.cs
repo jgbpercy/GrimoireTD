@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
 using GrimoireTD.Attributes;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Abilities.DefendMode;
 
@@ -34,6 +34,6 @@ namespace GrimoireTD.Creeps
 
         event EventHandler<EAOnAttributeChanged> OnSpeedChanged;
 
-        void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefendingEntity sourceDefendingEntity);
+        void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefender sourceDefender);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Technical;
 using GrimoireTD.Attributes;
 using GrimoireTD.Dependencies;
@@ -21,7 +21,7 @@ namespace GrimoireTD.Abilities.DefendMode
         public float TimeSinceExecuted { get; private set; }
         public float ActualCooldown { get; private set; }
 
-        private IDefendingEntity attachedToDefendingEntity;
+        private IDefender attachedToDefender;
 
         public event EventHandler<EAOnAbilityOffCooldown> OnAbilityOffCooldown;
 
@@ -57,7 +57,7 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public CDefendModeAbility(IDefendModeAbilityTemplate template, IDefendingEntity attachedToDefendingEntity) : base(template)
+        public CDefendModeAbility(IDefendModeAbilityTemplate template, IDefender attachedToDefender) : base(template)
         {
             DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
 
@@ -69,11 +69,11 @@ namespace GrimoireTD.Abilities.DefendMode
             DefendModeAbilityTemplate = template;
 
             ActualCooldown = GetCooldownAfterReduction(
-                attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value()
+                attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value()
             );
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction)
-                .OnAttributeChanged += OnAttachedDefendingEntityCooldownReductionChange;
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction)
+                .OnAttributeChanged += OnAttachedDefenderCooldownReductionChange;
 
             targetingComponent = template.TargetingComponentTemplate.GenerateTargetingComponent();
 
@@ -107,17 +107,17 @@ namespace GrimoireTD.Abilities.DefendMode
             return DefendModeAbilityTemplate.NameInGame;
         }
 
-        public bool ExecuteAbility(IDefendingEntity attachedToDefendingEntity)
+        public bool ExecuteAbility(IDefender attachedToDefender)
         {
             var targetList = targetingComponent.FindTargets(
-                attachedToDefendingEntity
+                attachedToDefender
             );
 
             if (targetList == null) return false;
 
             foreach (var effectComponent in effectComponents)
             {
-                effectComponent.ExecuteEffect(attachedToDefendingEntity, targetList);
+                effectComponent.ExecuteEffect(attachedToDefender, targetList);
             }
 
             TimeSinceExecuted = 0f;
@@ -132,7 +132,7 @@ namespace GrimoireTD.Abilities.DefendMode
             return DefendModeAbilityTemplate.BaseCooldown * (1 - cooldownReduction);
         }
 
-        private void OnAttachedDefendingEntityCooldownReductionChange(object sender, EAOnAttributeChanged args)
+        private void OnAttachedDefenderCooldownReductionChange(object sender, EAOnAttributeChanged args)
         {
             float newCooldown = GetCooldownAfterReduction(args.NewValue);
 

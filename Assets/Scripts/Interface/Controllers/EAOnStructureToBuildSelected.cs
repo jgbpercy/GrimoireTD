@@ -1,5 +1,5 @@
 ﻿using System;
-using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Defenders.Structures;
 
 namespace GrimoireTD.UI
 {

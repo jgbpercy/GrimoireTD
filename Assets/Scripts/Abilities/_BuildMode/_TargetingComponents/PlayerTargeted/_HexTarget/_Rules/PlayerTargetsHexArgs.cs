@@ -1,20 +1,20 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
     public class PlayerTargetsHexArgs
     {
-        public readonly IDefendingEntity SourceEntity;
+        public readonly IDefender SourceDefender;
 
         public readonly Coord TargetCoord;
 
         public PlayerTargetsHexArgs(
-            IDefendingEntity sourceEntity, 
+            IDefender sourceDefender, 
             Coord targetCoord
         )
         {
-            SourceEntity = sourceEntity;
+            SourceDefender = sourceDefender;
             TargetCoord = targetCoord;
         }
     }

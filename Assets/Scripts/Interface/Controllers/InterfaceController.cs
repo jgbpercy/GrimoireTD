@@ -4,8 +4,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.Assertions;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities.Structures;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders.Structures;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 using GrimoireTD.Technical;
 using GrimoireTD.Dependencies;
@@ -19,7 +19,7 @@ namespace GrimoireTD.UI
         EXECUTE_BUILD_MODE_ABILITY
     }
 
-    //TODO: Handle individual defending entity selection (for DefendingEntity-targetted Build Mode Abilities)
+    //TODO: Handle individual defender selection (for Defender-targetted Build Mode Abilities)
     public class InterfaceController : SingletonMonobehaviour<InterfaceController>
     {
         [SerializeField]
@@ -55,8 +55,8 @@ namespace GrimoireTD.UI
         public IUnit SelectedUnitInstance { get; private set; }
         public IStructure SelectedStructureInstance { get; private set; }
 
-        public event EventHandler<EAOnDefendingEntitySelected> OnDefendingEntitySelected;
-        public event EventHandler<EAOnDefendingEntityDeselected> OnDefendingEntityDeselected;
+        public event EventHandler<EAOnDefenderSelected> OnDefenderSelected;
+        public event EventHandler<EAOnDefenderDeselected> OnDefenderDeselected;
 
         public event EventHandler<EAOnStructureToBuildSelected> OnStructureToBuildSelected;
         public event EventHandler<EAOnStructureToBuildDeselected> OnStructureToBuildDeselected;
@@ -126,7 +126,7 @@ namespace GrimoireTD.UI
             if (Input.GetMouseButtonDown(1))
             {
                 SetCursorModeSelect();
-                DeselectDefendingEntities();
+                DeselectDefenders();
                 DeselectCreep();
             }
         }
@@ -173,7 +173,7 @@ namespace GrimoireTD.UI
             if (CurrentCursorMode == InterfaceCursorMode.SELECT && mouseOverCreep != null)
             {
                 SelectCreep(mouseOverCreep);
-                DeselectDefendingEntities();
+                DeselectDefenders();
                 return;
             }
 
@@ -188,7 +188,7 @@ namespace GrimoireTD.UI
             }
             else if (CurrentCursorMode == InterfaceCursorMode.SELECT)
             {
-                DeselectDefendingEntities();
+                DeselectDefenders();
                 DeselectCreep();
             }
 
@@ -245,16 +245,16 @@ namespace GrimoireTD.UI
             SelectedStructureInstance = hex.StructureHere;
             SelectedUnitInstance = hex.UnitHere;
 
-            OnDefendingEntitySelected?.Invoke(this, new EAOnDefendingEntitySelected(SelectedStructureInstance, SelectedUnitInstance));
+            OnDefenderSelected?.Invoke(this, new EAOnDefenderSelected(SelectedStructureInstance, SelectedUnitInstance));
         }
 
-        private void DeselectDefendingEntities()
+        private void DeselectDefenders()
         {
             SelectedStructureInstance = null;
             SelectedUnitInstance = null;
             selectedStructureTemplate = null;
 
-            OnDefendingEntityDeselected?.Invoke(this, new EAOnDefendingEntityDeselected());
+            OnDefenderDeselected?.Invoke(this, new EAOnDefenderDeselected());
 
             OnStructureToBuildDeselected?.Invoke(this, new EAOnStructureToBuildDeselected());
         }
@@ -271,7 +271,7 @@ namespace GrimoireTD.UI
 
         private void SetCursorModeBuild()
         {
-            DeselectDefendingEntities();
+            DeselectDefenders();
 
             CurrentCursorMode = InterfaceCursorMode.BUILD;
         }

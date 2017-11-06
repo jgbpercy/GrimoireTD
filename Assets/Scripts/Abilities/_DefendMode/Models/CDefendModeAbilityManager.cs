@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
     public class CDefendModeAbilityManager : IDefendModeAbilityManager
     {
-        private IDefendingEntity attachedToDefendingEntity;
+        private IDefender attachedToDefender;
 
         private List<IDefendModeAbility> offCooldownAbilities = new List<IDefendModeAbility>();
         private int numberOfAbilitiesOnCooldown;
 
         public event EventHandler<EAOnAllDefendModeAbilitiesOffCooldown> OnAllDefendModeAbilitiesOffCooldown;
 
-        public CDefendModeAbilityManager(IAbilities abilities, IDefendingEntity attachedToDefendingEntity)
+        public CDefendModeAbilityManager(IAbilities abilities, IDefender attachedToDefender)
         {
             DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
 
@@ -28,7 +28,7 @@ namespace GrimoireTD.Abilities.DefendMode
             abilities.OnDefendModeAbilityAdded += OnDefendModeAbilityAdded;
             abilities.OnDefendModeAbilityRemoved += OnDefendModeAbilityRemoved;
 
-            this.attachedToDefendingEntity = attachedToDefendingEntity;
+            this.attachedToDefender = attachedToDefender;
         }
 
         private void ModelObjectFrameUpdate(float deltaTime)
@@ -41,7 +41,7 @@ namespace GrimoireTD.Abilities.DefendMode
 
             foreach (var abilityOffCooldown in offCooldownAbilities)
             {
-                if (abilityOffCooldown.ExecuteAbility(attachedToDefendingEntity))
+                if (abilityOffCooldown.ExecuteAbility(attachedToDefender))
                 {
                     break;
                 }

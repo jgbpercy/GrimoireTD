@@ -3,7 +3,7 @@ using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 using GrimoireTD.Dependencies;
 
@@ -17,7 +17,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
         private IReadOnlyCreepManager creepManager = Substitute.For<ICreepManager>();
 
         //Other Objects Passed To Methods
-        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender attachedToDefender = Substitute.For<IDefender>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -26,7 +26,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
 
             DepsProv.SetTheGameModel(gameModel);
 
-            attachedToDefendingEntity.CoordPosition.Returns(new Coord(0, 0));
+            attachedToDefender.CoordPosition.Returns(new Coord(0, 0));
         }
 
         [OneTimeTearDown]
@@ -39,7 +39,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
         public void RunRule_PassedCreepClosestToFinishInRangeAndNoCreeps_ReturnsNull()
         {
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
-                attachedToDefendingEntity,
+                attachedToDefender,
                 3f
             );
 
@@ -70,7 +70,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
             creepManager.CreepList.Returns(creepList);
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
-                attachedToDefendingEntity,
+                attachedToDefender,
                 3f
             );
 
@@ -93,7 +93,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
             creepThree.Position.Returns(new Coord(4, 4).ToPositionVector());
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
-                attachedToDefendingEntity,
+                attachedToDefender,
                 20f
             );
 
@@ -134,7 +134,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
             creepManager.CreepList.Returns(creepList);
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
-                attachedToDefendingEntity,
+                attachedToDefender,
                 10f
             );
 
@@ -166,7 +166,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingRuleServiceTests
             creepManager.CreepList.Returns(creepList);
 
             var creepClosestToFinishInRangeArgs = new CreepClosestToFinishInRangeArgs(
-                attachedToDefendingEntity,
+                attachedToDefender,
                 10f
             );
 

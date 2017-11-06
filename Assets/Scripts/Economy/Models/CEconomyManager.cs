@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
-using GrimoireTD.DefendingEntities.Structures;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders;
+using GrimoireTD.Defenders.Structures;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 using GrimoireTD.UI;
 

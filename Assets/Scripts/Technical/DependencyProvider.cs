@@ -1,7 +1,7 @@
 ﻿using System;
 using GrimoireTD.Abilities;
 using GrimoireTD.Abilities.DefendMode;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Attributes;
 using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Creeps;
@@ -82,10 +82,10 @@ namespace GrimoireTD.Dependencies
 
         //***Instance Dependencies***
 
-        public static Func<IAbilities, IDefendingEntity, IDefendModeAbilityManager> DefendModeAbilityManager = 
-            (abilities, defendingEntity) =>
+        public static Func<IAbilities, IDefender, IDefendModeAbilityManager> DefendModeAbilityManager = 
+            (abilities, defender) =>
         {
-            return new CDefendModeAbilityManager(abilities, defendingEntity);
+            return new CDefendModeAbilityManager(abilities, defender);
         };
 
         public static Func<IAttributes<CreepAttrName>> CreepAttributes = () =>
@@ -103,14 +103,14 @@ namespace GrimoireTD.Dependencies
             return new CResistances(attachedToCreep, baseResistances);
         };
 
-        public static Func<IAttributes<DEAttrName>> DefendingEntityAttributes = () =>
+        public static Func<IAttributes<DeAttrName>> DefenderAttributes = () =>
         {
-            return new CAttributes<DEAttrName>(DefendingEntityAttributeDefinitions.NewAttributesDictionary());
+            return new CAttributes<DeAttrName>(DefenderAttributeDefinitions.NewAttributesDictionary());
         };
 
-        public static Func<IDefendingEntity, IAbilities> Abilities = (attachedToDefendingEntity) =>
+        public static Func<IDefender, IAbilities> Abilities = (attachedToDefender) =>
         {
-            return new CAbilities(attachedToDefendingEntity);
+            return new CAbilities(attachedToDefender);
         };
     }
 }

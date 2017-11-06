@@ -1,4 +1,4 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
@@ -8,10 +8,10 @@ namespace GrimoireTD.Abilities.BuildMode
         public readonly int Range;
 
         public ValidMoveArgs(
-            IDefendingEntity sourceEntity,
+            IDefender sourceDefender,
             Coord targetCoord,
             int range
-        ) : base(sourceEntity, targetCoord)
+        ) : base(sourceDefender, targetCoord)
         {
             Range = range;
         }

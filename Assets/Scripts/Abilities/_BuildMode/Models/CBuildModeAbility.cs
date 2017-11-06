@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
@@ -29,13 +29,13 @@ namespace GrimoireTD.Abilities.BuildMode
             }
         }
 
-        public void ExecuteAbility(IDefendingEntity executingEntity, Coord executionPosition)
+        public void ExecuteAbility(IDefender executingDefender, Coord executionPosition)
         {
             IReadOnlyList<IBuildModeTargetable> targetList = TargetingComponent.FindTargets(executionPosition);
 
             foreach(var effectComponent in effectComponents)
             {
-                effectComponent.ExecuteEffect(executingEntity, targetList);
+                effectComponent.ExecuteEffect(executingDefender, targetList);
             }
 
             OnExecuted?.Invoke(this, new EAOnExecutedBuildModeAbility(this));

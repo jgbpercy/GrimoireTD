@@ -1,4 +1,4 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
@@ -6,7 +6,7 @@ namespace GrimoireTD.Abilities.BuildMode
     public interface IPlayerTargetsHexArgsTemplate
     {
         PlayerTargetsHexArgs GenerateArgs(
-            IDefendingEntity sourceEntity,
+            IDefender sourceDefender,
             Coord targetCoord
         );
     }

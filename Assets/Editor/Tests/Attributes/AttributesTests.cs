@@ -8,33 +8,33 @@ namespace GrimoireTD.Tests.AttributesTests
 {
     public class AttributesTests
     {
-        private INamedAttributeModifier<DEAttrName> damageModifier = Substitute.For<INamedAttributeModifier<DEAttrName>>();
+        private INamedAttributeModifier<DeAttrName> damageModifier = Substitute.For<INamedAttributeModifier<DeAttrName>>();
 
-        private INamedAttributeModifier<DEAttrName> cooldownModifier = Substitute.For<INamedAttributeModifier<DEAttrName>>();
+        private INamedAttributeModifier<DeAttrName> cooldownModifier = Substitute.For<INamedAttributeModifier<DeAttrName>>();
 
-        private INamedAttributeModifier<DEAttrName> rangeModifier = Substitute.For<INamedAttributeModifier<DEAttrName>>();
+        private INamedAttributeModifier<DeAttrName> rangeModifier = Substitute.For<INamedAttributeModifier<DeAttrName>>();
 
         private IAttribute fakeDamageBonusAttribute = Substitute.For<IAttribute>();
         private IAttribute fakeCooldownAttribute = Substitute.For<IAttribute>();
 
-        private Dictionary<DEAttrName, IAttribute> attributeSetupDictionary;
+        private Dictionary<DeAttrName, IAttribute> attributeSetupDictionary;
 
-        private CAttributes<DEAttrName> subject;
+        private CAttributes<DeAttrName> subject;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            damageModifier.AttributeName.Returns(DEAttrName.damageBonus);
-            cooldownModifier.AttributeName.Returns(DEAttrName.cooldownReduction);
-            rangeModifier.AttributeName.Returns(DEAttrName.rangeBonus);
+            damageModifier.AttributeName.Returns(DeAttrName.damageBonus);
+            cooldownModifier.AttributeName.Returns(DeAttrName.cooldownReduction);
+            rangeModifier.AttributeName.Returns(DeAttrName.rangeBonus);
 
-            attributeSetupDictionary = new Dictionary<DEAttrName, IAttribute>
+            attributeSetupDictionary = new Dictionary<DeAttrName, IAttribute>
             {
-                { DEAttrName.damageBonus, fakeDamageBonusAttribute },
-                { DEAttrName.cooldownReduction, fakeCooldownAttribute }
+                { DeAttrName.damageBonus, fakeDamageBonusAttribute },
+                { DeAttrName.cooldownReduction, fakeCooldownAttribute }
             };
 
-            subject = new CAttributes<DEAttrName>(attributeSetupDictionary);
+            subject = new CAttributes<DeAttrName>(attributeSetupDictionary);
         }
 
         [SetUp]
@@ -65,7 +65,7 @@ namespace GrimoireTD.Tests.AttributesTests
 
             fakeCooldownAttribute.Value().Returns(newValue);
 
-            var eventTester = new EventTester<EAOnAnyAttributeChanged<DEAttrName>>();
+            var eventTester = new EventTester<EAOnAnyAttributeChanged<DeAttrName>>();
             subject.OnAnyAttributeChanged += eventTester.Handler;
 
             subject.AddModifier(cooldownModifier);
@@ -73,7 +73,7 @@ namespace GrimoireTD.Tests.AttributesTests
             eventTester.AssertFired(1);
             eventTester.AssertResult(
                 subject, 
-                (args) => args.AttributeName == DEAttrName.cooldownReduction && args.NewValue == newValue
+                (args) => args.AttributeName == DeAttrName.cooldownReduction && args.NewValue == newValue
             );
         }
 
@@ -120,7 +120,7 @@ namespace GrimoireTD.Tests.AttributesTests
 
             fakeCooldownAttribute.Value().Returns(newValue);
 
-            var eventTester = new EventTester<EAOnAnyAttributeChanged<DEAttrName>>();
+            var eventTester = new EventTester<EAOnAnyAttributeChanged<DeAttrName>>();
             subject.OnAnyAttributeChanged += eventTester.Handler;
 
             subject.TryRemoveModifier(cooldownModifier);
@@ -128,14 +128,14 @@ namespace GrimoireTD.Tests.AttributesTests
             eventTester.AssertFired(1);
             eventTester.AssertResult(
                 subject,
-                args => args.AttributeName == DEAttrName.cooldownReduction && args.NewValue == newValue
+                args => args.AttributeName == DeAttrName.cooldownReduction && args.NewValue == newValue
             );
         }
 
         [Test]
         public void Get_Always_ReturnsRequestedAttribute()
         {
-            var result = subject.Get(DEAttrName.cooldownReduction);
+            var result = subject.Get(DeAttrName.cooldownReduction);
 
             Assert.AreEqual(fakeCooldownAttribute, result);
         }

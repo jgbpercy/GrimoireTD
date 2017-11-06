@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.DefendMode;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Attributes;
 using GrimoireTD.Creeps;
 using GrimoireTD.Abilities;
@@ -38,7 +38,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         private IDefendModeEffectComponent effectComponentTwo = Substitute.For<IDefendModeEffectComponent>();
 
         //Other Deps Passed To Ctor
-        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender attachedToDefender = Substitute.For<IDefender>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -77,7 +77,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0f);
 
             effectComponentOne.ClearReceivedCalls();
             effectComponentTwo.ClearReceivedCalls();
@@ -93,14 +93,14 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         {
             return new CDefendModeAbility(
                 template,
-                attachedToDefendingEntity
+                attachedToDefender
             );
         }
 
         [Test]
-        public void ActualCooldown_WhenDefendingEntityHasNoCooldownReduction_IsBaseCooldown()
+        public void ActualCooldown_WhenDefenderHasNoCooldownReduction_IsBaseCooldown()
         {
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0f);
 
             var subject = ConstructSubject();
 
@@ -108,9 +108,9 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         }
 
         [Test]
-        public void ActualCooldown_WhenDefendingEntityHasCooldownReduction_TakesReductionIntoAcount()
+        public void ActualCooldown_WhenDefenderHasCooldownReduction_TakesReductionIntoAcount()
         {
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0.2f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0.2f);
 
             var subject = ConstructSubject();
 
@@ -118,15 +118,15 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         }
 
         [Test]
-        public void ActualCooldown_WhenDefendingEntityCooldownReductionChanges_TakesReductionIntoAccount()
+        public void ActualCooldown_WhenDefenderCooldownReductionChanges_TakesReductionIntoAccount()
         {
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0f);
 
             var subject = ConstructSubject();
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0.3f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0.3f);
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction)
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction)
                 .OnAttributeChanged += Raise.EventWith(new EAOnAttributeChanged(0.3f));
 
             AssertExt.Approximately(defaultBaseCooldown * (1 - 0.3f), subject.ActualCooldown);
@@ -229,7 +229,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         [Test]
         public void PercentOfCooldownPassed_WhenCooldownReductionChanges_DoesNotChange()
         {
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0f);
 
             var subject = ConstructSubject();
 
@@ -237,9 +237,9 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             var oldPercentOfCooldownPassed = subject.PercentOfCooldownPassed;
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0.3f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0.3f);
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction)
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction)
                 .OnAttributeChanged += Raise.EventWith(new EAOnAttributeChanged(0.3f));
 
             AssertExt.Approximately(oldPercentOfCooldownPassed, subject.PercentOfCooldownPassed);
@@ -248,7 +248,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         [Test]
         public void TimeSinceExecuted_WhenCooldownReductionChanges_ChangesProportionally()
         {
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0f);
 
             var subject = ConstructSubject();
 
@@ -256,9 +256,9 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             var oldTimeSinceExecuted = subject.TimeSinceExecuted;
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction).Value().Returns(0.3f);
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0.3f);
 
-            attachedToDefendingEntity.Attributes.Get(DEAttrName.cooldownReduction)
+            attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction)
                 .OnAttributeChanged += Raise.EventWith(new EAOnAttributeChanged(0.3f));
 
             AssertExt.Approximately(oldTimeSinceExecuted * 0.7f, subject.TimeSinceExecuted);
@@ -313,11 +313,11 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_IfFindTargetReturnsNull_ReturnsFalse()
         {
             IReadOnlyList<IDefendModeTargetable> returnVal = null;
-            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(returnVal);
+            targetingComponent.FindTargets(attachedToDefender).Returns(returnVal);
 
             var subject = ConstructSubject();
 
-            var result = subject.ExecuteAbility(attachedToDefendingEntity);
+            var result = subject.ExecuteAbility(attachedToDefender);
 
             Assert.False(result);
         }
@@ -326,14 +326,14 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_IfFindTargetReturnsNull_DoesNotFireOnAbilityExecutedEvent()
         {
             IReadOnlyList<IDefendModeTargetable> returnVal = null;
-            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(returnVal);
+            targetingComponent.FindTargets(attachedToDefender).Returns(returnVal);
 
             var subject = ConstructSubject();
 
             var eventTester = new EventTester<EAOnAbilityExecuted>();
             subject.OnAbilityExecuted += eventTester.Handler;
 
-            subject.ExecuteAbility(attachedToDefendingEntity);
+            subject.ExecuteAbility(attachedToDefender);
 
             eventTester.AssertFired(false);
         }
@@ -342,25 +342,25 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_WhenTargetsAreReturned_ExecutesAllEffectsWithTheCorrectArguments()
         {
             var targetList = new List<IDefendModeTargetable>();
-            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(targetList);
+            targetingComponent.FindTargets(attachedToDefender).Returns(targetList);
 
             var subject = ConstructSubject();
 
-            subject.ExecuteAbility(attachedToDefendingEntity);
+            subject.ExecuteAbility(attachedToDefender);
 
-            effectComponentOne.Received(1).ExecuteEffect(attachedToDefendingEntity, targetList);
-            effectComponentTwo.Received(1).ExecuteEffect(attachedToDefendingEntity, targetList);
+            effectComponentOne.Received(1).ExecuteEffect(attachedToDefender, targetList);
+            effectComponentTwo.Received(1).ExecuteEffect(attachedToDefender, targetList);
         }
 
         [Test]
         public void ExecuteAbility_WhenTargetsAreReturned_ReturnsTrue()
         {
             var targetList = new List<IDefendModeTargetable>();
-            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(targetList);
+            targetingComponent.FindTargets(attachedToDefender).Returns(targetList);
 
             var subject = ConstructSubject();
 
-            var result = subject.ExecuteAbility(attachedToDefendingEntity);
+            var result = subject.ExecuteAbility(attachedToDefender);
 
             Assert.True(result);
         }
@@ -369,14 +369,14 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void ExecuteAbility_WhenTargetsAreReturned_FiresOnAbilityExecutedEvent()
         {
             var targetList = new List<IDefendModeTargetable>();
-            targetingComponent.FindTargets(attachedToDefendingEntity).Returns(targetList);
+            targetingComponent.FindTargets(attachedToDefender).Returns(targetList);
 
             var subject = ConstructSubject();
 
             var eventTester = new EventTester<EAOnAbilityExecuted>();
             subject.OnAbilityExecuted += eventTester.Handler;
 
-            subject.ExecuteAbility(attachedToDefendingEntity);
+            subject.ExecuteAbility(attachedToDefender);
 
             eventTester.AssertFired(1);
             eventTester.AssertResult(subject, x => x.DefendModeAbility == subject);

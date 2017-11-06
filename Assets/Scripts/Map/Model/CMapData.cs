@@ -3,9 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-using GrimoireTD.DefendingEntities;
-using GrimoireTD.DefendingEntities.Structures;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders;
+using GrimoireTD.Defenders.Structures;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Levels;
 using GrimoireTD.UI;
 
@@ -16,7 +16,7 @@ namespace GrimoireTD.Map
         //Private fields
         private Dictionary<Coord, IHexData> hexes;
 
-        private Dictionary<IDefendingEntity, Coord> defendingEntityPositions;
+        private Dictionary<IDefender, Coord> defenderPositions;
 
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -59,7 +59,7 @@ namespace GrimoireTD.Map
         public CMapData()
         {
             hexes = new Dictionary<Coord, IHexData>();
-            defendingEntityPositions = new Dictionary<IDefendingEntity, Coord>();
+            defenderPositions = new Dictionary<IDefender, Coord>();
         }
 
         //Set Up
@@ -247,7 +247,7 @@ namespace GrimoireTD.Map
 
             GetHexAt(coord).AddStructureHere(newStructure);
 
-            defendingEntityPositions.Add(newStructure, coord);
+            defenderPositions.Add(newStructure, coord);
 
             if (CreepPath.Contains(coord))
             {
@@ -294,7 +294,7 @@ namespace GrimoireTD.Map
 
             GetHexAt(targetCoord).PlaceUnitHere(newUnit);
 
-            defendingEntityPositions.Add(newUnit, targetCoord);
+            defenderPositions.Add(newUnit, targetCoord);
 
             if (CreepPath.Contains(targetCoord))
             {
@@ -335,10 +335,10 @@ namespace GrimoireTD.Map
             }
 
             GetHexAt(targetCoord).PlaceUnitHere(unit);
-            GetHexAt(defendingEntityPositions[unit]).RemoveUnitHere();
+            GetHexAt(defenderPositions[unit]).RemoveUnitHere();
 
-            defendingEntityPositions.Remove(unit);
-            defendingEntityPositions.Add(unit, targetCoord);
+            defenderPositions.Remove(unit);
+            defenderPositions.Add(unit, targetCoord);
 
             TempRegeneratePath();
         }
@@ -400,9 +400,9 @@ namespace GrimoireTD.Map
             return coordsInRange;
         }
 
-        public Coord WhereAmI(IDefendingEntity defendingEntity)
+        public Coord WhereAmI(IDefender defender)
         {
-            return defendingEntityPositions[defendingEntity];
+            return defenderPositions[defender];
         }
 
         public List<Coord> GetDisallowedCoordsAfterUnitMove(Coord fromCoord)

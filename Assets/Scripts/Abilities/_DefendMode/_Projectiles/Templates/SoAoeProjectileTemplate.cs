@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
@@ -41,9 +41,9 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             }
         }
 
-        public override IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefendingEntity sourceDefendingEntity)
+        public override IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefender sourceDefender)
         {
-            return new CAoeProjectile(startPosition, target, this, sourceDefendingEntity);
+            return new CAoeProjectile(startPosition, target, this, sourceDefender);
         }
     }
 }

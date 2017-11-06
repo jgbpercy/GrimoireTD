@@ -9,7 +9,7 @@ using GrimoireTD.TemporaryEffects;
 using GrimoireTD.Map;
 using GrimoireTD.Technical;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using System;
 
 namespace GrimoireTD.Tests.CreepTests
@@ -64,7 +64,7 @@ namespace GrimoireTD.Tests.CreepTests
         private INamedAttributeModifier<CreepAttrName> baseAttributeModifier2 = Substitute.For<INamedAttributeModifier<CreepAttrName>>();
 
         //Other Objects Passed To Methods
-        private IDefendingEntity defendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender defender = Substitute.For<IDefender>();
 
         private IAttackEffect damageAttackEffect = Substitute.For<IAttackEffect>();
         private IAttackEffect killingDamageAttackEffect = Substitute.For<IAttackEffect>();
@@ -132,8 +132,8 @@ namespace GrimoireTD.Tests.CreepTests
             damageAttackEffect.AttackEffectType.Returns(damageAttackEffectType);
             killingDamageAttackEffect.AttackEffectType.Returns(damageAttackEffectType);
 
-            damageAttackEffect.GetActualMagnitude(defendingEntity).Returns(damageEffectActualMagnitude);
-            killingDamageAttackEffect.GetActualMagnitude(defendingEntity).Returns(killingDamageEffectActualMagnitude);
+            damageAttackEffect.GetActualMagnitude(defender).Returns(damageEffectActualMagnitude);
+            killingDamageAttackEffect.GetActualMagnitude(defender).Returns(killingDamageEffectActualMagnitude);
 
             resistances.GetResistance(damageAttackEffectType).Value.Returns(damageResistance);
             resistances.GetBlock(damageAttackEffectType).Value.Returns(damageBlock);
@@ -495,7 +495,7 @@ namespace GrimoireTD.Tests.CreepTests
                 damageAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             Assert.AreEqual(maxHitpoints - 3, subject.CurrentHitpoints);
         }
@@ -513,7 +513,7 @@ namespace GrimoireTD.Tests.CreepTests
                 damageAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             eventTester.AssertFired(1);
             eventTester.AssertResult(subject, args => args.NewValue == maxHitpoints - 3);
@@ -529,7 +529,7 @@ namespace GrimoireTD.Tests.CreepTests
                 killingDamageAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             Assert.AreEqual(0, subject.CurrentHitpoints);
         }
@@ -547,7 +547,7 @@ namespace GrimoireTD.Tests.CreepTests
                 killingDamageAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             eventTester.AssertFired(1);
         }
@@ -558,14 +558,14 @@ namespace GrimoireTD.Tests.CreepTests
             var subject = ConstructSubject();
 
             var actualMagnitude = 3f;
-            permanentAttributeModifierAttackEffect.GetActualMagnitude(defendingEntity).Returns(actualMagnitude);
+            permanentAttributeModifierAttackEffect.GetActualMagnitude(defender).Returns(actualMagnitude);
 
             var attackEffects = new List<IAttackEffect>()
             {
                 permanentAttributeModifierAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             attributes.Received(1)
                 .AddModifier(Arg.Is<INamedAttributeModifier<CreepAttrName>>(
@@ -579,14 +579,14 @@ namespace GrimoireTD.Tests.CreepTests
             var subject = ConstructSubject();
 
             var actualMagnitude = 2f;
-            permanentResistanceModifierAttackEffect.GetActualMagnitude(defendingEntity).Returns(actualMagnitude);
+            permanentResistanceModifierAttackEffect.GetActualMagnitude(defender).Returns(actualMagnitude);
 
             var attackEffects = new List<IAttackEffect>()
             {
                 permanentResistanceModifierAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             resistances.Received(1)
                 .AddResistanceModifier(Arg.Is<IResistanceModifier>(
@@ -600,14 +600,14 @@ namespace GrimoireTD.Tests.CreepTests
             var subject = ConstructSubject();
 
             var actualMagnitude = 1;
-            permanentBlockModifierAttackEffect.GetActualMagnitude(defendingEntity).Returns(actualMagnitude);
+            permanentBlockModifierAttackEffect.GetActualMagnitude(defender).Returns(actualMagnitude);
 
             var attackEffects = new List<IAttackEffect>()
             {
                 permanentBlockModifierAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             resistances.Received(1)
                 .AddBlockModifier(Arg.Is<IBlockModifier>(
@@ -621,17 +621,17 @@ namespace GrimoireTD.Tests.CreepTests
             var subject = ConstructSubject();
 
             var actualMagnitude = 4f;
-            temporaryAttributeModifierAttackEffect.GetActualMagnitude(defendingEntity).Returns(actualMagnitude);
+            temporaryAttributeModifierAttackEffect.GetActualMagnitude(defender).Returns(actualMagnitude);
 
             var actualDuration = 5f;
-            temporaryAttributeModifierAttackEffect.GetActualDuration(defendingEntity).Returns(actualDuration);
+            temporaryAttributeModifierAttackEffect.GetActualDuration(defender).Returns(actualDuration);
 
             var attackEffects = new List<IAttackEffect>()
             {
                 temporaryAttributeModifierAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             temporaryEffects.Received(1)
                 .ApplyEffect(
@@ -650,17 +650,17 @@ namespace GrimoireTD.Tests.CreepTests
             var subject = ConstructSubject();
 
             var actualMagnitude = 5f;
-            temporaryResistanceModifierAttackEffect.GetActualMagnitude(defendingEntity).Returns(actualMagnitude);
+            temporaryResistanceModifierAttackEffect.GetActualMagnitude(defender).Returns(actualMagnitude);
 
             var actualDuration = 6f;
-            temporaryResistanceModifierAttackEffect.GetActualDuration(defendingEntity).Returns(actualDuration);
+            temporaryResistanceModifierAttackEffect.GetActualDuration(defender).Returns(actualDuration);
 
             var attackEffects = new List<IAttackEffect>()
             {
                 temporaryResistanceModifierAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             temporaryEffects.Received(1)
                 .ApplyEffect(
@@ -679,17 +679,17 @@ namespace GrimoireTD.Tests.CreepTests
             var subject = ConstructSubject();
 
             var actualMagnitude = 6f;
-            temporaryBlockModifierAttackEffect.GetActualMagnitude(defendingEntity).Returns(actualMagnitude);
+            temporaryBlockModifierAttackEffect.GetActualMagnitude(defender).Returns(actualMagnitude);
 
             var actualDuration = 7f;
-            temporaryBlockModifierAttackEffect.GetActualDuration(defendingEntity).Returns(actualDuration);
+            temporaryBlockModifierAttackEffect.GetActualDuration(defender).Returns(actualDuration);
 
             var attackEffects = new List<IAttackEffect>()
             {
                 temporaryBlockModifierAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             temporaryEffects.Received(1)
                 .ApplyEffect(
@@ -708,7 +708,7 @@ namespace GrimoireTD.Tests.CreepTests
             var subject = ConstructSubject();
 
             var actualMagnitude = 3f;
-            permanentAttributeModifierAttackEffect.GetActualMagnitude(defendingEntity).Returns(actualMagnitude);
+            permanentAttributeModifierAttackEffect.GetActualMagnitude(defender).Returns(actualMagnitude);
 
             var attackEffects = new List<IAttackEffect>
             {
@@ -716,7 +716,7 @@ namespace GrimoireTD.Tests.CreepTests
                 permanentAttributeModifierAttackEffect
             };
 
-            subject.ApplyAttackEffects(attackEffects, defendingEntity);
+            subject.ApplyAttackEffects(attackEffects, defender);
 
             Assert.AreEqual(maxHitpoints - 3, subject.CurrentHitpoints);
 

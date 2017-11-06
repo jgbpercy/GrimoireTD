@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Technical;
 using GrimoireTD.Dependencies;
 
@@ -18,7 +18,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
         public Vector3 Position { get; private set; }
         private Vector3 currentDirection;
 
-        protected IDefendingEntity sourceDefendingEntity;
+        protected IDefender sourceDefender;
 
         private IDefendModeTargetable target;
 
@@ -39,7 +39,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             Vector3 startPosition, 
             IDefendModeTargetable target, 
             IProjectileTemplate template, 
-            IDefendingEntity sourceDefendingEntity
+            IDefender sourceDefender
         )
         {
             id = IdGen.GetNextId();
@@ -49,7 +49,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             this.target = target;
             target.OnDied += OnTargetDied;
 
-            this.sourceDefendingEntity = sourceDefendingEntity;
+            this.sourceDefender = sourceDefender;
 
             ProjectileTemplate = template;
 
@@ -87,8 +87,8 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         public void HitCreep(ICreep creep, float destructionDelay)
         { 
-            //TODO: apply modifiers from defending entity at the point of projectile creation, rather than at the point of effect application?
-            creep.ApplyAttackEffects(ProjectileTemplate.AttackEffects, sourceDefendingEntity);
+            //TODO: apply modifiers from defender at the point of projectile creation, rather than at the point of effect application?
+            creep.ApplyAttackEffects(ProjectileTemplate.AttackEffects, sourceDefender);
             destroyingForHitTarget = true;
             Destroy(destructionDelay);
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Dependencies;
@@ -39,11 +39,11 @@ namespace GrimoireTD.Abilities
             }
         }
 
-        public CAbilities(IDefendingEntity attachedToDefendingEntity)
+        public CAbilities(IDefender attachedToDefender)
         {
             abilityList = new SortedList<int, IAbility>();
 
-            defendModeAbilityManager = DepsProv.DefendModeAbilityManager(this, attachedToDefendingEntity);
+            defendModeAbilityManager = DepsProv.DefendModeAbilityManager(this, attachedToDefender);
         }
 
         public void AddAbility(IAbility ability)

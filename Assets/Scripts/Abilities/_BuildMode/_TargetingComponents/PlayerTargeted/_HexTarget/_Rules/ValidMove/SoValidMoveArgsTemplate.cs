@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using GrimoireTD.Map;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.BuildMode
 {
@@ -10,9 +10,9 @@ namespace GrimoireTD.Abilities.BuildMode
         [SerializeField]
         private int range;
 
-        public override PlayerTargetsHexArgs GenerateArgs(IDefendingEntity sourceEntity, Coord targetCoord)
+        public override PlayerTargetsHexArgs GenerateArgs(IDefender sourceDefender, Coord targetCoord)
         {
-            return new ValidMoveArgs(sourceEntity, targetCoord, range);
+            return new ValidMoveArgs(sourceDefender, targetCoord, range);
         }
     }
 }

@@ -4,8 +4,8 @@ using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Map;
-using GrimoireTD.DefendingEntities;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders;
+using GrimoireTD.Defenders.Units;
 
 namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
 {
@@ -15,7 +15,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
 
         private IUnit targetUnit = Substitute.For<IUnit>();
 
-        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender sourceDefender = Substitute.For<IDefender>();
 
         private IPlayerTargetsHexComponentTemplate template = Substitute.For<IPlayerTargetsHexComponentTemplate>();
 
@@ -33,12 +33,12 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         public void OneTimeSetUp()
         {
             playerTargetsHexArgs = new PlayerTargetsHexArgs(
-                sourceDefendingEntity,
+                sourceDefender,
                 targetCoord
             );
 
             template.TargetingRule
-                .GenerateArgs(sourceDefendingEntity, targetCoord)
+                .GenerateArgs(sourceDefender, targetCoord)
                 .Returns(playerTargetsHexArgs);
 
             PlayerTargetsHexRuleService.RunRule = (args) =>
@@ -91,7 +91,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         {
             Assert.Throws(typeof(ArgumentException), () =>
                 subject.IsValidTarget(
-                    sourceDefendingEntity, 
+                    sourceDefender, 
                     targetUnit 
                 )
             );
@@ -101,7 +101,7 @@ namespace GrimoireTD.Tests.PlayerTargetsHexComponentTests
         public void IsValidTarget_PassedValidInput_ReturnsCorrectRuleResultForTheArgsGeneratedFromInput()
         {
             var result = subject.IsValidTarget(
-                sourceDefendingEntity,
+                sourceDefender,
                 targetCoord
             );
 

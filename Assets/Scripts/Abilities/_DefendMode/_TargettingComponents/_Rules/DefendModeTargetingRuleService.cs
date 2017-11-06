@@ -32,7 +32,7 @@ namespace GrimoireTD.Abilities.DefendMode
             for (int i = 0; i < creepList.Count; i++)
             {
                 creepDistanceFromPosition = Vector3.Magnitude(
-                    creepList[i].Position - args.AttachedToDefendingEntity.CoordPosition.ToPositionVector()
+                    creepList[i].Position - args.AttachedToDefender.CoordPosition.ToPositionVector()
                 );
 
                 if (creepDistanceFromPosition < args.Range)

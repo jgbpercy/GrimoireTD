@@ -119,15 +119,15 @@ namespace GrimoireTD.Map
 
         private void OnSelectedStructureToBuildChange(object sender, EAOnStructureToBuildSelected args)
         {
-            //TODO: get and cache these at start (and also generally do better)
-            MeshFilter selectedStructureMeshFilter = MapEntitiesView.Instance.DefendingEntityPrefabs[args.SelectedStructureTemplate].GetComponentInChildren<MeshFilter>();
+            //TODO: get and cache these at start (and also generally do better) #optimisation
+            MeshFilter selectedStructureMeshFilter = MapEntitiesView.Instance.DefenderPrefabs[args.SelectedStructureTemplate].GetComponentInChildren<MeshFilter>();
             Transform selectedStructureGraphics = selectedStructureMeshFilter.transform;
 
             structureGhost.localScale = selectedStructureGraphics.localScale;
             structureGhostPositionOffset = selectedStructureGraphics.localPosition;
 
             structureGhostFilter.mesh = selectedStructureMeshFilter.sharedMesh;
-            structureGhostRenderer.material = MapEntitiesView.Instance.DefendingEntityPrefabs[args.SelectedStructureTemplate].GetComponentInChildren<MeshRenderer>().sharedMaterial;
+            structureGhostRenderer.material = MapEntitiesView.Instance.DefenderPrefabs[args.SelectedStructureTemplate].GetComponentInChildren<MeshRenderer>().sharedMaterial;
             structureGhostRenderer.material.color = new Color(structureGhostRenderer.material.color.r, structureGhostRenderer.material.color.g, structureGhostRenderer.material.color.b, 0.45f);
         }
     }

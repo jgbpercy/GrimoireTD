@@ -1,6 +1,6 @@
 ﻿using System;
 using GrimoireTD.Map;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Abilities.BuildMode
@@ -28,10 +28,10 @@ namespace GrimoireTD.Abilities.BuildMode
         //Rules
         private static bool ValidMove(ValidMoveArgs args)
         {
-            var sourceUnit = args.SourceEntity as IUnit;
+            var sourceUnit = args.SourceDefender as IUnit;
             if (sourceUnit == null) throw new ArgumentException("ValidMove was passed a non-Unit"); //optimisation: disable in release build
 
-            if (!HexIsInRange(new HexIsInRangeArgs(args.SourceEntity, args.TargetCoord, args.Range)))
+            if (!HexIsInRange(new HexIsInRangeArgs(args.SourceDefender, args.TargetCoord, args.Range)))
             {
                 return false;
             }
@@ -39,7 +39,7 @@ namespace GrimoireTD.Abilities.BuildMode
             return DepsProv.TheMapData.CanMoveUnitTo(args.TargetCoord, sourceUnit.CachedDisallowedMovementDestinations);
         }
 
-        private static bool DefendingEntityAtTarget(Coord targetCoord, IMapData mapData)
+        private static bool DefenderAtTarget(Coord targetCoord, IMapData mapData)
         {
             return UnitAtTarget(targetCoord, mapData) || StructureAtTarget(targetCoord, mapData);
         }
@@ -56,7 +56,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
         private static bool HexIsInRange(HexIsInRangeArgs args)
         {
-            return CMapData.HexIsInRange(args.Range, args.SourceEntity.CoordPosition, args.TargetCoord);
+            return CMapData.HexIsInRange(args.Range, args.SourceDefender.CoordPosition, args.TargetCoord);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Defenders.Structures;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Levels

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
@@ -27,7 +27,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         private IDefendModeAbility ability2 = Substitute.For<IDefendModeAbility>();
         private IDefendModeAbility ability3 = Substitute.For<IDefendModeAbility>();
 
-        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender attachedToDefender = Substitute.For<IDefender>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -67,9 +67,9 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
             ability2.ClearReceivedCalls();
             ability3.ClearReceivedCalls();
 
-            ability1.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
-            ability2.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
-            ability3.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(true);
+            ability1.ExecuteAbility(Arg.Any<IDefender>()).Returns(true);
+            ability2.ExecuteAbility(Arg.Any<IDefender>()).Returns(true);
+            ability3.ExecuteAbility(Arg.Any<IDefender>()).Returns(true);
         }
 
         [OneTimeTearDown]
@@ -82,7 +82,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         {
             return new CDefendModeAbilityManager(
                 abilities, 
-                attachedToDefendingEntity
+                attachedToDefender
             );
         }
 
@@ -95,9 +95,9 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
+            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability1.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability1.Received(1).ExecuteAbility(attachedToDefender);
         }
 
         //Intended behaviour until upswing/backswing times/animations
@@ -118,15 +118,15 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability1.Received(1).ExecuteAbility(attachedToDefendingEntity);
-            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.Received(1).ExecuteAbility(attachedToDefender);
+            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
 
             ability1.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(ability1));
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability2.Received(1).ExecuteAbility(attachedToDefendingEntity);
-            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability2.Received(1).ExecuteAbility(attachedToDefender);
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
         }
 
         [Test]
@@ -134,18 +134,18 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         {
             ConstructSubject();
 
-            ability1.ExecuteAbility(Arg.Any<IDefendingEntity>()).Returns(false);
+            ability1.ExecuteAbility(Arg.Any<IDefender>()).Returns(false);
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability2.Received(1).ExecuteAbility(attachedToDefendingEntity);
-            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability2.Received(1).ExecuteAbility(attachedToDefender);
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
 
             ability2.OnAbilityExecuted += Raise.EventWith(new EAOnAbilityExecuted(ability2));
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability3.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability3.Received(1).ExecuteAbility(attachedToDefender);
         }
 
         [Test]
@@ -159,9 +159,9 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
-            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
+            ability2.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
+            ability3.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
         }
 
         [Test]
@@ -175,7 +175,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability1.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability1.Received(1).ExecuteAbility(attachedToDefender);
         }
 
         [Test]
@@ -193,7 +193,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability2.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability2.Received(1).ExecuteAbility(attachedToDefender);
         }
 
         [Test]
@@ -215,7 +215,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability3.Received(1).ExecuteAbility(attachedToDefendingEntity);
+            ability3.Received(1).ExecuteAbility(attachedToDefender);
         }
 
         [Test]
@@ -237,7 +237,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefendingEntity>());
+            ability1.DidNotReceive().ExecuteAbility(Arg.Any<IDefender>());
         }
 
         [Test]

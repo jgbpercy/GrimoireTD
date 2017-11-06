@@ -1,4 +1,4 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 {
@@ -12,8 +12,8 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
 
         string EffectName { get; }
 
-        float GetActualDuration(IDefendingEntity sourceDefendingEntity);
+        float GetActualDuration(IDefender sourceDefender);
 
-        float GetActualMagnitude(IDefendingEntity sourceDefendingEntity);
+        float GetActualMagnitude(IDefender sourceDefender);
     }
 }

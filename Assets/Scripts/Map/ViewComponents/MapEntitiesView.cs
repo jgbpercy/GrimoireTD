@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
-using GrimoireTD.DefendingEntities.Structures;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders.Structures;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Technical;
 using GrimoireTD.Creeps;
 using GrimoireTD.Abilities.DefendMode.Projectiles;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using System.Collections.Generic;
 using GrimoireTD.Dependencies;
 
@@ -29,7 +29,7 @@ namespace GrimoireTD.Map
         private Transform creepFolder;
 
         [SerializeField]
-        private DefendingEntityGraphicsMapping[] defendingEntityGraphicsMappings;
+        private DefenderGraphicsMapping[] defenderGraphicsMappings;
 
         [SerializeField]
         private SProjectileGraphicsMapping[] projectileGraphicsMappings;
@@ -37,17 +37,17 @@ namespace GrimoireTD.Map
         [SerializeField]
         private CreepGraphicsMapping[] creepGraphicsMappings;
 
-        private Dictionary<IDefendingEntityTemplate, GameObject> defendingEntityPrefabs;
+        private Dictionary<IDefenderTemplate, GameObject> defenderPrefabs;
 
         private Dictionary<IProjectileTemplate, GameObject> projectilePrefabs;
 
         private Dictionary<ICreepTemplate, GameObject> creepPrefabs;
 
-        public IReadOnlyDictionary<IDefendingEntityTemplate, GameObject> DefendingEntityPrefabs
+        public IReadOnlyDictionary<IDefenderTemplate, GameObject> DefenderPrefabs
         {
             get
             {
-                return defendingEntityPrefabs;
+                return defenderPrefabs;
             }
         }
 
@@ -69,10 +69,10 @@ namespace GrimoireTD.Map
 
         private void Awake()
         {
-            defendingEntityPrefabs = new Dictionary<IDefendingEntityTemplate, GameObject>();
-            foreach (DefendingEntityGraphicsMapping mapping in defendingEntityGraphicsMappings)
+            defenderPrefabs = new Dictionary<IDefenderTemplate, GameObject>();
+            foreach (DefenderGraphicsMapping mapping in defenderGraphicsMappings)
             {
-                defendingEntityPrefabs.Add(mapping.DefendingEntityTemplate, mapping.Prefab);
+                defenderPrefabs.Add(mapping.DefenderTemplate, mapping.Prefab);
             }
 
             projectilePrefabs = new Dictionary<IProjectileTemplate, GameObject>();
@@ -103,7 +103,7 @@ namespace GrimoireTD.Map
         {
             StructureComponent structureComponent = Instantiate
             (
-                defendingEntityPrefabs[args.StructureCreated.DefendingEntityTemplate], 
+                defenderPrefabs[args.StructureCreated.DefenderTemplate], 
                 args.Position.ToPositionVector(), 
                 Quaternion.identity, 
                 structureFolder
@@ -119,7 +119,7 @@ namespace GrimoireTD.Map
         {
             UnitComponent unitComponent = Instantiate
             (
-                defendingEntityPrefabs[args.UnitCreated.DefendingEntityTemplate], 
+                defenderPrefabs[args.UnitCreated.DefenderTemplate], 
                 args.Position.ToPositionVector(), 
                 Quaternion.identity, unitFolder
             )

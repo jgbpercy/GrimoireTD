@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
@@ -21,8 +21,8 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
             Vector3 startPosition, 
             IDefendModeTargetable target, 
             IAoeProjectileTemplate template, 
-            IDefendingEntity sourceDefendingEntity
-        ) : base(startPosition, target, template, sourceDefendingEntity)
+            IDefender sourceDefender
+        ) : base(startPosition, target, template, sourceDefender)
         {
             AoeProjectileTemplate = template;
             CurrentAoeRadius = 0.0000001f;
@@ -59,7 +59,7 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         public virtual void HitCreepInAoe(ICreep creep)
         {
-            creep.ApplyAttackEffects(AoeProjectileTemplate.AoeAttackEffects, sourceDefendingEntity);
+            creep.ApplyAttackEffects(AoeProjectileTemplate.AoeAttackEffects, sourceDefender);
         }
     }
 }

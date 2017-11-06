@@ -6,7 +6,7 @@ using GrimoireTD.UI;
 using GrimoireTD.Map;
 using GrimoireTD.Levels;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
-using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Defenders.Structures;
 using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Technical

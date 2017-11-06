@@ -1,4 +1,4 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities
 {
@@ -6,6 +6,6 @@ namespace GrimoireTD.Abilities
     {
         string NameInGame { get; }
 
-        IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity);
+        IAbility GenerateAbility(IDefender attachedToDefender);
     }
 }

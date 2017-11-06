@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
+﻿using UnityEngine;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -9,12 +7,12 @@ namespace GrimoireTD.Abilities.DefendMode
     public class SoCreepClosestToFinishInRangeArgsTemplate : SoFloatRangeArgsTemplate
     {
         public override DefendModeTargetingArgs GenerateArgs(
-            IDefendingEntity attachedToDefendingEntity
+            IDefender attachedToDefender
         )
         {
-            var range = GetActualRange(attachedToDefendingEntity);
+            var range = GetActualRange(attachedToDefender);
 
-            return new CreepClosestToFinishInRangeArgs(attachedToDefendingEntity, range);
+            return new CreepClosestToFinishInRangeArgs(attachedToDefender, range);
         }
     }
 }

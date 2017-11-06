@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Technical;
 using GrimoireTD.Map;
 using GrimoireTD.Attributes;
@@ -184,14 +184,14 @@ namespace GrimoireTD.Creeps
             return currentDestinationPathNode * MapRenderer.HEX_OFFSET + distanceFromCurrentDestination;
         }
 
-        public void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefendingEntity sourceDefendingEntity)
+        public void ApplyAttackEffects(IEnumerable<IAttackEffect> attackEffects, IDefender sourceDefender)
         {
             foreach (IAttackEffect attackEffect in attackEffects)
             {
                 IDamageEffectType damageEffectType = attackEffect.AttackEffectType as IDamageEffectType;
                 if (damageEffectType != null)
                 {
-                    ApplyDamageEffect(attackEffect, sourceDefendingEntity, damageEffectType);
+                    ApplyDamageEffect(attackEffect, sourceDefender, damageEffectType);
                     continue;
                 }
 
@@ -200,11 +200,11 @@ namespace GrimoireTD.Creeps
                 {
                     if (modifierEffectType.Temporary)
                     {
-                        ApplyTemporaryEffect(attackEffect, sourceDefendingEntity, modifierEffectType);
+                        ApplyTemporaryEffect(attackEffect, sourceDefender, modifierEffectType);
                     }
                     else
                     {
-                        ApplyPermanentEffect(attackEffect, sourceDefendingEntity, modifierEffectType);
+                        ApplyPermanentEffect(attackEffect, sourceDefender, modifierEffectType);
                     }
                     continue;
                 }
@@ -214,9 +214,9 @@ namespace GrimoireTD.Creeps
         }
 
         //TODO: #optimisation total up damage from all effects and apply?
-        private void ApplyDamageEffect(IAttackEffect attackEffect, IDefendingEntity sourceDefendingEntity, IDamageEffectType damageEffectType)
+        private void ApplyDamageEffect(IAttackEffect attackEffect, IDefender sourceDefender, IDamageEffectType damageEffectType)
         {
-            float magnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
+            float magnitude = attackEffect.GetActualMagnitude(sourceDefender);
             int block = resistances.GetBlock(damageEffectType).Value;
             float resistance = resistances.GetResistance(damageEffectType).Value;
 
@@ -227,10 +227,10 @@ namespace GrimoireTD.Creeps
             );
         }
 
-        private void ApplyTemporaryEffect(IAttackEffect attackEffect, IDefendingEntity sourceDefendingEntity, IModifierEffectType modifierEffectType)
+        private void ApplyTemporaryEffect(IAttackEffect attackEffect, IDefender sourceDefender, IModifierEffectType modifierEffectType)
         {
-            float newEffectMagnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
-            float newEffectDuration = attackEffect.GetActualDuration(sourceDefendingEntity);
+            float newEffectMagnitude = attackEffect.GetActualMagnitude(sourceDefender);
+            float newEffectDuration = attackEffect.GetActualDuration(sourceDefender);
 
             IAttributeModifierEffectType attributeModifierEffectType = modifierEffectType as IAttributeModifierEffectType;
             if (attributeModifierEffectType != null)
@@ -295,9 +295,9 @@ namespace GrimoireTD.Creeps
             throw new Exception("Unhandled ModifierEffectType");
         }
 
-        private void ApplyPermanentEffect(IAttackEffect attackEffect, IDefendingEntity sourceDefendingEntity, IModifierEffectType modifierEffectType)
+        private void ApplyPermanentEffect(IAttackEffect attackEffect, IDefender sourceDefender, IModifierEffectType modifierEffectType)
         {
-            float actualMagnitude = attackEffect.GetActualMagnitude(sourceDefendingEntity);
+            float actualMagnitude = attackEffect.GetActualMagnitude(sourceDefender);
 
             IAttributeModifierEffectType attributeModifierEffectType = modifierEffectType as IAttributeModifierEffectType;
             if (attributeModifierEffectType != null)

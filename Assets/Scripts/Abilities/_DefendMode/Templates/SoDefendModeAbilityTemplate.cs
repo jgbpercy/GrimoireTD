@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -40,9 +40,9 @@ namespace GrimoireTD.Abilities.DefendMode
             }
         }
 
-        public override IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity)
+        public override IAbility GenerateAbility(IDefender attachedToDefender)
         {
-            return new CDefendModeAbility(this, attachedToDefendingEntity);
+            return new CDefendModeAbility(this, attachedToDefender);
         }
     }
 }

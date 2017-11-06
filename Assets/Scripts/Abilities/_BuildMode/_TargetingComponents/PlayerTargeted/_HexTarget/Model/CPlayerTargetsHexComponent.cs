@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
@@ -15,7 +15,7 @@ namespace GrimoireTD.Abilities.BuildMode
         }
 
         public bool IsValidTarget(
-            IDefendingEntity sourceDefendingEntity, 
+            IDefender sourceDefender, 
             IBuildModeTargetable potentialTarget        
         )
         {
@@ -28,7 +28,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
             return PlayerTargetsHexRuleService.RunRule(
                 PlayerTargetsHexComponentTemplate.TargetingRule.GenerateArgs(
-                    sourceDefendingEntity, 
+                    sourceDefender, 
                     potentialTargetCoord
                 )
             );

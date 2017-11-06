@@ -1,11 +1,11 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
     public interface IDefendModeTargetingArgsTemplate
     {
         DefendModeTargetingArgs GenerateArgs(
-            IDefendingEntity attachedToDefendingEntity
+            IDefender attachedToDefender
         );
     }
 }

@@ -1,4 +1,4 @@
-﻿using GrimoireTD.DefendingEntities;
+﻿using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -7,9 +7,9 @@ namespace GrimoireTD.Abilities.DefendMode
         public readonly float Range;
 
         public FloatRangeArgs(
-            IDefendingEntity attachedToDefendingEntity,
+            IDefender attachedToDefender,
             float range
-        ) : base(attachedToDefendingEntity)
+        ) : base(attachedToDefender)
         {
             Range = range;
         }

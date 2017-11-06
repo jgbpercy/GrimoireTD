@@ -1,5 +1,5 @@
 ﻿using System;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.UI

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using GrimoireTD.DefendingEntities.Structures;
-using GrimoireTD.DefendingEntities.Units;
-using GrimoireTD.DefendingEntities.DefenderEffects;
+using GrimoireTD.Defenders.Structures;
+using GrimoireTD.Defenders.Units;
+using GrimoireTD.Defenders.DefenderEffects;
 
 namespace GrimoireTD.Map
 {

@@ -1,4 +1,4 @@
-﻿using GrimoireTD.DefendingEntities.Structures;
+﻿using GrimoireTD.Defenders.Structures;
 
 namespace GrimoireTD.Economy
 {

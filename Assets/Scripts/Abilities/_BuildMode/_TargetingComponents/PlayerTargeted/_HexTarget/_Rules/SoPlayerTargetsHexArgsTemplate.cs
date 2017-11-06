@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Map;
 
 namespace GrimoireTD.Abilities.BuildMode
@@ -8,7 +8,7 @@ namespace GrimoireTD.Abilities.BuildMode
     public class SoPlayerTargetsHexArgsTemplate : ScriptableObject, IPlayerTargetsHexArgsTemplate
     {
         public virtual PlayerTargetsHexArgs GenerateArgs(
-            IDefendingEntity sourceEntity, 
+            IDefender sourceDefender, 
             Coord targetCoord
         )
         {

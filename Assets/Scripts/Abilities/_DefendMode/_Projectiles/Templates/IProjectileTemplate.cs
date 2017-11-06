@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode.Projectiles
 {
@@ -11,6 +11,6 @@ namespace GrimoireTD.Abilities.DefendMode.Projectiles
 
         float Speed { get; }
 
-        IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefendingEntity sourceDefendingEntity);
+        IProjectile GenerateProjectile(Vector3 startPosition, IDefendModeTargetable target, IDefender sourceDefender);
     }
 }

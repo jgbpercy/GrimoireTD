@@ -4,48 +4,48 @@ using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Map;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
-namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
+namespace GrimoireTD.Tests.PlayerTargetsDefenderComponentTests
 {
-    public class PlayerTargetsDefendingEntityComponentTests
+    public class PlayerTargetsDefenderComponentTests
     {
         private Coord targetCoord = new Coord(2, 3);
 
         private IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
 
-        private IDefendingEntity sourceDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender sourceDefender = Substitute.For<IDefender>();
 
-        private IDefendingEntity targetDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender targetDefender = Substitute.For<IDefender>();
 
-        private IPlayerTargetsDefendingEntityComponentTemplate template = Substitute.For<IPlayerTargetsDefendingEntityComponentTemplate>();
+        private IPlayerTargetsDefenderComponentTemplate template = Substitute.For<IPlayerTargetsDefenderComponentTemplate>();
 
         private IBuildModeTargetable target = Substitute.For<IBuildModeTargetable>();
 
         private List<IBuildModeTargetable> targetList;
 
-        private PlayerTargetsDefendingEntityArgs playerTargetsDefendingEntityArgs;
+        private PlayerTargetsDefenderArgs playerTargetsDefenderArgs;
 
         private BuildModeAutoTargetedArgs buildModeAutoTargetedArgs;
 
-        private CPlayerTargetsDefendingEntityComponent subject;
+        private CPlayerTargetsDefenderComponent subject;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            playerTargetsDefendingEntityArgs = new PlayerTargetsDefendingEntityArgs(
-                sourceDefendingEntity,
-                targetDefendingEntity,
+            playerTargetsDefenderArgs = new PlayerTargetsDefenderArgs(
+                sourceDefender,
+                targetDefender,
                 mapData
             );
 
             template.TargetingRule
-                .GenerateArgs(sourceDefendingEntity, targetDefendingEntity)
-                .Returns(playerTargetsDefendingEntityArgs);
+                .GenerateArgs(sourceDefender, targetDefender)
+                .Returns(playerTargetsDefenderArgs);
 
-            PlayerTargetsDefendingEntityRuleService.RunRule = (args) =>
+            PlayerTargetsDefenderRuleService.RunRule = (args) =>
             {
-                if (args == playerTargetsDefendingEntityArgs)
+                if (args == playerTargetsDefenderArgs)
                 {
                     return true;
                 }
@@ -78,22 +78,22 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
                 }
             };
 
-            subject = new CPlayerTargetsDefendingEntityComponent(template);
+            subject = new CPlayerTargetsDefenderComponent(template);
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            typeof(PlayerTargetsDefendingEntityRuleService).TypeInitializer.Invoke(null, null);
+            typeof(PlayerTargetsDefenderRuleService).TypeInitializer.Invoke(null, null);
             typeof(BuildModeAutoTargetedRuleService).TypeInitializer.Invoke(null, null);
         }
 
         [Test]
-        public void IsValidTarget_PassedNonDefendingEntity_ThrowsException()
+        public void IsValidTarget_PassedNonDefender_ThrowsException()
         {
             Assert.Throws(typeof(ArgumentException), () =>
                 subject.IsValidTarget(
-                    sourceDefendingEntity,
+                    sourceDefender,
                     targetCoord
                 )
             );
@@ -103,8 +103,8 @@ namespace GrimoireTD.Tests.PlayerTargetsDefendingEntityComponentTests
         public void IsValidTarget_PassedValidInput_ReturnsCorrectRuleResultForTheArgsGeneratedFromInput()
         {
             var result = subject.IsValidTarget(
-                sourceDefendingEntity,
-                targetDefendingEntity
+                sourceDefender,
+                targetDefender
             );
 
             Assert.True(result);

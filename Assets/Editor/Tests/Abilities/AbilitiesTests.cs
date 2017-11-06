@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Dependencies;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Abilities.BuildMode;
@@ -11,7 +11,7 @@ namespace GrimoireTD.Tests.AbilitiesTests
 {
     public class AbilitiesTests
     {
-        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender attachedToDefender = Substitute.For<IDefender>();
 
         private IDefendModeAbilityManager defendModeAbilityManager = Substitute.For<IDefendModeAbilityManager>();
 
@@ -24,7 +24,7 @@ namespace GrimoireTD.Tests.AbilitiesTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            DepsProv.DefendModeAbilityManager = (abilities, defendingEntity) =>
+            DepsProv.DefendModeAbilityManager = (abilities, defender) =>
             {
                 return defendModeAbilityManager;
             };
@@ -45,7 +45,7 @@ namespace GrimoireTD.Tests.AbilitiesTests
         private CAbilities ConstructSubject()
         {
             return new CAbilities(
-                attachedToDefendingEntity
+                attachedToDefender
             );
         }
 

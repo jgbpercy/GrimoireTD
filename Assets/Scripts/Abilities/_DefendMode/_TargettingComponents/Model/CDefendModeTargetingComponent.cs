@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities.DefendMode
 {
@@ -12,11 +12,11 @@ namespace GrimoireTD.Abilities.DefendMode
             DefendModeTargetingComponentTemplate = template;
         }
 
-        public virtual IReadOnlyList<IDefendModeTargetable> FindTargets(IDefendingEntity attachedToDefendingEntity)
+        public virtual IReadOnlyList<IDefendModeTargetable> FindTargets(IDefender attachedToDefender)
         {
             return DefendModeTargetingRuleService.RunRule(
                 DefendModeTargetingComponentTemplate.TargetingRule.GenerateArgs(
-                    attachedToDefendingEntity 
+                    attachedToDefender 
                 )
             );
         }

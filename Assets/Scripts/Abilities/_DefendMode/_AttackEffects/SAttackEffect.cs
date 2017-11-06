@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 using GrimoireTD.Attributes;
 
 namespace GrimoireTD.Abilities.DefendMode.AttackEffects
@@ -49,23 +49,23 @@ namespace GrimoireTD.Abilities.DefendMode.AttackEffects
             }
         }
 
-        public float GetActualMagnitude(IDefendingEntity sourceDefendingEntity)
+        public float GetActualMagnitude(IDefender sourceDefender)
         {
             IDamageEffectType damageEffectType = attackEffectType as IDamageEffectType;
             if (damageEffectType != null)
             {
-                return GetDamage(sourceDefendingEntity, damageEffectType);
+                return GetDamage(sourceDefender, damageEffectType);
             }
 
             return baseMagnitude;
         }
 
-        private float GetDamage(IDefendingEntity sourceDefendingEntity, IDamageEffectType damageEffectType)
+        private float GetDamage(IDefender sourceDefender, IDamageEffectType damageEffectType)
         {
-            return (1 + sourceDefendingEntity.Attributes.Get(DEAttrName.damageBonus).Value()) * baseMagnitude;
+            return (1 + sourceDefender.Attributes.Get(DeAttrName.damageBonus).Value()) * baseMagnitude;
         }
 
-        public float GetActualDuration(IDefendingEntity sourceDefendingEntity)
+        public float GetActualDuration(IDefender sourceDefender)
         {
             return BaseDuration;
         }

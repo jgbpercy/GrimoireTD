@@ -4,17 +4,17 @@ using UnityEngine;
 namespace GrimoireTD.Attributes
 {
     [Serializable]
-    public class SNamedDefendingEntityAttributeModifier : SAttributeModifier, INamedAttributeModifier<DEAttrName>
+    public class SNamedDefenderAttributeModifier : SAttributeModifier, INamedAttributeModifier<DeAttrName>
     {
         [SerializeField]
-        private DEAttrName attributeName;
+        private DeAttrName attributeName;
 
-        public SNamedDefendingEntityAttributeModifier(float magnitude, DEAttrName attributeName) : base(magnitude)
+        public SNamedDefenderAttributeModifier(float magnitude, DeAttrName attributeName) : base(magnitude)
         {
             this.attributeName = attributeName;
         }
 
-        public DEAttrName AttributeName
+        public DeAttrName AttributeName
         {
             get
             {

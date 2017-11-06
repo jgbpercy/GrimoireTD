@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 using GrimoireTD.Abilities.BuildMode;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Tests.BuildModeAbilityTests
 {
@@ -60,7 +60,7 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
         }
 
         [Test]
-        public void ExecuteAbility_PassedExecutingEntity_ExecutesEffectWithPassedEntity()
+        public void ExecuteAbility_PassedExecutingDefender_ExecutesEffectWithPassedDefender()
         {
             var subject = ConstructSubject();
 
@@ -77,8 +77,8 @@ namespace GrimoireTD.Tests.BuildModeAbilityTests
 
             subject.ExecuteAbility(unit, new Coord(0, 0));
 
-            effectComponent.Received(1).ExecuteEffect(Arg.Any<IDefendingEntity>(), returnedTargetList);
-            effectComponentTwo.Received(1).ExecuteEffect(Arg.Any<IDefendingEntity>(), returnedTargetList);
+            effectComponent.Received(1).ExecuteEffect(Arg.Any<IDefender>(), returnedTargetList);
+            effectComponentTwo.Received(1).ExecuteEffect(Arg.Any<IDefender>(), returnedTargetList);
         }
 
         [Test]

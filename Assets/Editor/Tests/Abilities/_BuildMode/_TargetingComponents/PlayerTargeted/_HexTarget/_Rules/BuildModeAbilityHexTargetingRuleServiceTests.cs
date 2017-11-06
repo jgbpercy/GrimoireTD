@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.BuildMode;
-using GrimoireTD.DefendingEntities.Units;
+using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
-using GrimoireTD.DefendingEntities.Structures;
+using GrimoireTD.Defenders.Structures;
 using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Tests.BuildModeAbilityHexTargetingRuleServiceTests

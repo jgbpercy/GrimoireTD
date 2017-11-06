@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using GrimoireTD.DefendingEntities.DefenderEffects;
+using GrimoireTD.Defenders.DefenderEffects;
 using GrimoireTD.Technical;
 using GrimoireTD.UI;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Abilities
 {
@@ -17,7 +17,7 @@ namespace GrimoireTD.Abilities
             }
         }
 
-        public virtual IAbility GenerateAbility(IDefendingEntity attachedToDefendingEntity)
+        public virtual IAbility GenerateAbility(IDefender attachedToDefender)
         {
             throw new NotImplementedException("Cannot Generate from AbilityTemplate - it is pseudo-abstract");
         }

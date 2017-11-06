@@ -3,13 +3,13 @@ using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.DefendMode;
 using GrimoireTD.Creeps;
-using GrimoireTD.DefendingEntities;
+using GrimoireTD.Defenders;
 
 namespace GrimoireTD.Tests.DefendModeTargetingComponentTests
 {
     public class DefendModeTargetingComponentTests
     {
-        private IDefendingEntity attachedToDefendingEntity = Substitute.For<IDefendingEntity>();
+        private IDefender attachedToDefender = Substitute.For<IDefender>();
 
         private IDefendModeTargetable target = Substitute.For<IDefendModeTargetable>();
 
@@ -29,10 +29,10 @@ namespace GrimoireTD.Tests.DefendModeTargetingComponentTests
                 target
             };
 
-            defendModeTargetingArgs = new DefendModeTargetingArgs(attachedToDefendingEntity);
+            defendModeTargetingArgs = new DefendModeTargetingArgs(attachedToDefender);
 
             template.TargetingRule
-                .GenerateArgs(attachedToDefendingEntity)
+                .GenerateArgs(attachedToDefender)
                 .Returns(defendModeTargetingArgs);
 
             DefendModeTargetingRuleService.RunRule = (args) =>
@@ -59,7 +59,7 @@ namespace GrimoireTD.Tests.DefendModeTargetingComponentTests
         [Test]
         public void FindTargets_PassedValidInput_ReturnsRuleResultForTheArgsGeneratedFromThisInput()
         {
-            var result = subject.FindTargets(attachedToDefendingEntity);
+            var result = subject.FindTargets(attachedToDefender);
 
             Assert.AreEqual(result, targetList);
         }
