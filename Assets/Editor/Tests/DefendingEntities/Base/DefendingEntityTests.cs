@@ -70,12 +70,6 @@ namespace GrimoireTD.Tests.DefendingEntityTests
         protected IDefenderAuraTemplate defenderAuraTemplate = Substitute.For<IDefenderAuraTemplate>();
         protected IDefenderAura defenderAura = Substitute.For<IDefenderAura>();
 
-        //Other Deps Passed To Ctor or SetUp
-
-
-        //Other Objects Passed To Methods
-
-
         [OneTimeSetUp]
         public virtual void OneTimeSetUp()
         {
@@ -90,6 +84,8 @@ namespace GrimoireTD.Tests.DefendingEntityTests
             gameModel.GameStateManager.Returns(gameStateManager);
             gameModel.EconomyManager.Returns(economyManager);
 
+            mapData.CoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord> { startPosition });
+
             DepsProv.SetTheGameModel(gameModel);
 
             //Instance Dependency Provider Deps
@@ -102,16 +98,6 @@ namespace GrimoireTD.Tests.DefendingEntityTests
             {
                 return abilities;
             };
-
-            //Template Deps
-
-
-            //Other Deps Passed To Ctor or SetUp
-
-
-            //Other Objects Passed To Methods
-
-
         }
 
         [SetUp]
@@ -141,7 +127,7 @@ namespace GrimoireTD.Tests.DefendingEntityTests
 
         protected abstract CDefendingEntity ConstructSubject();
 
-        protected void SetUpBaseCharacteristics(IDefendingEntityImprovement baseCharacteristics)
+        protected virtual void SetUpBaseCharacteristics(IDefendingEntityImprovement baseCharacteristics)
         {
             baseCharacteristics.AttributeModifiers.Returns(new List<INamedAttributeModifier<DEAttrName>>
             {
@@ -207,7 +193,7 @@ namespace GrimoireTD.Tests.DefendingEntityTests
         }
 
         [Test]
-        public void Ctor_Always_AddBaseCharacteristicsFlatHexOccupationBonusToFlatHexOccupationBonuses()
+        public void Ctor_Always_AddsBaseCharacteristicsFlatHexOccupationBonusToFlatHexOccupationBonuses()
         {
             var subject = ConstructSubject();
 

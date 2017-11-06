@@ -296,7 +296,7 @@ namespace GrimoireTD.UI
                 SelectedBuildModeAbilityTargetingComponent = playerTargetedComponent;
                 selectedBuildModeAbility = abilityToActivate;
 
-                //TODO: optimisation: only do for a movement ability? Also, make an event/callback?
+                //TODO: #optimisation: only do for a movement ability? Also, make an event/callback?
                 SelectedUnitInstance.RegenerateCachedDisallowedMovementDestinations();
             }
             else

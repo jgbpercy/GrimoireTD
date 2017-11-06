@@ -13,8 +13,6 @@ namespace GrimoireTD.DefendingEntities.Units
 
         IEnumerable<IUnitTalent> UnitTalents { get; }
 
-        IUnitImprovement BaseUnitCharacteristics { get; }
-
         IUnit GenerateUnit(Coord position);
     }
 }

@@ -47,9 +47,6 @@ namespace GrimoireTD.Tests.StructureTests
         {
             base.OneTimeSetUp();
 
-            //Model and Frame Updater
-            mapData.CoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord> { startPosition });
-
             //Template Deps
             template.BaseCharacteristics.Returns(baseCharacteristics);
 

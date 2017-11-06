@@ -125,7 +125,10 @@ namespace GrimoireTD.DefendingEntities.Units
         //Constructor
         public CUnit(IUnitTemplate unitTemplate, Coord coordPosition) : base(unitTemplate, coordPosition)
         {
-            Assert.IsTrue(unitTemplate.BaseCharacteristics is IUnitImprovement);
+            var baseUnitCharacteristics = unitTemplate.BaseCharacteristics as IUnitImprovement;
+
+            //TODO: remove in release
+            if (baseUnitCharacteristics == null) throw new ArgumentException("UnitTemplate BaseCharacteristics is not an IUnitImprovement");
 
             UnitTemplate = unitTemplate;
 
@@ -146,7 +149,7 @@ namespace GrimoireTD.DefendingEntities.Units
 
             abilities.DefendModeAbilityManager.OnAllDefendModeAbilitiesOffCooldown += OnAllDefendModeAbilitiesOffCooldown;
 
-            ApplyUnitImprovement(unitTemplate.BaseUnitCharacteristics);
+            ApplyUnitImprovement(baseUnitCharacteristics);
 
             TimeIdle = 0f;
             TimeActive = 0f;
@@ -441,7 +444,7 @@ namespace GrimoireTD.DefendingEntities.Units
             CoordPosition = targetCoord;
 
             OnHex.DefenderAurasHere.OnAdd += OnNewDefenderAuraInCurrentHex;
-            OnHex.DefenderAurasHere.OnRemove -= OnClearDefenderAuraInCurrentHex;
+            OnHex.DefenderAurasHere.OnRemove += OnClearDefenderAuraInCurrentHex;
 
             OnMoved?.Invoke(this, new EAOnMoved(targetCoord));
 
