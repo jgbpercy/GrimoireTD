@@ -11,7 +11,7 @@ namespace GrimoireTD.Defenders.Units
 
         IReadOnlyList<Coord> CachedDisallowedMovementDestinations { get; }
 
-        IReadOnlyDictionary<IUnitTalent, int> LevelledTalents { get; }
+        IReadOnlyDictionary<IUnitTalent, int> TalentsLevelled { get; }
 
         float TimeIdle { get; }
         float TimeActive { get; }

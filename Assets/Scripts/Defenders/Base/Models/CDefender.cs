@@ -176,7 +176,7 @@ namespace GrimoireTD.Defenders
         }
 
         //Improvements
-        protected void ApplyImprovement(IDefenderImprovement improvement)
+        protected virtual void ApplyImprovement(IDefenderImprovement improvement)
         {
             foreach (INamedAttributeModifier<DeAttrName> attributeModifier in improvement.AttributeModifiers)
             {
@@ -199,7 +199,7 @@ namespace GrimoireTD.Defenders
             }
         }
 
-        protected void RemoveImprovement(IDefenderImprovement improvement)
+        protected virtual void RemoveImprovement(IDefenderImprovement improvement)
         {
             bool wasPresent;
 
@@ -260,7 +260,7 @@ namespace GrimoireTD.Defenders
         {
             var mapData = DepsProv.TheMapData;
 
-            List<Coord> affectedCoords = mapData.CoordsInRange(args.AddedItem.Range, CoordPosition);
+            List<Coord> affectedCoords = mapData.GetCoordsInRange(args.AddedItem.Range, CoordPosition);
 
             foreach (Coord coord in affectedCoords)
             {

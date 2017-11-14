@@ -377,7 +377,7 @@ namespace GrimoireTD.Map
             return baseVerticalDistance + Mathf.Max(baseHorizontalDistance - (baseVerticalDistance / 2), 0);
         }
 
-        public List<Coord> CoordsInRange(int range, Coord startHex)
+        public List<Coord> GetCoordsInRange(int range, Coord startHex)
         {
             //TODO: do this more efficiently. Find the Coords in a sensible way, not by looping through all possibles :)
             List<Coord> coordsInRange = new List<Coord>();
@@ -405,7 +405,7 @@ namespace GrimoireTD.Map
             return defenderPositions[defender];
         }
 
-        public List<Coord> GetDisallowedCoordsAfterUnitMove(Coord fromCoord)
+        public List<Coord> GetDisallowedMovementDestinationCoords(Coord fromCoord)
         {
             if (GetHexAt(fromCoord).IsPathableByCreepsWithUnitRemoved())
             {

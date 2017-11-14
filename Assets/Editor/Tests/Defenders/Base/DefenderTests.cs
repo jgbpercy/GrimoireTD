@@ -28,8 +28,6 @@ namespace GrimoireTD.Tests.DefenderTests
         protected int otherFlatHexBonus1Resource2Amount = 9;
 
         //Model and Frame Updater
-        protected FrameUpdaterStub frameUpdater;
-
         protected IReadOnlyGameModel gameModel = Substitute.For<IReadOnlyGameModel>();
 
         protected IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
@@ -84,30 +82,26 @@ namespace GrimoireTD.Tests.DefenderTests
             gameModel.GameStateManager.Returns(gameStateManager);
             gameModel.EconomyManager.Returns(economyManager);
 
-            mapData.CoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord> { startPosition });
+            mapData.GetCoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord> { startPosition });
 
             DepsProv.SetTheGameModel(gameModel);
 
             //Instance Dependency Provider Deps
-            DepsProv.DefenderAttributes = () =>
-            {
-                return attributes;
-            };
+            DepsProv.DefenderAttributes = () => attributes;
 
-            DepsProv.Abilities = (attachedToDefender) =>
-            {
-                return abilities;
-            };
+            DepsProv.Abilities = (attachedToDefender) => abilities;
         }
 
         [SetUp]
         public virtual void EachTestSetUp()
         {
-            frameUpdater = new FrameUpdaterStub();
-
             attributes.ClearReceivedCalls();
             abilities.ClearReceivedCalls();
             startHexData.ClearReceivedCalls();
+            defenderAura.ClearReceivedCalls();
+
+            abilities.TryRemoveAbility(Arg.Any<IAbility>()).Returns(true);
+            abilities.TryRemoveAbility(Arg.Any<IAbilityTemplate>()).Returns(true);
 
             aurasAtStartHex = new CallbackList<IDefenderAura>();
 
@@ -115,6 +109,8 @@ namespace GrimoireTD.Tests.DefenderTests
             startHexData.HexType.Returns(occupiedHexType);
 
             mapData.GetHexAt(startPosition).Returns(startHexData);
+
+            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
 
             attributes.TryRemoveModifier(Arg.Any<INamedAttributeModifier<DeAttrName>>()).Returns(true);
         }
@@ -227,7 +223,7 @@ namespace GrimoireTD.Tests.DefenderTests
 
             mapData.GetHexAt(coordInRange).Returns(hexInRangeData);
 
-            mapData.CoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord>
+            mapData.GetCoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord>
             {
                 startPosition,
                 coordInRange

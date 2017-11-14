@@ -43,12 +43,12 @@ namespace GrimoireTD.Defenders.Units
             ownText.text = TalentText(unitTalent);
 
             ownSlider.maxValue = unitTalent.UnitImprovements.Count;
-            ownSlider.value = selectedUnit.LevelledTalents[unitTalent];
+            ownSlider.value = selectedUnit.TalentsLevelled[unitTalent];
         }
 
         private string TalentText(IUnitTalent talent)
         {
-            return selectedUnit.LevelledTalents[talent] + " / " + talent.UnitImprovements.Count + "\n" + talent.DescriptionText;
+            return selectedUnit.TalentsLevelled[talent] + " / " + talent.UnitImprovements.Count + "\n" + talent.DescriptionText;
         }
 
         public void UIComponentClicked()

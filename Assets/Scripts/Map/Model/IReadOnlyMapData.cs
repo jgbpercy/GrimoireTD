@@ -32,8 +32,8 @@ namespace GrimoireTD.Map
 
         Coord WhereAmI(IDefender defender);
 
-        List<Coord> CoordsInRange(int range, Coord startHex);
+        List<Coord> GetCoordsInRange(int range, Coord startHex);
 
-        List<Coord> GetDisallowedCoordsAfterUnitMove(Coord fromCoord);
+        List<Coord> GetDisallowedMovementDestinationCoords(Coord fromCoord);
     }
 }

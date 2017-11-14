@@ -203,7 +203,7 @@ namespace GrimoireTD.Tests.StructureTests
             aura.DefenderEffectTemplate.Improvement.AttributeModifiers.Returns(auraAttributeModifierList);
             aura.DefenderAuraTemplate.Improvement.AttributeModifiers.Returns(auraAttributeModifierList);
 
-            var subject = ConstructSubject();
+            var subject = ConstructStructureSubject();
 
             aurasAtStartHex.Add(aura);
 
@@ -226,7 +226,7 @@ namespace GrimoireTD.Tests.StructureTests
             aura.DefenderEffectTemplate.Improvement.AttributeModifiers.Returns(auraAttributeModifierList);
             aura.DefenderAuraTemplate.Improvement.AttributeModifiers.Returns(auraAttributeModifierList);
 
-            var subject = ConstructSubject();
+            var subject = ConstructStructureSubject();
 
             aurasAtStartHex.Add(aura);
 
