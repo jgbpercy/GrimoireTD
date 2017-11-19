@@ -34,7 +34,7 @@ namespace GrimoireTD.Economy
 
         public bool CanDoTransaction(int amount)
         {
-            int resultingAmount = AmountOwned + amount;
+            var resultingAmount = AmountOwned + amount;
 
             if (resultingAmount > resourceTemplate.MaxAmount || resultingAmount < 0)
             {
@@ -44,6 +44,7 @@ namespace GrimoireTD.Economy
             return true;
         }
 
+        //Currently the responsibility of the caller to check CanDoTransaction
         public void DoTransaction(int amount)
         {
             AmountOwned += amount;

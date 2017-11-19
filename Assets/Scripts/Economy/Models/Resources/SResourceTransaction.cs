@@ -28,10 +28,5 @@ namespace GrimoireTD.Economy
                 return amount;
             }
         }
-
-        public bool CanDoTransaction()
-        {
-            return CResourceTransaction.CanDoTransaction(this);
-        }
     }
 }

@@ -74,11 +74,11 @@ namespace GrimoireTD.Defenders.Structures
             upgradesBought = new Dictionary<IStructureUpgrade, bool>();
             enhancementsChosen = new Dictionary<IStructureEnhancement, bool>();
 
-            foreach (IStructureUpgrade upgrade in StructureTemplate.StructureUpgrades)
+            foreach (var upgrade in StructureTemplate.StructureUpgrades)
             {
                 upgradesBought.Add(upgrade, false);
 
-                foreach (IStructureEnhancement enhancement in upgrade.OptionalEnhancements)
+                foreach (var enhancement in upgrade.OptionalEnhancements)
                 {
                     enhancementsChosen.Add(enhancement, false);
                 }
@@ -89,7 +89,7 @@ namespace GrimoireTD.Defenders.Structures
         {
             IStructureUpgrade currentUpgrade = null;
 
-            foreach (KeyValuePair<IStructureUpgrade, bool> structureUpgrade in upgradesBought)
+            foreach (var structureUpgrade in upgradesBought)
             {
                 if (structureUpgrade.Value == false)
                 {

@@ -11,15 +11,5 @@
             Resource = resource;
             Amount = amount;
         }
-
-        public bool CanDoTransaction()
-        {
-            return CanDoTransaction(this);
-        }
-
-        public static bool CanDoTransaction(IResourceTransaction transaction)
-        {
-            return transaction.Resource.CanDoTransaction(transaction.Amount);
-        }
     }
 }

@@ -79,23 +79,21 @@ namespace GrimoireTD.Tests.StructureTests
                 upgrade2Enhancement2
             });
 
-            combinedImprovement.AttributeModifiers.Returns(new List<INamedAttributeModifier<DeAttrName>>
+            upgrade1.MainUpgradeBonus.AttributeModifiers.Returns(new List<INamedAttributeModifier<DeAttrName>>
             {
                 upgradeAttributeModifier
             });
 
-            combinedImprovement.Abilities.Returns(new List<IAbilityTemplate>
+            upgrade1.MainUpgradeBonus.Abilities.Returns(new List<IAbilityTemplate>
             {
                 upgradeAbilityTemplate
             });
 
             upgradeAbilityTemplate.GenerateAbility(Arg.Any<IDefender>()).Returns(upgradeAbility);
 
-            combinedImprovement.FlatHexOccupationBonuses.Returns(new List<IHexOccupationBonus>());
+            upgrade1Enhancement1.EnhancementBonus.FlatHexOccupationBonuses.Returns(new List<IHexOccupationBonus>());
 
-            combinedImprovement.Auras.Returns(new List<IDefenderAuraTemplate>());
-
-            upgrade1.MainUpgradeBonus.CombineWith(upgrade1Enhancement1.EnhancementBonus).Returns(combinedImprovement);
+            upgrade1Enhancement1.EnhancementBonus.Auras.Returns(new List<IDefenderAuraTemplate>());
         }
 
         [SetUp]

@@ -5,7 +5,5 @@
         IReadOnlyResource Resource { get; }
 
         int Amount { get; }
-
-        bool CanDoTransaction();
     }
 }
