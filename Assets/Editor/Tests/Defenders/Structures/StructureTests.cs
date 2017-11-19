@@ -95,7 +95,7 @@ namespace GrimoireTD.Tests.StructureTests
 
             combinedImprovement.Auras.Returns(new List<IDefenderAuraTemplate>());
 
-            upgrade1.MainUpgradeBonus.Combine(upgrade1Enhancement1.EnhancementBonus).Returns(combinedImprovement);
+            upgrade1.MainUpgradeBonus.CombineWith(upgrade1Enhancement1.EnhancementBonus).Returns(combinedImprovement);
         }
 
         [SetUp]

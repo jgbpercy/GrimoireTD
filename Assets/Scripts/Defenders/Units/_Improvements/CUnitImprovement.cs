@@ -8,9 +8,9 @@ namespace GrimoireTD.Defenders.Units
 {
     public class CUnitImprovement : CDefenderImprovement, IUnitImprovement
     {
-        public IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses { get; }
+        public ICollection<IHexOccupationBonus> ConditionalHexOccupationBonuses { get; }
 
-        public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
+        public ICollection<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
 
         public CUnitImprovement(
             ICollection<INamedAttributeModifier<DeAttrName>> attributeModifiers,
@@ -22,14 +22,8 @@ namespace GrimoireTD.Defenders.Units
             )
             : base(attributeModifiers, flatHexOccupationBonuses, abilities, auras)
         {
-            var tempConditionalHexOccupationBonuses = new IHexOccupationBonus[conditionalHexOccupationBonuses.Count];
-            var tempConditionalStructureOccupationBonuses = new IStructureOccupationBonus[conditionalStructureOccupationBonuses.Count];
-
-            conditionalHexOccupationBonuses.CopyTo(tempConditionalHexOccupationBonuses, 0);
-            conditionalStructureOccupationBonuses.CopyTo(tempConditionalStructureOccupationBonuses, 0);
-
-            ConditionalHexOccupationBonuses = tempConditionalHexOccupationBonuses;
-            ConditionalStructureOccupationBonuses = tempConditionalStructureOccupationBonuses;
+            ConditionalHexOccupationBonuses = conditionalHexOccupationBonuses;
+            ConditionalStructureOccupationBonuses = conditionalStructureOccupationBonuses;
         }
     }
 }

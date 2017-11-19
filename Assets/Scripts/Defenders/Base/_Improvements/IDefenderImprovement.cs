@@ -8,14 +8,12 @@ namespace GrimoireTD.Defenders
 {
     public interface IDefenderImprovement
     {
-        IEnumerable<INamedAttributeModifier<DeAttrName>> AttributeModifiers { get; }
+        ICollection<INamedAttributeModifier<DeAttrName>> AttributeModifiers { get; }
 
-        IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses { get; }
+        ICollection<IHexOccupationBonus> FlatHexOccupationBonuses { get; }
 
-        IEnumerable<IAbilityTemplate> Abilities { get; }
+        ICollection<IAbilityTemplate> Abilities { get; }
 
-        IEnumerable<IDefenderAuraTemplate> Auras { get; }
-
-        IDefenderImprovement Combine(IDefenderImprovement otherImprovement);
+        ICollection<IDefenderAuraTemplate> Auras { get; }
     }
 }

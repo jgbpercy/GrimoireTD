@@ -22,7 +22,7 @@ namespace GrimoireTD.Defenders
         [SerializeField]
         private SoDefenderAuraTemplate[] auras;
 
-        public IEnumerable<INamedAttributeModifier<DeAttrName>> AttributeModifiers
+        public ICollection<INamedAttributeModifier<DeAttrName>> AttributeModifiers
         {
             get
             {
@@ -30,7 +30,7 @@ namespace GrimoireTD.Defenders
             }
         }
 
-        public IEnumerable<IHexOccupationBonus> FlatHexOccupationBonuses
+        public ICollection<IHexOccupationBonus> FlatHexOccupationBonuses
         {
             get
             {
@@ -38,7 +38,7 @@ namespace GrimoireTD.Defenders
             }
         }
 
-        public IEnumerable<IAbilityTemplate> Abilities
+        public ICollection<IAbilityTemplate> Abilities
         {
             get
             {
@@ -46,17 +46,12 @@ namespace GrimoireTD.Defenders
             }
         }
 
-        public IEnumerable<IDefenderAuraTemplate> Auras
+        public ICollection<IDefenderAuraTemplate> Auras
         {
             get
             {
                 return auras;
             }
-        }
-
-        public IDefenderImprovement Combine(IDefenderImprovement otherImprovement)
-        {
-            return CDefenderImprovement.Combine(this, otherImprovement);
         }
     }
 }

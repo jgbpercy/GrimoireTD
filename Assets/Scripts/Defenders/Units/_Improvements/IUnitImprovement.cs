@@ -5,8 +5,8 @@ namespace GrimoireTD.Defenders.Units
 {
     public interface IUnitImprovement : IDefenderImprovement
     {
-        IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses { get; }
+        ICollection<IHexOccupationBonus> ConditionalHexOccupationBonuses { get; }
 
-        IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
+        ICollection<IStructureOccupationBonus> ConditionalStructureOccupationBonuses { get; }
     }
 }

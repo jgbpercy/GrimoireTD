@@ -13,7 +13,7 @@ namespace GrimoireTD.Defenders.Units
         [SerializeField]
         private SStructureOccupationBonus[] conditionalStructureOccupationBonuses;
 
-        public IEnumerable<IHexOccupationBonus> ConditionalHexOccupationBonuses
+        public ICollection<IHexOccupationBonus> ConditionalHexOccupationBonuses
         {
             get
             {
@@ -21,7 +21,7 @@ namespace GrimoireTD.Defenders.Units
             }
         }
 
-        public IEnumerable<IStructureOccupationBonus> ConditionalStructureOccupationBonuses
+        public ICollection<IStructureOccupationBonus> ConditionalStructureOccupationBonuses
         {
             get
             {

@@ -381,12 +381,12 @@ namespace GrimoireTD.Defenders.Units
             var unitImprovement = improvement as IUnitImprovement;
             if (unitImprovement != null)
             {
-                foreach (IStructureOccupationBonus occupationBonus in unitImprovement.ConditionalStructureOccupationBonuses)
+                foreach (var occupationBonus in unitImprovement.ConditionalStructureOccupationBonuses)
                 {
                     conditionalStructureOccupationBonuses.Add(occupationBonus);
                 }
 
-                foreach (IHexOccupationBonus occupationBonus in unitImprovement.ConditionalHexOccupationBonuses)
+                foreach (var occupationBonus in unitImprovement.ConditionalHexOccupationBonuses)
                 {
                     conditionalHexOccupationBonuses.Add(occupationBonus);
                 }

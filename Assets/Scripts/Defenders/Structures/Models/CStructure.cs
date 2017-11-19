@@ -114,7 +114,7 @@ namespace GrimoireTD.Defenders.Structures
                 return false;
             }
 
-            IDefenderImprovement combinedImprovement = upgrade.MainUpgradeBonus.Combine(chosenEnhancement.EnhancementBonus);
+            IDefenderImprovement combinedImprovement = upgrade.MainUpgradeBonus.CombineWith(chosenEnhancement.EnhancementBonus);
 
             ApplyImprovement(combinedImprovement);
 
