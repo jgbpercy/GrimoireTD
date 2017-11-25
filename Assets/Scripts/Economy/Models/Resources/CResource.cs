@@ -44,9 +44,14 @@ namespace GrimoireTD.Economy
             return true;
         }
 
-        //Currently the responsibility of the caller to check CanDoTransaction
         public void DoTransaction(int amount)
         {
+            //TODO: remove in release
+            if (!CanDoTransaction(amount))
+            {
+                throw new Exception("Resource was asked to do a transaction that can't be done. Some code didn't check the transaction could be done.");
+            }
+
             AmountOwned += amount;
 
             OnResourceChanged?.Invoke(this, new EAOnResourceChanged(amount, AmountOwned));

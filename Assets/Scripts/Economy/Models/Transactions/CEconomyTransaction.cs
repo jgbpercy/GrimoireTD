@@ -13,7 +13,7 @@ namespace GrimoireTD.Economy
         {
             transactionsDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (IResource resource in DepsProv.TheEconomyManager.Resources)
+            foreach (var resource in DepsProv.TheEconomyManager.Resources)
             {
                 transactionsDictionary.Add(resource, new CResourceTransaction(resource, 0));
             }
@@ -23,11 +23,11 @@ namespace GrimoireTD.Economy
         {
             transactionsDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
-            foreach (IResource resource in DepsProv.TheEconomyManager.Resources)
+            foreach (var resource in DepsProv.TheEconomyManager.Resources)
             {
-                int amount = 0;
+                var amount = 0;
 
-                foreach (IResourceTransaction resourceTransaction in resourceTransactions)
+                foreach (var resourceTransaction in resourceTransactions)
                 {
                     if (resourceTransaction.Resource == resource)
                     {
@@ -43,7 +43,7 @@ namespace GrimoireTD.Economy
         {
             this.transactionsDictionary = transactionsDictionary;
 
-            foreach (IResource resource in DepsProv.TheEconomyManager.Resources)
+            foreach (var resource in DepsProv.TheEconomyManager.Resources)
             {
                 if (!transactionsDictionary.ContainsKey(resource))
                 {

@@ -34,6 +34,7 @@ namespace GrimoireTD.Abilities.BuildMode
             ownText.text = buildModeAbility.BuildModeAbilityTemplate.NameInGame;
         }
 
+        //TODO: Make Event?
         public void UIComponentClicked()
         {
             InterfaceController.Instance.ActivateBuildModeAbility(buildModeAbility);

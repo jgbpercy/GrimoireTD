@@ -8,6 +8,7 @@ using GrimoireTD.Defenders.Structures;
 using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 using GrimoireTD.UI;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Economy
 {
@@ -36,17 +37,16 @@ namespace GrimoireTD.Economy
             }
         }
 
-        //TODO: needed? probably later. Remember to trigger when it is
-        //public event EventHandler<EAOnResourceCreated> OnResourceCreated;
         public event EventHandler<EAOnAnyResourceChanged> OnAnyResourceChanged;
 
+        //NOTE: Could move these ctor args to come from DepsProv, but for now prefer them to be explicit for the GameModelLoader ordering stuff
         public CEconomyManager(IReadOnlyMapData mapData, IReadOnlyCreepManager creepManager)
         {
             resources = new List<IResource>();
             resourceTemplateToResourceDict = new Dictionary<IResourceTemplate, IResource>();
 
             //Callbacks
-            InterfaceController.Instance.OnBuildStructurePlayerAction += OnStructureBuilt;
+            DepsProv.TheInterfaceController().OnBuildStructurePlayerAction += OnStructureBuilt;
 
             creepManager.OnCreepSpawned += (object spawnSender, EAOnCreepSpawned spawnArgs) =>
             {
@@ -90,9 +90,9 @@ namespace GrimoireTD.Economy
 
         public void SetUp(IEnumerable<IResourceTemplate> resourceTemplates, IEconomyTransaction startingResources)
         {
-            foreach (IResourceTemplate resourceTemplate in resourceTemplates)
+            foreach (var resourceTemplate in resourceTemplates)
             {
-                IResource newResource = new CResource(resourceTemplate);
+                var newResource = resourceTemplate.GenerateResource();
 
                 resources.Add(newResource);
                 resourceTemplateToResourceDict.Add(resourceTemplate, newResource);
@@ -110,12 +110,13 @@ namespace GrimoireTD.Economy
 
         private void DoTransaction(IEconomyTransaction transaction)
         {
+            //TODO: remove in release
             if (!transaction.CanDoTransaction())
             {
                 throw new Exception("EconomyManager triggered a transaction that can't be done. Some code didn't check the transaction could be done.");
             }
 
-            foreach (IResource resource in resources)
+            foreach (var resource in resources)
             {
                 resource.DoTransaction(transaction.GetTransactionAmount(resource));
             }

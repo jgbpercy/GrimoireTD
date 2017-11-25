@@ -40,8 +40,6 @@ namespace GrimoireTD.Tests.StructureTests
         private IAbilityTemplate upgradeAbilityTemplate = Substitute.For<IAbilityTemplate>();
         private IAbility upgradeAbility = Substitute.For<IAbility>();
 
-        private IDefenderImprovement combinedImprovement = Substitute.For<IDefenderImprovement>();
-
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

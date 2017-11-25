@@ -9,6 +9,7 @@ using GrimoireTD.Technical;
 using GrimoireTD.Map;
 using GrimoireTD.Economy;
 using GrimoireTD.Abilities.DefendMode.AttackEffects;
+using GrimoireTD.UI;
 
 // *** It should go without saying that changing any of this stuff outside of tests is inadvisable ***
 
@@ -78,6 +79,12 @@ namespace GrimoireTD.Dependencies
         public static Func<IModelObjectFrameUpdater> TheModelObjectFrameUpdater = () =>
         {
             return ModelObjectFrameUpdater.Instance;
+        };
+
+        //***Controllers***
+        public static Func<IModelInterfaceController> TheInterfaceController = () =>
+        {
+            return InterfaceController.Instance;
         };
 
         //***Instance Dependencies***

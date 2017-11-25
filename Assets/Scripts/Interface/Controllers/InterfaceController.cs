@@ -20,7 +20,7 @@ namespace GrimoireTD.UI
     }
 
     //TODO: Handle individual defender selection (for Defender-targetted Build Mode Abilities)
-    public class InterfaceController : SingletonMonobehaviour<InterfaceController>
+    public class InterfaceController : SingletonMonobehaviour<InterfaceController>, IInterfaceController
     {
         [SerializeField]
         private float tempDebugTimeScale = 1f;

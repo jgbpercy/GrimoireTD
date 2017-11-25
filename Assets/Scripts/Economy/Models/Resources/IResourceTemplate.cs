@@ -9,5 +9,7 @@ namespace GrimoireTD.Economy
         string ShortName { get; }
 
         int MaxAmount { get; }
+
+        IResource GenerateResource();
     }
 }

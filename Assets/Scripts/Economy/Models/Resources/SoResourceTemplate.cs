@@ -37,5 +37,10 @@ namespace GrimoireTD.Economy
                 return maxAmount;
             }
         }
+
+        public IResource GenerateResource()
+        {
+            return new CResource(this);
+        }
     }
 }
