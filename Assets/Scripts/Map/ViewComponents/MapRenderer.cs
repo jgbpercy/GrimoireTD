@@ -7,9 +7,6 @@ namespace GrimoireTD.Map
     public class MapRenderer : SingletonMonobehaviour<MapRenderer>
     {
         [SerializeField]
-        private bool debugOn;
-
-        [SerializeField]
         private float textureRes = 512f;
 
         public const float HEX_OFFSET = 0.43301270189f;

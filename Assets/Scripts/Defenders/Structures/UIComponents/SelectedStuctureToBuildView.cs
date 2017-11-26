@@ -33,8 +33,6 @@ namespace GrimoireTD.Defenders.Structures
         [SerializeField]
         private Text hexOccupationBonusText;
 
-        private IStructureTemplate selectedStructureToBuild;
-
         private List<Text> abilityTexts;
 
         private List<Text> auraTexts;
@@ -62,7 +60,7 @@ namespace GrimoireTD.Defenders.Structures
             //Involves the added things all having their own UI component, which implements a set up interface
             foreach (var ability in args.SelectedStructureTemplate.BaseCharacteristics.Abilities)
             {
-                Text newAbilityText = Instantiate(abilityTextPrefab).GetComponent<Text>();
+                var newAbilityText = Instantiate(abilityTextPrefab).GetComponent<Text>();
                 newAbilityText.transform.SetParent(abilitiesVLayout);
 
                 newAbilityText.text = ability.NameInGame;
@@ -72,7 +70,7 @@ namespace GrimoireTD.Defenders.Structures
 
             foreach (var aura in args.SelectedStructureTemplate.BaseCharacteristics.Auras)
             {
-                Text newAuraText = Instantiate(auraTextPrefab).GetComponent<Text>();
+                var newAuraText = Instantiate(auraTextPrefab).GetComponent<Text>();
                 newAuraText.transform.SetParent(aurasVLayout);
 
                 newAuraText.text = aura.NameInGame;
@@ -82,7 +80,7 @@ namespace GrimoireTD.Defenders.Structures
 
             hexOccupationBonusText.text = "";
 
-            foreach (IHexOccupationBonus occupationBonus in args.SelectedStructureTemplate.BaseCharacteristics.FlatHexOccupationBonuses)
+            foreach (var occupationBonus in args.SelectedStructureTemplate.BaseCharacteristics.FlatHexOccupationBonuses)
             {
                 hexOccupationBonusText.text += occupationBonus.HexType.NameInGame + "\n";
                 hexOccupationBonusText.text += occupationBonus.ResourceGain.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";

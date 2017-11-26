@@ -21,8 +21,6 @@ namespace GrimoireTD.Abilities.DefendMode
         public float TimeSinceExecuted { get; private set; }
         public float ActualCooldown { get; private set; }
 
-        private IDefender attachedToDefender;
-
         public event EventHandler<EAOnAbilityOffCooldown> OnAbilityOffCooldown;
 
         public float TimeSinceExecutedClamped
@@ -113,7 +111,10 @@ namespace GrimoireTD.Abilities.DefendMode
                 attachedToDefender
             );
 
-            if (targetList == null) return false;
+            if (targetList == null)
+            {
+                return false;
+            }
 
             foreach (var effectComponent in effectComponents)
             {

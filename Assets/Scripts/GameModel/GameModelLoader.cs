@@ -89,10 +89,10 @@ namespace GrimoireTD.Technical
 
         private void Update()
         {
-            Dictionary<Color32, IHexType> colorsToTypesDictionary = new Dictionary<Color32, IHexType>();
-            List<IHexType> hexTypeList = new List<IHexType>();
+            var colorsToTypesDictionary = new Dictionary<Color32, IHexType>();
+            var hexTypeList = new List<IHexType>();
 
-            foreach (ColorToHexType colorToType in hexColorsAndTypes)
+            foreach (var colorToType in hexColorsAndTypes)
             {
                 colorsToTypesDictionary.Add(colorToType.Color, colorToType.hexType);
                 hexTypeList.Add(colorToType.hexType);
