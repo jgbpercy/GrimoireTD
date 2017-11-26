@@ -20,8 +20,26 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         private int resource1StartingAmount = 100;
         private int resource2StartingAmount = 50;
 
-        //Model and Frame Updater
+        int creepDiedResource1Bounty = 1;
+        int creepDiedResource2Bounty = 2;
 
+        int buildStructureResource1Cost = -3;
+        int buildStructureResource2Cost = -4;
+
+        int buildModeAbilityExecutedResource1Cost = -5;
+        int buildModeAbilityExecutedResource2Cost = -6;
+
+        int flatHexOccupationBonusResource1Amount = 7;
+        int flatHexOccupationBonusResource2Amount = 8;
+
+        int conditionalHexOccupationBonusResource1Amount = 9;
+        int conditionalHexOccupationBonusResource2Amount = 10;
+
+        int conditionalStructureOccupationBonusResource1Amount = 11;
+        int conditionalStructureOccupationBonusResource2Amount = 12;
+
+        int structureUpgradedResource1Cost = -13;
+        int structureUpgradedResource2Cost = -14;
 
         //Instance Dependency Provider Deps
         IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
@@ -29,10 +47,7 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         IReadOnlyCreepManager creepManager = Substitute.For<IReadOnlyCreepManager>();
 
         IModelInterfaceController interfaceController = Substitute.For<IModelInterfaceController>();
-
-        //Template Deps
-
-
+        
         //Other Deps Passed To Ctor or SetUp
         IResourceTemplate resource1Template = Substitute.For<IResourceTemplate>();
         IResourceTemplate resource2Template = Substitute.For<IResourceTemplate>();
@@ -42,8 +57,8 @@ namespace GrimoireTD.Tests.EconomyManagerTests
 
         IEconomyTransaction startingResources = Substitute.For<IEconomyTransaction>();
 
-        //Other Objects Passed To Methods
-
+        //subject
+        IEconomyManager subject;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -53,40 +68,30 @@ namespace GrimoireTD.Tests.EconomyManagerTests
             {
                 return interfaceController;
             };
-
-            //Instance Dependency Provider Deps
-
-
-            //Template Deps
-
-
+            
             //Other Deps Passed To Ctor or SetUp
             resource1Template.MaxAmount.Returns(100000);
             resource2Template.MaxAmount.Returns(100000);
 
-            startingResources.CanDoTransaction().Returns(true);
-
-            //Other Objects Passed To Methods
-
-
-        }
-
-        [SetUp]
-        public void EachTestSetUp()
-        {
             resource1 = Substitute.For<IResource>();
             resource2 = Substitute.For<IResource>();
+
+            resource1.CanDoTransaction(Arg.Any<int>()).Returns(true);
+            resource2.CanDoTransaction(Arg.Any<int>()).Returns(true);
 
             resource1Template.GenerateResource().Returns(resource1);
             resource2Template.GenerateResource().Returns(resource2);
 
-            startingResources.GetTransactionAmount(resource1).Returns(resource1StartingAmount);
             var startingResource1Transaction = new CResourceTransaction(resource1, resource1StartingAmount);
-            startingResources.GetResourceTransaction(resource1).Returns(startingResource1Transaction);
-
-            startingResources.GetTransactionAmount(resource2).Returns(resource2StartingAmount);
             var startingResource2Transaction = new CResourceTransaction(resource2, resource2StartingAmount);
-            startingResources.GetResourceTransaction(resource2).Returns(startingResource2Transaction);
+
+            startingResources.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, startingResource1Transaction },
+                { resource2, startingResource2Transaction }
+            });
+
+            subject = ConstructAndSetUpSubject();
         }
 
         [OneTimeTearDown]
@@ -97,34 +102,22 @@ namespace GrimoireTD.Tests.EconomyManagerTests
 
         private CEconomyManager ConstructAndSetUpSubject()
         {
-            var subject = ConstructSubject();
-
-            SetUpSubject(subject);
-
-            return subject; 
-        }
-
-        private CEconomyManager ConstructSubject()
-        {
-            return new CEconomyManager(
+            var subject = new CEconomyManager(
                 mapData,
                 creepManager
             );
-        }
 
-        private void SetUpSubject(CEconomyManager subject)
-        {
             subject.SetUp(
                 new List<IResourceTemplate> { resource1Template, resource2Template },
                 startingResources
             );
+
+            return subject; 
         }
 
         [Test]
         public void SetUp_Always_AddsResourcesToPublicList()
         {
-            var subject = ConstructAndSetUpSubject();
-
             Assert.True(subject.Resources.Contains(resource1));
             Assert.True(subject.Resources.Contains(resource2));
         }
@@ -132,8 +125,6 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void SetUp_Always_AddsStartingResource()
         {
-            ConstructAndSetUpSubject();
-
             resource1.Received(1).DoTransaction(resource1StartingAmount);
             resource2.Received(1).DoTransaction(resource2StartingAmount);
         }
@@ -141,8 +132,6 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void GetResourceFromTemplate_Always_ReturnsTheResourceFromTheTemplatePassed()
         {
-            var subject = ConstructAndSetUpSubject();
-
             var result = subject.GetResourceFromTemplate(resource1Template);
 
             Assert.AreEqual(resource1, result);
@@ -151,16 +140,13 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void OnStructureBuilt_Always_SubtractsTheStructuresCostAndFiresEvent()
         {
-            ConstructAndSetUpSubject();
-
-            var buildStructureResource1Cost = -20;
-            var buildStructureResource2Cost = -15;
-
             var structureCost = Substitute.For<IEconomyTransaction>();
 
-            structureCost.GetTransactionAmount(resource1).Returns(buildStructureResource1Cost);
-            structureCost.GetTransactionAmount(resource2).Returns(buildStructureResource2Cost);
-            structureCost.CanDoTransaction().Returns(true);
+            structureCost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, new CResourceTransaction(resource1, buildStructureResource1Cost) },
+                { resource2, new CResourceTransaction(resource2, buildStructureResource2Cost) }
+            });
 
             var structureTemplate = Substitute.For<IStructureTemplate>();
             
@@ -178,16 +164,13 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void OnCreepDied_Always_AddsTheCreepsBounty()
         {
-            ConstructAndSetUpSubject();
-
-            var creepDiedResource1Bounty = 5;
-            var creepDiedResource2Bounty = 7;
-
             var creepBounty = Substitute.For<IEconomyTransaction>();
 
-            creepBounty.GetTransactionAmount(resource1).Returns(creepDiedResource1Bounty);
-            creepBounty.GetTransactionAmount(resource2).Returns(creepDiedResource2Bounty);
-            creepBounty.CanDoTransaction().Returns(true);
+            creepBounty.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, new CResourceTransaction(resource1, creepDiedResource1Bounty) },
+                { resource2, new CResourceTransaction(resource2, creepDiedResource2Bounty) },
+            });
             
             var creep = Substitute.For<ICreep>();
 
@@ -204,11 +187,6 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void OnBuildModeAbilityExecuted_Always_SubtractsTheAbilitysCost()
         {
-            ConstructAndSetUpSubject();
-            
-            var buildModeAbilityExecutedResource1Cost = -3;
-            var buildModeAbilityExecutedResource2Cost = -8;
-
             var unit = Substitute.For<IUnit>();
 
             mapData.OnUnitCreated += Raise.EventWith(new EAOnUnitCreated(
@@ -218,9 +196,11 @@ namespace GrimoireTD.Tests.EconomyManagerTests
 
             var abilityCost = Substitute.For<IEconomyTransaction>();
 
-            abilityCost.GetTransactionAmount(resource1).Returns(buildModeAbilityExecutedResource1Cost);
-            abilityCost.GetTransactionAmount(resource2).Returns(buildModeAbilityExecutedResource2Cost);
-            abilityCost.CanDoTransaction().Returns(true);
+            abilityCost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, new CResourceTransaction(resource1, buildModeAbilityExecutedResource1Cost) },
+                { resource2, new CResourceTransaction(resource2, buildModeAbilityExecutedResource2Cost) },
+            });
 
             var ability = Substitute.For<IBuildModeAbility>();
             
@@ -237,11 +217,6 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void OnFlatHexOccupatioBonusTriggered_Always_AddsTheTransaction()
         {
-            ConstructAndSetUpSubject();
-
-            var flatHexOccupationBonusResource1Amount = 4;
-            var flatHexOccupationBonusResource2Amount = 12;
-
             var unit = Substitute.For<IUnit>();
 
             mapData.OnUnitCreated += Raise.EventWith(new EAOnUnitCreated(
@@ -251,9 +226,11 @@ namespace GrimoireTD.Tests.EconomyManagerTests
 
             var bonus = Substitute.For<IEconomyTransaction>();
 
-            bonus.GetTransactionAmount(resource1).Returns(flatHexOccupationBonusResource1Amount);
-            bonus.GetTransactionAmount(resource2).Returns(flatHexOccupationBonusResource2Amount);
-            bonus.CanDoTransaction().Returns(true);
+            bonus.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, new CResourceTransaction(resource1, flatHexOccupationBonusResource1Amount) },
+                { resource2, new CResourceTransaction(resource2, flatHexOccupationBonusResource2Amount) },
+            });
 
             unit.OnTriggeredFlatHexOccupationBonus += Raise.EventWith(
                 new EAOnTriggeredFlatHexOccupationBonus(unit, bonus));
@@ -265,14 +242,6 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void OnConditionalOccupationBonusTriggered_Always_AddsTheTransactions()
         {
-            ConstructAndSetUpSubject();
-
-            var conditionalHexOccupationBonusResource1Amount = 1;
-            var conditionalHexOccupationBonusResource2Amount = 11;
-
-            var conditionalStructureOccupationBonusResource1Amount = 2;
-            var conditionalStructureOccupationBonusResource2Amount = 13;
-
             var unit = Substitute.For<IUnit>();
 
             mapData.OnUnitCreated += Raise.EventWith(new EAOnUnitCreated(
@@ -282,15 +251,19 @@ namespace GrimoireTD.Tests.EconomyManagerTests
 
             var hexTransaction = Substitute.For<IEconomyTransaction>();
 
-            hexTransaction.GetTransactionAmount(resource1).Returns(conditionalHexOccupationBonusResource1Amount);
-            hexTransaction.GetTransactionAmount(resource2).Returns(conditionalHexOccupationBonusResource2Amount);
-            hexTransaction.CanDoTransaction().Returns(true);
+            hexTransaction.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, new CResourceTransaction(resource1, conditionalHexOccupationBonusResource1Amount) },
+                { resource2, new CResourceTransaction(resource2, conditionalHexOccupationBonusResource2Amount) },
+            });
 
             var structureTransaction = Substitute.For<IEconomyTransaction>();
 
-            structureTransaction.GetTransactionAmount(resource1).Returns(conditionalStructureOccupationBonusResource1Amount);
-            structureTransaction.GetTransactionAmount(resource2).Returns(conditionalStructureOccupationBonusResource2Amount);
-            structureTransaction.CanDoTransaction().Returns(true);
+            structureTransaction.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, new CResourceTransaction(resource1, conditionalStructureOccupationBonusResource1Amount) },
+                { resource2, new CResourceTransaction(resource2, conditionalStructureOccupationBonusResource2Amount) },
+            });
 
             unit.OnTriggeredConditionalOccupationBonuses += Raise.EventWith(new EAOnTriggeredConditionalOccupationBonus(
                 unit,
@@ -308,11 +281,6 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void OnStructureUpgraded_Always_SubtractsTheUpgradeCost()
         {
-            ConstructAndSetUpSubject();
-            
-            var structureUpgradedResource1Cost = -18;
-            var structureUpgradedResource2Cost = -22;
-
             var structure = Substitute.For<IStructure>();
 
             mapData.OnStructureCreated += Raise.EventWith(new EAOnStructureCreated(
@@ -322,10 +290,12 @@ namespace GrimoireTD.Tests.EconomyManagerTests
 
             var enhancementCost = Substitute.For<IEconomyTransaction>();
 
-            enhancementCost.GetTransactionAmount(resource1).Returns(structureUpgradedResource1Cost);
-            enhancementCost.GetTransactionAmount(resource2).Returns(structureUpgradedResource2Cost);
-            enhancementCost.CanDoTransaction().Returns(true);
-            
+            enhancementCost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource1, new CResourceTransaction(resource1, structureUpgradedResource1Cost) },
+                { resource2, new CResourceTransaction(resource2, structureUpgradedResource2Cost) },
+            });
+
             var enhancement = Substitute.For<IStructureEnhancement>();
 
             enhancement.Cost.Returns(enhancementCost);
@@ -342,8 +312,6 @@ namespace GrimoireTD.Tests.EconomyManagerTests
         [Test]
         public void OnResourceChangedEvent_Always_FiresOnAnyResourceChangedEvent()
         {
-            var subject = ConstructAndSetUpSubject();
-
             var eventTester = new EventTester<EAOnAnyResourceChanged>();
             subject.OnAnyResourceChanged += eventTester.Handler;
 

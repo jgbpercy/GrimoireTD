@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Assertions;
 using GrimoireTD.Defenders.DefenderEffects;
 using GrimoireTD.Map;
+using GrimoireTD.Economy;
 
 namespace GrimoireTD.Defenders.Structures
 {

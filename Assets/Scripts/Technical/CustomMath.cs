@@ -3,6 +3,14 @@ using UnityEngine;
 
 namespace GrimoireTD.Technical
 {
+
+    public enum RoundingMode
+    {
+        NEAREST,
+        UP,
+        DOWN
+    }
+
     public static class CustomMath
     {
         private static readonly float myEpsilon = 0.00001f; //#optimisation #robustness where do I use this and what value is ok?

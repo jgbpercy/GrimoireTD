@@ -1,7 +1,6 @@
 ﻿using GrimoireTD.Dependencies;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace GrimoireTD.Economy
@@ -12,21 +11,21 @@ namespace GrimoireTD.Economy
         [SerializeField]
         private SResourceTransaction[] resourceTransactions;
 
-        private IDictionary<IReadOnlyResource, IResourceTransaction> _transactionsDictionary = null;
+        private Dictionary<IReadOnlyResource, IResourceTransaction> _transactionDictionary = null;
 
-        private IDictionary<IReadOnlyResource, IResourceTransaction> transactionsDictionary
+        public IReadOnlyDictionary<IReadOnlyResource, IResourceTransaction> TransactionDictionary
         {
             get
             {
-                if (_transactionsDictionary == null)
+                if (_transactionDictionary == null)
                 {
-                    _transactionsDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
+                    _transactionDictionary = new Dictionary<IReadOnlyResource, IResourceTransaction>();
 
                     foreach (var resource in DepsProv.TheEconomyManager.Resources)
                     {
-                        int amount = 0;
+                        var amount = 0;
 
-                        foreach (IResourceTransaction resourceTransaction in resourceTransactions)
+                        foreach (var resourceTransaction in resourceTransactions)
                         {
                             if (resourceTransaction.Resource == resource)
                             {
@@ -34,72 +33,17 @@ namespace GrimoireTD.Economy
                             }
                         }
 
-                        _transactionsDictionary.Add(resource, new CResourceTransaction(resource, amount));
+                        _transactionDictionary.Add(resource, new CResourceTransaction(resource, amount));
                     }
                 }
 
-                return _transactionsDictionary;
+                return _transactionDictionary;
             }
-        }
-
-        public IResourceTransaction GetResourceTransaction(IReadOnlyResource resource)
-        {
-            return transactionsDictionary[resource];
-        }
-
-        public int GetTransactionAmount(IReadOnlyResource resource)
-        {
-            return transactionsDictionary[resource].Amount;
-        }
-
-        public bool CanDoTransaction()
-        {
-            return transactionsDictionary.Values.All(x => x.CanDoTransaction());
         }
 
         public override string ToString()
         {
-            return CEconomyTransaction.ToString(this);
-        }
-
-        public string ToString(bool absolute)
-        {
-            return CEconomyTransaction.ToString(this, absolute);
-        }
-
-        public string ToString(EconomyTransactionStringFormat format, bool absolute)
-        {
-            return CEconomyTransaction.ToString(this, format, absolute);
-        }
-
-        public IEconomyTransaction Abs()
-        {
-            return CEconomyTransaction.Abs(this);
-        }
-
-        public IEconomyTransaction Add(IEconomyTransaction otherTransaction)
-        {
-            return CEconomyTransaction.Add(this, otherTransaction);
-        }
-
-        public IEconomyTransaction Subtract(IEconomyTransaction otherTransaction)
-        {
-            return CEconomyTransaction.Subtract(this, otherTransaction);
-        }
-
-        public IEconomyTransaction Multiply(int factor)
-        {
-            return CEconomyTransaction.Multiply(this, factor);
-        }
-
-        public IEconomyTransaction Multiply(float factor, RoundingMode roundingMode)
-        {
-            return CEconomyTransaction.Multiply(this, factor, roundingMode);
-        }
-
-        public IEconomyTransaction Multiply(float factor)
-        {
-            return CEconomyTransaction.Multiply(this, factor);
+            return EconomyTransactionExtensions.ToString(this);
         }
     }
 }

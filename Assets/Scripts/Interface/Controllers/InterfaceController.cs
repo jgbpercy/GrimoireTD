@@ -9,6 +9,7 @@ using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 using GrimoireTD.Technical;
 using GrimoireTD.Dependencies;
+using GrimoireTD.Economy;
 
 namespace GrimoireTD.UI
 {
@@ -288,7 +289,7 @@ namespace GrimoireTD.UI
                 return;
             }
 
-            IPlayerTargetedComponent playerTargetedComponent = abilityToActivate.TargetingComponent as IPlayerTargetedComponent;
+            var playerTargetedComponent = abilityToActivate.TargetingComponent as IPlayerTargetedComponent;
             if (playerTargetedComponent != null)
             {
                 CurrentCursorMode = InterfaceCursorMode.EXECUTE_BUILD_MODE_ABILITY;

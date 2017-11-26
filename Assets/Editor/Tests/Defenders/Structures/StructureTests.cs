@@ -99,10 +99,10 @@ namespace GrimoireTD.Tests.StructureTests
         {
             base.EachTestSetUp();
 
-            upgrade1Enhancement1.Cost.CanDoTransaction().Returns(true);
-            upgrade1Enhancement2.Cost.CanDoTransaction().Returns(true);
-            upgrade2Enhancement1.Cost.CanDoTransaction().Returns(true);
-            upgrade2Enhancement2.Cost.CanDoTransaction().Returns(true);
+            upgrade1Enhancement1.Cost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>());
+            upgrade1Enhancement2.Cost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>());
+            upgrade2Enhancement1.Cost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>());
+            upgrade2Enhancement2.Cost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>());
         }
 
         protected override CDefender ConstructSubject()
@@ -275,7 +275,14 @@ namespace GrimoireTD.Tests.StructureTests
         {
             var subject = ConstructStructureSubject();
 
-            upgrade1Enhancement1.Cost.CanDoTransaction().Returns(false);
+            var resource = Substitute.For<IResource>();
+
+            resource.CanDoTransaction(Arg.Any<int>()).Returns(false);
+
+            upgrade1Enhancement1.Cost.TransactionDictionary.Returns(new Dictionary<IReadOnlyResource, IResourceTransaction>
+            {
+                { resource, new CResourceTransaction(resource, 1) }
+            });
 
             var result = subject.TryUpgrade(upgrade1, upgrade1Enhancement1);
 
