@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NSubstitute;
 using GrimoireTD.Map;
 using UnityEngine;
 
@@ -41,6 +40,39 @@ namespace GrimoireTD.Tests.CoordTest
         }
 
         [Test]
+        public void EqualsOperator_BothNull_ReturnsTrue()
+        {
+            var first = null as Coord;
+            var second = null as Coord;
+
+            var result = first == second;
+
+            Assert.True(result);
+        }
+
+        [Test]
+        public void EqualsOperator_FirstNull_ReturnsFalse()
+        {
+            var first = null as Coord;
+            var second = new Coord(5, 5);
+
+            var result = first == second;
+
+            Assert.False(result);
+        }
+
+        [Test]
+        public void EqualsOperator_SecondNull_ReturnsFalse()
+        {
+            var first = new Coord(5, 6);
+            var second = null as Coord;
+
+            var result = first == second;
+
+            Assert.False(result);
+        }
+
+        [Test]
         public void Equals_ForTwoCoordWithTheSameXAndY_ReturnsTrue()
         {
             var first = new Coord(3, 4);
@@ -67,6 +99,17 @@ namespace GrimoireTD.Tests.CoordTest
         {
             var first = new Coord(3, 4);
             var second = new Coord(3, 2);
+
+            var result = first.Equals(second);
+
+            Assert.False(result);
+        }
+
+        [Test]
+        public void Equals_WithNull_ReturnsFalse()
+        {
+            var first = new Coord(5, 6);
+            var second = null as Coord;
 
             var result = first.Equals(second);
 
@@ -124,6 +167,39 @@ namespace GrimoireTD.Tests.CoordTest
             var expected = new Vector3(3f * MapRenderer.HEX_OFFSET, 0.75f, 0f);
 
             AssertExt.Approximately(expected, subject.ToPositionVector());
+        }
+
+        [Test]
+        public void NotEqualsOperator_BothNull_ReturnsFalse()
+        {
+            var first = null as Coord;
+            var second = null as Coord;
+
+            var result = first != second;
+
+            Assert.False(result);
+        }
+
+        [Test]
+        public void NotEqualsOperator_FirstNull_ReturnsTrue()
+        {
+            var first = null as Coord;
+            var second = new Coord(5, 5);
+
+            var result = first != second;
+
+            Assert.True(result);
+        }
+
+        [Test]
+        public void NotEqualsOperator_SecondNull_ReturnsTrue()
+        {
+            var first = new Coord(5, 6);
+            var second = null as Coord;
+
+            var result = first != second;
+
+            Assert.True(result);
         }
 
         [Test]

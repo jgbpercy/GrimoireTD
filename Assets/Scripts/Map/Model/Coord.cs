@@ -60,12 +60,30 @@ namespace GrimoireTD.Map
 
         public static bool operator == (Coord coord1, Coord coord2)
         {
-            return (coord1.x == coord2.x) && (coord1.y == coord2.y);
+            if (ReferenceEquals(coord1, coord2))
+            {
+                return true;
+            }
+            if (ReferenceEquals(coord1, null))
+            {
+                return false;
+            }
+
+            return coord1.Equals(coord2);
         }
 
         public static bool operator != (Coord coord1, Coord coord2)
         {
-            return !((coord1.x == coord2.x) && (coord1.y == coord2.y));
+            if (ReferenceEquals(coord1, coord2))
+            {
+                return false;
+            }
+            if (ReferenceEquals(coord1, null))
+            {
+                return true;
+            }
+
+            return !coord1.Equals(coord2);
         }
 
         public bool Equals(Coord z)
