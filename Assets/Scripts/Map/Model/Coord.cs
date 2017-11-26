@@ -58,6 +58,16 @@ namespace GrimoireTD.Map
             return (x == z.x) && (y == z.y);
         }
 
+        public static bool operator == (Coord coord1, Coord coord2)
+        {
+            return (coord1.x == coord2.x) && (coord1.y == coord2.y);
+        }
+
+        public static bool operator != (Coord coord1, Coord coord2)
+        {
+            return !((coord1.x == coord2.x) && (coord1.y == coord2.y));
+        }
+
         public bool Equals(Coord z)
         {
             if ((object)z == null)
