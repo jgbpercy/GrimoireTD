@@ -53,7 +53,7 @@ namespace GrimoireTD.Map
             }
         }
 
-        public bool TypeIsPathableByCreeps
+        public bool IsPathableByCreeps
         {
             get
             {

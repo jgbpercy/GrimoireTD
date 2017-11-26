@@ -218,7 +218,7 @@ namespace GrimoireTD.Map
 
         public bool CanBuildStructureAt(Coord coord)
         {
-            if (!GetHexAt(coord).CanPlaceStructureHere())
+            if (!GetHexAt(coord).CanBuildStructureHere())
             {
                 return false;
             }
@@ -245,7 +245,7 @@ namespace GrimoireTD.Map
 
             IStructure newStructure = structureTemplate.GenerateStructure(coord);
 
-            GetHexAt(coord).AddStructureHere(newStructure);
+            GetHexAt(coord).BuildStructureHere(newStructure);
 
             defenderPositions.Add(newStructure, coord);
 

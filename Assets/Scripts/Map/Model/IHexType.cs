@@ -9,7 +9,7 @@
 
         bool IsBuildable { get; }
 
-        bool TypeIsPathableByCreeps { get; }
+        bool IsPathableByCreeps { get; }
 
         bool UnitCanOccupy { get; }
     }

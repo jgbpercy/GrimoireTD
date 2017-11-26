@@ -49,7 +49,7 @@ namespace GrimoireTD.Map
                 return false;
             }
 
-            Coord z = obj as Coord;
+            var z = obj as Coord;
             if ((object)z == null)
             {
                 return false;
@@ -87,101 +87,14 @@ namespace GrimoireTD.Map
 
         public Vector3 ToFirePointVector()
         {
-            return new Vector3(ToPositionVector().x, ToPositionVector().y, -0.5f);
+            var positionVector = ToPositionVector();
+
+            return new Vector3(positionVector.x, positionVector.y, -0.5f);
         }
 
         public override string ToString()
         {
             return "(" + x + ", " + y + ")";
-        }
-
-        public static Coord PositionVectorToCoord(Vector3 positionVector)
-        {
-            int mainYSection = Mathf.FloorToInt((positionVector.y + 0.5f) / 1.5f);
-            float ySubSection = (positionVector.y + 0.5f) % 1.5f;
-
-            int mainXSection;
-            float normalisedY;
-
-            int x = 0;
-            int y = 0;
-
-            if (0.25f <= ySubSection && ySubSection < 0.75f)
-            {
-                y = mainYSection * 2;
-                x = Mathf.FloorToInt((positionVector.x + MapRenderer.HEX_OFFSET) / (MapRenderer.HEX_OFFSET * 2));
-            }
-            else if (1f <= ySubSection && ySubSection < 1.5f)
-            {
-                y = mainYSection * 2 + 1;
-                x = Mathf.FloorToInt(positionVector.x / (MapRenderer.HEX_OFFSET * 2));
-            }
-            else if (0f <= ySubSection && ySubSection < 0.25f)
-            {
-                mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
-                normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
-
-                if (mainXSection % 2 == 0)
-                {
-                    if (normalisedY + ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET) > MapRenderer.HEX_OFFSET)
-                    {
-                        y = mainYSection * 2;
-                        x = mainXSection / 2;
-                    }
-                    else
-                    {
-                        y = mainYSection * 2 - 1;
-                        x = mainXSection / 2 - 1;
-                    }
-                }
-                else
-                {
-                    if (normalisedY > ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET))
-                    {
-                        y = mainYSection * 2;
-                        x = mainXSection / 2;
-                    }
-                    else
-                    {
-                        y = mainYSection * 2 - 1;
-                        x = mainXSection / 2;
-                    }
-                }
-            }
-            else if (0.75f <= ySubSection && ySubSection < 1f)
-            {
-                mainXSection = Mathf.FloorToInt(positionVector.x / MapRenderer.HEX_OFFSET) + 1;
-                normalisedY = ((positionVector.y + 1f) % 0.25f) * (MapRenderer.HEX_OFFSET / 0.25f);
-
-                if (mainXSection % 2 == 0)
-                {
-                    if (normalisedY > ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET))
-                    {
-                        y = mainYSection * 2 + 1;
-                        x = mainXSection / 2 - 1;
-                    }
-                    else
-                    {
-                        y = mainYSection * 2;
-                        x = mainXSection / 2;
-                    }
-                }
-                else
-                {
-                    if (normalisedY + ((positionVector.x + MapRenderer.HEX_OFFSET) % MapRenderer.HEX_OFFSET) > MapRenderer.HEX_OFFSET)
-                    {
-                        y = mainYSection * 2 + 1;
-                        x = mainXSection / 2;
-                    }
-                    else
-                    {
-                        y = mainYSection * 2;
-                        x = mainXSection / 2;
-                    }
-                }
-            }
-
-            return new Coord(x, y);
         }
     }
 }

@@ -31,13 +31,13 @@ namespace GrimoireTD.Map
 
         bool IsPathableByCreepsWithUnitRemoved();
 
-        bool CanPlaceStructureHere();
+        bool CanBuildStructureHere();
 
         bool CanPlaceUnitHere();
 
         bool IsEmpty();
 
-        void AddStructureHere(IStructure structureAdded);
+        void BuildStructureHere(IStructure structureAdded);
 
         void PlaceUnitHere(IUnit unitPlaced);
 

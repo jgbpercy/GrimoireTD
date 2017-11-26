@@ -1,6 +1,6 @@
 ﻿namespace System.Collections.Generic
 {
-    public class EAOnCallbackListRemove<T>
+    public class EAOnCallbackListRemove<T> : EventArgs
     {
         public readonly T RemovedItem;
 

@@ -95,16 +95,12 @@ namespace GrimoireTD.UI
         {
             Time.timeScale = tempDebugTimeScale;
 
-            //map
             mapData = DepsProv.TheMapData;
 
-            //gamestate
             gameStateManager = DepsProv.TheGameStateManager;
 
-            //camera
             mainCamera = Camera.main;
 
-            //default cursor mode
             SetCursorModeSelect();
 
             gameStateManager.OnEnterBuildMode += OnEnterBuildMode;
@@ -140,7 +136,7 @@ namespace GrimoireTD.UI
             }
 
             cameraToMouseRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-            bool mouseRaycastHit = Physics.Raycast(cameraToMouseRay, out mouseHit, maxRayFromCameraDistance, mainRayHitLayer);
+            var mouseRaycastHit = Physics.Raycast(cameraToMouseRay, out mouseHit, maxRayFromCameraDistance, mainRayHitLayer);
 
             if (!mouseRaycastHit)
             {
@@ -149,7 +145,7 @@ namespace GrimoireTD.UI
 
             if (mouseHit.transform.CompareTag("TileMap"))
             {
-                MouseOverCoord = Coord.PositionVectorToCoord(new Vector3(mouseHit.point.x, mouseHit.point.y, 0f));
+                MouseOverCoord = (new Vector2(mouseHit.point.x, mouseHit.point.y)).ToCoord();
                 MouseOverHex = mapData.GetHexAt(MouseOverCoord);
                 return;
             }

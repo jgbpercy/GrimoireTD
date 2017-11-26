@@ -47,12 +47,12 @@ namespace GrimoireTD.Map
         //Public non-changing helpers
         public bool IsPathableByCreeps()
         {
-            return HexType.TypeIsPathableByCreeps && IsEmpty();
+            return HexType.IsPathableByCreeps && IsEmpty();
         }
 
         public bool IsPathableByCreepsWithUnitRemoved()
         {
-            return HexType.TypeIsPathableByCreeps && StructureHere == null;
+            return HexType.IsPathableByCreeps && StructureHere == null;
         }
 
         public bool IsPathableByCreepsWithTypePathable()
@@ -62,10 +62,10 @@ namespace GrimoireTD.Map
 
         public bool IsPathableByCreepsWithStructureRemoved()
         {
-            return HexType.TypeIsPathableByCreeps && UnitHere == null;
+            return HexType.IsPathableByCreeps && UnitHere == null;
         }
 
-        public bool CanPlaceStructureHere()
+        public bool CanBuildStructureHere()
         {
             return HexType.IsBuildable && StructureHere == null;
         }
@@ -81,7 +81,7 @@ namespace GrimoireTD.Map
         }
 
         //Public change methods
-        public void AddStructureHere(IStructure structureAdded)
+        public void BuildStructureHere(IStructure structureAdded)
         {
             StructureHere = structureAdded;
         }
