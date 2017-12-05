@@ -128,7 +128,10 @@ namespace GrimoireTD.Defenders.Units
             var baseUnitCharacteristics = unitTemplate.BaseCharacteristics as IUnitImprovement;
 
             //TODO: remove in release
-            if (baseUnitCharacteristics == null) throw new ArgumentException("UnitTemplate BaseCharacteristics is not an IUnitImprovement");
+            if (baseUnitCharacteristics == null)
+            {
+                throw new ArgumentException("UnitTemplate BaseCharacteristics is not an IUnitImprovement");
+            }
 
             UnitTemplate = unitTemplate;
 
@@ -190,7 +193,7 @@ namespace GrimoireTD.Defenders.Units
         {
             talentsLevelled = new Dictionary<IUnitTalent, int>();
 
-            foreach (IUnitTalent talent in UnitTemplate.UnitTalents)
+            foreach (var talent in UnitTemplate.UnitTalents)
             {
                 talentsLevelled.Add(talent, 0);
             }
@@ -202,7 +205,7 @@ namespace GrimoireTD.Defenders.Units
 
             affectedByDefenderAuras.OnAdd += (object sender, EAOnCallbackListAdd<IDefenderAura> args) =>
             {
-                IUnitImprovement unitImprovement = args.AddedItem.DefenderEffectTemplate.Improvement as IUnitImprovement;
+                var unitImprovement = args.AddedItem.DefenderEffectTemplate.Improvement as IUnitImprovement;
                 if (unitImprovement != null)
                 {
                     ApplyImprovement(unitImprovement);
@@ -215,7 +218,7 @@ namespace GrimoireTD.Defenders.Units
 
             affectedByDefenderAuras.OnRemove += (object sender, EAOnCallbackListRemove<IDefenderAura> args) =>
             {
-                IUnitImprovement unitImprovement = args.RemovedItem.DefenderEffectTemplate.Improvement as IUnitImprovement;
+                var unitImprovement = args.RemovedItem.DefenderEffectTemplate.Improvement as IUnitImprovement;
                 if (unitImprovement != null)
                 {
                     RemoveImprovement(unitImprovement);
@@ -274,15 +277,15 @@ namespace GrimoireTD.Defenders.Units
         //Economy
         private void OnEnterBuildModeEconomyChanges()
         {
-            float idleProportion = TimeIdle / (TimeActive + TimeIdle);
+            var idleProportion = TimeIdle / (TimeActive + TimeIdle);
 
-            IEconomyTransaction grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
+            var grossConditionalHexOccuationBonus = GetHexOccupationBonus(OnHexType, conditionalHexOccupationBonuses);
 
-            IEconomyTransaction netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(idleProportion);
+            var netConditionalHexOccupationBonus = grossConditionalHexOccuationBonus.Multiply(idleProportion);
 
-            IEconomyTransaction grossConditionalStructureOccupationBonus = GetStructureOccupationBonus(OnHex.StructureHere, conditionalStructureOccupationBonuses);
+            var grossConditionalStructureOccupationBonus = GetStructureOccupationBonus(OnHex.StructureHere, conditionalStructureOccupationBonuses);
 
-            IEconomyTransaction netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(idleProportion);
+            var netConditionalStructureOccupationBonus = grossConditionalStructureOccupationBonus.Multiply(idleProportion);
 
             OnTriggeredConditionalOccupationBonuses?.Invoke(this, new EAOnTriggeredConditionalOccupationBonus(this, netConditionalHexOccupationBonus, netConditionalStructureOccupationBonus));
         }
@@ -291,10 +294,10 @@ namespace GrimoireTD.Defenders.Units
         {
             IEconomyTransaction occupationBonusTransaction = new CEconomyTransaction();
 
-            IStructureTemplate template = structure?.StructureTemplate;
-            IStructureUpgrade upgrade = structure?.CurrentUpgradeLevel();
+            var template = structure?.StructureTemplate;
+            var upgrade = structure?.CurrentUpgradeLevel();
 
-            foreach (IStructureOccupationBonus structureOccupationBonus in structureOccupationBonuses)
+            foreach (var structureOccupationBonus in structureOccupationBonuses)
             {
                 if (structureOccupationBonus.StructureTemplate == template && structureOccupationBonus.StructureUpgradeLevel == upgrade)
                 {
@@ -313,11 +316,11 @@ namespace GrimoireTD.Defenders.Units
         //Experience, Fatigue and Talents
         private void OnEnterBuildModeExperienceAndFatigueChanges()
         {
-            float rawExperienceGain = (TimeActive / (TimeActive + TimeIdle)) * 100;
+            var rawExperienceGain = (TimeActive / (TimeActive + TimeIdle)) * 100;
 
-            float fatigueFactor = FatigueFactor();
+            var fatigueFactor = FatigueFactor();
 
-            int experienceGain = Mathf.RoundToInt(rawExperienceGain * fatigueFactor);
+            var experienceGain = Mathf.RoundToInt(rawExperienceGain * fatigueFactor);
             Experience += experienceGain;
 
             Fatigue += Mathf.RoundToInt((TimeActive / (TimeActive + TimeIdle)) * 10) - 5;
@@ -332,7 +335,7 @@ namespace GrimoireTD.Defenders.Units
 
         private float FatigueFactor()
         {
-            float rawInverserFactor = CustomMath.SignedOddRoot((Fatigue - inflectionPoint) / shallownessMultiplier, 3) + Mathf.Pow(inflectionPoint / shallownessMultiplier, 1f / 3f);
+            var rawInverserFactor = CustomMath.SignedOddRoot((Fatigue - inflectionPoint) / shallownessMultiplier, 3) + Mathf.Pow(inflectionPoint / shallownessMultiplier, 1f / 3f);
 
             return Mathf.Clamp(1 - rawInverserFactor, 0f, 1f);
         }
@@ -402,13 +405,13 @@ namespace GrimoireTD.Defenders.Units
             {
                 bool wasPresent;
 
-                foreach (IStructureOccupationBonus occupationBonus in unitImprovement.ConditionalStructureOccupationBonuses)
+                foreach (var occupationBonus in unitImprovement.ConditionalStructureOccupationBonuses)
                 {
                     wasPresent = conditionalStructureOccupationBonuses.TryRemove(occupationBonus);
                     Assert.IsTrue(wasPresent);
                 }
 
-                foreach (IHexOccupationBonus occupationBonus in unitImprovement.ConditionalHexOccupationBonuses)
+                foreach (var occupationBonus in unitImprovement.ConditionalHexOccupationBonuses)
                 {
                     wasPresent = conditionalHexOccupationBonuses.TryRemove(occupationBonus);
                     Assert.IsTrue(wasPresent);
@@ -433,7 +436,7 @@ namespace GrimoireTD.Defenders.Units
                 args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.BOTH || 
                 args.RemovedItem.DefenderEffectTemplate.Affects == DefenderEffectAffectsType.UNITS)
             {
-                bool wasPresent = affectedByDefenderAuras.TryRemove(args.RemovedItem);
+                var wasPresent = affectedByDefenderAuras.TryRemove(args.RemovedItem);
                 Assert.IsTrue(wasPresent);
             }
         }
@@ -444,14 +447,14 @@ namespace GrimoireTD.Defenders.Units
             OnHex.DefenderAurasHere.OnAdd -= OnNewDefenderAuraInCurrentHex;
             OnHex.DefenderAurasHere.OnRemove -= OnClearDefenderAuraInCurrentHex;
 
+            var oldPosition = CoordPosition;
+
             CoordPosition = targetCoord;
 
             OnHex.DefenderAurasHere.OnAdd += OnNewDefenderAuraInCurrentHex;
             OnHex.DefenderAurasHere.OnRemove += OnClearDefenderAuraInCurrentHex;
 
-            OnMoved?.Invoke(this, new EAOnMoved(targetCoord));
-
-            foreach (IDefenderAura auraEmitted in aurasEmitted)
+            foreach (var auraEmitted in aurasEmitted)
             {
                 auraEmitted.ClearAura();
 
@@ -461,6 +464,8 @@ namespace GrimoireTD.Defenders.Units
             affectedByDefenderAuras.Clear();
 
             GetDefenderAurasFromCurrentHex();
+
+            OnMoved?.Invoke(this, new EAOnMoved(this, oldPosition, targetCoord));
         }
 
         public void RegenerateCachedDisallowedMovementDestinations()

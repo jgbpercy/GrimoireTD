@@ -56,7 +56,7 @@ namespace GrimoireTD.Abilities.BuildMode
 
         private static bool HexIsInRange(HexIsInRangeArgs args)
         {
-            return CMapData.HexIsInRange(args.Range, args.SourceDefender.CoordPosition, args.TargetCoord);
+            return CMapData.CoordIsInRange(args.Range, args.SourceDefender.CoordPosition, args.TargetCoord);
         }
     }
 }

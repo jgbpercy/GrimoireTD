@@ -82,7 +82,7 @@ namespace GrimoireTD.UI
         {
             get
             {
-                return mapData.WhereAmI(SelectedUnitInstance);
+                return SelectedUnitInstance.CoordPosition;
             }
         }
 

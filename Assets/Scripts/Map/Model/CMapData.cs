@@ -2,12 +2,11 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
-using GrimoireTD.Defenders;
 using GrimoireTD.Defenders.Structures;
 using GrimoireTD.Defenders.Units;
 using GrimoireTD.Levels;
 using GrimoireTD.UI;
+using GrimoireTD.Dependencies;
 
 namespace GrimoireTD.Map
 {
@@ -16,15 +15,12 @@ namespace GrimoireTD.Map
         //Private fields
         private Dictionary<Coord, IHexData> hexes;
 
-        private Dictionary<IDefender, Coord> defenderPositions;
-
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        //TODO: why have I done this? Fix?
         private List<Coord> _path;
 
-        private List<Coord> disallowedCoords;
+        private List<Coord> disallowedCoordsForUnitOrStructurePlacement;
 
         public event EventHandler<EAOnMapCreated> OnMapCreated;
         public event EventHandler<EAOnPathGeneratedOrChanged> OnPathGeneratedOrChanged;
@@ -43,24 +39,20 @@ namespace GrimoireTD.Map
             }
         }
 
-        private List<Coord> Path
+        private List<Coord> path
         {
             set
             {
                 _path = value;
 
-                OnPathGeneratedOrChanged?.Invoke(this, new EAOnPathGeneratedOrChanged(value));
+                disallowedCoordsForUnitOrStructurePlacement = PathingService.GetDisallowedCoords(_path, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
 
-                disallowedCoords = PathingService.DisallowedCoords(_path, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
+                OnPathGeneratedOrChanged?.Invoke(this, new EAOnPathGeneratedOrChanged(value));
             }
         }
 
         //Constructor
-        public CMapData()
-        {
-            hexes = new Dictionary<Coord, IHexData>();
-            defenderPositions = new Dictionary<IDefender, Coord>();
-        }
+        public CMapData() { }
 
         //Set Up
         public void SetUp(
@@ -71,64 +63,31 @@ namespace GrimoireTD.Map
         )
         {
             //Register callbacks
-            InterfaceController.Instance.OnBuildStructurePlayerAction += OnBuildStructurePlayerAction;
-            InterfaceController.Instance.OnCreateUnitPlayerAction += OnCreateUnitPlayerAction;
+            DepsProv.TheInterfaceController().OnBuildStructurePlayerAction += OnBuildStructurePlayerAction;
+            DepsProv.TheInterfaceController().OnCreateUnitPlayerAction += OnCreateUnitPlayerAction;
 
-            //Public Hex List
+            //Public Hex Type List
             HexTypes = colorsToTypesDictionary.Values.ToList();
 
             //Generate Map
             Width = mapImage.width / 2;
             Height = mapImage.height / 2;
 
-            Color32[] allPixels = mapImage.GetPixels32();
-            int xPixelCoord;
-            int yPixelCoord;
-
-            IHexType currentHexType;
-            bool foundHexType;
-
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    xPixelCoord = y % 2 == 0 ? 2 * x : 2 * x + 1;
-                    yPixelCoord = 2 * y;
-
-                    foundHexType = colorsToTypesDictionary.TryGetValue(allPixels[xPixelCoord + yPixelCoord * Width * 2], out currentHexType);
-
-                    Assert.IsTrue(foundHexType);
-
-                    hexes.Add(new Coord(x, y), new CHexData(currentHexType));
-                }
-            }
+            hexes = MapImageToMapDictionaryService.GetMapDictionary(mapImage, colorsToTypesDictionary);
 
             OnMapCreated?.Invoke(this, new EAOnMapCreated(this));
 
             TempRegeneratePath();
 
-            foreach (IStartingStructure startingStructure in startingStructures)
+            //Starting Structures and Units
+            foreach (var startingStructure in startingStructures)
             {
-                if (!CanBuildStructureAt(startingStructure.StartingPosition))
-                {
-                    throw new Exception("Attempted to add Starting Structure at invalid position (" + startingStructure.StartingPosition.X + ", " + startingStructure.StartingPosition.Y + ")");
-                }
-                else
-                {
-                    BuildStructure(startingStructure.StartingPosition, startingStructure.StructureTemplate);
-                }
+                BuildStructure(startingStructure.StartingPosition, startingStructure.StructureTemplate);
             }
 
-            foreach (IStartingUnit startingUnit in startingUnits)
+            foreach (var startingUnit in startingUnits)
             {
-                if (!CanCreateUnitAt(startingUnit.StartingPosition))
-                {
-                    throw new Exception("Attempted to add Starting Unit at invalid position (" + startingUnit.StartingPosition.X + ", " + startingUnit.StartingPosition.Y + ")");
-                }
-                else
-                {
-                    CreateUnit(startingUnit.StartingPosition, startingUnit.UnitTemplate);
-                }
+                CreateUnit(startingUnit.StartingPosition, startingUnit.UnitTemplate);
             }
         }
 
@@ -136,24 +95,24 @@ namespace GrimoireTD.Map
         //  until variable start/ends etc, to at least just store the hardcoded start and ends in one place
         private void TempRegeneratePath()
         {
-            Path = PathingService.GeneratePath(this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
+            path = PathingService.GetPath(this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
         }
 
         private void TempRegenerateDisallowedCoords()
         {
-            disallowedCoords = PathingService.DisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
+            disallowedCoordsForUnitOrStructurePlacement = PathingService.GetDisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
         }
 
         //Public Hex/Coord queries
         public IHexData TryGetHexAt(Coord hexCoord)
         {
-            IHexData hexAtCoords;
+            IHexData hexAtCoord;
 
-            bool foundHex = hexes.TryGetValue(hexCoord, out hexAtCoords);
+            var foundHex = hexes.TryGetValue(hexCoord, out hexAtCoord);
 
             if (foundHex)
             {
-                return hexAtCoords;
+                return hexAtCoord;
             }
 
             return null;
@@ -164,46 +123,51 @@ namespace GrimoireTD.Map
             return hexes[hexCoord];
         }
 
+        /* TODO? #optimisation? This can be done with just the width and height without looking in the dict, obviously
+         * And/or: if this is used much - have an unsafe static version that doesn't check existance, and usage code knows is has to call
+         * TryGetHexAt or whatever? That's probably better? I guess that's what GetCoordsInRangeIs, but it's doing it badly right now.
+         * This all needs tidy up!
+         */    
         public List<Coord> GetNeighboursOf(Coord hexCoord)
         {
-            List<Coord> neighbourList = new List<Coord>();
+            var neighbourList = new List<Coord>();
 
-            int x = hexCoord.X;
-            int y = hexCoord.Y;
+            var x = hexCoord.X;
+            var y = hexCoord.Y;
 
-            int xOffset = y % 2 == 0 ? -1 : 0;
+            var xOffset = y % 2 == 0 ? -1 : 0;
 
-            Coord upLeft = new Coord(x + xOffset, y + 1);
+            var upLeft = new Coord(x + xOffset, y + 1);
             if (TryGetHexAt(upLeft) != null)
             {
                 neighbourList.Add(upLeft);
             }
 
-            Coord upRight = new Coord(x + xOffset + 1, y + 1);
+            var upRight = new Coord(x + xOffset + 1, y + 1);
             if (TryGetHexAt(upRight) != null)
             {
                 neighbourList.Add(upRight);
             }
 
-            Coord xRight = new Coord(x + 1, y);
+            var xRight = new Coord(x + 1, y);
             if (TryGetHexAt(xRight) != null)
             {
                 neighbourList.Add(xRight);
             }
 
-            Coord downRight = new Coord(x + xOffset + 1, y - 1);
+            var downRight = new Coord(x + xOffset + 1, y - 1);
             if (TryGetHexAt(downRight) != null)
             {
                 neighbourList.Add(downRight);
             }
 
-            Coord downLeft = new Coord(x + xOffset, y - 1);
+            var downLeft = new Coord(x + xOffset, y - 1);
             if (TryGetHexAt(downLeft) != null)
             {
                 neighbourList.Add(downLeft);
             }
 
-            Coord xLeft = new Coord(x - 1, y);
+            var xLeft = new Coord(x - 1, y);
             if (TryGetHexAt(xLeft) != null)
             {
                 neighbourList.Add(xLeft);
@@ -213,21 +177,16 @@ namespace GrimoireTD.Map
         }
 
         //Build / Create / Move
-        //  Optimisation: cache all of the below CanX call when entering states where this info is needed 
+        //  #optimisation: cache all of the below CanX call when entering states where this info is needed 
         //  At time of writing, will be called each frame from MouseOverMapView
 
         public bool CanBuildStructureAt(Coord coord)
         {
-            if (!GetHexAt(coord).CanBuildStructureHere())
+            if (!GetHexAt(coord).CanBuildStructureHere() || disallowedCoordsForUnitOrStructurePlacement.Contains(coord))
             {
                 return false;
             }
-
-            if (disallowedCoords.Contains(coord))
-            {
-                return false;
-            }
-
+            
             return true;
         }
 
@@ -243,11 +202,9 @@ namespace GrimoireTD.Map
                 throw new Exception("MapData attempted to build a structure where one couldn't be built. Some code is not checking properly if a structure can be built.");
             }
 
-            IStructure newStructure = structureTemplate.GenerateStructure(coord);
+            var newStructure = structureTemplate.GenerateStructure(coord);
 
             GetHexAt(coord).BuildStructureHere(newStructure);
-
-            defenderPositions.Add(newStructure, coord);
 
             if (CreepPath.Contains(coord))
             {
@@ -261,16 +218,10 @@ namespace GrimoireTD.Map
             OnStructureCreated?.Invoke(this, new EAOnStructureCreated(coord, newStructure));
         }
 
-        //  Unit Creation
+        // Unit Creation
         public bool CanCreateUnitAt(Coord coord)
         {
-            if (!GetHexAt(coord).CanPlaceUnitHere())
-            {
-                //CDebug.Log(something)
-                return false;
-            }
-
-            if (disallowedCoords.Contains(coord))
+            if (!GetHexAt(coord).CanPlaceUnitHere() || disallowedCoordsForUnitOrStructurePlacement.Contains(coord))
             {
                 return false;
             }
@@ -290,11 +241,9 @@ namespace GrimoireTD.Map
                 throw new Exception("MapData attempted to create a unit where one couldn't be created. Some code is not checking properly if a unit can be created.");
             }
 
-            IUnit newUnit = unitTemplate.GenerateUnit(targetCoord);
+            var newUnit = unitTemplate.GenerateUnit(targetCoord);
 
             GetHexAt(targetCoord).PlaceUnitHere(newUnit);
-
-            defenderPositions.Add(newUnit, targetCoord);
 
             if (CreepPath.Contains(targetCoord))
             {
@@ -305,17 +254,16 @@ namespace GrimoireTD.Map
                 TempRegenerateDisallowedCoords();
             }
 
-            newUnit.OnMoved += (object sender, EAOnMoved args) => MoveUnitTo(args.ToPosition, newUnit, newUnit.CachedDisallowedMovementDestinations);
+            newUnit.OnMoved += OnUnitMoved;
 
-            OnUnitCreated?.Invoke(this,new EAOnUnitCreated(targetCoord, newUnit));
+            OnUnitCreated?.Invoke(this, new EAOnUnitCreated(targetCoord, newUnit));
         }
 
-        //  Unit Movement
+        // Unit Movement
         public bool CanMoveUnitTo(Coord targetCoord, IReadOnlyList<Coord> disallowedCoordsForMove)
         {
             if (!GetHexAt(targetCoord).CanPlaceUnitHere())
             {
-                //CDebug.Log(something)
                 return false;
             }
 
@@ -327,31 +275,28 @@ namespace GrimoireTD.Map
             return true;
         }
 
-        private void MoveUnitTo(Coord targetCoord, IUnit unit, IReadOnlyList<Coord> disallowedCoordsForMove)
+        private void OnUnitMoved(object sender, EAOnMoved args)
         {
-            if (!CanMoveUnitTo(targetCoord, disallowedCoordsForMove))
+            if (!CanMoveUnitTo(args.ToPosition, args.Unit.CachedDisallowedMovementDestinations))
             {
                 throw new Exception("MapData attempted to move a unit where it couldn't be move. Some code is not checking properly if a unit can be moved.");
             }
 
-            GetHexAt(targetCoord).PlaceUnitHere(unit);
-            GetHexAt(defenderPositions[unit]).RemoveUnitHere();
-
-            defenderPositions.Remove(unit);
-            defenderPositions.Add(unit, targetCoord);
+            GetHexAt(args.ToPosition).PlaceUnitHere(args.Unit);
+            GetHexAt(args.OldPosition).RemoveUnitHere();
 
             TempRegeneratePath();
         }
 
         //Public non-changing helper methods
-        public static bool HexIsInRange(int range, Coord startHex, Coord targetHex)
+        public static bool CoordIsInRange(int range, Coord startHex, Coord targetHex)
         {
             return Distance(startHex, targetHex) <= range;
         }
 
         public static int Distance(Coord startHex, Coord targetHex)
         {
-            int baseVerticalDistance = Mathf.Abs(startHex.Y - targetHex.Y);
+            var baseVerticalDistance = Mathf.Abs(startHex.Y - targetHex.Y);
             int baseHorizontalDistance;
 
             if (baseVerticalDistance % 2 == 0)
@@ -379,18 +324,16 @@ namespace GrimoireTD.Map
 
         public List<Coord> GetCoordsInRange(int range, Coord startHex)
         {
-            //TODO: do this more efficiently. Find the Coords in a sensible way, not by looping through all possibles :)
-            List<Coord> coordsInRange = new List<Coord>();
+            //TODO: #optimisation do this more efficiently. Find the Coords in a sensible way, not by looping through all possibles :)
+            var coordsInRange = new List<Coord>();
 
-            Coord currentCoord;
-
-            for (int x = 0; x < Width; x++)
+            for (var x = 0; x < Width; x++)
             {
-                for (int y = 0; y < Height; y++)
+                for (var y = 0; y < Height; y++)
                 {
-                    currentCoord = new Coord(x, y);
+                    var currentCoord = new Coord(x, y);
 
-                    if (HexIsInRange(range, startHex, currentCoord))
+                    if (CoordIsInRange(range, startHex, currentCoord))
                     {
                         coordsInRange.Add(currentCoord);
                     }
@@ -400,24 +343,19 @@ namespace GrimoireTD.Map
             return coordsInRange;
         }
 
-        public Coord WhereAmI(IDefender defender)
-        {
-            return defenderPositions[defender];
-        }
-
         public List<Coord> GetDisallowedMovementDestinationCoords(Coord fromCoord)
         {
             if (GetHexAt(fromCoord).IsPathableByCreepsWithUnitRemoved())
             {
-                return PathingService.DisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), new List<Coord> { fromCoord });
+                return PathingService.GetDisallowedCoordsWithNewlyPathableCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), new List<Coord> { fromCoord });
             }
 
-            return disallowedCoords;
+            return disallowedCoordsForUnitOrStructurePlacement;
         }
 
         private List<Coord> GetDisallowedCoords(List<Coord> newlyPathableCoords)
         {
-            return PathingService.DisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), newlyPathableCoords);
+            return PathingService.GetDisallowedCoordsWithNewlyPathableCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), newlyPathableCoords);
         }
     }
 }

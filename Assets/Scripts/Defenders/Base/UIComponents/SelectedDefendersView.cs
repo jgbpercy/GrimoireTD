@@ -265,15 +265,15 @@ namespace GrimoireTD.Defenders
 
             SetNameAndDescription(newSelection, nameText, descriptionText);
 
-            IReadOnlyList<IDefendModeAbility> defenderDefendModeAbilities = newSelection.Abilities.DefendModeAbilities();
-            IReadOnlyList<IBuildModeAbility> defenderBuildModeAbilities = newSelection.Abilities.BuildModeAbilities();
+            var defenderDefendModeAbilities = newSelection.Abilities.DefendModeAbilities();
+            var defenderBuildModeAbilities = newSelection.Abilities.BuildModeAbilities();
 
-            foreach (IDefendModeAbility defendModeAbility in defenderDefendModeAbilities)
+            foreach (var defendModeAbility in defenderDefendModeAbilities)
             {
                 AddDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
             }
 
-            foreach (IBuildModeAbility buildModeAbility in defenderBuildModeAbilities)
+            foreach (var buildModeAbility in defenderBuildModeAbilities)
             {
                 AddBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
             }
@@ -281,14 +281,14 @@ namespace GrimoireTD.Defenders
 
         private void OnNewAbilityAdded(IAbility ability, GameObject abilityVerticalLayout)
         {
-            IDefendModeAbility defendModeAbility = ability as IDefendModeAbility;
+            var defendModeAbility = ability as IDefendModeAbility;
             if (defendModeAbility != null)
             {
                 AddDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
                 return;
             }
 
-            IBuildModeAbility buildModeAbility = ability as IBuildModeAbility;
+            var buildModeAbility = ability as IBuildModeAbility;
             if (buildModeAbility != null)
             {
                 AddBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
@@ -300,7 +300,7 @@ namespace GrimoireTD.Defenders
 
         private void AddDefendModeAbilitySlider(IDefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
         {
-            DefendModeAbilityUIComponent newSlider = Instantiate(abilitySliderPrefab).GetComponent<DefendModeAbilityUIComponent>();
+            var newSlider = Instantiate(abilitySliderPrefab).GetComponent<DefendModeAbilityUIComponent>();
             newSlider.transform.SetParent(abilityVerticalLayout.transform);
 
             newSlider.SetUp(defendModeAbility);
@@ -310,7 +310,7 @@ namespace GrimoireTD.Defenders
 
         private void AddBuildModeAbilityButton(IBuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
         {
-            BuildModeAbilityUIComponent newButton = Instantiate(abilityButtonPrefab).GetComponent<BuildModeAbilityUIComponent>();
+            var newButton = Instantiate(abilityButtonPrefab).GetComponent<BuildModeAbilityUIComponent>();
             newButton.transform.SetParent(abilityVerticalLayout.transform);
 
             newButton.SetUp(buildModeAbility);
@@ -320,14 +320,14 @@ namespace GrimoireTD.Defenders
 
         private void OnAbilityRemoved(IAbility ability, GameObject abilityVerticalLayout)
         {
-            IDefendModeAbility defendModeAbility = ability as IDefendModeAbility;
+            var defendModeAbility = ability as IDefendModeAbility;
             if (defendModeAbility != null)
             {
                 RemoveDefendModeAbilitySlider(defendModeAbility, abilityVerticalLayout);
                 return;
             }
 
-            IBuildModeAbility buildModeAbility = ability as IBuildModeAbility;
+            var buildModeAbility = ability as IBuildModeAbility;
             if (buildModeAbility != null)
             {
                 RemoveBuildModeAbilityButton(buildModeAbility, abilityVerticalLayout);
@@ -339,7 +339,7 @@ namespace GrimoireTD.Defenders
 
         private void RemoveDefendModeAbilitySlider(IDefendModeAbility defendModeAbility, GameObject abilityVerticalLayout)
         {
-            DefendModeAbilityUIComponent uiComponentToRemove = abilitySliders.Find(x => x.DefendModeAbility == defendModeAbility);
+            var uiComponentToRemove = abilitySliders.Find(x => x.DefendModeAbility == defendModeAbility);
 
             Destroy(uiComponentToRemove.gameObject);
 
@@ -348,7 +348,7 @@ namespace GrimoireTD.Defenders
 
         private void RemoveBuildModeAbilityButton(IBuildModeAbility buildModeAbility, GameObject abilityVerticalLayout)
         {
-            BuildModeAbilityUIComponent uiComponentToRemove = abilityButtons.Find(x => x.BuildModeAbility == buildModeAbility);
+            var uiComponentToRemove = abilityButtons.Find(x => x.BuildModeAbility == buildModeAbility);
 
             Destroy(uiComponentToRemove.gameObject);
 
@@ -455,7 +455,7 @@ namespace GrimoireTD.Defenders
         {
             ClearUpgradeAndEnhancementDisplays();
 
-            foreach (IStructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
+            foreach (var upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
             {
                 AddUpgradeDisplay(upgrade);
 
@@ -468,16 +468,16 @@ namespace GrimoireTD.Defenders
 
         private void AddUpgradeDisplay(IStructureUpgrade upgrade)
         {
-            GameObject newUpgradeDisplay = Instantiate(structureUpgradeDisplayPrefab) as GameObject;
+            var newUpgradeDisplay = Instantiate(structureUpgradeDisplayPrefab) as GameObject;
             newUpgradeDisplay.transform.SetParent(structureUpgradeLayout);
 
             upgradeDisplays.Add(newUpgradeDisplay);
 
             newUpgradeDisplay.GetComponentInChildren<Text>().text = "Upgrade to " + upgrade.NewStructureName + "\n" + upgrade.BonusDescription;
 
-            foreach (IStructureEnhancement enhancement in upgrade.OptionalEnhancements)
+            foreach (var enhancement in upgrade.OptionalEnhancements)
             {
-                GameObject newEnhancementDisplay = Instantiate(structureEnhancementDisplayPrefab) as GameObject;
+                var newEnhancementDisplay = Instantiate(structureEnhancementDisplayPrefab) as GameObject;
                 newEnhancementDisplay.transform.SetParent(newUpgradeDisplay.transform);
 
                 newEnhancementDisplay.GetComponent<StructureEnhancementUIComponent>().SetUp(selectedStructure, upgrade, enhancement);
@@ -490,7 +490,7 @@ namespace GrimoireTD.Defenders
         {
             SetNameAndDescription(selectedStructure, selectedStructureName, selectedStructureText);
 
-            foreach (IStructureUpgrade upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
+            foreach (var upgrade in selectedStructure.StructureTemplate.StructureUpgrades)
             {
                 if (!selectedStructure.UpgradesBought[upgrade])
                 {
@@ -553,9 +553,9 @@ namespace GrimoireTD.Defenders
         {
             ClearTalentDisplays();
 
-            foreach (IUnitTalent talent in selectedUnit.UnitTemplate.UnitTalents)
+            foreach (var talent in selectedUnit.UnitTemplate.UnitTalents)
             {
-                GameObject newTalentDisplay = Instantiate(unitTalentDisplayPrefab) as GameObject;
+                var newTalentDisplay = Instantiate(unitTalentDisplayPrefab) as GameObject;
                 newTalentDisplay.transform.SetParent(unitTalentLayout);
 
                 newTalentDisplay.GetComponent<UnitTalentUIComponent>().SetUp(selectedUnit, talent);
@@ -574,7 +574,7 @@ namespace GrimoireTD.Defenders
 
         private string GetAbilityText(IDefender defender)
         {
-            string abilityText = "Abilities:\n";
+            var abilityText = "Abilities:\n";
 
             foreach (var ability in defender.Abilities.AbilityList)
             {
@@ -586,16 +586,16 @@ namespace GrimoireTD.Defenders
 
         private string GetAuraText(IDefender defender)
         {
-            string auraText = "Auras:\n" + "Source Of:\n";
+            var auraText = "Auras:\n" + "Source Of:\n";
 
-            foreach (IDefenderAura aura in defender.AurasEmitted)
+            foreach (var aura in defender.AurasEmitted)
             {
                 auraText += aura.UIText() + "\n";
             }
 
             auraText += "Affected By:\n";
 
-            foreach (IDefenderAura aura in defender.AffectedByDefenderAuras)
+            foreach (var aura in defender.AffectedByDefenderAuras)
             {
                 auraText += aura.UIText() + "\n";
             }
@@ -605,9 +605,9 @@ namespace GrimoireTD.Defenders
 
         private string GetAttributesText(IDefender defender)
         {
-            string attributesText = "Attributes:\n";
+            var attributesText = "Attributes:\n";
 
-            foreach (KeyValuePair<DeAttrName,string> attributeName in DefenderAttributeDefinitions.DisplayNames)
+            foreach (var attributeName in DefenderAttributeDefinitions.DisplayNames)
             {
                 attributesText += 
                     attributeName.Value + ": " + 
@@ -620,12 +620,12 @@ namespace GrimoireTD.Defenders
 
         private string GetUnitEconomyText(IUnit unit)
         {
-            string economyText = "Economy:\n";
+            var economyText = "Economy:\n";
 
             economyText += "Structures:\n";
 
             //TODO: This will duplicate but it's fine for now
-            foreach (IStructureOccupationBonus structureOccupationBonus in unit.ConditionalStructureOccupationBonuses)
+            foreach (var structureOccupationBonus in unit.ConditionalStructureOccupationBonuses)
             {
                 economyText += structureOccupationBonus.StructureUpgradeLevel == null ? structureOccupationBonus.StructureTemplate.StartingNameInGame : structureOccupationBonus.StructureUpgradeLevel.NewStructureName + "\n";
                 economyText += structureOccupationBonus.ResourceGain.ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
@@ -633,7 +633,7 @@ namespace GrimoireTD.Defenders
 
             economyText += "Hexes (conditional):\n";
 
-            foreach (IHexType hexType in DepsProv.TheMapData.HexTypes)
+            foreach (var hexType in DepsProv.TheMapData.HexTypes)
             {
                 economyText += unit.GetConditionalHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
             }
@@ -643,16 +643,16 @@ namespace GrimoireTD.Defenders
 
         private string GetStructureEconomyText(IStructure structure)
         {
-            string economyText = "Economy:\n";
+            var economyText = "Economy:\n";
 
             return economyText + GetStaticEconomyText(structure);
         }
 
         private string GetStaticEconomyText(IDefender defender)
         {
-            string economyText = "Hexes (flat):\n";
+            var economyText = "Hexes (flat):\n";
 
-            foreach (IHexType hexType in DepsProv.TheMapData.HexTypes)
+            foreach (var hexType in DepsProv.TheMapData.HexTypes)
             {
                 economyText += defender.GetFlatHexOccupationBonus(hexType).ToString(EconomyTransactionStringFormat.ShortNameSingleLine, false) + "\n";
             }

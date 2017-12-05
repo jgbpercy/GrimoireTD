@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GrimoireTD.Map
@@ -33,27 +34,62 @@ namespace GrimoireTD.Map
             }
         }
 
-        public static List<Coord> GeneratePath(IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end)
+        private class PathingData
         {
-            return GeneratePath(map, hexes, start, end, new List<Coord>());
+            public float FScore = Mathf.Infinity;
+            public float GScore = Mathf.Infinity;
+            public Coord CameFrom = null;
         }
 
-        public static List<Coord> GeneratePath(IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end, List<Coord> unpathableCoords)
+        public static Func<
+            IMapData, 
+            Dictionary<Coord, IHexData>, 
+            Coord, 
+            Coord, 
+            List<Coord>> 
+        GetPath = (map, hexes, start, end) =>
         {
-            return GeneratePath(map, hexes, start, end, unpathableCoords, new List<Coord>());
-        }
+            return GetPathWithUnpathableList(map, hexes, start, end, new List<Coord>());
+        };
 
-        public static List<Coord> GeneratePath(IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end, List<Coord> unpathableCoords, List<Coord> newlyPathableCoords)
+        public static Func<
+            IMapData, 
+            Dictionary<Coord, IHexData>, 
+            Coord, 
+            Coord, 
+            List<Coord>, 
+            List<Coord>>
+        GetPathWithUnpathableList = (map, hexes, start, end, unpathableCoords) =>
         {
-            List<GraphEdge> graphEdges = GraphEdges(map, hexes, unpathableCoords, newlyPathableCoords);
+            return GetPathWithUnpathableAndNewlyPathableLists(map, hexes, start, end, unpathableCoords, new List<Coord>());
+        };
 
-            return CalculatePath(hexes, start, end, graphEdges);
-        }
-
-        public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end)
+        public static Func<
+            IMapData,
+            Dictionary<Coord, IHexData>,
+            Coord,
+            Coord,
+            List<Coord>,
+            List<Coord>,
+            List<Coord>>
+        GetPathWithUnpathableAndNewlyPathableLists = (map, hexes, start, end, unpathableCoords, newlyPathableCoords) =>
         {
-            return DisallowedCoords(path, map, hexes, start, end, new List<Coord>());
-        }
+            var graphEdges = GraphEdges(map, hexes, unpathableCoords, newlyPathableCoords);
+
+            return CalculatePath(start, end, hexes.Keys, graphEdges);
+        };
+
+        public static Func<
+            IReadOnlyList<Coord>,
+            IMapData,
+            Dictionary<Coord, IHexData>,
+            Coord,
+            Coord,
+            List<Coord>>
+        GetDisallowedCoords = (path, map, hexes, start, end) =>
+        {
+            return GetDisallowedCoordsWithNewlyPathableCoords(path, map, hexes, start, end, new List<Coord>());
+        };
 
         /*Optimisation: 
          * when assessing a path coord, just try and generate from the 
@@ -65,30 +101,38 @@ namespace GrimoireTD.Map
          * OR!
          * You can probably do something where you start with a non-zero open set?
         */
-        public static List<Coord> DisallowedCoords(IReadOnlyList<Coord> path, IMapData map, Dictionary<Coord, IHexData> hexes, Coord start, Coord end, List<Coord> newlyPathableCoords)
+        public static Func<
+            IReadOnlyList<Coord>,
+            IMapData,
+            Dictionary<Coord, IHexData>,
+            Coord,
+            Coord,
+            List<Coord>,
+            List<Coord>>
+        GetDisallowedCoordsWithNewlyPathableCoords = (path, map, hexes, start, end, newlyPathableCoords) =>
         {
-            List<Coord> disallowedList = new List<Coord>();
+            var disallowedList = new List<Coord>();
 
-            foreach (Coord coord in path)
+            foreach (var coord in path)
             {
-                if (GeneratePath(map, hexes, start, end, new List<Coord> { coord }, newlyPathableCoords) == null)
+                if (GetPathWithUnpathableAndNewlyPathableLists(map, hexes, start, end, new List<Coord> { coord }, newlyPathableCoords) == null)
                 {
                     disallowedList.Add(coord);
                 }
             }
 
             return disallowedList;
-        }
+        };
 
         private static List<GraphEdge> GraphEdges(IMapData map, Dictionary<Coord, IHexData> hexes, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
         {
-            List<GraphEdge> graphEdges = new List<GraphEdge>();
+            var graphEdges = new List<GraphEdge>();
 
-            List<Coord> currentNeighbours = new List<Coord>();
+            var currentNeighbours = new List<Coord>();
             Coord currentCoord;
             IHexData currentHex;
 
-            foreach (KeyValuePair<Coord, IHexData> hex in hexes)
+            foreach (var hex in hexes)
             {
                 currentCoord = hex.Key;
                 currentHex = hex.Value;
@@ -97,7 +141,7 @@ namespace GrimoireTD.Map
                 {
                     currentNeighbours = map.GetNeighboursOf(currentCoord);
 
-                    foreach (Coord neighbour in currentNeighbours)
+                    foreach (var neighbour in currentNeighbours)
                     {
                         if (map.GetHexAt(neighbour) != null && IsPathable(neighbour, map.GetHexAt(neighbour), newlyUnpathableCoords, newlyPathableCoords))
                         {
@@ -113,8 +157,6 @@ namespace GrimoireTD.Map
 
         private static bool IsPathable(Coord coord, IHexData hex, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
         {
-            //bool debugThis = false;
-
             if (hex.IsPathableByCreeps() && !newlyUnpathableCoords.Contains(coord))
             {
                 return true;
@@ -128,32 +170,34 @@ namespace GrimoireTD.Map
             return false;
         }
 
-        private static List<Coord> CalculatePath(Dictionary<Coord, IHexData> hexes, Coord fromCoord, Coord toCoord, List<GraphEdge> graphEdges)
+        private static List<Coord> CalculatePath(Coord fromCoord, Coord toCoord, IEnumerable<Coord> coords, List<GraphEdge> graphEdges)
         {
-            List<Coord> closedSet = new List<Coord>();
-            List<Coord> openSet = new List<Coord>();
+            var pathingData = new Dictionary<Coord, PathingData>();
 
-            List<GraphEdge> currentEdges = new List<GraphEdge>();
+            var closedSet = new List<Coord>();
+            var openSet = new List<Coord>();
+
+            var currentEdges = new List<GraphEdge>();
 
             Coord currentCoord;
 
             float tentativeGScore;
 
-            foreach (KeyValuePair<Coord, IHexData> hex in hexes)
+            foreach (var coord in coords)
             {
-                hex.Value.ResetPathingData();
+                pathingData.Add(coord, new PathingData());
             }
 
             openSet.Add(fromCoord);
-            hexes[fromCoord].pathingGScore = 0f;
-            hexes[fromCoord].pathingFScore = HeuristicDistance(fromCoord, toCoord);
+            pathingData[fromCoord].GScore = 0f;
+            pathingData[fromCoord].FScore = HeuristicDistance(fromCoord, toCoord);
 
             while (openSet.Count != 0)
             {
                 currentCoord = openSet[0];
-                foreach (Coord openSetMember in openSet)
+                foreach (var openSetMember in openSet)
                 {
-                    if (hexes[openSetMember].pathingFScore < hexes[currentCoord].pathingFScore)
+                    if (pathingData[openSetMember].FScore < pathingData[currentCoord].FScore)
                     {
                         currentCoord = openSetMember;
                     }
@@ -161,7 +205,7 @@ namespace GrimoireTD.Map
 
                 if (currentCoord.Equals(toCoord))
                 {
-                    return ReconstructPath(hexes, fromCoord, toCoord);
+                    return ReconstructPath(pathingData, fromCoord, toCoord);
                 }
 
                 openSet.Remove(currentCoord);
@@ -169,42 +213,41 @@ namespace GrimoireTD.Map
 
                 currentEdges = graphEdges.FindAll(x => x.FromVertex.Equals(currentCoord));
 
-                foreach (GraphEdge edge in currentEdges)
+                foreach (var edge in currentEdges)
                 {
                     if (!closedSet.Contains(edge.ToVertex))
                     {
 
-                        tentativeGScore = hexes[currentCoord].pathingGScore + 2 * MapRenderer.HEX_OFFSET;
+                        tentativeGScore = pathingData[currentCoord].GScore + 2 * MapRenderer.HEX_OFFSET;
 
                         if (!openSet.Contains(edge.ToVertex))
                         {
                             openSet.Add(edge.ToVertex);
                         }
 
-                        if (tentativeGScore < hexes[edge.ToVertex].pathingGScore)
+                        if (tentativeGScore < pathingData[edge.ToVertex].GScore)
                         {
-                            hexes[edge.ToVertex].pathingGScore = tentativeGScore;
-                            hexes[edge.ToVertex].pathingCameFrom = currentCoord;
-                            hexes[edge.ToVertex].pathingFScore = tentativeGScore + HeuristicDistance(edge.ToVertex, toCoord);
+                            pathingData[edge.ToVertex].GScore = tentativeGScore;
+                            pathingData[edge.ToVertex].CameFrom = currentCoord;
+                            pathingData[edge.ToVertex].FScore = tentativeGScore + HeuristicDistance(edge.ToVertex, toCoord);
                         }
                     }
                 }
             }
 
             return null;
-
         }
 
-        private static List<Coord> ReconstructPath(Dictionary<Coord, IHexData> hexes, Coord fromCoord, Coord toCoord)
+        private static List<Coord> ReconstructPath(Dictionary<Coord, PathingData> pathingData, Coord fromCoord, Coord toCoord)
         {
-            List<Coord> path = new List<Coord>();
+            var path = new List<Coord>();
 
-            Coord currentCoord = toCoord;
+            var currentCoord = toCoord;
 
             while (!currentCoord.Equals(fromCoord))
             {
                 path.Add(currentCoord);
-                currentCoord = hexes[currentCoord].pathingCameFrom;
+                currentCoord = pathingData[currentCoord].CameFrom;
             }
 
             path.Add(fromCoord);

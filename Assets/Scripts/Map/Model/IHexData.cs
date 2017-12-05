@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GrimoireTD.Defenders.DefenderEffects;
 using GrimoireTD.Defenders.Structures;
 using GrimoireTD.Defenders.Units;
@@ -15,13 +14,6 @@ namespace GrimoireTD.Map
         IUnit UnitHere { get; }
 
         IReadOnlyCallbackList<IDefenderAura> DefenderAurasHere { get; }
-
-        //TODO remove (as also noted in CHexData)
-        float pathingFScore { get; set; }
-        float pathingGScore { get; set; }
-        Coord pathingCameFrom { get; set; }
-
-        void ResetPathingData();
 
         bool IsPathableByCreeps();
 

@@ -30,8 +30,6 @@ namespace GrimoireTD.Map
 
         bool CanMoveUnitTo(Coord targetCoord, IReadOnlyList<Coord> disallowedCoordsForMove);
 
-        Coord WhereAmI(IDefender defender);
-
         List<Coord> GetCoordsInRange(int range, Coord startHex);
 
         List<Coord> GetDisallowedMovementDestinationCoords(Coord fromCoord);

@@ -24,24 +24,11 @@ namespace GrimoireTD.Map
             }
         }
 
-        //TODO: publics are hangover from early pathing prototype - fix (just move into pathing service itself?)
-        public float pathingFScore { get; set; }
-        public float pathingGScore { get; set; }
-        public Coord pathingCameFrom { get; set; }
-
         public CHexData(IHexType createWithType)
         {
             HexType = createWithType;
-            ResetPathingData();
 
             defenderAurasHere = new CallbackList<IDefenderAura>();
-        }
-
-        public void ResetPathingData()
-        {
-            pathingFScore = Mathf.Infinity;
-            pathingGScore = Mathf.Infinity;
-            pathingCameFrom = null;
         }
 
         //Public non-changing helpers
