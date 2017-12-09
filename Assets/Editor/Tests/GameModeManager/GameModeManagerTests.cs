@@ -8,7 +8,6 @@ namespace GrimoireTD.Tests.GameModeManagerTests
 {
     public class GameModeManagerTests
     {
-        //Model and Frame Updater
         private IModelInterfaceController interfaceController;
 
         private IReadOnlyGameModel gameModel;

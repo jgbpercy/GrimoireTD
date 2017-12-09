@@ -1,34 +1,34 @@
 ﻿namespace System.Collections.Generic
 {
-    public class MutableRecalculatorList<U, V, EA> : RecalculatorList<U, V> 
-        where EA: EventArgs 
-        where U : INotifyOnChange<EA>
+    public class MutableRecalculatorList<TItem, TValue, TEventArgs> : RecalculatorList<TItem, TValue> 
+        where TEventArgs : EventArgs 
+        where TItem : INotifyOnChange<TEventArgs>
     {
         public MutableRecalculatorList(
-            List<U> list, 
-            Func<List<U>, V> valueFunction
+            List<TItem> list, 
+            Func<List<TItem>, TValue> valueFunction
         ) : base(list, valueFunction)
         {
-            foreach (U item in list)
+            foreach (var item in list)
             {
                 item.OnChange += OnItemChange;
             }
         }
 
-        public MutableRecalculatorList(Func<List<U>, V> valueFunction) : base(valueFunction)
+        public MutableRecalculatorList(Func<List<TItem>, TValue> valueFunction) : base(valueFunction)
         {
         }
 
-        public override V Add(U item)
+        public override TValue Add(TItem item)
         {
             item.OnChange += OnItemChange;
 
             return base.Add(item);
         }
 
-        public override V AddRange(IEnumerable<U> items)
+        public override TValue AddRange(IEnumerable<TItem> items)
         {
-            foreach (U item in items)
+            foreach (var item in items)
             {
                 item.OnChange += OnItemChange;
             }
@@ -36,18 +36,18 @@
             return base.AddRange(items);
         }
 
-        public override V Remove(U item)
+        public override TValue Remove(TItem item)
         {
             item.OnChange -= OnItemChange;
 
             return base.Remove(item);
         }
 
-        private void OnItemChange(object sender, EA args)
+        private void OnItemChange(object sender, TEventArgs args)
         {
             CalculateValue();
 
-            OnChangeVirtual(new EAOnRecalculatorListChange<V>(Value));
+            OnChangeVirtual(new EAOnRecalculatorListChange<TValue>(Value));
         }
     }
 }

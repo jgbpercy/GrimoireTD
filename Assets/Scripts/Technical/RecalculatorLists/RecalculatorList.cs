@@ -1,16 +1,16 @@
 ﻿namespace System.Collections.Generic
 {
-    public class RecalculatorList<U, V> : IReadOnlyRecalculatorList<V>, INotifyOnChange<EAOnRecalculatorListChange<V>>
+    public class RecalculatorList<TItem, TValue> : IReadOnlyRecalculatorList<TValue>, INotifyOnChange<EAOnRecalculatorListChange<TValue>>
     {
-        private List<U> internalList;
+        private List<TItem> internalList;
 
-        private Func<List<U>, V> valueFunction;
+        private Func<List<TItem>, TValue> valueFunction;
 
-        public V Value { get; private set; }
+        public TValue Value { get; private set; }
 
-        public event EventHandler<EAOnRecalculatorListChange<V>> OnChange;
+        public event EventHandler<EAOnRecalculatorListChange<TValue>> OnChange;
 
-        public RecalculatorList(List<U> list, Func<List<U>, V> valueFunction)
+        public RecalculatorList(List<TItem> list, Func<List<TItem>, TValue> valueFunction)
         {
             internalList = list;
             this.valueFunction = valueFunction;
@@ -18,33 +18,33 @@
             CalculateValue();
         }
 
-        public RecalculatorList(Func<List<U>, V> valueFunction) : this(new List<U>(), valueFunction)
+        public RecalculatorList(Func<List<TItem>, TValue> valueFunction) : this(new List<TItem>(), valueFunction)
         {
         }
 
-        public virtual V Add(U item)
+        public virtual TValue Add(TItem item)
         {
             internalList.Add(item);
 
             CalculateValue();
 
-            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<TValue>(Value));
 
             return Value;
         }
 
-        public virtual V AddRange(IEnumerable<U> items)
+        public virtual TValue AddRange(IEnumerable<TItem> items)
         {
             internalList.AddRange(items);
 
             CalculateValue();
 
-            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<TValue>(Value));
 
             return Value;
         }
 
-        public virtual V Remove(U item)
+        public virtual TValue Remove(TItem item)
         {
             var found = internalList.Remove(item);
 
@@ -52,14 +52,14 @@
 
             CalculateValue();
 
-            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<TValue>(Value));
 
             return Value;
         }
 
         //TODO? RemoveRange
 
-        public virtual V Replace(U outgoingItem, U incomingItem)
+        public virtual TValue Replace(TItem outgoingItem, TItem incomingItem)
         {
             var found = internalList.Remove(outgoingItem);
 
@@ -69,7 +69,7 @@
 
             CalculateValue();
 
-            OnChange?.Invoke(this, new EAOnRecalculatorListChange<V>(Value));
+            OnChange?.Invoke(this, new EAOnRecalculatorListChange<TValue>(Value));
 
             return Value;
         }
@@ -82,9 +82,9 @@
         }
 
         //see: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/events/how-to-raise-base-class-events-in-derived-classes
-        protected virtual void OnChangeVirtual(EAOnRecalculatorListChange<V> eventArgs)
+        protected virtual void OnChangeVirtual(EAOnRecalculatorListChange<TValue> eventArgs)
         {
-            EventHandler<EAOnRecalculatorListChange<V>> tempCopy = OnChange;
+            EventHandler<EAOnRecalculatorListChange<TValue>> tempCopy = OnChange;
 
             tempCopy?.Invoke(this, eventArgs);
         }
