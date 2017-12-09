@@ -15,15 +15,18 @@ namespace GrimoireTD.Technical
     {
         private static readonly float myEpsilon = 0.00001f; //#optimisation #robustness where do I use this and what value is ok?
 
-        public static float SignedOddRoot(float value, int nthRoot)
+        public static float SignedRoot(float value, int nthRoot)
         {
-            Assert.IsTrue(nthRoot % 2 == 1);
+            var exponent = 1f / (float)nthRoot;
 
-            int sign = value < 0 ? -1 : 1;
+            if (nthRoot % 2 == 0)
+            {
+                return Mathf.Pow(value, exponent);
+            }
 
-            float exponent = 1f / (float)nthRoot;
+            var sign = value < 0 ? -1 : 1;
 
-            float rawRoot = Mathf.Pow(Mathf.Abs(value), exponent);
+            var rawRoot = Mathf.Pow(Mathf.Abs(value), exponent);
 
             return rawRoot * sign;
         }

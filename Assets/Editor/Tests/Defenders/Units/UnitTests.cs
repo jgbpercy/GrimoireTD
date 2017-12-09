@@ -712,7 +712,7 @@ namespace GrimoireTD.Tests.UnitTests
                 revertToBuildMode: true
             );
 
-            var expectedFatigueFactor = Mathf.Clamp(1 - (CustomMath.SignedOddRoot((expectedFirstRoundFatigue - fatigueInflectionPoint) / fatigueShallownessMultiplier, 3) + Mathf.Pow(fatigueInflectionPoint / fatigueShallownessMultiplier, 1f / 3f)), 0f, 1f);
+            var expectedFatigueFactor = Mathf.Clamp(1 - (CustomMath.SignedRoot((expectedFirstRoundFatigue - fatigueInflectionPoint) / fatigueShallownessMultiplier, 3) + Mathf.Pow(fatigueInflectionPoint / fatigueShallownessMultiplier, 1f / 3f)), 0f, 1f);
 
             var expectedExperience = Mathf.RoundToInt((timeActiveForTest / totalTimeForTest) * 100) + Mathf.RoundToInt((timeActiveForTest / totalTimeForTest) * 100 * expectedFatigueFactor);
 

@@ -335,7 +335,7 @@ namespace GrimoireTD.Defenders.Units
 
         private float FatigueFactor()
         {
-            var rawInverserFactor = CustomMath.SignedOddRoot((Fatigue - inflectionPoint) / shallownessMultiplier, 3) + Mathf.Pow(inflectionPoint / shallownessMultiplier, 1f / 3f);
+            var rawInverserFactor = CustomMath.SignedRoot((Fatigue - inflectionPoint) / shallownessMultiplier, 3) + Mathf.Pow(inflectionPoint / shallownessMultiplier, 1f / 3f);
 
             return Mathf.Clamp(1 - rawInverserFactor, 0f, 1f);
         }
