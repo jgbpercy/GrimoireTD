@@ -13,7 +13,7 @@ namespace GrimoireTD
 
     public class CGameModeManager : IGameModeManager
     {
-        private GameMode _gameMode;
+        private GameMode _gameMode = GameMode.BUILD;
 
         public event EventHandler<EAOnEnterBuildMode> OnEnterBuildMode;
         public event EventHandler<EAOnEnterDefendMode> OnEnterDefendMode;
@@ -38,22 +38,17 @@ namespace GrimoireTD
                 }
             }
         }
-
+        
         public CGameModeManager()
         {
-            CurrentGameMode = GameMode.BUILD;
-
-            InterfaceController.Instance.OnEnterDefendModePlayerAction += (object sender, EAOnEnterDefendModePlayerAction args) => SetGameModeDefend();
+            DepsProv.TheInterfaceController().OnEnterDefendModePlayerAction += 
+                (object sender, EAOnEnterDefendModePlayerAction args) => CurrentGameMode = GameMode.DEFEND;
         }
 
         public void SetUp()
         {
-            DepsProv.TheCreepManager.OnWaveOver += (object sender, EAOnWaveOver args) => CurrentGameMode = GameMode.BUILD;
-        }
-
-        private void SetGameModeDefend()
-        {
-            CurrentGameMode = GameMode.DEFEND;
+            DepsProv.TheCreepManager.OnWaveOver += 
+                (object sender, EAOnWaveOver args) => CurrentGameMode = GameMode.BUILD;
         }
     }
 }
