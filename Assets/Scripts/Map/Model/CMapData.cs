@@ -45,7 +45,7 @@ namespace GrimoireTD.Map
             {
                 _path = value;
 
-                disallowedCoordsForUnitOrStructurePlacement = PathingService.GetDisallowedCoords(_path, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
+                disallowedCoordsForUnitOrStructurePlacement = PathingService.GetDisallowedCoords(_path, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
 
                 OnPathGeneratedOrChanged?.Invoke(this, new EAOnPathGeneratedOrChanged(value));
             }
@@ -95,12 +95,12 @@ namespace GrimoireTD.Map
         //  until variable start/ends etc, to at least just store the hardcoded start and ends in one place
         private void TempRegeneratePath()
         {
-            path = PathingService.GetPath(this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
+            path = PathingService.GetPath(hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
         }
 
         private void TempRegenerateDisallowedCoords()
         {
-            disallowedCoordsForUnitOrStructurePlacement = PathingService.GetDisallowedCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
+            disallowedCoordsForUnitOrStructurePlacement = PathingService.GetDisallowedCoords(CreepPath, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1));
         }
 
         //Public Hex/Coord queries
@@ -123,17 +123,16 @@ namespace GrimoireTD.Map
             return hexes[hexCoord];
         }
 
-        /* TODO? #optimisation? This can be done with just the width and height without looking in the dict, obviously
-         * And/or: if this is used much - have an unsafe static version that doesn't check existance, and usage code knows is has to call
-         * TryGetHexAt or whatever? That's probably better? I guess that's what GetCoordsInRangeIs, but it's doing it badly right now.
-         * This all needs tidy up!
+        /* TODO? #optimisation? A better versions of this / GetCoordsInRange with:
+         * - a static unchecked version that gets possible coords in range (that should probably just be a Coord method)
+         * - an extant version that gets all coords actually on the map in range
          */    
-        public List<Coord> GetNeighboursOf(Coord hexCoord)
+        public List<Coord> GetExtantNeighboursOf(Coord coord)
         {
             var neighbourList = new List<Coord>();
 
-            var x = hexCoord.X;
-            var y = hexCoord.Y;
+            var x = coord.X;
+            var y = coord.Y;
 
             var xOffset = y % 2 == 0 ? -1 : 0;
 
@@ -174,6 +173,21 @@ namespace GrimoireTD.Map
             }
 
             return neighbourList;
+        }
+
+        public static List<Coord> GetUncheckedNeighboursOf(Coord coord)
+        {
+            var xOffset = coord.Y % 2 == 0 ? -1 : 0;
+
+            return new List<Coord>
+            {
+                new Coord(coord.X + xOffset, coord.Y + 1), //up left
+                new Coord(coord.X + xOffset + 1, coord.Y + 1), //up right
+                new Coord(coord.X + 1, coord.Y), //right
+                new Coord(coord.X + xOffset + 1, coord.Y - 1), //down right
+                new Coord(coord.X + xOffset, coord.Y - 1), //down left
+                new Coord(coord.X - 1, coord.Y), //left
+            };
         }
 
         //Build / Create / Move
@@ -347,7 +361,7 @@ namespace GrimoireTD.Map
         {
             if (GetHexAt(fromCoord).IsPathableByCreepsWithUnitRemoved())
             {
-                return PathingService.GetDisallowedCoordsWithNewlyPathableCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), new List<Coord> { fromCoord });
+                return PathingService.GetDisallowedCoordsWithNewlyPathableCoords(CreepPath, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), new List<Coord> { fromCoord });
             }
 
             return disallowedCoordsForUnitOrStructurePlacement;
@@ -355,7 +369,7 @@ namespace GrimoireTD.Map
 
         private List<Coord> GetDisallowedCoords(List<Coord> newlyPathableCoords)
         {
-            return PathingService.GetDisallowedCoordsWithNewlyPathableCoords(CreepPath, this, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), newlyPathableCoords);
+            return PathingService.GetDisallowedCoordsWithNewlyPathableCoords(CreepPath, hexes, new Coord(0, 0), new Coord(Width - 1, Height - 1), newlyPathableCoords);
         }
     }
 }

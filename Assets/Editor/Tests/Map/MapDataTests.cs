@@ -287,11 +287,11 @@ namespace GrimoireTD.Tests.MapDataTests
         }
 
         [Test]
-        public void GetNeighboursOf_ForHexesInMiddle_ReturnsSixNeighbours()
+        public void GetExtantNeighboursOf_ForHexesInMiddle_ReturnsSixNeighbours()
         {
             var subject = ConstructAndSetUpSubject();
 
-            var result = subject.GetNeighboursOf(new Coord(1, 1));
+            var result = subject.GetExtantNeighboursOf(new Coord(1, 1));
 
             Assert.Contains(new Coord(1, 0), result);
             Assert.Contains(new Coord(2, 0), result);
@@ -302,11 +302,11 @@ namespace GrimoireTD.Tests.MapDataTests
         }
 
         [Test]
-        public void GetNeighboursOf_ForHexesOnEdge_ReturnsExtantNeighbours()
+        public void GetExtantNeighboursOf_ForHexesOnEdge_ReturnsExtantNeighbours()
         {
             var subject = ConstructAndSetUpSubject();
 
-            var result = subject.GetNeighboursOf(new Coord(1, 0));
+            var result = subject.GetExtantNeighboursOf(new Coord(1, 0));
 
             Assert.Contains(new Coord(0, 0), result);
             Assert.Contains(new Coord(0, 1), result);
@@ -314,7 +314,19 @@ namespace GrimoireTD.Tests.MapDataTests
             Assert.Contains(new Coord(2, 0), result);
         }
 
-        
+        [Test]
+        public void GetUncheckedNeighboursOf_Always_ReturnsSixNeighbours()
+        {
+            var result = CMapData.GetUncheckedNeighboursOf(new Coord(0, 0));
+
+            Assert.Contains(new Coord(-1, 1), result);
+            Assert.Contains(new Coord(0, 1), result);
+            Assert.Contains(new Coord(1, 0), result);
+            Assert.Contains(new Coord(0, -1), result);
+            Assert.Contains(new Coord(-1, -1), result);
+            Assert.Contains(new Coord(-1, 0), result);
+        }
+
         [TestCase(1, 1, 2, 1)]
         [TestCase(1, 2, 0, 1)]
         public void CoordIsInRange_PassedRange1AndAdjacentHexes_ReturnsTrue(int coord1X, int coord1Y, int coord2X, int coord2Y)

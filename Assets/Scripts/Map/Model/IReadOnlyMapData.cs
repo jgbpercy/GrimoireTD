@@ -22,7 +22,7 @@ namespace GrimoireTD.Map
         IHexData TryGetHexAt(Coord hexCoord);
         IHexData GetHexAt(Coord hexCoord);
 
-        List<Coord> GetNeighboursOf(Coord hexCoord);
+        List<Coord> GetExtantNeighboursOf(Coord hexCoord);
 
         bool CanBuildStructureAt(Coord coord);
 

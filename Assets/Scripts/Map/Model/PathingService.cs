@@ -42,53 +42,52 @@ namespace GrimoireTD.Map
         }
 
         public static Func<
-            IMapData, 
             Dictionary<Coord, IHexData>, 
             Coord, 
             Coord, 
             List<Coord>> 
-        GetPath = (map, hexes, start, end) =>
+        GetPath = (hexes, start, end) =>
         {
-            return GetPathWithUnpathableList(map, hexes, start, end, new List<Coord>());
+            return GetPathWithUnpathableList(hexes, start, end, new List<Coord>());
         };
 
         public static Func<
-            IMapData, 
             Dictionary<Coord, IHexData>, 
             Coord, 
             Coord, 
             List<Coord>, 
             List<Coord>>
-        GetPathWithUnpathableList = (map, hexes, start, end, unpathableCoords) =>
+        GetPathWithUnpathableList = (hexes, start, end, unpathableCoords) =>
         {
-            return GetPathWithUnpathableAndNewlyPathableLists(map, hexes, start, end, unpathableCoords, new List<Coord>());
+            return GetPathWithUnpathableAndNewlyPathableLists(hexes, start, end, unpathableCoords, new List<Coord>());
         };
 
         public static Func<
-            IMapData,
             Dictionary<Coord, IHexData>,
             Coord,
             Coord,
             List<Coord>,
             List<Coord>,
             List<Coord>>
-        GetPathWithUnpathableAndNewlyPathableLists = (map, hexes, start, end, unpathableCoords, newlyPathableCoords) =>
+        GetPathWithUnpathableAndNewlyPathableLists = (hexes, start, end, unpathableCoords, newlyPathableCoords) =>
         {
-            var graphEdges = GraphEdges(map, hexes, unpathableCoords, newlyPathableCoords);
+            var graphEdges = GraphEdges(hexes, unpathableCoords, newlyPathableCoords);
 
             return CalculatePath(start, end, hexes.Keys, graphEdges);
         };
 
+        /*  Obviously GetDisallowed Coords doesn't really need the path, it could recalc it from the other args, but for now
+         *  anything calling this (tests aside) will have the path anyway
+         */
         public static Func<
             IReadOnlyList<Coord>,
-            IMapData,
             Dictionary<Coord, IHexData>,
             Coord,
             Coord,
             List<Coord>>
-        GetDisallowedCoords = (path, map, hexes, start, end) =>
+        GetDisallowedCoords = (path, hexes, start, end) =>
         {
-            return GetDisallowedCoordsWithNewlyPathableCoords(path, map, hexes, start, end, new List<Coord>());
+            return GetDisallowedCoordsWithNewlyPathableCoords(path, hexes, start, end, new List<Coord>());
         };
 
         /*Optimisation: 
@@ -103,19 +102,18 @@ namespace GrimoireTD.Map
         */
         public static Func<
             IReadOnlyList<Coord>,
-            IMapData,
             Dictionary<Coord, IHexData>,
             Coord,
             Coord,
             List<Coord>,
             List<Coord>>
-        GetDisallowedCoordsWithNewlyPathableCoords = (path, map, hexes, start, end, newlyPathableCoords) =>
+        GetDisallowedCoordsWithNewlyPathableCoords = (path, hexes, start, end, newlyPathableCoords) =>
         {
             var disallowedList = new List<Coord>();
 
             foreach (var coord in path)
             {
-                if (GetPathWithUnpathableAndNewlyPathableLists(map, hexes, start, end, new List<Coord> { coord }, newlyPathableCoords) == null)
+                if (GetPathWithUnpathableAndNewlyPathableLists(hexes, start, end, new List<Coord> { coord }, newlyPathableCoords) == null)
                 {
                     disallowedList.Add(coord);
                 }
@@ -124,7 +122,7 @@ namespace GrimoireTD.Map
             return disallowedList;
         };
 
-        private static List<GraphEdge> GraphEdges(IMapData map, Dictionary<Coord, IHexData> hexes, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
+        private static List<GraphEdge> GraphEdges(Dictionary<Coord, IHexData> hexes, List<Coord> newlyUnpathableCoords, List<Coord> newlyPathableCoords)
         {
             var graphEdges = new List<GraphEdge>();
 
@@ -139,14 +137,13 @@ namespace GrimoireTD.Map
 
                 if (IsPathable(currentCoord, currentHex, newlyUnpathableCoords, newlyPathableCoords))
                 {
-                    currentNeighbours = map.GetNeighboursOf(currentCoord);
+                    currentNeighbours = CMapData.GetUncheckedNeighboursOf(currentCoord);
 
                     foreach (var neighbour in currentNeighbours)
                     {
-                        if (map.GetHexAt(neighbour) != null && IsPathable(neighbour, map.GetHexAt(neighbour), newlyUnpathableCoords, newlyPathableCoords))
+                        if (hexes.ContainsKey(neighbour) && IsPathable(neighbour, hexes[neighbour], newlyUnpathableCoords, newlyPathableCoords))
                         {
                             graphEdges.Add(new GraphEdge(currentCoord, neighbour));
-
                         }
                     }
                 }
@@ -217,7 +214,6 @@ namespace GrimoireTD.Map
                 {
                     if (!closedSet.Contains(edge.ToVertex))
                     {
-
                         tentativeGScore = pathingData[currentCoord].GScore + 2 * MapRenderer.HEX_OFFSET;
 
                         if (!openSet.Contains(edge.ToVertex))

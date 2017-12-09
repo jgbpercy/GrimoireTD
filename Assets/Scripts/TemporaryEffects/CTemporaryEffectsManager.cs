@@ -24,7 +24,7 @@ namespace GrimoireTD.TemporaryEffects
 
         public void ApplyEffect(object key, float magnitude, float duration, string effectName, Action onApplyCallback, EventHandler<EAOnTemporaryEffectEnd> onEndEvent)
         {
-            ITemporaryEffect currentEffect = effectsList.Find(x => x.Key == key);
+            var currentEffect = effectsList.Find(x => x.Key == key);
 
             if (!ShouldApplyEffect(magnitude, duration, currentEffect))
             {
