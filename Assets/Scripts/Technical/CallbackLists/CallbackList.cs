@@ -84,7 +84,7 @@ namespace System.Collections.Generic
         {
             while (list.Count > 0)
             {
-                T item = list[0];
+                var item = list[0];
 
                 list.RemoveAt(0);
 

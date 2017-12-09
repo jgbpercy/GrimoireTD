@@ -161,7 +161,7 @@ namespace GrimoireTD.Defenders
 
         protected void GetDefenderAurasFromCurrentHex()
         {
-            foreach (IDefenderAura defenderAura in OnHex.DefenderAurasHere)
+            foreach (var defenderAura in OnHex.DefenderAurasHere)
             {
                 OnNewDefenderAuraInCurrentHex(this, new EAOnCallbackListAdd<IDefenderAura>(defenderAura));
             }
@@ -170,7 +170,7 @@ namespace GrimoireTD.Defenders
         //Enter Build Mode
         protected virtual void OnEnterBuildMode(object sender, EAOnEnterBuildMode args)
         {
-            IEconomyTransaction flatHexOccupationBonus = GetHexOccupationBonus(OnHexType, flatHexOccupationBonuses);
+            var flatHexOccupationBonus = GetHexOccupationBonus(OnHexType, flatHexOccupationBonuses);
 
             OnTriggeredFlatHexOccupationBonus?.Invoke(this, new EAOnTriggeredFlatHexOccupationBonus(this, flatHexOccupationBonus));
         }
@@ -178,22 +178,22 @@ namespace GrimoireTD.Defenders
         //Improvements
         protected virtual void ApplyImprovement(IDefenderImprovement improvement)
         {
-            foreach (INamedAttributeModifier<DeAttrName> attributeModifier in improvement.AttributeModifiers)
+            foreach (var attributeModifier in improvement.AttributeModifiers)
             {
                 attributes.AddModifier(attributeModifier);
             }
 
-            foreach (IHexOccupationBonus hexOccupationBonus in improvement.FlatHexOccupationBonuses)
+            foreach (var hexOccupationBonus in improvement.FlatHexOccupationBonuses)
             {
                 flatHexOccupationBonuses.Add(hexOccupationBonus);
             }
 
-            foreach (IAbilityTemplate abilityTemplate in improvement.Abilities)
+            foreach (var abilityTemplate in improvement.Abilities)
             {
                 abilities.AddAbility(abilityTemplate.GenerateAbility(this));
             }
 
-            foreach (IDefenderAuraTemplate auraTemplate in improvement.Auras)
+            foreach (var auraTemplate in improvement.Auras)
             {
                 aurasEmitted.Add(auraTemplate.GenerateDefenderAura(this));
             }
@@ -203,25 +203,25 @@ namespace GrimoireTD.Defenders
         {
             bool wasPresent;
 
-            foreach (INamedAttributeModifier<DeAttrName> attributeModifier in improvement.AttributeModifiers)
+            foreach (var attributeModifier in improvement.AttributeModifiers)
             {
                 wasPresent = attributes.TryRemoveModifier(attributeModifier);
                 Assert.IsTrue(wasPresent);
             }
 
-            foreach (IHexOccupationBonus hexOccupationBonus in improvement.FlatHexOccupationBonuses)
+            foreach (var hexOccupationBonus in improvement.FlatHexOccupationBonuses)
             {
                 wasPresent = flatHexOccupationBonuses.TryRemove(hexOccupationBonus);
                 Assert.IsTrue(wasPresent);
             }
 
-            foreach (IAbilityTemplate abilityTemplate in improvement.Abilities)
+            foreach (var abilityTemplate in improvement.Abilities)
             {
                 wasPresent = abilities.TryRemoveAbility(abilityTemplate);
                 Assert.IsTrue(wasPresent);
             }
 
-            foreach (IDefenderAuraTemplate auraTemplate in improvement.Auras)
+            foreach (var auraTemplate in improvement.Auras)
             {
                 wasPresent = aurasEmitted.TryRemove(auraTemplate.GenerateDefenderAura(this), new CDefenderAura.TemplateEqualityComparer());
                 Assert.IsTrue(wasPresent);
@@ -233,7 +233,7 @@ namespace GrimoireTD.Defenders
         {
             IEconomyTransaction occupationBonusTransaction = new CEconomyTransaction();
 
-            foreach (IHexOccupationBonus hexOccupationBonus in occupationBonusList)
+            foreach (var hexOccupationBonus in occupationBonusList)
             {
                 if (hexOccupationBonus.HexType == hexType)
                 {
@@ -260,9 +260,9 @@ namespace GrimoireTD.Defenders
         {
             var mapData = DepsProv.TheMapData;
 
-            List<Coord> affectedCoords = mapData.GetCoordsInRange(args.AddedItem.Range, CoordPosition);
+            var affectedCoords = mapData.GetCoordsInRange(args.AddedItem.Range, CoordPosition);
 
-            foreach (Coord coord in affectedCoords)
+            foreach (var coord in affectedCoords)
             {
                 mapData.GetHexAt(coord).AddDefenderAura(args.AddedItem);
             }
