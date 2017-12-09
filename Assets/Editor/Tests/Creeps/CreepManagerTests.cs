@@ -23,7 +23,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
 
         private IReadOnlyGameModel gameModel = Substitute.For<IGameModel>();
 
-        private IReadOnlyGameStateManager gameStateManager = Substitute.For<IReadOnlyGameStateManager>();
+        private IReadOnlyGameModeManager gameModeManager = Substitute.For<IReadOnlyGameModeManager>();
 
         //Other Deps Passed To Ctor or SetUp
         private List<IWaveTemplate> waves;
@@ -53,7 +53,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
                 return frameUpdater;
             };
 
-            gameModel.GameStateManager.Returns(gameStateManager);
+            gameModel.GameModeManager.Returns(gameModeManager);
 
             DepsProv.SetTheGameModel(gameModel);
 
@@ -79,7 +79,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
         {
             frameUpdater = new FrameUpdaterStub();
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
 
             wave1.Spawns.Returns(new Dictionary<float, ICreepTemplate>
             {
@@ -129,7 +129,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
         [Test]
         public void FrameUpdate_WhenInBuildMode_DoesNotSpawnCreeps()
         {
-            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
+            gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
 
             var subject = ConstructAndSetUpSubject();
 
@@ -148,7 +148,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
         {
             var subject = ConstructAndSetUpSubject();
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.5f);
 
@@ -168,7 +168,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
             var eventTester = new EventTester<EAOnCreepSpawned>();
             subject.OnCreepSpawned += eventTester.Handler;
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.5f);
 
@@ -185,7 +185,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
         {
             var subject = ConstructAndSetUpSubject();
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.5f);
             frameUpdater.RunUpdate(wave1Timing1 / 1.5f);
@@ -202,7 +202,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
         {
             var subject = ConstructAndSetUpSubject();
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
@@ -228,7 +228,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
             var eventTester = new EventTester<EAOnCreepSpawned>();
             subject.OnCreepSpawned += eventTester.Handler;
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
@@ -254,7 +254,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
             var eventTester = new EventTester<EAOnWaveOver>();
             subject.OnWaveOver += eventTester.Handler;
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
@@ -300,7 +300,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
             var eventTester = new EventTester<EAOnWaveOver>();
             subject.OnWaveOver += eventTester.Handler;
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
@@ -345,7 +345,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
         {
             var subject = ConstructAndSetUpSubject();
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
             frameUpdater.RunUpdate(wave1Timing1 / 1.9f);
@@ -374,13 +374,13 @@ namespace GrimoireTD.Tests.CreepManagerTests
 
             Assert.AreEqual(0, subject.CreepList.Count);
 
-            gameStateManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
-            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
+            gameModeManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
+            gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
 
             frameUpdater.RunUpdate(0.5f);
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(wave2Timing1 / 1.9f);
 
@@ -397,7 +397,7 @@ namespace GrimoireTD.Tests.CreepManagerTests
         {
             var subject = ConstructAndSetUpSubject();
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             wave1Creep1.DistanceFromEnd.Returns(2f);
             wave1Creep2.DistanceFromEnd.Returns(3f);

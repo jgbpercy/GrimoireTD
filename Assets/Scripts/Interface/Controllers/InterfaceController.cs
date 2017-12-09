@@ -44,7 +44,7 @@ namespace GrimoireTD.UI
         private Camera mainCamera;
 
         private IReadOnlyMapData mapData;
-        private IReadOnlyGameStateManager gameStateManager;
+        private IReadOnlyGameModeManager gameModeManager;
 
         public InterfaceCursorMode CurrentCursorMode { get; private set; }
 
@@ -97,14 +97,14 @@ namespace GrimoireTD.UI
 
             mapData = DepsProv.TheMapData;
 
-            gameStateManager = DepsProv.TheGameStateManager;
+            gameModeManager = DepsProv.TheGameModeManager;
 
             mainCamera = Camera.main;
 
             SetCursorModeSelect();
 
-            gameStateManager.OnEnterBuildMode += OnEnterBuildMode;
-            gameStateManager.OnEnterDefendMode += OnEnterDefendMode;
+            gameModeManager.OnEnterBuildMode += OnEnterBuildMode;
+            gameModeManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void Update()

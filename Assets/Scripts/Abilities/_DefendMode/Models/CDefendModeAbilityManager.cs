@@ -34,7 +34,7 @@ namespace GrimoireTD.Abilities.DefendMode
         private void ModelObjectFrameUpdate(float deltaTime)
         {
             //TODO: If all model object frame updates are in defend mode, stop doing this check everywhere and only do the action in the right mode!
-            if (DepsProv.TheGameStateManager.CurrentGameMode != GameMode.DEFEND)
+            if (DepsProv.TheGameModeManager.CurrentGameMode != GameMode.DEFEND)
             {
                 return;
             }

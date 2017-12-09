@@ -10,7 +10,7 @@ namespace GrimoireTD
 {
     public interface IReadOnlyGameModel
     {
-        IReadOnlyGameStateManager GameStateManager { get; }
+        IReadOnlyGameModeManager GameModeManager { get; }
         IReadOnlyMapData MapData { get; }
         IReadOnlyCreepManager CreepManager { get; }
         IReadOnlyEconomyManager EconomyManager { get; }

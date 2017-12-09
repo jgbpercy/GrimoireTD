@@ -46,7 +46,7 @@ namespace GrimoireTD.Creeps
 
         public void SetUp(IEnumerable<IWaveTemplate> waves, float idleTimeToTrackAfterSpawnEnd)
         {
-            DepsProv.TheGameStateManager.OnEnterDefendMode += StartNextWave;
+            DepsProv.TheGameModeManager.OnEnterDefendMode += StartNextWave;
 
             foreach (IWaveTemplate waveTemplate in waves)
             {
@@ -60,7 +60,7 @@ namespace GrimoireTD.Creeps
 
         private void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameModeManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }

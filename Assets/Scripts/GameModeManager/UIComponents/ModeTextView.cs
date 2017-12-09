@@ -11,8 +11,8 @@ namespace GrimoireTD.Technical
 
         private void Start()
         {
-            DepsProv.TheGameStateManager.OnEnterBuildMode += (object sender, EAOnEnterBuildMode args) => modeText.text = "Mode: Build";
-            DepsProv.TheGameStateManager.OnEnterDefendMode += (object sender, EAOnEnterDefendMode args) => modeText.text = "Mode: Defend";
+            DepsProv.TheGameModeManager.OnEnterBuildMode += (object sender, EAOnEnterBuildMode args) => modeText.text = "Mode: Build";
+            DepsProv.TheGameModeManager.OnEnterDefendMode += (object sender, EAOnEnterDefendMode args) => modeText.text = "Mode: Defend";
         }
     }
 }

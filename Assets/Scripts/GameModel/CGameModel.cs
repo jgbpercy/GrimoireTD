@@ -12,7 +12,7 @@ namespace GrimoireTD
 {
     public class CGameModel : IGameModel
     {
-        private readonly IGameStateManager gameStateManager;
+        private readonly IGameModeManager gameModeManager;
 
         private readonly IMapData mapData;
 
@@ -31,11 +31,11 @@ namespace GrimoireTD
 
         public event EventHandler<EAOnGameModelSetUp> OnGameModelSetUp;
 
-        public IReadOnlyGameStateManager GameStateManager
+        public IReadOnlyGameModeManager GameModeManager
         {
             get
             {
-                return gameStateManager;
+                return gameModeManager;
             }
         }
 
@@ -73,7 +73,7 @@ namespace GrimoireTD
 
         public CGameModel()
         {
-            gameStateManager = new CGameStateManager();
+            gameModeManager = new CGameModeManager();
             mapData = new CMapData();
             creepManager = new CCreepManager();
             attackEffectTypeManager = new CAttackEffectTypeManager();
@@ -92,7 +92,7 @@ namespace GrimoireTD
             float unitFatigueFactorShallownessMultiplier
         )
         {
-            gameStateManager.SetUp();
+            gameModeManager.SetUp();
             mapData.SetUp(level.LevelImage, colorToHexTypeDictionary, level.StartingStructures, level.StartingUnits);
             creepManager.SetUp(level.Waves, trackIdleTimeAfterSpawns);
             economyManager.SetUp(resourceTemplates, level.StartingResources);

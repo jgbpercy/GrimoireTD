@@ -235,7 +235,7 @@ namespace GrimoireTD.Defenders.Units
         //Update loop
         private void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameModeManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }

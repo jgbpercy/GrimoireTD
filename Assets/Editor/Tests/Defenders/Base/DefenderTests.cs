@@ -32,7 +32,7 @@ namespace GrimoireTD.Tests.DefenderTests
 
         protected IReadOnlyMapData mapData = Substitute.For<IReadOnlyMapData>();
 
-        protected IReadOnlyGameStateManager gameStateManager = Substitute.For<IReadOnlyGameStateManager>();
+        protected IReadOnlyGameModeManager gameModeManager = Substitute.For<IReadOnlyGameModeManager>();
 
         protected IReadOnlyEconomyManager economyManager = Substitute.For<IReadOnlyEconomyManager>();
 
@@ -79,7 +79,7 @@ namespace GrimoireTD.Tests.DefenderTests
             });
 
             gameModel.MapData.Returns(mapData);
-            gameModel.GameStateManager.Returns(gameStateManager);
+            gameModel.GameModeManager.Returns(gameModeManager);
             gameModel.EconomyManager.Returns(economyManager);
 
             mapData.GetCoordsInRange(defenderAuraRange, startPosition).Returns(new List<Coord> { startPosition });
@@ -110,7 +110,7 @@ namespace GrimoireTD.Tests.DefenderTests
 
             mapData.GetHexAt(startPosition).Returns(startHexData);
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
+            gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
 
             attributes.TryRemoveModifier(Arg.Any<INamedAttributeModifier<DeAttrName>>()).Returns(true);
         }
@@ -318,7 +318,7 @@ namespace GrimoireTD.Tests.DefenderTests
             var eventTester = new EventTester<EAOnTriggeredFlatHexOccupationBonus>();
             subject.OnTriggeredFlatHexOccupationBonus += eventTester.Handler;
 
-            gameStateManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
+            gameModeManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
 
             eventTester.AssertFired(1);
             eventTester.AssertResult(subject, args => {

@@ -18,7 +18,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
 
         private IReadOnlyGameModel gameModel = Substitute.For<IReadOnlyGameModel>();
 
-        private IReadOnlyGameStateManager gameStateManager = Substitute.For<IReadOnlyGameStateManager>();
+        private IReadOnlyGameModeManager gameModeManager = Substitute.For<IReadOnlyGameModeManager>();
 
         //Other Deps Passed To Ctor
         private IAbilities abilities = Substitute.For<IAbilities>();
@@ -38,7 +38,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
                 return frameUpdater;
             };
 
-            gameModel.GameStateManager.Returns(gameStateManager);
+            gameModel.GameModeManager.Returns(gameModeManager);
 
             DepsProv.SetTheGameModel(gameModel);
         }
@@ -49,7 +49,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
             //Model and Frame Updater
             frameUpdater = new FrameUpdaterStub();
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
 
             //Other Deps Passed To Ctor
             abilities.DefendModeAbilities().Returns(new List<IDefendModeAbility>
@@ -89,7 +89,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityManagerTests
         [Test]
         public void Manager_WhenInBuildMode_DoesNotExecuteOffCooldownAbilities()
         {
-            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
+            gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
 
             ConstructSubject();
 

@@ -59,7 +59,7 @@ namespace GrimoireTD.Abilities.DefendMode
         {
             DepsProv.TheModelObjectFrameUpdater().Register(ModelObjectFrameUpdate);
 
-            DepsProv.TheGameStateManager.OnEnterDefendMode += OnEnterDefendMode;
+            DepsProv.TheGameModeManager.OnEnterDefendMode += OnEnterDefendMode;
 
             id = IdGen.GetNextId();
 
@@ -85,7 +85,7 @@ namespace GrimoireTD.Abilities.DefendMode
 
         private void ModelObjectFrameUpdate(float deltaTime)
         {
-            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameModeManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }

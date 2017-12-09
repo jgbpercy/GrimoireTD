@@ -143,7 +143,7 @@ namespace GrimoireTD.Defenders
 
             SetUpAffectedByDefenderAuras();
 
-            DepsProv.TheGameStateManager.OnEnterBuildMode += OnEnterBuildMode;
+            DepsProv.TheGameModeManager.OnEnterBuildMode += OnEnterBuildMode;
         }
 
         //Set Up

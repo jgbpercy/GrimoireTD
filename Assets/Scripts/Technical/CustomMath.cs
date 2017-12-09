@@ -1,9 +1,7 @@
-﻿using UnityEngine.Assertions;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GrimoireTD.Technical
 {
-
     public enum RoundingMode
     {
         NEAREST,

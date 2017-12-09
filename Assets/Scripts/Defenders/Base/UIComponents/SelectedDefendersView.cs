@@ -129,7 +129,7 @@ namespace GrimoireTD.Defenders
             InterfaceController.Instance.OnDefenderSelected += OnNewSelection;
             InterfaceController.Instance.OnDefenderDeselected += OnDefenderDeselected;
 
-            DepsProv.TheGameStateManager.OnEnterDefendMode += OnEnterDefendMode;
+            DepsProv.TheGameModeManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void Update()
@@ -140,7 +140,7 @@ namespace GrimoireTD.Defenders
                 selectedUnit.TempDebugAddExperience();
             }
 
-            if (DepsProv.TheGameStateManager.CurrentGameMode == GameMode.BUILD)
+            if (DepsProv.TheGameModeManager.CurrentGameMode == GameMode.BUILD)
             {
                 return;
             }

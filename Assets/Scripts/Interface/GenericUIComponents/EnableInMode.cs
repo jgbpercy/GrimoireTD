@@ -39,21 +39,21 @@ namespace GrimoireTD.UI
         {
             if (enabledInMode == GameMode.DEFEND)
             {
-                if (gameModel.GameStateManager.CurrentGameMode == GameMode.BUILD) SetSelfInactive();
+                if (gameModel.GameModeManager.CurrentGameMode == GameMode.BUILD) SetSelfInactive();
 
                 OnEnterBuildMode = (object sender, EAOnEnterBuildMode args) => SetSelfInactive();
                 OnEnterDefendMode = (object sender, EAOnEnterDefendMode args) => SetSelfActive();
             }
             else
             {
-                if (gameModel.GameStateManager.CurrentGameMode == GameMode.DEFEND) SetSelfInactive();
+                if (gameModel.GameModeManager.CurrentGameMode == GameMode.DEFEND) SetSelfInactive();
 
                 OnEnterBuildMode = (object sender, EAOnEnterBuildMode args) => SetSelfActive();
                 OnEnterDefendMode = (object sender, EAOnEnterDefendMode args) => SetSelfInactive(); 
             }
 
-            gameModel.GameStateManager.OnEnterBuildMode += OnEnterBuildMode;
-            gameModel.GameStateManager.OnEnterDefendMode += OnEnterDefendMode;
+            gameModel.GameModeManager.OnEnterBuildMode += OnEnterBuildMode;
+            gameModel.GameModeManager.OnEnterDefendMode += OnEnterDefendMode;
         }
 
         private void SetSelfActive()
@@ -68,10 +68,10 @@ namespace GrimoireTD.UI
 
         private void OnDestroy()
         {
-            if (gameModel != null && gameModel.GameStateManager != null)
+            if (gameModel != null && gameModel.GameModeManager != null)
             {
-                gameModel.GameStateManager.OnEnterBuildMode -= OnEnterBuildMode;
-                gameModel.GameStateManager.OnEnterDefendMode -= OnEnterDefendMode;
+                gameModel.GameModeManager.OnEnterBuildMode -= OnEnterBuildMode;
+                gameModel.GameModeManager.OnEnterDefendMode -= OnEnterDefendMode;
             }
         }
     }

@@ -34,11 +34,11 @@ namespace GrimoireTD.Dependencies
             }
         }
 
-        public static IReadOnlyGameStateManager TheGameStateManager
+        public static IReadOnlyGameModeManager TheGameModeManager
         {
             get
             {
-                return theGameModel.GameStateManager;
+                return theGameModel.GameModeManager;
             }
         }
 

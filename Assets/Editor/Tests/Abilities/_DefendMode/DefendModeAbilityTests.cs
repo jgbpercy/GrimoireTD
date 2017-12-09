@@ -22,7 +22,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
         private IReadOnlyGameModel gameModel = Substitute.For<IReadOnlyGameModel>();
 
-        private IReadOnlyGameStateManager gameStateManager = Substitute.For<IReadOnlyGameStateManager>();
+        private IReadOnlyGameModeManager gameModeManager = Substitute.For<IReadOnlyGameModeManager>();
 
         private IReadOnlyCreepManager creepManager = Substitute.For<IReadOnlyCreepManager>();
 
@@ -44,7 +44,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         public void OneTimeSetUp()
         {
             //Model and Frame Updater
-            gameModel.GameStateManager.Returns(gameStateManager);
+            gameModel.GameModeManager.Returns(gameModeManager);
 
             gameModel.CreepManager.Returns(creepManager);
 
@@ -75,7 +75,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             template.BaseCooldown.Returns(defaultBaseCooldown);
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
 
             attachedToDefender.Attributes.Get(DeAttrName.cooldownReduction).Value().Returns(0f);
 
@@ -135,7 +135,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
         [Test]
         public void FrameUpdate_WhenInBuildMode_DoesNotIncreaseTimeSinceExecuted()
         {
-            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
+            gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
 
             var subject = ConstructSubject();
 
@@ -390,7 +390,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
             var eventTester = new EventTester<EAOnAbilityOffCooldown>();
             subject.OnAbilityOffCooldown += eventTester.Handler;
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith(new EAOnEnterDefendMode());
+            gameModeManager.OnEnterDefendMode += Raise.EventWith(new EAOnEnterDefendMode());
 
             eventTester.AssertFired(1);
             eventTester.AssertResult(subject, x => x.DefendModeAbility == subject);
@@ -403,7 +403,7 @@ namespace GrimoireTD.Tests.DefendModeAbilityTests
 
             Assert.False(subject.IsOffCooldown);
 
-            gameStateManager.OnEnterDefendMode += Raise.EventWith(new EAOnEnterDefendMode());
+            gameModeManager.OnEnterDefendMode += Raise.EventWith(new EAOnEnterDefendMode());
 
             Assert.True(subject.IsOffCooldown);
         }

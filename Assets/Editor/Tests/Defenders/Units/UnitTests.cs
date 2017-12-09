@@ -300,8 +300,8 @@ namespace GrimoireTD.Tests.UnitTests
             bool endWithAllAbilitiesOffCooldown = true
         )
         {
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             var defendModeAbility = Substitute.For<IDefendModeAbility>();
             abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(defendModeAbility));
@@ -319,8 +319,8 @@ namespace GrimoireTD.Tests.UnitTests
 
             if (revertToBuildMode)
             {
-                gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
-                gameStateManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
+                gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
+                gameModeManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
             }
         }
 
@@ -489,7 +489,7 @@ namespace GrimoireTD.Tests.UnitTests
         [Test]
         public void FrameUpdate_InBuildMode_DoesNotChangeTimeActiveOrTimeIdle()
         {
-            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
+            gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
 
             var subject = ConstructUnitSubject();
 
@@ -504,8 +504,8 @@ namespace GrimoireTD.Tests.UnitTests
         {
             var subject = ConstructUnitSubject();
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
@@ -517,8 +517,8 @@ namespace GrimoireTD.Tests.UnitTests
         {
             var subject = ConstructUnitSubject();
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             var defendModeAbility = Substitute.For<IDefendModeAbility>();
             abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(defendModeAbility));
@@ -537,8 +537,8 @@ namespace GrimoireTD.Tests.UnitTests
         {
             var subject = ConstructUnitSubject();
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.DEFEND);
-            gameStateManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
+            gameModeManager.CurrentGameMode.Returns(GameMode.DEFEND);
+            gameModeManager.OnEnterDefendMode += Raise.EventWith<EAOnEnterDefendMode>();
 
             var defendModeAbility = Substitute.For<IDefendModeAbility>();
             abilities.OnDefendModeAbilityAdded += Raise.EventWith(new EAOnDefendModeAbilityAdded(defendModeAbility));
@@ -569,8 +569,8 @@ namespace GrimoireTD.Tests.UnitTests
 
             frameUpdater.RunUpdate(defaultDeltaTime);
 
-            gameStateManager.CurrentGameMode.Returns(GameMode.BUILD);
-            gameStateManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
+            gameModeManager.CurrentGameMode.Returns(GameMode.BUILD);
+            gameModeManager.OnEnterBuildMode += Raise.EventWith<EAOnEnterBuildMode>();
 
             AssertExt.Approximately(0f, subject.TimeActive);
             AssertExt.Approximately(0f, subject.TimeIdle);
