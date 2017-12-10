@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using GrimoireTD.Dependencies;
+using GrimoireTD.Technical;
 
 namespace GrimoireTD.TemporaryEffects
 {
@@ -38,7 +40,7 @@ namespace GrimoireTD.TemporaryEffects
 
             onApplyCallback?.Invoke();
 
-            ITemporaryEffect newEffect = new CTemporaryEffect(key, magnitude, duration, effectName, onEndEvent);
+            var newEffect = DepsProv.TemporaryEffect(key, magnitude, duration, effectName, onEndEvent);
 
             effectsList.Add(newEffect);
 
@@ -59,7 +61,7 @@ namespace GrimoireTD.TemporaryEffects
                 return true;
             }
 
-            if (currentEffect.Magnitude == newMagnitude && currentEffect.TimeRemaining < newDuration)
+            if (CustomMath.Approximately(currentEffect.Magnitude, newMagnitude) && currentEffect.TimeRemaining < newDuration)
             {
                 return true;
             }

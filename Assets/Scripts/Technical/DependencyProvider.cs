@@ -82,6 +82,7 @@ namespace GrimoireTD.Dependencies
         };
 
         //***Controllers***
+
         public static Func<IModelInterfaceController> TheInterfaceController = () =>
         {
             return InterfaceController.Instance;
@@ -118,6 +119,12 @@ namespace GrimoireTD.Dependencies
         public static Func<IDefender, IAbilities> Abilities = (attachedToDefender) =>
         {
             return new CAbilities(attachedToDefender);
+        };
+
+        public static Func<object, float, float, string, EventHandler<EAOnTemporaryEffectEnd>, ITemporaryEffect> TemporaryEffect =
+            (key, magnitude, duration, effectName, onEndEvent) =>
+        {
+            return new CTemporaryEffect(key, magnitude, duration, effectName, onEndEvent);
         };
     }
 }

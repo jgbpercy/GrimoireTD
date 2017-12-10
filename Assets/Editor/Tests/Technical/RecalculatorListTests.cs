@@ -12,11 +12,6 @@ namespace GrimoireTD.Tests.RecalculatorListTests
             return list.Sum().ToString();
         }
 
-        protected virtual RecalculatorList<TItem, TValue> ConstructSubject<TItem, TValue>(List<TItem> initialList, Func<List<TItem>, TValue> valueFunction)
-        {
-            return new RecalculatorList<TItem, TValue>(initialList, valueFunction);
-        }
-
         [Test]
         public void ListCtor_Always_CalculatesValue()
         {
