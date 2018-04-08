@@ -62,6 +62,7 @@ namespace GrimoireTD.Defenders.Structures
             {
                 var newAbilityText = Instantiate(abilityTextPrefab).GetComponent<Text>();
                 newAbilityText.transform.SetParent(abilitiesVLayout);
+                newAbilityText.transform.localScale = Vector3.one;
 
                 newAbilityText.text = ability.NameInGame;
 
@@ -72,6 +73,7 @@ namespace GrimoireTD.Defenders.Structures
             {
                 var newAuraText = Instantiate(auraTextPrefab).GetComponent<Text>();
                 newAuraText.transform.SetParent(aurasVLayout);
+                newAuraText.transform.localScale = Vector3.one;
 
                 newAuraText.text = aura.NameInGame;
 

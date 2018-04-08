@@ -18,10 +18,11 @@ namespace GrimoireTD.Defenders.Structures
 
         private void SetUpStructurePanel(object sender, EAOnGameModelSetUp args)
         {
-            foreach (IStructureTemplate structureTemplate in args.GameModel.BuildableStructureTemplates)
+            foreach (var structureTemplate in args.GameModel.BuildableStructureTemplates)
             {
-                GameObject structurePanel = Instantiate(structurePanelPrefab) as GameObject;
+                var structurePanel = Instantiate(structurePanelPrefab) as GameObject;
                 structurePanel.transform.SetParent(structureSelectPanel.transform, false);
+                structurePanel.transform.localScale = Vector3.one;
 
                 structurePanel.GetComponent<SelectStructureToBuildUIElement>().SetUp(structureTemplate);
             }

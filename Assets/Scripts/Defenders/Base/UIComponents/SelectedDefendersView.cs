@@ -302,6 +302,7 @@ namespace GrimoireTD.Defenders
         {
             var newSlider = Instantiate(abilitySliderPrefab).GetComponent<DefendModeAbilityUIComponent>();
             newSlider.transform.SetParent(abilityVerticalLayout.transform);
+            newSlider.transform.localScale = Vector3.one;
 
             newSlider.SetUp(defendModeAbility);
 
@@ -312,6 +313,7 @@ namespace GrimoireTD.Defenders
         {
             var newButton = Instantiate(abilityButtonPrefab).GetComponent<BuildModeAbilityUIComponent>();
             newButton.transform.SetParent(abilityVerticalLayout.transform);
+            newButton.transform.localScale = Vector3.one;
 
             newButton.SetUp(buildModeAbility);
 
@@ -470,6 +472,7 @@ namespace GrimoireTD.Defenders
         {
             var newUpgradeDisplay = Instantiate(structureUpgradeDisplayPrefab) as GameObject;
             newUpgradeDisplay.transform.SetParent(structureUpgradeLayout);
+            newUpgradeDisplay.transform.localScale = Vector3.one;
 
             upgradeDisplays.Add(newUpgradeDisplay);
 
@@ -479,6 +482,7 @@ namespace GrimoireTD.Defenders
             {
                 var newEnhancementDisplay = Instantiate(structureEnhancementDisplayPrefab) as GameObject;
                 newEnhancementDisplay.transform.SetParent(newUpgradeDisplay.transform);
+                newEnhancementDisplay.transform.localScale = Vector3.one;
 
                 newEnhancementDisplay.GetComponent<StructureEnhancementUIComponent>().SetUp(selectedStructure, upgrade, enhancement);
 
@@ -557,6 +561,7 @@ namespace GrimoireTD.Defenders
             {
                 var newTalentDisplay = Instantiate(unitTalentDisplayPrefab) as GameObject;
                 newTalentDisplay.transform.SetParent(unitTalentLayout);
+                newTalentDisplay.transform.localScale = Vector3.one;
 
                 newTalentDisplay.GetComponent<UnitTalentUIComponent>().SetUp(selectedUnit, talent);
 

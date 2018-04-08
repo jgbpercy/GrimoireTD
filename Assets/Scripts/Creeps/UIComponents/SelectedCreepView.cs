@@ -76,6 +76,7 @@ namespace GrimoireTD.Creeps
         {
             GameObject newSliderGo = Instantiate(effectSliderPrefab) as GameObject;
             newSliderGo.transform.SetParent(effectVerticalLayout);
+            newSliderGo.transform.localScale = Vector3.one;
 
             effectSliders.Add(newSliderGo);
 
