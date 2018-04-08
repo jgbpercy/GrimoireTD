@@ -25,3 +25,4 @@ Assets/UnityTestTools/
 Assets/UnityTestTools\.meta
 
 \.vs/*
+/packages/
