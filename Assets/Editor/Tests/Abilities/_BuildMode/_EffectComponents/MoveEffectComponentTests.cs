@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using NSubstitute;
 using GrimoireTD.Abilities.BuildMode;
 using GrimoireTD.Defenders.Units;
 using GrimoireTD.Map;
 using GrimoireTD.Defenders.Structures;
-using System;
 
 namespace GrimoireTD.Tests.MoveEffectComponentTests
 {
