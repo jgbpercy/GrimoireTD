@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrimoireTD", "GrimoireTD.csproj", "{FE66D01F-FBDC-E705-717E-4FA1274D8D76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrimoireTD.Plugins", "GrimoireTD.Plugins.csproj", "{6C58993F-D9F4-BA6C-0628-31E9B57049C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrimoireTD.Editor.Plugins", "GrimoireTD.Editor.Plugins.csproj", "{1AEC1C99-1A81-528D-EDCB-BAC6AAFBDB5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrimoireTD.Editor", "GrimoireTD.Editor.csproj", "{26F2D58D-6900-24EA-D816-129EC0CB8296}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE66D01F-FBDC-E705-717E-4FA1274D8D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE66D01F-FBDC-E705-717E-4FA1274D8D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE66D01F-FBDC-E705-717E-4FA1274D8D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE66D01F-FBDC-E705-717E-4FA1274D8D76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C58993F-D9F4-BA6C-0628-31E9B57049C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C58993F-D9F4-BA6C-0628-31E9B57049C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C58993F-D9F4-BA6C-0628-31E9B57049C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C58993F-D9F4-BA6C-0628-31E9B57049C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AEC1C99-1A81-528D-EDCB-BAC6AAFBDB5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AEC1C99-1A81-528D-EDCB-BAC6AAFBDB5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AEC1C99-1A81-528D-EDCB-BAC6AAFBDB5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AEC1C99-1A81-528D-EDCB-BAC6AAFBDB5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26F2D58D-6900-24EA-D816-129EC0CB8296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26F2D58D-6900-24EA-D816-129EC0CB8296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26F2D58D-6900-24EA-D816-129EC0CB8296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26F2D58D-6900-24EA-D816-129EC0CB8296}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

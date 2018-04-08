@@ -1,0 +1,627 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FE66D01F-FBDC-E705-717E-4FA1274D8D76}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile></TargetFrameworkProfile>
+    <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectGenerator>VSTU</UnityProjectGenerator>
+    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
+    <UnityVersion>2017.4.0f1</UnityVersion>
+    <RootNamespace></RootNamespace>
+    <LangVersion>6</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoConfig>true</NoConfig>
+    <NoStdLib>true</NoStdLib>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\UnityVS_bin\Debug\</OutputPath>
+    <IntermediateOutputPath>Temp\UnityVS_obj\Debug\</IntermediateOutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_6_OR_NEWER;UNITY_2017_1_OR_NEWER;UNITY_2017_2_OR_NEWER;UNITY_2017_3_OR_NEWER;UNITY_2017_4_OR_NEWER;UNITY_2017_4_0;UNITY_2017_4;UNITY_2017;PLATFORM_ARCH_64;UNITY_64;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_GENERICS;ENABLE_PVR_GI;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_GRID;ENABLE_TILEMAP;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_DIRECTOR;ENABLE_UNET;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES_COLLAB;ENABLE_CLOUD_SERVICES_COLLAB_SOFTLOCKS;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_USE_WEBREQUEST;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_HUB;ENABLE_EDITOR_HUB_LICENSE;ENABLE_WEBSOCKET_CLIENT;ENABLE_DIRECTOR_AUDIO;ENABLE_DIRECTOR_TEXTURE;ENABLE_TIMELINE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;ENABLE_NATIVE_ARRAY;ENABLE_SPRITE_MASKING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;ENABLE_MONO_BDWGC;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;INCLUDE_PUBNUB;ENABLE_PLAYMODE_TESTS_RUNNER;ENABLE_VIDEO;ENABLE_RMGUI;ENABLE_PACKMAN;ENABLE_CUSTOM_RENDER_TEXTURE;ENABLE_STYLE_SHEETS;ENABLE_LOCALIZATION;PLATFORM_STANDALONE_WIN;PLATFORM_STANDALONE;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_UNITYWEBREQUEST;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_VR;ENABLE_AR;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;NET_4_6;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;ENABLE_NATIVE_ARRAY_CHECKS;UNITY_TEAM_LICENSE;ENABLE_VSTU;CROSS_PLATFORM_INPUT</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\UnityVS_bin\Release\</OutputPath>
+    <IntermediateOutputPath>Temp\UnityVS_obj\Release\</IntermediateOutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>TRACE;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_6_OR_NEWER;UNITY_2017_1_OR_NEWER;UNITY_2017_2_OR_NEWER;UNITY_2017_3_OR_NEWER;UNITY_2017_4_OR_NEWER;UNITY_2017_4_0;UNITY_2017_4;UNITY_2017;PLATFORM_ARCH_64;UNITY_64;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_GENERICS;ENABLE_PVR_GI;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_GRID;ENABLE_TILEMAP;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_DIRECTOR;ENABLE_UNET;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES_COLLAB;ENABLE_CLOUD_SERVICES_COLLAB_SOFTLOCKS;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_USE_WEBREQUEST;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_HUB;ENABLE_EDITOR_HUB_LICENSE;ENABLE_WEBSOCKET_CLIENT;ENABLE_DIRECTOR_AUDIO;ENABLE_DIRECTOR_TEXTURE;ENABLE_TIMELINE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;ENABLE_NATIVE_ARRAY;ENABLE_SPRITE_MASKING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;ENABLE_MONO_BDWGC;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;INCLUDE_PUBNUB;ENABLE_PLAYMODE_TESTS_RUNNER;ENABLE_VIDEO;ENABLE_RMGUI;ENABLE_PACKMAN;ENABLE_CUSTOM_RENDER_TEXTURE;ENABLE_STYLE_SHEETS;ENABLE_LOCALIZATION;PLATFORM_STANDALONE_WIN;PLATFORM_STANDALONE;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_UNITYWEBREQUEST;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_VR;ENABLE_AR;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;NET_4_6;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;ENABLE_NATIVE_ARRAY_CHECKS;UNITY_TEAM_LICENSE;ENABLE_VSTU;CROSS_PLATFORM_INPUT</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.6-api\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.6-api\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.XML">
+      <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.6-api\System.XML.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.6-api\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.6-api\Microsoft.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.6-api\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <HintPath>C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\4.6-api\System.Xml.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AccessibilityModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AccessibilityModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VehiclesModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.VehiclesModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClothModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ClothModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainPhysicsModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TerrainPhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterInputModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ClusterInputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterRendererModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ClusterRendererModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UNETModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UNETModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.DirectorModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.DirectorModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityAnalyticsModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityAnalyticsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PerformanceReportingModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.PerformanceReportingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityConnectModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityConnectModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.WebModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.WebModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ARModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ARModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VRModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.VRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.StyleSheetsModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.StyleSheetsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CrashReportingModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.CrashReportingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GameCenterModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.GameCenterModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GridModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.GridModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.InputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.JSONSerializeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticlesLegacyModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ParticlesLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ScreenCaptureModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SharedInternalsModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.SharedInternalsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteMaskModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.SpriteMaskModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteShapeModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.SpriteShapeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TerrainModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TilemapModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.TilemapModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VideoModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.VideoModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.WindModule">
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.WindModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Networking">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TestRunner">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Timeline">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIAutomation">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GoogleAudioSpatializer">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.HoloLens">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpatialTracking">
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Advertisements">
+      <HintPath>C:/ProgramData/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.3/UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Analytics">
+      <HintPath>C:/ProgramData/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.13/UnityEngine.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing">
+      <HintPath>C:/ProgramData/Unity/cache/packages/packages.unity.com/com.unity.purchasing@0.0.19/UnityEngine.Purchasing.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.StandardEvents">
+      <HintPath>C:/ProgramData/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="GrimoireTD.Plugins.csproj">
+      <Project>{6C58993F-D9F4-BA6C-0628-31E9B57049C7}</Project>
+      <Name>GrimoireTD.Plugins</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_EffectComponents\_Base\Model\IBuildModeEffectComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_EffectComponents\_Base\Template\IBuildModeEffectComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_EffectComponents\_Base\Template\SoBuildModeEffectComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_EffectComponents\Move\Model\CMoveEffectComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_EffectComponents\Move\Model\IMoveEffectComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_EffectComponents\Move\Template\IMoveEffectComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_EffectComponents\Move\Template\SoMoveEffectComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\_Base\Model\IBuildModeTargetable.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\_Base\Model\IBuildModeTargetingComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\_Base\Template\IBuildModeTargetingComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\_Base\Template\SoBuildModeTargetingComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\_Rules\BuildModeAutoTargetedArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\_Rules\BuildModeAutoTargetedRuleService.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\_Rules\IBuildModeAutoTargetedArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\_Rules\SingleHex\SingleHexArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\_Rules\SingleHex\SoSingleHexArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\_Rules\SoBuildModeAutoTargetedArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\Model\CAutoTargetedComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\Model\IAutoTargetedComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\Template\IAutoTargetedComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\AutoTargeted\Template\SoAutoTargetedComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_BasePlayerTargeted\Model\IPlayerTargetedComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_BasePlayerTargeted\Template\IPlayerTargetedComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_BasePlayerTargeted\Template\SoPlayerTargetedComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\_Rules\IPlayerTargetsDefendingEntityArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\_Rules\PlayerTargetsDefendingEntityArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\_Rules\PlayerTargetsDefendingEntityRuleService.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\_Rules\SoPlayerTargetsDefendingEntityArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\Model\CPlayerTargetsDefendingEntityComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\Model\IPlayerTargetsDefendingEntityComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\Template\IPlayerTargetsDefendingEntityComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_DefenderTarget\Template\SoPlayerTargetsDefendingEntityComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\HexIsInRange\HexIsInRangeArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\HexIsInRange\SoHexIsInRangeArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\IPlayerTargetsHexArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\PlayerTargetsHexArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\PlayerTargetsHexRuleService.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\SoPlayerTargetsHexArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\ValidMove\SoValidMoveArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\_Rules\ValidMove\ValidMoveArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\Model\CPlayerTargetsHexComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\Model\IPlayerTargetsHexComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\Template\IPlayerTargetsHexComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\_TargetingComponents\PlayerTargeted\_HexTarget\Template\SoPlayerTargetsHexComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\Models\CBuildModeAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\Models\EAOnExecuteBuildModeAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\Models\IBuildModeAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\Templates\IBuildModeAbilityTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\Templates\SoBuildModeAbilityTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_BuildMode\UIComponents\BuildModeAbilityUIComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\IAttackEffect.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Managers\CAttackEffectTypeManager.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Managers\IAttackEffectTypeManager.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Managers\IReadOnlyAttackEffectTypeManager.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\SAttackEffect.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\IBasicMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\IDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\IMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\ISpecificDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\IStrongMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\IWeakMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\SoBasicMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\SoDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\SoMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\SoSpecificDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\SoStrongMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\Damage\SoWeakMetaDamageEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\IAttackEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\IAttributeModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\IBlockModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\IModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\IResistanceModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\SoAttributeModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\SoBlockModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\SoModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\ModifierEffectType\SoResistanceModifierEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_AttackEffects\Types\SoAttackEffectType.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_EffectComponents\_Base\Model\IDefendModeEffectComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_EffectComponents\_Base\Template\IDefendModeEffectComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_EffectComponents\_Base\Template\SoDefendModeEffectComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_EffectComponents\ProjectileLauncher\Model\CProjectileLauncherComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_EffectComponents\ProjectileLauncher\Model\IProjectileLauncherComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_EffectComponents\ProjectileLauncher\Template\IProjectileLauncherComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_EffectComponents\ProjectileLauncher\Template\SoProjectileLauncherComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\GraphicsMappings\SProjectileGraphicsMapping.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Models\CAoeProjectile.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Models\CProjectile.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Models\EAOnDestroyProjectile.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Models\EAOnExplosionFinished.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Models\EAOnExplosionStarted.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Models\IAoeProjectile.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Models\IProjectile.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Templates\IAoeProjectileTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Templates\IProjectileTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Templates\SoAoeProjectileTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\Templates\SoProjectileTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\ViewComponents\AoeProjectileComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_Projectiles\ViewComponents\ProjectileComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\DefendModeTargetingArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\DefendModeTargetingRuleService.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\FloatRange\CreepClosestToFinishInRange\CreepClosestToFinishInRangeArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\FloatRange\CreepClosestToFinishInRange\SoCreepClosestToFinishInRangeArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\FloatRange\FloatRangeArgs.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\FloatRange\SoFloatRangeArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\IDefendModeTargetingArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\_Rules\SoDefendModeTargetingArgsTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\Model\CDefendModeTargetingComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\Model\IDefendModeTargetable.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\Model\IDefendModeTargetingComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\Template\IDefendModeTargetingComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\_TargettingComponents\Template\SoDefendModeTargetingComponentTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Models\CDefendModeAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Models\CDefendModeAbilityManager.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Models\EAOnAbilityOffCooldown.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Models\EAOnAllDefendModeAbilitiesOffCooldown.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Models\IDefendModeAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Models\IDefendModeAbilityManager.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Models\IReadOnlyDefendModeAbilityManager.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Templates\IDefendModeAbilityTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\Templates\SoDefendModeAbilityTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\_DefendMode\UIComponents\DefendModeAbilityUIComponent.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\CAbilities.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\CAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\EAOnAbilityAdded.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\EAOnAbilityExecuted.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\EAOnAbilityRemoved.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\EAOnBuildModeAbilityAdded.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\EAOnBuildModeAbilityRemoved.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\EAOnDefendModeAbilityAdded.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\EAOnDefendModeAbilityRemoved.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\IAbilities.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\IAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Models\IReadOnlyAbilities.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Templates\IAbilityTemplate.cs" />
+    <Compile Include="Assets\Scripts\Abilities\Templates\SoAbilityTemplate.cs" />
+    <Compile Include="Assets\Scripts\Attributes\CAdditiveAttribute.cs" />
+    <Compile Include="Assets\Scripts\Attributes\CAttribute.cs" />
+    <Compile Include="Assets\Scripts\Attributes\CAttributes.cs" />
+    <Compile Include="Assets\Scripts\Attributes\CDiminishingAttribute.cs" />
+    <Compile Include="Assets\Scripts\Attributes\CMultiplicativeAttribute.cs" />
+    <Compile Include="Assets\Scripts\Attributes\EAOnAnyAttributeChanged.cs" />
+    <Compile Include="Assets\Scripts\Attributes\EAOnAttributeChanged.cs" />
+    <Compile Include="Assets\Scripts\Attributes\IAttribute.cs" />
+    <Compile Include="Assets\Scripts\Attributes\IAttributes.cs" />
+    <Compile Include="Assets\Scripts\Attributes\IReadOnlyAttribute.cs" />
+    <Compile Include="Assets\Scripts\Attributes\IReadOnlyAttributes.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Modifiers\IAttributeModifier.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Modifiers\INamedAttributeModifier.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Modifiers\SAttributeModifier.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Modifiers\SNamedCreepAttributeModifier.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Modifiers\SNamedDefendingEntityAttributeModifier.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Names\CreepAttributeDefinitions.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Names\CreepAttrName.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Names\DEAttrName.cs" />
+    <Compile Include="Assets\Scripts\Attributes\Names\DefenderAttributeDefinitions.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\CBlockModifier.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\CResistanceModifier.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\CResistances.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\EAOnAnyBlockChanged.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\EAOnAnyResistanceChanged.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\IBaseResistances.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\IBlockModifier.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\IReadOnlyResistances.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\IResistanceModifier.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\IResistances.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\SBaseResistances.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\SBlockModifier.cs" />
+    <Compile Include="Assets\Scripts\Creeps\_Resistances\SResistanceModifier.cs" />
+    <Compile Include="Assets\Scripts\Creeps\GraphicsMappings\CreepGraphicsMapping.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\CCreep.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\CCreepManager.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\CWave.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\EAOnCreepSpawned.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\EAOnHealthChanged.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\EAOnWaveOver.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\ICreep.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\ICreepManager.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\IReadOnlyCreepManager.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Models\IWave.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Templates\ICreepTemplate.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Templates\ISpawn.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Templates\IWaveTemplate.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Templates\SoCreepTemplate.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Templates\SoWaveTemplate.cs" />
+    <Compile Include="Assets\Scripts\Creeps\Templates\SSpawn.cs" />
+    <Compile Include="Assets\Scripts\Creeps\UIComponents\CreepTemporaryEffectUiComponent.cs" />
+    <Compile Include="Assets\Scripts\Creeps\UIComponents\SelectedCreepDetailsView.cs" />
+    <Compile Include="Assets\Scripts\Creeps\UIComponents\SelectedCreepView.cs" />
+    <Compile Include="Assets\Scripts\Creeps\ViewComponents\CreepComponent.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\CCreepAura.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\CDefenderAura.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\CDefenderEffect.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\CModeDurationDefenderEffect.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\CTimedDefenderEffect.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\EAOnClearDefenderAura.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\ICreepAura.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\IDefenderAura.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\IDefenderEffect.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\IModeDurationDefenderEffect.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Models\ITimedDefenderEffect.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\ICreepAuraTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\IDefenderAuraTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\IDefenderEffectTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\IModeDurationDefenderEffectTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\ITimedDefenderEffectTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\SoCreepAuraTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\SoDefenderAuraTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\SoDefenderEffectTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\SoModeDurationDefenderEffectTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Effects\Templates\SoTimedDefenderEffectTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Improvements\CDefenderImprovement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Improvements\IDefenderImprovement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Improvements\ImprovementExtensions.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\_Improvements\SoDefenderImprovement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\Models\CDefender.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\Models\EAOnProjectileCreated.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\Models\EAOnTriggeredFlatHexOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\Models\IDefender.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\Templates\IDefenderTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\Templates\SoDefenderTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Base\UIComponents\SelectedDefendersView.cs" />
+    <Compile Include="Assets\Scripts\Defenders\GraphicsMappings\DefenderGraphicsMapping.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Models\CStructure.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Models\EAOnUpgraded.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Models\IStructure.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Models\IStructureEnhancement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Models\SStructureEnhancement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Templates\IStructureTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Templates\IStructureUpgrade.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Templates\SoStructureTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\Templates\SoStructureUpgrade.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\UIComponents\SelectedStuctureToBuildView.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\UIComponents\SelectStructureToBuildUIElement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\UIComponents\SelectStructureToBuildView.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\UIComponents\StructureEnhancementUIComponent.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\ViewComponents\RangeIndicatorsView.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Structures\ViewComponents\StructureComponent.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\_Improvements\CUnitImprovement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\_Improvements\IUnitImprovement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\_Improvements\SoUnitImprovement.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Models\CUnit.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Models\EAOnExperienceFatigueLevelChange.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Models\EAOnMoved.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Models\EAOnTriggeredConditionalOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Models\IUnit.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Templates\IUnitTalent.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Templates\IUnitTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Templates\SoUnitTalent.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\Templates\SoUnitTemplate.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\UIComponents\UnitTalentUIComponent.cs" />
+    <Compile Include="Assets\Scripts\Defenders\Units\ViewComponents\UnitComponent.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\CEconomyManager.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\EAOnAnyResourceChanged.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\EAOnResourceCreated.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\IEconomyManager.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\IReadOnlyEconomyManager.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\OccupationBonuses\IHexOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\OccupationBonuses\IOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\OccupationBonuses\IStructureOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\OccupationBonuses\SHexOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\OccupationBonuses\SOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\OccupationBonuses\SStructureOccupationBonus.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\CResource.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\CResourceTransaction.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\EAOnResourceChanged.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\IReadOnlyResource.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\IResource.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\IResourceTemplate.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\IResourceTransaction.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\ResourceTransactionExtensions.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\SoResourceTemplate.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Resources\SResourceTransaction.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Transactions\CEconomyTransaction.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Transactions\EconomyTransactionExtensions.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Transactions\IEconomyTransaction.cs" />
+    <Compile Include="Assets\Scripts\Economy\Models\Transactions\SEconomyTransaction.cs" />
+    <Compile Include="Assets\Scripts\Economy\UIComponents\EconomyView.cs" />
+    <Compile Include="Assets\Scripts\GameModel\CGameModel.cs" />
+    <Compile Include="Assets\Scripts\GameModel\EAOnGameModelSetUp.cs" />
+    <Compile Include="Assets\Scripts\GameModel\GameModelLoader.cs" />
+    <Compile Include="Assets\Scripts\GameModel\IGameModel.cs" />
+    <Compile Include="Assets\Scripts\GameModel\IReadOnlyGameModel.cs" />
+    <Compile Include="Assets\Scripts\GameModeManager\Models\CGameModeManager.cs" />
+    <Compile Include="Assets\Scripts\GameModeManager\Models\EAOnEnterBuildMode.cs" />
+    <Compile Include="Assets\Scripts\GameModeManager\Models\EAOnEnterDefendMode.cs" />
+    <Compile Include="Assets\Scripts\GameModeManager\Models\IGameModeManager.cs" />
+    <Compile Include="Assets\Scripts\GameModeManager\Models\IReadOnlyGameModeManager.cs" />
+    <Compile Include="Assets\Scripts\GameModeManager\UIComponents\ModeTextView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnBuildStructurePlayerAction.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnCreateUnitPlayerAction.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnCreepDeselected.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnCreepSelected.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnDefenderDeselected.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnDefenderSelected.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnEnterDefendModePlayerAction.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnStructureToBuildDeselected.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\EAOnStructureToBuildSelected.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\IInterfaceController.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\IModelInterfaceController.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\InterfaceController.cs" />
+    <Compile Include="Assets\Scripts\Interface\Controllers\IReadOnlyInterfaceController.cs" />
+    <Compile Include="Assets\Scripts\Interface\GenericUIComponents\EnableInMode.cs" />
+    <Compile Include="Assets\Scripts\Interface\GenericUIComponents\InWorldUIRotatesToCamera.cs" />
+    <Compile Include="Assets\Scripts\Levels\ILevel.cs" />
+    <Compile Include="Assets\Scripts\Levels\IStartingStructure.cs" />
+    <Compile Include="Assets\Scripts\Levels\IStartingUnit.cs" />
+    <Compile Include="Assets\Scripts\Levels\SoLevel.cs" />
+    <Compile Include="Assets\Scripts\Levels\SStartingStructure.cs" />
+    <Compile Include="Assets\Scripts\Levels\SStartingUnit.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\CHexData.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\CMapData.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\Coord.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\EAOnMapCreated.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\EAOnPathGeneratedOrChanged.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\EAOnStructureCreated.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\EAOnUnitCreated.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\IHexData.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\IHexType.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\IMapData.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\IReadOnlyMapData.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\MapImageToMapDictionaryService.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\PathingService.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\SoHexType.cs" />
+    <Compile Include="Assets\Scripts\Map\Model\VectorExtensions.cs" />
+    <Compile Include="Assets\Scripts\Map\UIComponents\MouseOverHexTextView.cs" />
+    <Compile Include="Assets\Scripts\Map\ViewComponents\MapEntitiesView.cs" />
+    <Compile Include="Assets\Scripts\Map\ViewComponents\MapRenderer.cs" />
+    <Compile Include="Assets\Scripts\Map\ViewComponents\MouseOverMapView.cs" />
+    <Compile Include="Assets\Scripts\Technical\CallbackLists\CallbackList.cs" />
+    <Compile Include="Assets\Scripts\Technical\CallbackLists\EAOnCallbackListAdd.cs" />
+    <Compile Include="Assets\Scripts\Technical\CallbackLists\EAOnCallbackListRemove.cs" />
+    <Compile Include="Assets\Scripts\Technical\CallbackLists\IReadOnlyCallbackList.cs" />
+    <Compile Include="Assets\Scripts\Technical\CollectionExt.cs" />
+    <Compile Include="Assets\Scripts\Technical\CustomMath.cs" />
+    <Compile Include="Assets\Scripts\Technical\DependencyProvider.cs" />
+    <Compile Include="Assets\Scripts\Technical\IdGen.cs" />
+    <Compile Include="Assets\Scripts\Technical\ModelObjectFrameUpdates\IModelObjectFrameUpdater.cs" />
+    <Compile Include="Assets\Scripts\Technical\ModelObjectFrameUpdates\ModelObjectFrameUpdater.cs" />
+    <Compile Include="Assets\Scripts\Technical\RecalculatorLists\EARecalculatorListChange.cs" />
+    <Compile Include="Assets\Scripts\Technical\RecalculatorLists\INotifyOnChange.cs" />
+    <Compile Include="Assets\Scripts\Technical\RecalculatorLists\IReadOnlyRecalculatorList.cs" />
+    <Compile Include="Assets\Scripts\Technical\RecalculatorLists\MutableRecalculatorList.cs" />
+    <Compile Include="Assets\Scripts\Technical\RecalculatorLists\RecalculatorList.cs" />
+    <Compile Include="Assets\Scripts\Technical\SingletonMonobehaviour.cs" />
+    <Compile Include="Assets\Scripts\Technical\UIModeToggler.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\CTemporaryEffect.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\CTemporaryEffectsManager.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\EAOnNewTemporaryEffect.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\EAOnTemporaryEffectEnd.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\IReadOnlyTemporaryEffect.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\IReadOnlyTemporaryEffectsManager.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\ITemporaryEffect.cs" />
+    <Compile Include="Assets\Scripts\TemporaryEffects\ITemporaryEffectsManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
+    <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
+    <None Include="Assets\Standard Assets\ParticleSystems\ParticleSystemsGuidelines.txt" />
+    <None Include="Assets\Standard Assets\ParticleSystems\Shaders\PriorityParticleAdd.shader" />
+    <None Include="Assets\Standard Assets\ParticleSystems\Shaders\PriorityParticleAddSoft.shader" />
+    <None Include="Assets\Standard Assets\ParticleSystems\Shaders\PriorityParticleAlpha.shader" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="GenerateTargetFrameworkMonikerAttribute" />
+</Project>
